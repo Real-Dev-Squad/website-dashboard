@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div class="container">
+    <form action="" id="taskForm">
+      <div class="inputBox">
+        <label for="title">Title</label>
+        <input type="text" name="title" placeholder="Title" id="title">
+      </div>
+      <div class="inputBox">
+        <label for="purpose">Purpose</label>
+        <input type="text" id="purpose" name="purpose" placeholder="Purpose">
+      </div>
+      <div class="inputBox">
+        <label for="featureUrl">Feature URL</label>
+        <input type="text" id="featureUrl" name="featureUrl" placeholder="Feature URL">
+      </div>
+      <div class="inputBox">
+        <label for="dev">Dev</label>
+        <input type="radio" id="dev" name="type" value="dev">
+        <label for="group">Group</label>
+        <input type="radio" id="group" name="type" value="group">
+      </div>
+      <div class="inputBox">
+        <label for="links">Links</label>
+        <input type="text" name="links" id="links">
+      </div>
+      <div class="inputBox">
+        <label for="startedOn">Started on</label>
+        <input type="date" name="startedOn" id="startedOn">
+      </div>
+      <div class="inputBox">
+        <label for="endsOn">Ends on</label>
+        <input type="date" name="endsOn" id="endsOn">
+      </div>
+      <div class="inputBox">
+        <label for="status">Status</label>
+        <input type="text" placeholder="Status" id="status" name="status">
+      </div>
+      <div class="inputBox">
+        <label for="ownerId">Owner Id</label>
+        <input type="text" placeholder="Owner Id" id="ownerId" name="ownerId">
+      </div>
+      <div class="inputBox">
+        <label for="percentCompleted">Percent completed</label>
+        <input type="number" id="percentCompleted" name="percentCompleted" placeholder="Percent completed">
+      </div>
+      <div class="inputBox">
+        <label for="completionAward">Completion award</label>
+        <div class="inputBox">
+          <label for="completionAwardGold">Gold</label>
+          <input type="number" id="completionAwardGold" name="completionAwardGold" placeholder="Number of gold coins">
+        </div>
+        <div class="inputBox">
+          <label for="completionAwardSilver">Silver</label>
+          <input type="number" id="completionAwardSilver" name="completionAwardSilver" placeholder="Number of silver coins">
+        </div>
+        <div class="inputBox">
+          <label for="completionAwardBronze">Bronze</label>
+          <input type="number" id="completionAwardBronze" name="completionAwardBronze" placeholder="Number of bronze coins">
+        </div>
+      </div>
+      <div class="inputBox">
+        <label for="lossRate">Loss rate</label>
+        <div class="inputBox">
+          <label for="lossRateGold">Gold</label>
+          <input type="number" id="lossRateGold" name="lossRateGold" placeholder="Number of gold coins">
+        </div>
+        <div class="inputBox">
+          <label for="lossRateSilver">Silver</label>
+          <input type="number" id="lossRateSilver" name="lossRateSilver" placeholder="Number of silver coins">
+        </div>
+        <div class="inputBox">
+          <label for="lossRateBronze">Bronze</label>
+          <input type="number" id="lossRateBronze" name="lossRateBronze" placeholder="Number of bronze coins">
+        </div>
+      </div>
+      <div class="inputBox">
+        <label for="isNoteworthy">Is noteworthy</label>
+        <input type="checkbox" value="true" id="isNoteworthy" name="isNoteworthy">
+      </div>
+      <div class="inputBox">
+        <input type="submit" value="Submit" >
+      </div>
+    </form>
+
+    <script src="./script.js"></script> 
+  </div>
+</body>
+</html>
