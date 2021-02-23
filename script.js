@@ -1,4 +1,4 @@
-const BASE_URL = 'https://staging-api.realdevsquad.com';
+const BASE_URL = 'https://api.realdevsquad.com';
 
 function getObjectOfFormData(formId) {
   const object = {};
