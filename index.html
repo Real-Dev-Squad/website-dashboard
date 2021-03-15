@@ -22,10 +22,16 @@
         <input type="text" id="featureUrl" name="featureUrl" placeholder="Feature URL">
       </div>
       <div class="inputBox">
-        <label for="dev">Dev</label>
-        <input type="radio" id="dev" name="type" value="dev">
-        <label for="group">Group</label>
-        <input type="radio" id="group" name="type" value="group">
+        <div class="radioButtons">
+          <div class="dev">
+            <label for="dev">Dev</label>
+            <input type="radio" id="dev" name="type" value="dev">
+          </div>
+          <div class="group">
+            <label for="group">Group</label>
+            <input type="radio" id="group" name="type" value="group">
+          </div>
+        </div>
       </div>
       <div class="inputBox">
         <label for="links">Links:</label>
@@ -86,11 +92,13 @@
         </div>
       </div>
       <div class="inputBox">
-        <label for="isNoteworthy">Is noteworthy</label>
-        <input type="checkbox" value="true" id="isNoteworthy" name="isNoteworthy">
+        <div class="checkBox">
+          <label for="isNoteworthy">Is noteworthy:</label>
+          <input type="checkbox" value="true" id="isNoteworthy" name="isNoteworthy">
+        </div>
       </div>
       <div class="inputBox">
-        <input type="submit" value="Submit" >
+        <input type="submit" class="submitBtn" value="Submit" >
       </div>
     </form>
 

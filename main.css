@@ -9,3 +9,61 @@ body {
     margin: 0;
 }
 
+.container {
+  width: 100%;
+  color: #666;
+  text-align: center;
+  padding: 1em 0;
+}
+
+#taskForm {
+  width: 60vw;
+  max-width: 40rem;
+  min-width: 300px;
+  margin: 0 auto;
+  padding: 1em 1.5em;
+  border: 1px solid #f4f4f4;
+  border-radius: 2%;
+  box-shadow: 0 0 15px -7px rgba(0, 0, 0, .65);
+}
+
+.inputBox {
+  width: 100%;
+  margin-bottom: 1em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.inputBox label {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.inputBox input {
+  padding: 1em;
+  border: 1px solid #666;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.radioButtons {
+  display: flex;
+  flex-direction: row;
+}
+
+.checkBox {
+  display: flex;
+  flex-direction: column;
+}
+
+.submitBtn {
+  background-color: #43a0488c;
+  font-size: 1rem;
+  color: #fff;
+  padding: 1em .5em;
+  cursor: pointer;
+  outline: 0;
+  box-shadow: rgba(0,0,0,.07) 0 1px 1px, rgba(0,0,0,.07) 0 2px 2px, rgba(0,0,0,.07) 0 4px 4px, rgba(0,0,0,.07) 0 8px 8px, rgba(0,0,0,.07) 0 16px 16px;
+}
