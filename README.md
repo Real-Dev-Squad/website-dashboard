@@ -1,2 +1,3 @@
-# website-template
-A template to create all public facing sites
+# website-dashboard
+
+Dashboard that performs authorized actions acrosss the website
