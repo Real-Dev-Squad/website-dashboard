@@ -12,9 +12,14 @@
 <body>
 
   <div class="wallets">
-    <div class="inputBox wallets__input">
-      <label for="all-users">Users:</label>
-      <input type="text" placeholder="userA, userB" id="all-users" name="all-users" value="ankush, harshith, akanksha">
+    <div class="wallets__fetcher">
+      <div class="inputBox wallets__input">
+        <label for="all-users">Users:</label>
+        <input type="text" placeholder="userA, userB" id="all-users" name="all-users" value="ankush, harshith, akanksha">
+      </div>
+      <button class="wallets__submit" onclick="getWallets()">
+        Fetch Wallets
+      </button>
     </div>
   </div>
 

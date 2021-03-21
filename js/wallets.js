@@ -42,37 +42,70 @@ function updateWalletForUser(username) {
     previousCurrencies.forEach(node => node.remove());
 
     // Add fresh
-    const currencies = { 
-      dinero: 100,
-      neelam: 2
-    };
 
-    // const c = createCurrencyNode('neelam', currencies.neelam);
-    // currenciesHolder.append(c);
-    // const ca = createCurrencyNode('dinero', Math.random());
-    // currenciesHolder.append(ca);
+    // const userAction = async () => {
+    //   const response = await fetch(GET_WALLET);
+    //   const json = await response.json(); //extract JSON from the http response
+    //   // do something with response
+    // }
 
+    //To-Do: Delete the following mock once API call set up properly
+    mockResponse = {
+      "message": "Wallet returned successfully",
+      "wallet": {
+          "id": "id-of-wallet",
+          "currencies": {
+              "neelam": 14,
+              "dinero": 200
+          },
+          "userId": "id-of-user"
+      } 
+    }
+
+    const currencies = mockResponse.wallet.currencies;
+
+    for (const currency in currencies) {
+      let newCurrency = createCurrencyNode(`${currency}` , `${currencies[currency]}`);
+      currenciesHolder.append(newCurrency);
+    }
   }, 200);
 }
 
 function createCurrencyNode(currencyType, currencyVal) {
   const currencyRef = document.createElement('div');
+  const currencyLabelRef = document.createElement('div');
   currencyRef.classList.add('currency');
+  currencyLabelRef.classList.add('currencyLabel')
 
   // Create icon
   const icon = document.createElement('div');
-  icon.classList.add('currency--icon');
-  icon.classList.add(`currency-type-${currencyType}`);
+  icon.classList.add('currency__icon');
+  icon.classList.add(`currency-type--${currencyType}`);
   currencyRef.append(icon);
+
+  // Create currency label
+  const currencyLabel = document.createElement('p');
+  currencyLabel.classList.add('currency__label');
+  const currency = document.createTextNode(currencyType);
+  currencyLabel.append(currency);
+  currencyLabelRef.append(currencyLabel);
 
   // Create balance
   const balanceHolder = document.createElement('div');
-  balanceHolder.classList.add('currency--balance');
+  balanceHolder.classList.add('currency__balance');
   const balance = document.createTextNode(currencyVal);
   balanceHolder.append(balance);
-  currencyRef.append(balanceHolder);
+  currencyLabelRef.append(balanceHolder);
+  currencyRef.append(currencyLabelRef);
 
   return currencyRef;
 }
 
-getUserWallet('akanksha');
+function getWallets() {
+  const inputString = document.getElementById("all-users").value;
+  const inputArray = inputString.split(',');
+
+  inputArray.forEach(username => getUserWallet(username));
+}
+
+getWallets();
