@@ -1,8 +1,11 @@
 .wallets {
   width: 80%;
+  height: 90vh;
   margin: 100px auto;
   border-radius: 5px;
   background-color: whitesmoke;
+  padding: 50px;
+  overflow-y: auto;
 }
 
 .wallets__fetcher {
@@ -21,18 +24,19 @@
   height: 40px;
   width: 105px;
   background-color: beige;
-  color: purple;
-  border-radius: 25px;
+  border-radius: 5px;
 }
 
 .user-wallet {
-  border: 1px solid red;
-  background-color: beige;
+  border-radius: 7px;
+  border: 1px solid #9E9E9E;
+  width: 350px;
+  height: 200px;
   margin: 50px auto;
+  position: relative;
 }
 
 .user-wallet__currencies {
-  border: 20px solid purple;
   margin-top: 50px;
   height: 100px;
   width: 100%;
@@ -40,13 +44,22 @@
   justify-content: space-around;
 }
 
-.user-wallet__refresh-btn {
-  border: 1px solid green;
+.user-wallet__username {
+  font-size: 24px;
+  margin-left: 20px;
+  text-transform: capitalize;
+  color: #757575;
+}
 
-  margin-top: 50px;
-  height: 60px;
-  width: 100px;
-  margin: 20px 50px;
+
+.user-wallet__refresh-btn {
+  border: 2px solid green;
+  border-radius: 3px;
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  height: 40px;
+  width: 70px;
 }
 
 .currency {

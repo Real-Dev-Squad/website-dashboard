@@ -1,4 +1,4 @@
-const BASE_URL = 'https://api.realdevsquad.com';
+const API_BASE_URL = 'https://api.realdevsquad.com';
 
 const walletsRef = document.querySelector('.wallets');
 
@@ -16,8 +16,14 @@ function createUserWallet (username) {
   currenciesHolder.classList.add('user-wallet__currencies');
   userWallet.append(currenciesHolder);
 
+  const usernameHolder = document.createElement('div');
+  usernameHolder.classList.add('user-wallet__username');
+  usernameHolder.textContent = username;
+  userWallet.append(usernameHolder);
+
   const refreshButton = document.createElement('button');
   refreshButton.classList.add('user-wallet__refresh-btn');
+  refreshButton.textContent = 'Refresh';
   refreshButton.onclick = function() {
     updateWalletForUser(username);
   }
@@ -36,39 +42,27 @@ function updateWalletForUser(username) {
   const userWallet = getUserWallet(username);
   const currenciesHolder = userWallet.querySelector('.user-wallet__currencies');
 
-  setTimeout(() => {
-    // Remove previous
-    const previousCurrencies = currenciesHolder.querySelectorAll('.currency');
-    previousCurrencies.forEach(node => node.remove());
+  // Remove previous
+  const previousCurrencies = currenciesHolder.querySelectorAll('.currency');
+  previousCurrencies.forEach(node => node.remove());
 
-    // Add fresh
+  // Add fresh
+  const userDataPromise = async () => {
+    const response = await fetch(`${API_BASE_URL}/wallet/${username}`, {
+       credentials: 'include'
+    });
+    return await response.json();
+  }
 
-    // const userAction = async () => {
-    //   const response = await fetch(GET_WALLET);
-    //   const json = await response.json(); //extract JSON from the http response
-    //   // do something with response
-    // }
-
-    //To-Do: Delete the following mock once API call set up properly
-    mockResponse = {
-      "message": "Wallet returned successfully",
-      "wallet": {
-          "id": "id-of-wallet",
-          "currencies": {
-              "neelam": 14,
-              "dinero": 200
-          },
-          "userId": "id-of-user"
-      } 
+  userDataPromise().then(data => {
+    const currencies = data.wallet.currencies;
+    for (const [currency, value] of Object.entries(currencies)) {
+      if(value > 0){
+        const newCurrency = createCurrencyNode(currency , value);
+        currenciesHolder.append(newCurrency);
+      }
     }
-
-    const currencies = mockResponse.wallet.currencies;
-
-    for (const currency in currencies) {
-      let newCurrency = createCurrencyNode(`${currency}` , `${currencies[currency]}`);
-      currenciesHolder.append(newCurrency);
-    }
-  }, 200);
+  });
 }
 
 function createCurrencyNode(currencyType, currencyVal) {
@@ -103,9 +97,8 @@ function createCurrencyNode(currencyType, currencyVal) {
 
 function getWallets() {
   const inputString = document.getElementById("all-users").value;
-  const inputArray = inputString.split(',');
-
-  inputArray.forEach(username => getUserWallet(username));
+  const usernamesProvided = inputString.split(',').map(usrname => usrname.trim());
+  usernamesProvided.forEach(username => updateWalletForUser(username));
 }
 
 getWallets();
