@@ -5,72 +5,7 @@
 }
 
 body {
-  margin:0;
-  padding:0;
-  font-family: sans-serif;
-  background: linear-gradient(#041535, #3983d8);
-  height: 100vh;
+    font-family: "Roboto", sans-serif;
+    margin: 0;
 }
 
-.container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 400px;
-  padding: 40px;
-  transform: translate(-50%, -50%);
-  background: rgba(30, 43, 68, 0.5);
-  box-sizing: border-box;
-  box-shadow: 0 15px 25px rgba(0,0,0,.6);
-  border-radius: 10px;
-  color: #fff;
-}
-
-.container .inputBox {
-  position: relative;
-  padding: 2px;
-}
-
-input {
-  border-radius: 10px;
-  padding: 10px;
-  font-size: 20px;
-}
-
-.submit {
-  position: relative;
-  display: inline-block;
-  padding: 10px 20px;
-  color: #121e30;
-  font-size: 16px;
-  text-decoration: none;
-  text-transform: uppercase;
-  overflow: hidden;
-  transition: .5s;
-  margin-top: 40px;
-  letter-spacing: 4px
-}
-
-.submit:hover {
-  background: #0a335a;
-  color: #fff;
-  border-radius: 5px;
-  box-shadow: 0 0 5px #03e9f4,
-              0 0 25px #03e9f4,
-              0 0 50px #03e9f4,
-              0 0 100px #03e9f4;
-}
-
-@media only screen and (max-width: 320px) {
-  /* For mobile phones: */
-  .container {
-    width: 300px;
-  }
-}
-
-@media only screen and (max-width: 375px) {
-  /* For mobile phones: */
-  .container {
-    width: 300px;
-  }
-}
