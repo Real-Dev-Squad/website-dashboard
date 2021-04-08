@@ -66,6 +66,7 @@ taskForm.onsubmit = async (e) => {
   try {
     const response = await fetch(`${BASE_URL}/tasks`, {
       method: 'POST',
+      credentials: 'include',
       body: JSON.stringify(dataToBeSent),
       headers: {
         'Content-type': 'application/json'
