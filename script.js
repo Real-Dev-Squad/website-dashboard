@@ -29,7 +29,7 @@ taskForm.onsubmit = async (e) => {
     endsOn,
     startedOn,
     status,
-    ownerId,
+    assignedTo,
     percentCompleted,
     completionAwardGold,
     completionAwardSilver,
@@ -49,7 +49,7 @@ taskForm.onsubmit = async (e) => {
     endsOn,
     startedOn,
     status,
-    ownerId,
+    assignedTo,
     percentCompleted,
     completionAward: {
       gold: completionAwardGold,
@@ -66,6 +66,7 @@ taskForm.onsubmit = async (e) => {
   try {
     const response = await fetch(`${BASE_URL}/tasks`, {
       method: 'POST',
+      credentials: 'include',
       body: JSON.stringify(dataToBeSent),
       headers: {
         'Content-type': 'application/json'
