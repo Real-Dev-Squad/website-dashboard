@@ -6,6 +6,11 @@ function getObjectOfFormData(formId) {
 
   data.forEach((value, key) => {
     if (!Reflect.has(object, key)) {
+      if (key === "startedOn" || key === "endsOn") {
+        let date = new Date(value);
+        let myEpoch = date.getTime() / 1000.0;
+        value = myEpoch;
+      }
       object[key] = value;
       return;
     }
@@ -63,6 +68,7 @@ taskForm.onsubmit = async (e) => {
     },
     isNoteworthy: isNoteworthy || false,
   };
+
   try {
     const response = await fetch(`${BASE_URL}/tasks`, {
       method: "POST",
