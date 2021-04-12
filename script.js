@@ -29,7 +29,7 @@ taskForm.onsubmit = async (e) => {
     endsOn,
     startedOn,
     status,
-    ownerId,
+    assignedTo,
     percentCompleted,
     completionAwardGold,
     completionAwardSilver,
@@ -49,7 +49,7 @@ taskForm.onsubmit = async (e) => {
     endsOn,
     startedOn,
     status,
-    ownerId,
+    assignedTo,
     percentCompleted,
     completionAward: {
       gold: completionAwardGold,
