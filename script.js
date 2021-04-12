@@ -35,6 +35,7 @@ taskForm.onsubmit = async (e) => {
     startedOn,
     status,
     assignee,
+    participants,
     percentCompleted,
     completionAwardDinero,
     completionAwardNeelam,
@@ -52,7 +53,6 @@ taskForm.onsubmit = async (e) => {
     endsOn,
     startedOn,
     status,
-    assignee,
     percentCompleted,
     completionAward: {
       dinero: completionAwardDinero,
@@ -64,6 +64,14 @@ taskForm.onsubmit = async (e) => {
     },
     isNoteworthy: isNoteworthy || false,
   };
+
+  if (dataToBeSent.type == 'feature') {
+    dataToBeSent.assignee = assignee;
+  }
+
+  if (dataToBeSent.type == 'group') {
+    dataToBeSent.participants = participants.trim().split(',');
+  }
 
   try {
     const response = await fetch(`${BASE_URL}/tasks`, {
@@ -108,6 +116,21 @@ let stateHandle = () => {
     document.getElementById("submit").classList.remove("active");
   }
 };
+
+let hideUnusedField = (radio) => {
+  if ('assignee' === radio) {
+    document.getElementById('assigneeInput').style.display = 'flex';
+  } else {
+    document.getElementById('assigneeInput').style.display = 'none';
+  }
+
+  if ('participants' === radio) {
+    document.getElementById('participantsInput').style.display = 'flex';
+  } else {
+    document.getElementById('participantsInput').style.display = 'none';
+  }
+
+}
 
 const input = document.getElementsByClassName("input");
 

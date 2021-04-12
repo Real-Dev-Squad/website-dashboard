@@ -16,8 +16,8 @@
         <input required class="input" type="text" name="title" placeholder="Title" id="title">
       </div>
       <div class="inputBox">
-        <label for="purpose">Purpose:<span class="required">*</span></label>
-        <input required class="input" type="text" id="purpose" name="purpose" placeholder="Purpose">
+        <label for="purpose">Purpose:</label>
+        <input type="text" id="purpose" name="purpose" placeholder="Purpose">
       </div>
       <div class="inputBox">
         <label for="featureUrl">Feature URL:</label>
@@ -25,27 +25,28 @@
       </div>
       <div class="inputBox">
         <div class="radioButtons">
-          <div class="dev">
-            <label for="dev">Dev</label>
-            <input required class="input" type="radio" id="dev" name="type" value="dev" checked>
+          <div class="feature" onclick="hideUnusedField('assignee');">
+            <label for="feature">Feature</label>
+            <input required class="input" type="radio" id="feature" name="type" value="feature" checked>
           </div>
-          <div class="group">
-            <label for="group">Group<span class="required">*</span></label>
+          <div class="group" onclick="hideUnusedField('participants');">
+            <label for="group">Group</label>
             <input required class="input" type="radio" id="group" name="type" value="group">
           </div>
+          <span class="required">*</span>
         </div>
       </div>
       <div class="inputBox">
         <label for="links">Links:</label>
-        <input type="text" name="links" id="links">
+        <input type="text" name="links" id="links" placeholder="Comma separated links">
       </div>
       <div class="inputBox">
         <label for="startedOn">Started:<span class="required">*</span></label>
         <input required class="input" type="date" name="startedOn" id="startedOn">
       </div>
       <div class="inputBox">
-        <label for="endsOn">Ended:</label>
-        <input type="date" name="endsOn" id="endsOn">
+        <label for="endsOn">Ended:<span class="required">*</span></label>
+        <input required class="input" type="date" name="endsOn" id="endsOn">
       </div>
       <div class="inputBox">
         <label for="status">Status:<span class="required">*</span></label>
@@ -55,9 +56,13 @@
           <option selected value="pending">Pending</option>
         </select>
       </div>
-      <div class="inputBox">
-        <label for="assignee">Assigned To:<span class="required">*</span></label>
-        <input required class="input" type="text" placeholder="Assigned To" id="assignee" name="assignee">
+      <div class="inputBox class" id="assigneeInput">
+        <label for="assignee">Assigned To:</label>
+        <input type="text" placeholder="Assigned To" id="assignee" name="assignee">
+      </div>
+      <div class="inputBox" id="participantsInput">
+        <label for="participants">Participants:</label>
+        <input type="text" placeholder="Comma separated participants username" id="participants" name="participants">
       </div>
       <div class="inputBox">
         <label for="percentCompleted">Percent Completed:</label>
@@ -82,11 +87,11 @@
         <br>
         <div class="inputBox">
           <label for="lossRateDinero">Dinero</label>
-          <input type="number" id="lossRateDinero" name="lossRateDinero" placeholder="Number of Dinero coins">
+          <input type="number" value="0" id="lossRateDinero" name="lossRateDinero" placeholder="Number of Dinero coins">
         </div>
         <div class="inputBox">
           <label for="lossRateNeelam">Neelam</label>
-          <input type="number" id="lossRateNeelam" name="lossRateNeelam" placeholder="Number of Neelam coins">
+          <input type="number" value="0" id="lossRateNeelam" name="lossRateNeelam" placeholder="Number of Neelam coins">
         </div>
       </div>
       <div class="inputBox">

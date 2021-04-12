@@ -94,3 +94,7 @@ body {
 #isNoteworthy {
   width: auto;
 }
+
+#participantsInput {
+  display: none;
+}
