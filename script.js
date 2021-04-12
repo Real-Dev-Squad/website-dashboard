@@ -1,4 +1,4 @@
-const BASE_URL = "https://api.realdevsquad.com";
+const BASE_URL = "https://staging-api.realdevsquad.com";
 
 function getObjectOfFormData(formId) {
   const object = {};
@@ -8,7 +8,7 @@ function getObjectOfFormData(formId) {
     if (!Reflect.has(object, key)) {
       if (key === "startedOn" || key === "endsOn") {
         let date = new Date(value);
-        let myEpoch = date.getTime() / 1000.0;
+        let myEpoch = String(date.getTime() / 1000.0);
         value = myEpoch;
       }
       object[key] = value;
@@ -34,14 +34,12 @@ taskForm.onsubmit = async (e) => {
     endsOn,
     startedOn,
     status,
-    assignedTo,
+    assignee,
     percentCompleted,
-    completionAwardGold,
-    completionAwardSilver,
-    completionAwardBronze,
-    lossRateGold,
-    lossRateSilver,
-    lossRateBronze,
+    completionAwardDinero,
+    completionAwardNeelam,
+    lossRateDinero,
+    lossRateNeelam,
     isNoteworthy,
   } = getObjectOfFormData(taskForm);
 
@@ -54,17 +52,15 @@ taskForm.onsubmit = async (e) => {
     endsOn,
     startedOn,
     status,
-    assignedTo,
+    assignee,
     percentCompleted,
     completionAward: {
-      gold: completionAwardGold,
-      silver: completionAwardSilver,
-      bronze: completionAwardBronze,
+      dinero: completionAwardDinero,
+      neelam: completionAwardNeelam,
     },
     lossRate: {
-      gold: lossRateGold,
-      silver: lossRateSilver,
-      bronze: lossRateBronze,
+      dinero: lossRateDinero,
+      neelam: lossRateNeelam,
     },
     isNoteworthy: isNoteworthy || false,
   };
