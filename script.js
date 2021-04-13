@@ -129,7 +129,6 @@ let hideUnusedField = (radio) => {
   } else {
     document.getElementById('participantsInput').style.display = 'none';
   }
-
 }
 
 const input = document.getElementsByClassName("input");
