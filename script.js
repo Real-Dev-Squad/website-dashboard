@@ -62,7 +62,7 @@ taskForm.onsubmit = async (e) => {
       dinero: lossRateDinero,
       neelam: lossRateNeelam,
     },
-    isNoteworthy: isNoteworthy || false,
+    isNoteworthy: isNoteworthy = (isNoteworthy == 'true'),
   };
 
   if (dataToBeSent.type == 'feature') {
