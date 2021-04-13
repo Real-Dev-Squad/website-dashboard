@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="main.css">
   <title>Tasks</title>
 </head>
+
 <body>
   <div class="container">
     <form action="" id="taskForm">
       <div class="inputBox">
-        <label for="title">Title:</label>
-        <input type="text" name="title" placeholder="Title" id="title">
+        <label for="title">Title:<span class="required">*</span></label>
+        <input required class="input" type="text" name="title" placeholder="Title" id="title">
       </div>
       <div class="inputBox">
         <label for="purpose">Purpose:</label>
@@ -19,90 +21,92 @@
       </div>
       <div class="inputBox">
         <label for="featureUrl">Feature URL:</label>
-        <input type="text" id="featureUrl" name="featureUrl" placeholder="Feature URL">
+        <input type="url" id="featureUrl" name="featureUrl" placeholder="Feature URL">
       </div>
       <div class="inputBox">
         <div class="radioButtons">
-          <div class="dev">
-            <label for="dev">Dev</label>
-            <input type="radio" id="dev" name="type" value="dev">
+          <div class="feature" onclick="hideUnusedField('assignee');">
+            <label for="feature">Feature</label>
+            <input required class="input" type="radio" id="feature" name="type" value="feature" checked>
           </div>
-          <div class="group">
+          <div class="group" onclick="hideUnusedField('participants');">
             <label for="group">Group</label>
-            <input type="radio" id="group" name="type" value="group">
+            <input required class="input" type="radio" id="group" name="type" value="group">
           </div>
+          <span class="required">*</span>
         </div>
       </div>
       <div class="inputBox">
         <label for="links">Links:</label>
-        <input type="text" name="links" id="links">
+        <input type="text" name="links" id="links" placeholder="Comma separated links">
       </div>
       <div class="inputBox">
-        <label for="startedOn">Started:</label>
-        <input type="date" name="startedOn" id="startedOn">
+        <label for="startedOn">Started:<span class="required">*</span></label>
+        <input required class="input" type="date" name="startedOn" id="startedOn">
       </div>
       <div class="inputBox">
-        <label for="endsOn">Ended:</label>
-        <input type="date" name="endsOn" id="endsOn">
+        <label for="endsOn">Ended:<span class="required">*</span></label>
+        <input required class="input" type="date" name="endsOn" id="endsOn">
       </div>
       <div class="inputBox">
-        <label for="status">Status:</label>
-        <select id="status">
+        <label for="status">Status:<span class="required">*</span></label>
+        <select required class="input" id="status" name="status">
           <option value="blocked">Blocked</option>
           <option value="active">Active</option>
-          <option value="pending">Pending</option>
+          <option selected value="pending">Pending</option>
         </select>
       </div>
-      <div class="inputBox">
-        <label for="assignedTo">Assigned To:</label>
-        <input type="text" placeholder="Assigned To" id="assignedTo" name="assignedTo">
+      <div class="inputBox class" id="assigneeInput">
+        <label for="assignee">Assigned To:</label>
+        <input type="text" placeholder="Assigned To" id="assignee" name="assignee">
+      </div>
+      <div class="inputBox" id="participantsInput">
+        <label for="participants">Participants:</label>
+        <input type="text" placeholder="Comma separated participants username" id="participants" name="participants">
       </div>
       <div class="inputBox">
         <label for="percentCompleted">Percent Completed:</label>
-        <input type="number" id="percentCompleted" name="percentCompleted" placeholder="Percent completed">
+        <input value="0" type="number" id="percentCompleted" name="percentCompleted" placeholder="Percent completed">
       </div>
       <div class="inputBox">
         <label for="completionAward">Completion Award:</label>
+        <br>
         <div class="inputBox">
-          <label for="completionAwardGold">Gold:</label>
-          <input type="number" id="completionAwardGold" name="completionAwardGold" placeholder="Number of gold coins">
+          <label for="completionAwardDinero">Dinero:</label>
+          <input value="100" type="number" id="completionAwardDinero" name="completionAwardDinero"
+            placeholder="Number of Dinero coins">
         </div>
         <div class="inputBox">
-          <label for="completionAwardSilver">Silver:</label>
-          <input type="number" id="completionAwardSilver" name="completionAwardSilver" placeholder="Number of silver coins">
-        </div>
-        <div class="inputBox">
-          <label for="completionAwardBronze">Bronze:</label>
-          <input type="number" id="completionAwardBronze" name="completionAwardBronze" placeholder="Number of bronze coins">
+          <label for="completionAwardNeelam">Neelam:</label>
+          <input type="number" value="0" id="completionAwardNeelam" name="completionAwardNeelam"
+            placeholder="Number of Neelam coins">
         </div>
       </div>
       <div class="inputBox">
         <label for="lossRate">Loss Rate:</label>
+        <br>
         <div class="inputBox">
-          <label for="lossRateGold">Gold</label>
-          <input type="number" id="lossRateGold" name="lossRateGold" placeholder="Number of gold coins">
+          <label for="lossRateDinero">Dinero</label>
+          <input type="number" value="0" id="lossRateDinero" name="lossRateDinero" placeholder="Number of Dinero coins">
         </div>
         <div class="inputBox">
-          <label for="lossRateSilver">Silver</label>
-          <input type="number" id="lossRateSilver" name="lossRateSilver" placeholder="Number of silver coins">
-        </div>
-        <div class="inputBox">
-          <label for="lossRateBronze">Bronze</label>
-          <input type="number" id="lossRateBronze" name="lossRateBronze" placeholder="Number of bronze coins">
+          <label for="lossRateNeelam">Neelam</label>
+          <input type="number" value="0" id="lossRateNeelam" name="lossRateNeelam" placeholder="Number of Neelam coins">
         </div>
       </div>
       <div class="inputBox">
         <div class="checkBox">
           <label for="isNoteworthy">Is noteworthy:</label>
-          <input type="checkbox" value="true" id="isNoteworthy" name="isNoteworthy">
+          <span><input type="checkbox" id="isNoteworthy" name="isNoteworthy"></span>
         </div>
       </div>
       <div class="inputBox">
-        <input type="submit" class="submitBtn" value="Submit" >
+        <input type="submit" class="submit disabled" value="Submit" id="submit">
       </div>
     </form>
 
-    <script src="./script.js"></script> 
+    <script src="./script.js"></script>
   </div>
 </body>
+
 </html>
