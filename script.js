@@ -23,8 +23,26 @@ function getObjectOfFormData(formId) {
   return object;
 }
 
+/**
+ * Hide/shows the loader of the form submit button
+ * @param {Boolean} show whether to show loader or hide
+ */
+const showSubmitLoader = (show=true) =>{
+  const loadingWrapper = document.getElementById('submit-loader')
+  if(show) {
+    loadingWrapper.classList.remove("hidden")
+    loadingWrapper.classList.add('loader-wrapper')
+  }
+  else {
+    loadingWrapper.classList.add("hidden")
+    loadingWrapper.classList.remove('loader-wrapper')
+  }
+}
+
 taskForm.onsubmit = async (e) => {
   e.preventDefault();
+  showSubmitLoader()
+
   const {
     title,
     purpose,
@@ -84,11 +102,15 @@ taskForm.onsubmit = async (e) => {
     });
 
     const result = await response.json();
+    // showSubmitLoader(false)
 
     alert(result.message);
   } catch (error) {
+    // showSubmitLoader(false)
     alert(`Error: ${error}`);
   }
+    showSubmitLoader(false)
+
 };
 
 let addEventToInput = (input, event, fn) => {
