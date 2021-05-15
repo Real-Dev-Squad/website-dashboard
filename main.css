@@ -1,143 +1,149 @@
 *,
 ::after,
 ::before {
-  box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 body {
-  font-family: "Roboto", sans-serif;
-  margin: 0;
+	font-family: "Roboto", sans-serif;
+	margin: 0;
 }
 
 .container {
-  width: 100%;
-  color: #666;
-  text-align: center;
-  padding: 1em 0;
+	width: 100%;
+	color: #666;
+	text-align: center;
+	padding: 1em 0;
 }
 
 #taskForm {
-  width: 60vw;
-  max-width: 40rem;
-  min-width: 300px;
-  margin: 0 auto;
-  padding: 1em 1.5em;
-  border: 1px solid #f4f4f4;
-  border-radius: 2%;
-  box-shadow: 0 0 15px -7px rgba(0, 0, 0, 0.65);
+	width: 60vw;
+	max-width: 40rem;
+	min-width: 300px;
+	margin: 0 auto;
+	padding: 1em 1.5em;
+	border: 1px solid #f4f4f4;
+	border-radius: 2%;
+	box-shadow: 0 0 15px -7px rgba(0, 0, 0, 0.65);
 }
 
 .inputBox {
-  width: 100%;
-  margin-bottom: 1em;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
+	width: 100%;
+	margin-bottom: 1em;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
 }
 
 .inputBox label {
-  font-size: 1rem;
-  font-weight: 700;
+	font-size: 1rem;
+	font-weight: 700;
 }
 
 .inputBox input {
-  padding: 1em;
-  border: 1px solid #666;
-  border-radius: 5px;
-  width: 100%;
+	padding: 1em;
+	border: 1px solid #666;
+	border-radius: 5px;
+	width: 100%;
 }
 
 .radioButtons {
-  display: flex;
-  flex-direction: row;
+	display: flex;
+	flex-direction: row;
 }
 
 .checkBox {
-  display: flex;
-  flex-direction: row;
+	display: flex;
+	flex-direction: row;
 }
 
 .submitBtn {
-  font-size: 1rem;
-  padding: 1em 0.5em;
-  outline: 0;
-  box-shadow: rgba(0, 0, 0, 0.07) 0 1px 1px, rgba(0, 0, 0, 0.07) 0 2px 2px,
-    rgba(0, 0, 0, 0.07) 0 4px 4px, rgba(0, 0, 0, 0.07) 0 8px 8px,
-    rgba(0, 0, 0, 0.07) 0 16px 16px;
+	font-size: 1rem;
+	padding: 1em 0.5em;
+	outline: 0;
+	box-shadow: rgba(0, 0, 0, 0.07) 0 1px 1px, rgba(0, 0, 0, 0.07) 0 2px 2px,
+		rgba(0, 0, 0, 0.07) 0 4px 4px, rgba(0, 0, 0, 0.07) 0 8px 8px,
+		rgba(0, 0, 0, 0.07) 0 16px 16px;
 }
 
 .active {
-  background-color: #43a0488c;
-  color: #fff;
+	background-color: #43a0488c;
+	color: #fff;
 }
 
 .disabled {
-  color: -internal-light-dark(rgba(16, 16, 16, 0.3), rgba(255, 255, 255, 0.3));
-  background-color: -internal-light-dark(
-    rgba(239, 239, 239, 0.3),
-    rgba(19, 1, 1, 0.3)
-  );
+	color: -internal-light-dark(rgba(16, 16, 16, 0.3), rgba(255, 255, 255, 0.3));
+	background-color: -internal-light-dark(
+		rgba(239, 239, 239, 0.3),
+		rgba(19, 1, 1, 0.3)
+	);
 }
 
 .required {
-  color: red;
-  font-size: medium;
+	color: red;
+	font-size: medium;
 }
 
 #status {
-  width: 100%;
-  padding: 1em;
-  border-radius: 5px;
+	width: 100%;
+	padding: 1em;
+	border-radius: 5px;
 }
 
 #isNoteworthy {
-  width: auto;
+	width: auto;
 }
 
 #participantsInput {
-  display: none;
+	display: none;
 }
 
-.hidden{
-  display: none;
+.hidden {
+	display: none;
 }
 
 /* --- Loading spinner --- */
 
-.loaderContainer{
-  position: relative;
-  cursor: default;
+.loaderContainer {
+	position: relative;
+	cursor: default;
 }
 
-.loader-wrapper{
-  position: absolute;
-  pointer-events: none;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-  background-color: rgba(255,255,255,0.3);
+.loader-wrapper {
+	position: absolute;
+	pointer-events: none;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 2;
+	background-color: rgba(255, 255, 255, 0.3);
 }
 
 .loader {
-  border: 4px solid transparent;
-  border-top: 4px solid #1d58d8;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  animation: spin 1.3s linear infinite;
+	border: 4px solid transparent;
+	border-top: 4px solid #1d58d8;
+	border-radius: 50%;
+	width: 32px;
+	height: 32px;
+	animation: spin 1.3s linear infinite;
+}
+.info-repo {
+	font-weight: 100;
+	padding: auto;
+	margin: 5 auto;
+	text-align: center;
 }
 
 @keyframes spin {
-  0% { 
-    transform: rotate(0deg); 
-  }
-  100% { 
-    transform: rotate(360deg); 
-  }
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
 }
