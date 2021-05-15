@@ -102,14 +102,13 @@ taskForm.onsubmit = async (e) => {
     });
 
     const result = await response.json();
-    // showSubmitLoader(false)
 
     alert(result.message);
   } catch (error) {
-    // showSubmitLoader(false)
     alert(`Error: ${error}`);
-  }
+  } finally{
     showSubmitLoader(false)
+  }
 
 };
 
