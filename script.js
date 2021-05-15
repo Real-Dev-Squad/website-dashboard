@@ -30,12 +30,12 @@ function getObjectOfFormData(formId) {
 const showSubmitLoader = (show=true) =>{
   const loadingWrapper = document.getElementById('submit-loader')
   if(show) {
-    loadingWrapper.classList.remove("hidden")
-    loadingWrapper.classList.add('loader-wrapper')
+    loadingWrapper.classList.remove("hidden");
+    loadingWrapper.classList.add('loader-wrapper');
   }
   else {
-    loadingWrapper.classList.add("hidden")
-    loadingWrapper.classList.remove('loader-wrapper')
+    loadingWrapper.classList.add("hidden");
+    loadingWrapper.classList.remove('loader-wrapper');
   }
 }
 
@@ -107,7 +107,7 @@ taskForm.onsubmit = async (e) => {
   } catch (error) {
     alert(`Error: ${error}`);
   } finally{
-    showSubmitLoader(false)
+    showSubmitLoader(false);
   }
 
 };
