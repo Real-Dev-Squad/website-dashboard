@@ -6,18 +6,18 @@
 	background-color: whitesmoke;
 	padding: 50px;
 	overflow-y: auto;
-}
-
-.wallets__fetcher {
+  }
+  
+  .wallets__fetcher {
 	text-align: center;
-}
-
-.wallets__input input {
+  }
+  
+  .wallets__input input {
 	margin-top: 10px;
 	width: 80%;
-}
-
-.wallets__submit {
+  }
+  
+  .wallets__submit {
 	cursor: pointer;
 	margin-top: 15px;
 	margin-left: 20px;
@@ -25,33 +25,34 @@
 	width: 105px;
 	background-color: beige;
 	border-radius: 5px;
-}
-
-.user-wallet {
+  }
+  
+  .user-wallet {
 	border-radius: 7px;
-	border: 1px solid #9e9e9e;
+	border: 1px solid #9E9E9E;
 	width: 350px;
 	height: 200px;
 	margin: 50px auto;
 	position: relative;
-}
-
-.user-wallet__currencies {
+  }
+  
+  .user-wallet__currencies {
 	margin-top: 50px;
 	height: 100px;
 	width: 100%;
 	display: flex;
 	justify-content: space-around;
-}
-
-.user-wallet__username {
+  }
+  
+  .user-wallet__username {
 	font-size: 24px;
 	margin-left: 20px;
 	text-transform: capitalize;
 	color: #757575;
-}
-
-.user-wallet__refresh-btn {
+  }
+  
+  
+  .user-wallet__refresh-btn {
 	border: 2px solid green;
 	border-radius: 3px;
 	position: absolute;
@@ -59,35 +60,36 @@
 	bottom: 10px;
 	height: 40px;
 	width: 70px;
-}
-
-.currency {
+  }
+  
+  .currency {
 	display: flex;
 	padding-top: 5px;
-}
-
-.currencyLabel {
+  }
+  
+  .currencyLabel {
 	padding-left: 10px;
-}
-
-.currency__label {
+  }
+  
+  .currency__label {
 	margin: 5px 0;
-}
-
-.currency__icon {
+  }
+  
+  .currency__icon {
 	height: 35px;
 	width: 35px;
 	margin-top: 7px;
-}
-
-.currency-type--neelam {
-	background-color: blue;
-}
-
-.currency-type--dinero {
+  }
+  
+  .currency-type--neelam {
+   background-color: blue;
+  }
+  
+  .currency-type--dinero {
 	border-radius: 50%;
 	background-color: green;
-}
+  }
+  
 .info-repo {
 	font-weight: 100;
 	margin: 5 auto;
