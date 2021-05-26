@@ -27,6 +27,17 @@ body {
   box-shadow: 0 0 15px -7px rgba(0, 0, 0, 0.65);
 }
 
+#featureForm {
+  width: 60vw;
+  max-width: 40rem;
+  min-width: 300px;
+  margin: 0 auto;
+  padding: 1em 1.5em;
+  border: 1px solid #f4f4f4;
+  border-radius: 2%;
+  box-shadow: 0 0 15px -7px rgba(0, 0, 0, 0.65);
+}
+
 .inputBox {
   width: 100%;
   margin-bottom: 1em;

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../main.css">
+  <title>Features</title>
+</head>
+
+<body>
+  <div class="container">
+    <form action="" id="featureForm">
+      <div class="inputBox">
+        <label for="feature_name">Feature Name:<span class="required">*</span></label>
+        <input required class="input" type="text" name="feature_name" placeholder="Feature Name" id="feature_name">
+      </div>
+      <div class="inputBox">
+        <label for="feature_title">Feature Title:<span class="required">*</span></label>
+        <input required class="input" type="text" name="feature_title" placeholder="Feature Title" id="feature_title">
+      </div>
+      <div class="inputBox">
+        <label for="feature_owner">Owner:<span class="required">*</span></label>
+        <input class="input" type="text" name="feature_owner" placeholder="Owner" id="feature_owner">
+      </div>
+      <div class="inputBox">
+        <div class="radioButtons">
+          <div>
+            <label for="enabled">Enabled</label>
+            <input required class="input" type="radio" id="enabled" name="is_enabled" value="true">
+          </div>
+          <div>
+            <label for="disabled">Disabled</label>
+            <input required class="input" type="radio" id="disabled" name="is_enabled" value="false">
+          </div>
+          <span class="required">*</span>
+        </div>
+      </div>
+      <div class="inputBox loaderContainer">
+        <input type="submit" class="submit disabled" value="Submit" id="submit">
+        <div class="hidden" id="submit-loader">
+          <div class="loader"></div>
+        </div>
+      </div>
+    </form>
+
+    <footer>
+      <p class="info-repo">
+        The contents of this website are deployed from this
+        <a href="https://github.com/Real-Dev-Squad/website-dashboard" target="_blank" rel="noopener noreferrer">open
+          sourced repo</a>
+      </p>
+    </footer>
+
+    <script src="./script.js"></script>
+  </div>
+</body>
+
+</html>

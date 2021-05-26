@@ -1,0 +1,116 @@
+body {
+    font-family: "Roboto", sans-serif;
+    margin: 0;
+  }
+  
+  #container {
+    width: 50vw;
+    max-width: 50rem;
+    min-width: 300px;
+    margin: 2em auto;
+    padding: 1em 1.5em;
+    border: 1px solid #f4f4f4;
+    border-radius: 2%;
+  }
+
+  .heading{
+      font-weight: bold;
+      font-size: 40px;
+  }
+
+  .primaryInfo, .secondaryInfo{
+    display: flex;
+  }
+
+  .primaryInfo1{
+    width:50%;
+  }
+
+  .primaryInfo2{
+    width:20%;
+    padding-left:40%;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .secondaryInfo1{
+    width:30%;
+    padding-left:40%;
+    display: flex;
+  }
+
+  .featureName{
+    color: #041187;
+    font-size: 30px;
+    margin-bottom: 5px;
+  }
+
+  .createdDate{
+    font-size: 20px;
+  }
+
+  .primaryInfo2 .checked{  
+    height: 40px;
+    width:40px;
+    margin-top:35px;
+    border: 2px solid #27ae60;
+    border-radius: 5px;
+    display:inline-block;
+    background: #27ae60
+    url(https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/White_check.svg/1200px-White_check.svg.png)
+    center/60% no-repeat;
+  }
+
+  .featureToggle{
+    display: none;
+  }
+
+  .primaryInfo2 .unchecked{
+    height: 40px;
+    width:40px;
+    margin-top:35px;
+    border-radius: 5px;
+    display:inline-block;
+    border: 2px solid #e2e1eb;
+    background-color: #e2e1eb;
+  }
+
+  .isActive{
+    color:#27ae60;
+    font-weight: bold;
+    font-size: 17px;
+    display: block;
+  }
+
+  .launchedDate{
+    width:50%;
+    color:#ADACBE;
+    font-weight: bold;
+  }
+
+  .ownerName,.launchedDate{
+    font-size: 17px;
+  }
+
+  .ownerImg{
+    height: 40px;
+    width: 40px;
+    padding: 5px;
+    border-radius: 100px;
+  }
+
+  .imgInactive{
+    opacity: 0.5;
+  }
+
+  .inactive{
+    color:#c8c8d3;
+  }
+
+  .border{
+    height:1px;
+    margin-top: 10px;
+    border-width:0;
+    color:#e0e0eb;
+    background-color:#e0e0eb;
+  }
