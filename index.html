@@ -100,10 +100,25 @@
           <span><input type="checkbox" id="isNoteworthy" name="isNoteworthy"></span>
         </div>
       </div>
-      <div class="inputBox">
+      <div class="inputBox loaderContainer">
         <input type="submit" class="submit disabled" value="Submit" id="submit">
+        <div class="hidden" id="submit-loader">
+          <div class="loader"></div>
+        </div>
       </div>
     </form>
+    
+    <footer>
+      <p class="info-repo">
+        The contents of this website are deployed from this
+        <a
+          href="https://github.com/Real-Dev-Squad/website-dashboard"
+          target="_blank"
+          rel="noopener noreferrer"
+          >open sourced repo</a
+        >
+      </p>
+    </footer>
 
     <script src="./script.js"></script>
   </div>
