@@ -30,113 +30,46 @@ const featureContent = [
     }
 ]
 
-function setStructure(){
-    const featureBox = document.createElement("div");
-    featureBox.classList.add("featureBox");
-    const primaryInfo = document.createElement("div");
-    primaryInfo.classList.add("primaryInfo");
-    const secondaryInfo = document.createElement("div");
-    secondaryInfo.classList.add("secondaryInfo");
-    const primaryInfo1 = document.createElement("div");
-    primaryInfo1.classList.add("primaryInfo1");
-    const primaryInfo2 = document.createElement("label");
-    primaryInfo2.classList.add("primaryInfo2");
-    const featureName = document.createElement("p");
-    featureName.classList.add("featureName");
-    const createdDate = document.createElement("p");
-    createdDate.classList.add("createdDate");
-    const featureToggle = document.createElement("input");
-    featureToggle.setAttribute("type", "checkbox");
-    featureToggle.setAttribute("checked", "true");
-    featureToggle.classList.add("filled-in");
-    featureToggle.classList.add("featureToggle");
-    const activeToggle = document.createElement("span");
-    activeToggle.classList.add("checked");
-    const isActive = document.createElement("label");
-    isActive.classList.add("isActive");
-    const launchedDate = document.createElement("p");
-    launchedDate.classList.add("launchedDate");
-    const secondaryInfo1 = document.createElement("div");
-    secondaryInfo1.classList.add("secondaryInfo1");
-    const ownerName = document.createElement("p");
-    ownerName.classList.add("ownerName");
-    const ownerImg = document.createElement("img");
-    ownerImg.classList.add("ownerImg");
-    const border = document.createElement("hr");
-    border.classList.add("border");
-
-    const container = document.getElementById("container");
-    container.appendChild(featureBox);
-    featureBox.appendChild(primaryInfo);
-    featureBox.appendChild(secondaryInfo);
-    featureBox.appendChild(border);
-    primaryInfo.appendChild(primaryInfo1);
-    primaryInfo.appendChild(primaryInfo2);
-    primaryInfo1.appendChild(featureName);
-    primaryInfo1.appendChild(createdDate);
-    primaryInfo2.appendChild(featureToggle);
-    primaryInfo2.appendChild(activeToggle);
-    primaryInfo2.appendChild(isActive);    
-    secondaryInfo.appendChild(launchedDate);
-    secondaryInfo.appendChild(secondaryInfo1);
-    secondaryInfo1.appendChild(ownerName);
-    secondaryInfo1.appendChild(ownerImg);
-}
-
-var i = 0;
-
-function setValues(title, createdAgo, launchedAgo, isEnabled, owner, ownerImage){
-    const featureName = document.getElementsByClassName("featureName")[i];
-    const createdDate = document.getElementsByClassName("createdDate")[i];
-    const featureToggle = document.getElementsByClassName("featureToggle")[i];
-    const activeToggle = document.getElementsByClassName("checked")[i];
-    const isActive = document.getElementsByClassName("isActive")[i];
-    const launchedDate = document.getElementsByClassName("launchedDate")[i];
-    const ownerName = document.getElementsByClassName("ownerName")[i];
-    const ownerImg = document.getElementsByClassName("ownerImg")[i];
-    featureName.innerHTML = title;
-
-    createdDate.innerHTML = "<i class='fas fa-calendar-alt'></i>"
-    +"<span style='font-size:18px;'> Created </span>"
-    +"<span style='font-weight: bold;'>" + createdAgo + " days ago"+"</span>";
-
-    isActive.innerHTML = "Active";
-    launchedDate.innerHTML = "Lauched " + launchedAgo + " days ago";
-    ownerName.innerHTML = "<span style='color:#ADACBE;'>POC: </span>"+"<span style='font-weight: bold;'>"+owner+"</span>";
-    ownerImg.src =  ownerImage;
-    if(isEnabled === false){
-        featureToggle.checked = false;
-        activeToggle.classList.remove("checked");
-        activeToggle.classList.add("unchecked");
-        featureName.classList.add("inactive");
-        createdDate.classList.add("inactive");
-        isActive.innerHTML = "off";
-        isActive.classList.add("inactive");
-        launchedDate.classList.add("inactive");
-        ownerName.classList.add("inactive");
-        ownerImg.classList.add("imgInactive");
-    }
-    
-    i++;
-}
-
-featureContent.forEach((feature)=>{ 
-    setStructure();
-
+function getDateFromTimestamp(ts) {
     const today = Date.now();
-    const createdAt = feature.created_at;
-    const launchedAt = feature.launched_at;
-    const createdAgo = Math.floor((today - createdAt)/(1000*3600*24));
-    const launchedAgo = Math.floor((today - launchedAt)/(1000*3600*24));
+    return Math.floor((today - ts) / ( 1000 * 3600 * 24));
+}
 
-    setValues(feature.title,
-        createdAgo,
-        launchedAgo,
-        feature.config.enabled,
-        feature.owner.username,
-        feature.owner.img);   
-});
+function createFeatureElement(featureData) {
+    const template = document.querySelector("#feature-template")
+    const feature = template.content.cloneNode(true);
 
+    feature.querySelector(".featureName").innerHTML = featureData.title;
+    feature.querySelector(".createdDate > span:nth-child(3)").innerHTML = getDateFromTimestamp(featureData.created_at) + " days ago";
+    feature.querySelector(".isActive").innerHTML = "Active";
+    feature.querySelector(".launchedDate").innerHTML = "Launched " + getDateFromTimestamp(featureData.launched_at) + " days ago";
+    feature.querySelector(".ownerName > span:nth-child(2)").innerHTML = featureData.owner.username;
+    feature.querySelector(".ownerImg").setAttribute("src", featureData.owner.img);
+
+    if (!featureData.config.enabled) {
+        feature.querySelector(".featureName").classList.add("inactive");
+        feature.querySelector(".createdDate").classList.add("inactive");
+        const featureCkbox = feature.querySelector(".featureToggle");
+        featureCkbox.setAttribute("checked", "false");
+        const ckboxOverlay = feature.querySelector(".primaryInfo2 > span");
+        ckboxOverlay.classList.remove("checked");
+        ckboxOverlay.classList.add("unchecked");
+        feature.querySelector(".isActive").innerHTML = "off";
+        feature.querySelector(".isActive").classList.add("inactive");
+        feature.querySelector(".launchedDate").classList.add("inactive");
+        feature.querySelector(".ownerName").classList.add("inactive");
+        feature.querySelector(".ownerImg").classList.add("imgInactive");
+    }
+  
+    return feature;
+}
+
+window.onload = function () {
+    const container = document.querySelector("#container");
+    featureContent.forEach( (feature) => {
+        container.appendChild(createFeatureElement(feature))
+    });
+}
 
 
 
