@@ -9,12 +9,7 @@ function getObjectOfFormData(formId) {
       object[key] = value;
       return;
     }
-    if (!Array.isArray(object[key])) {
-      object[key] = [object[key]];
-    }
-    object[key].push(value);
   });
-  console.log(object);
   return object;
 }
 
@@ -41,20 +36,16 @@ featureForm.onsubmit = async (e) => {
   const {
     feature_name,
     feature_title,
-    feature_owner,
     is_enabled,
   } = getObjectOfFormData(featureForm);
 
   const dataToBeSent = {
     feature_name,
     feature_title,
-    feature_owner,
     config: {
-      enabled: is_enabled
+      enabled: is_enabled === "true" ? true : false
     }
   };
-
-  console.log(dataToBeSent);
 
   try {
     const response = await fetch(`${BASE_URL}/featureFlags`, {
@@ -65,16 +56,13 @@ featureForm.onsubmit = async (e) => {
         "Content-type": "application/json",
       },
     });
-
     const result = await response.json();
-
     alert(result.message);
   } catch (error) {
     alert(`Error: ${error}`);
   } finally {
     showSubmitLoader(false);
   }
-
 };
 
 let addEventToInput = (input, event, fn) => {
@@ -108,5 +96,3 @@ const input = document.getElementsByClassName("input");
 const button = document.getElementById("submit");
 button.disabled = true; //setting button state to disabled
 addEventToInput(input, "change", stateHandle);
-
-
