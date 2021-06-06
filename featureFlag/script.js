@@ -92,7 +92,6 @@ let stateHandle = () => {
 };
 
 const input = document.getElementsByClassName("input");
-
 const button = document.getElementById("submit");
 button.disabled = true; //setting button state to disabled
 addEventToInput(input, "change", stateHandle);
