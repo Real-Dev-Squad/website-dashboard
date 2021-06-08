@@ -131,7 +131,7 @@ window.onload = function () {
     }
 
     try {
-      const response = await fetch(`${BASE_URL}/featureFlags/` + featureId, {
+      const response = await fetch(`${BASE_URL}/featureFlags/${featureId}`, {
         method: "PATCH",
         credentials: "include",
         body: JSON.stringify(dataToBeSent),
@@ -141,7 +141,9 @@ window.onload = function () {
       });
       const result = await response.json();
       alert(result.message);
-      changeTheFeatureToggle(featureId);
+      if(result.status === 200){
+        changeTheFeatureToggle(featureId);
+      }
     } catch (error) {
       alert(`Error: ${error}`);
     }
