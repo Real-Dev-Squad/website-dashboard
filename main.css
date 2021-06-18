@@ -156,3 +156,15 @@ body {
     transform: rotate(360deg); 
   }
 }
+
+#tasksNav {
+  background-color: #1D1283;
+  height: 32px;
+}
+
+#createTask {
+  color: white;
+  padding-left: 50%;
+  text-decoration: none;
+  font-size: large;
+}

@@ -2,126 +2,29 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="main.css">
-  <title>Tasks</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./main.css">
+    <title>Create Tasks</title>
 </head>
 
 <body>
-  <div class="container">
-    <form action="" id="taskForm">
-      <div class="inputBox">
-        <label for="title">Title:<span class="required">*</span></label>
-        <input required class="input" type="text" name="title" placeholder="Title" id="title">
-      </div>
-      <div class="inputBox">
-        <label for="purpose">Purpose:</label>
-        <textarea class="textInput"  id="purpose" name="purpose" placeholder="Purpose..."></textarea>
-      </div>
-      <div class="inputBox">
-        <label for="featureUrl">Feature URL:</label>
-        <input type="url" id="featureUrl" name="featureUrl" placeholder="Feature URL">
-      </div>
-      <div class="inputBox">
-        <div class="radioButtons">
-          <div class="feature" onclick="hideUnusedField('assignee');">
-            <label for="feature">Feature</label>
-            <input required class="input" type="radio" id="feature" name="type" value="feature" checked>
-          </div>
-          <div class="group" onclick="hideUnusedField('participants');">
-            <label for="group">Group</label>
-            <input required class="input" type="radio" id="group" name="type" value="group">
-          </div>
-          <span class="required">*</span>
-        </div>
-      </div>
-      <div class="inputBox">
-        <label for="links">Links:</label>
-        <input type="text" name="links" id="links" placeholder="Comma separated links">
-      </div>
-      <div class="inputBox">
-        <label for="startedOn">Started:<span class="required">*</span></label>
-        <input required class="input" type="date" name="startedOn" id="startedOn">
-      </div>
-      <div class="inputBox">
-        <label for="endsOn">Ended:<span class="required">*</span></label>
-        <input required class="input" type="date" name="endsOn" id="endsOn">
-      </div>
-      <div class="inputBox">
-        <label for="status">Status:<span class="required">*</span></label>
-        <select required class="input" id="status" name="status">
-          <option value="blocked">Blocked</option>
-          <option value="active">Active</option>
-          <option selected value="pending">Pending</option>
-        </select>
-      </div>
-      <div class="inputBox class" id="assigneeInput">
-        <label for="assignee">Assigned To:</label>
-        <input type="text" placeholder="Assigned To" id="assignee" name="assignee">
-      </div>
-      <div class="inputBox" id="participantsInput">
-        <label for="participants">Participants:</label>
-        <input type="text" placeholder="Comma separated participants username" id="participants" name="participants">
-      </div>
-      <div class="inputBox">
-        <label for="percentCompleted">Percent Completed:</label>
-        <input value="0" type="number" id="percentCompleted" name="percentCompleted" placeholder="Percent completed">
-      </div>
-      <div class="inputBox">
-        <label for="completionAward">Completion Award:</label>
-        <br>
-        <div class="inputBox">
-          <label for="completionAwardDinero">Dinero:</label>
-          <input value="100" type="number" id="completionAwardDinero" name="completionAwardDinero"
-            placeholder="Number of Dinero coins">
-        </div>
-        <div class="inputBox">
-          <label for="completionAwardNeelam">Neelam:</label>
-          <input type="number" value="0" id="completionAwardNeelam" name="completionAwardNeelam"
-            placeholder="Number of Neelam coins">
-        </div>
-      </div>
-      <div class="inputBox">
-        <label for="lossRate">Loss Rate:</label>
-        <br>
-        <div class="inputBox">
-          <label for="lossRateDinero">Dinero</label>
-          <input type="number" value="0" id="lossRateDinero" name="lossRateDinero" placeholder="Number of Dinero coins">
-        </div>
-        <div class="inputBox">
-          <label for="lossRateNeelam">Neelam</label>
-          <input type="number" value="0" id="lossRateNeelam" name="lossRateNeelam" placeholder="Number of Neelam coins">
-        </div>
-      </div>
-      <div class="inputBox">
-        <div class="checkBox">
-          <label for="isNoteworthy">Is noteworthy:</label>
-          <span><input type="checkbox" id="isNoteworthy" name="isNoteworthy"></span>
-        </div>
-      </div>
-      <div class="inputBox loaderContainer">
-        <input type="submit" class="submit disabled" value="Submit" id="submit">
-        <div class="hidden" id="submit-loader">
-          <div class="loader"></div>
-        </div>
-      </div>
-    </form>
-    
+    <nav id="tasksNav">
+        <a id="createTask" class="nav-link" href="task/create.html">
+            Tasks
+        </a>
+    </nav>
     <footer>
-      <p class="info-repo">
-        The contents of this website are deployed from this
-        <a
-          href="https://github.com/Real-Dev-Squad/website-dashboard"
-          target="_blank"
-          rel="noopener noreferrer"
-          >open sourced repo</a
-        >
-      </p>
+        <p class="info-repo">
+            The contents of this website are deployed from this
+            <a href="https://github.com/Real-Dev-Squad/website-dashboard" target="_blank" rel="noopener noreferrer">
+                open sourced repo
+            </a>
+        </p>
     </footer>
 
     <script src="./script.js"></script>
-  </div>
 </body>
 
 </html>
