@@ -48,6 +48,14 @@ body {
   width: 100%;
 }
 
+.textInput {
+  padding: 1em;
+  width: 100%;
+  min-height: 65px;
+  border-radius: 5px;
+  border: 1px solid #666;
+}
+
 .radioButtons {
   display: flex;
   flex-direction: row;
