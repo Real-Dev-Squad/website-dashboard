@@ -4,20 +4,20 @@
   "description": "Dashboard that performs authorized actions acrosss the website",
   "main": "script.js",
   "scripts": {
-    "start": "npx prettier --write",
-    "test": "echo \"Error: no test specified\" && exit 1"
+   "check": "prettier --check .",
+   "fix": "prettier --write ."
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/abhinav1590/website-dashboard.git"
+    "url": "git+https://github.com/Real-Dev-Squad/website-dashboard"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/abhinav1590/website-dashboard/issues"
+    "url":  "https://github.com/Real-Dev-Squad/website-dashboard"
   },
-  "homepage": "https://github.com/abhinav1590/website-dashboard#readme",
+  "homepage":  "https://github.com/Real-Dev-Squad/website-dashboard#readme",
   "devDependencies": {
     "prettier": "2.3.1"
   }
