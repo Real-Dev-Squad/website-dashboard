@@ -17,7 +17,7 @@
   "bugs": {
     "url": "https://github.com/Real-Dev-Squad/website-dashboard"
   },
-  "pre-commit": "check",
+  "pre-commit": "check" ,
   "homepage": "https://github.com/Real-Dev-Squad/website-dashboard#readme",
   "devDependencies": {
     "pre-commit": "^1.2.2",
