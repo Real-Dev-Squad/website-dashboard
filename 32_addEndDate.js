@@ -10,6 +10,7 @@ $('#txtEndDate').datepicker();
 $('#txtStartDate').change(function(){
     var interval = 7;
     var startDate = new Date($(this).val());
-    $('#txtEndDate').val(startDate.addDays(interval));
+    $('#txtEndDate').val(startDate.addDays(interval)
+                        );
 }
                          );
