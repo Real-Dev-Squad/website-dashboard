@@ -5,7 +5,7 @@
 }
 
 body {
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   margin: 0;
 }
 
@@ -107,18 +107,18 @@ body {
   display: none;
 }
 
-.hidden{
+.hidden {
   display: none;
 }
 
 /* --- Loading spinner --- */
 
-.loaderContainer{
+.loaderContainer {
   position: relative;
   cursor: default;
 }
 
-.loader-wrapper{
+.loader-wrapper {
   position: absolute;
   pointer-events: none;
   top: 0;
@@ -129,7 +129,7 @@ body {
   align-items: center;
   justify-content: center;
   z-index: 2;
-  background-color: rgba(255,255,255,0.3);
+  background-color: rgba(255, 255, 255, 0.3);
 }
 
 .loader {
@@ -142,23 +142,23 @@ body {
 }
 
 .info-repo {
-	font-weight: 100;
-	padding: auto;
-	margin: 5 auto;
-	text-align: center;
+  font-weight: 100;
+  padding: auto;
+  margin: 5 auto;
+  text-align: center;
 }
 
 @keyframes spin {
-  0% { 
-    transform: rotate(0deg); 
+  0% {
+    transform: rotate(0deg);
   }
-  100% { 
-    transform: rotate(360deg); 
+  100% {
+    transform: rotate(360deg);
   }
 }
 
 #tasksNav {
-  background-color: #1D1283;
+  background-color: #1d1283;
   height: 32px;
 }
 
