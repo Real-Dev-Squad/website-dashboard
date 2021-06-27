@@ -5,9 +5,9 @@ If you find a bug anywhere, you can fix it.
 # File Structure
 
 ```
-├── css                                All the styling for wallet goes here
+├── css                                All the styling goes here
 │   ├── wallet.css
-├── js                                 All the working logic for wallet goes here                            
+├── js                                 All the working logic goes here                            
 │   ├── wallet.js                      
 ├── tasks                              For assigning tasks to the members HTML page
 │   ├── create.html
