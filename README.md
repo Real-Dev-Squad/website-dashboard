@@ -13,9 +13,9 @@ Read here:[Click](https://github.com/Real-Dev-Squad/website-dashboard/blob/devel
 
     - First follow the contribution link on how to contribute given above.
 
-    - You need to install GoLive extension in you VSCode and start server from index.html or you can simply go into the file where you have cloned and run index.html in your browser.
+    - You need to install Live Server extension in you VSCode and start server from index.html or you can simply go into the file where you have cloned and run index.html in your browser.
 
-    - GoLive method is much preferred as it makes work easy and can be controlled easily through VSCode.
+    - Live Server method is much preferred as it makes work easy and auto-reload.
 
 
 
