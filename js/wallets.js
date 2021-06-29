@@ -7,7 +7,7 @@ const usernames = ipUsernames.value;
 
 const nodeMapping = {};
 
-function createUserWallet (username) {
+function createUserWallet(username) {
   const userWallet = document.createElement('div');
   userWallet.classList.add('user-wallet');
   nodeMapping[username] = userWallet;
@@ -24,16 +24,16 @@ function createUserWallet (username) {
   const refreshButton = document.createElement('button');
   refreshButton.classList.add('user-wallet__refresh-btn');
   refreshButton.textContent = 'Refresh';
-  refreshButton.onclick = function() {
+  refreshButton.onclick = function () {
     updateWalletForUser(username);
-  }
+  };
   userWallet.append(refreshButton);
 
   walletsRef.append(userWallet);
   return userWallet;
 }
 
-function getUserWallet (username) {
+function getUserWallet(username) {
   const userWallet = nodeMapping[username] || createUserWallet(username);
   return userWallet;
 }
@@ -44,21 +44,21 @@ function updateWalletForUser(username) {
 
   // Remove previous
   const previousCurrencies = currenciesHolder.querySelectorAll('.currency');
-  previousCurrencies.forEach(node => node.remove());
+  previousCurrencies.forEach((node) => node.remove());
 
   // Add fresh
   const userDataPromise = async () => {
     const response = await fetch(`${API_BASE_URL}/wallet/${username}`, {
-       credentials: 'include'
+      credentials: 'include',
     });
     return await response.json();
-  }
+  };
 
-  userDataPromise().then(data => {
+  userDataPromise().then((data) => {
     const currencies = data.wallet.currencies;
     for (const [currency, value] of Object.entries(currencies)) {
-      if(value > 0){
-        const newCurrency = createCurrencyNode(currency , value);
+      if (value > 0) {
+        const newCurrency = createCurrencyNode(currency, value);
         currenciesHolder.append(newCurrency);
       }
     }
@@ -69,7 +69,7 @@ function createCurrencyNode(currencyType, currencyVal) {
   const currencyRef = document.createElement('div');
   const currencyLabelRef = document.createElement('div');
   currencyRef.classList.add('currency');
-  currencyLabelRef.classList.add('currencyLabel')
+  currencyLabelRef.classList.add('currencyLabel');
 
   // Create icon
   const icon = document.createElement('div');
@@ -96,9 +96,11 @@ function createCurrencyNode(currencyType, currencyVal) {
 }
 
 function getWallets() {
-  const inputString = document.getElementById("all-users").value;
-  const usernamesProvided = inputString.split(',').map(usrname => usrname.trim());
-  usernamesProvided.forEach(username => updateWalletForUser(username));
+  const inputString = document.getElementById('all-users').value;
+  const usernamesProvided = inputString
+    .split(',')
+    .map((usrname) => usrname.trim());
+  usernamesProvided.forEach((username) => updateWalletForUser(username));
 }
 
 getWallets();

@@ -1,0 +1,26 @@
+{
+  "name": "website-dashboard",
+  "version": "1.0.0",
+  "description": "Dashboard that performs authorized actions acrosss the website",
+  "main": "script.js",
+  "scripts": {
+    "check": "prettier --check .",
+    "fix": "prettier --write ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Real-Dev-Squad/website-dashboard"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Real-Dev-Squad/website-dashboard"
+  },
+  "pre-commit": "check",
+  "homepage": "https://github.com/Real-Dev-Squad/website-dashboard#readme",
+  "devDependencies": {
+    "pre-commit": "^1.2.2",
+    "prettier": "2.3.1"
+  }
+}

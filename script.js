@@ -1,4 +1,4 @@
-const BASE_URL = "https://api.realdevsquad.com";
+const BASE_URL = 'https://api.realdevsquad.com';
 
 function getObjectOfFormData(formId) {
   const object = {};
@@ -6,7 +6,7 @@ function getObjectOfFormData(formId) {
 
   data.forEach((value, key) => {
     if (!Reflect.has(object, key)) {
-      if (key === "startedOn" || key === "endsOn") {
+      if (key === 'startedOn' || key === 'endsOn') {
         let date = new Date(value);
         let myEpoch = String(date.getTime() / 1000.0);
         value = myEpoch;
@@ -27,21 +27,20 @@ function getObjectOfFormData(formId) {
  * Hide/shows the loader of the form submit button
  * @param {Boolean} show whether to show loader or hide
  */
-const showSubmitLoader = (show=true) =>{
-  const loadingWrapper = document.getElementById('submit-loader')
-  if(show) {
-    loadingWrapper.classList.remove("hidden");
+const showSubmitLoader = (show = true) => {
+  const loadingWrapper = document.getElementById('submit-loader');
+  if (show) {
+    loadingWrapper.classList.remove('hidden');
     loadingWrapper.classList.add('loader-wrapper');
-  }
-  else {
-    loadingWrapper.classList.add("hidden");
+  } else {
+    loadingWrapper.classList.add('hidden');
     loadingWrapper.classList.remove('loader-wrapper');
   }
-}
+};
 
 taskForm.onsubmit = async (e) => {
   e.preventDefault();
-  showSubmitLoader()
+  showSubmitLoader();
 
   const {
     title,
@@ -80,7 +79,7 @@ taskForm.onsubmit = async (e) => {
       dinero: lossRateDinero,
       neelam: lossRateNeelam,
     },
-    isNoteworthy: (isNoteworthy == 'on'),
+    isNoteworthy: isNoteworthy == 'on',
   };
 
   if (dataToBeSent.type == 'feature') {
@@ -93,11 +92,11 @@ taskForm.onsubmit = async (e) => {
 
   try {
     const response = await fetch(`${BASE_URL}/tasks`, {
-      method: "POST",
-      credentials: "include",
+      method: 'POST',
+      credentials: 'include',
       body: JSON.stringify(dataToBeSent),
       headers: {
-        "Content-type": "application/json",
+        'Content-type': 'application/json',
       },
     });
 
@@ -106,10 +105,9 @@ taskForm.onsubmit = async (e) => {
     alert(result.message);
   } catch (error) {
     alert(`Error: ${error}`);
-  } finally{
+  } finally {
     showSubmitLoader(false);
   }
-
 };
 
 let addEventToInput = (input, event, fn) => {
@@ -122,19 +120,19 @@ let stateHandle = () => {
   const arrInput = Object.values(input);
 
   let results = arrInput.filter(function (item, index, array) {
-    if (item.value === "") {
+    if (item.value === '') {
       return true;
     }
   });
 
   if (results.length === 0) {
     button.disabled = false;
-    document.getElementById("submit").classList.add("active");
-    document.getElementById("submit").classList.remove("disabled");
+    document.getElementById('submit').classList.add('active');
+    document.getElementById('submit').classList.remove('disabled');
   } else {
     button.disabled = true;
-    document.getElementById("submit").classList.add("disabled");
-    document.getElementById("submit").classList.remove("active");
+    document.getElementById('submit').classList.add('disabled');
+    document.getElementById('submit').classList.remove('active');
   }
 };
 
@@ -150,18 +148,18 @@ let hideUnusedField = (radio) => {
   } else {
     document.getElementById('participantsInput').style.display = 'none';
   }
-}
+};
 
-const input = document.getElementsByClassName("input");
+const input = document.getElementsByClassName('input');
 
-const button = document.getElementById("submit");
+const button = document.getElementById('submit');
 button.disabled = true; //setting button state to disabled
-addEventToInput(input, "change", stateHandle);
+addEventToInput(input, 'change', stateHandle);
 
 const currentDate = new Date();
-const dd = String(currentDate.getDate()).padStart(2, "0");
-const mm = String(currentDate.getMonth() + 1).padStart(2, "0");
+const dd = String(currentDate.getDate()).padStart(2, '0');
+const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
 const yyyy = currentDate.getFullYear();
 
 today = `${yyyy}-${mm}-${dd}`;
-document.getElementById("startedOn").value = today;
+document.getElementById('startedOn').value = today;
