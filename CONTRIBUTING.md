@@ -11,10 +11,10 @@ If you find a bug anywhere, you can fix it.
 │   ├── wallet.js                      
 ├── tasks                              For assigning tasks to the members HTML page
 │   ├── create.html
-├── contribution.md                    CONTRIBUTION file for the repository
+├── CONTRIBUTING.md                    CONTRIBUTING file for the repository
 ├── index.html                         For Homepage HTML file    
 ├── main.css                           All the styling goes here except wallet page
-├── readme.md                          README file for the repository
+├── README.md                          README file for the repository
 ├── script.js                          All the working logic goes here except wallet page
 ├── wallets.html                       Wallets page for members HTML Page
 ```
