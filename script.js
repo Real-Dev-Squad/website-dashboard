@@ -37,6 +37,20 @@ const showSubmitLoader = (show = true) => {
     loadingWrapper.classList.remove('loader-wrapper');
   }
 };
+function setEndDate(startDate) {
+  const startTimeEpoch = new Date(startDate).getTime();
+  const endTime = new Date(startTimeEpoch + 1000 * 60 * 60 * 24 * 7);
+  const dd = String(endTime.getDate()).padStart(2, "0");
+  const mm = String(endTime.getMonth() + 1).padStart(2, "0");
+  const yyyy = endTime.getFullYear();
+
+  document.getElementById("endsOn").value = `${yyyy}-${mm}-${dd}`;
+}
+document.getElementById("startedOn").addEventListener("change", function (event) {
+  if (event.target.value) {
+    setEndDate(event.target.value);
+  }
+})
 
 taskForm.onsubmit = async (e) => {
   e.preventDefault();
@@ -161,5 +175,8 @@ const dd = String(currentDate.getDate()).padStart(2, '0');
 const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
 const yyyy = currentDate.getFullYear();
 
-today = `${yyyy}-${mm}-${dd}`;
-document.getElementById('startedOn').value = today;
+let today = `${yyyy}-${mm}-${dd}`; 
+() =>
+{document.getElementById("startedOn").value = today;
+setEndDate(currentDate);
+return today};
