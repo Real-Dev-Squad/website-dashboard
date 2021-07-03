@@ -48,10 +48,10 @@ const setEndDate = startDate => {
   const mm = String(endTime.getMonth() + 1).padStart(2, "0");
   const yyyy = endTime.getFullYear();
 
-  document.getElementById("endsOn").value = `${yyyy}-${mm}-${dd}`;
+  endDate.value = `${yyyy}-${mm}-${dd}`;
 }
 
-document.getElementById("endsOn").addEventListener("change", (event) => {
+endDate.addEventListener("change", (event) => {
   if (event.target.value) {
     if (startedDate.value < endDate.value) {
       alert("End Date should be greater than the Start Date")
@@ -59,7 +59,7 @@ document.getElementById("endsOn").addEventListener("change", (event) => {
   }
 })
 
-document.getElementById("startedOn").addEventListener("change", function (event) {
+startedDate.addEventListener("change", function (event) {
   if (event.target.value) {
     setEndDate(event.target.value);
   }
@@ -188,6 +188,6 @@ const dd = String(currentDate.getDate()).padStart(2, '0');
 const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
 const yyyy = currentDate.getFullYear();
 
-today = `${yyyy}-${mm}-${dd}`; 
-document.getElementById("startedOn").value = today;
+let today = `${yyyy}-${mm}-${dd}`; 
+startedDate.value = today;
 setEndDate(currentDate);
