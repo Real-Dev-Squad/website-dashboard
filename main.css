@@ -76,16 +76,14 @@ body {
 }
 
 .active {
-  background-color: #43a0488c;
+  background-color: #0d27b9d2;
   color: #fff;
 }
 
 .disabled {
-  color: -internal-light-dark(rgba(16, 16, 16, 0.3), rgba(255, 255, 255, 0.3));
-  background-color: -internal-light-dark(
-    rgba(239, 239, 239, 0.3),
-    rgba(19, 1, 1, 0.3)
-  );
+  color:white;
+  background-color:#0e30da98 ;
+  opacity: 0.4;
 }
 
 .required {
