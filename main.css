@@ -81,8 +81,8 @@ body {
 }
 
 .disabled {
-  color: #fff;
-  background-color: #0000ee;
+  color: rgb(204 200 200);
+  background-color: #7171fd;
   opacity: 0.5;
 }
 
