@@ -188,6 +188,6 @@ const dd = String(currentDate.getDate()).padStart(2, '0');
 const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
 const yyyy = currentDate.getFullYear();
 
-let today = `${yyyy}-${mm}-${dd}`; 
+const today = `${yyyy}-${mm}-${dd}`; 
 startedDate.value = today;
 setEndDate(currentDate);
