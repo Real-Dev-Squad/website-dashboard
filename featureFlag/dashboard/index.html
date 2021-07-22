@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="https://kit.fontawesome.com/3cd4a70e0c.js" crossorigin="anonymous"></script>
+  <title>Dashboard</title>
+</head>
+
+<body>
+  <div id="container">    
+      <p class="heading">Features:</p>
+      
+      <template id="feature-template">
+        <div class="featureBox">
+          <div class="primaryInfo">
+            <div class="primaryInfo1">
+              <p class="featureTitle"></p>
+              <p class="createdDate">
+                <i class='fas fa-calendar-alt'></i>
+                <span style='font-size:18px;'> Created </span>
+                <span style="font-weight: bold;"></span>
+              </p>
+            </div>
+            <label class="primaryInfo2">
+              <input type="checkbox" checked="true" class="filled-in featureToggle">
+              <span class="ckBoxToggle checked"></span>
+              <label class="isActive"></label>
+            </label>
+          </div>
+          <div class="secondaryInfo">
+            <p class="launchedDate"></p>
+            <div class="secondaryInfo1">
+              <p class="ownerName">
+                <span style="color:#ADACBE;">POC: </span>
+                <span style="font-weight: bold;"></span>
+              </p>
+              <img class="ownerImg">
+            </div>
+          </div>
+          <hr class="border">
+        </div>
+      </template>
+      
+  </div>
+</body>
+
+<script src='./index.js'></script>
+</html>
