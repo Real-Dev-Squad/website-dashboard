@@ -48,7 +48,7 @@ body {
   width: 100%;
 }
 
-::placeholder{
+::placeholder {
   font-family: sans-serif;
 }
 
