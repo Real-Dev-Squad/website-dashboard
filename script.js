@@ -38,32 +38,32 @@ const showSubmitLoader = (show = true) => {
   }
 };
 
-const startedDate = document.getElementById("startedOn");
-const endDate = document.getElementById("endsOn");
+const startedDate = document.getElementById('startedOn');
+const endDate = document.getElementById('endsOn');
 
-const setEndDate = startDate => {
+const setEndDate = (startDate) => {
   const startTimeEpoch = new Date(startDate).getTime();
   const endTime = new Date(startTimeEpoch + 1000 * 60 * 60 * 24 * 7);
-  const dd = String(endTime.getDate()).padStart(2, "0");
-  const mm = String(endTime.getMonth() + 1).padStart(2, "0");
+  const dd = String(endTime.getDate()).padStart(2, '0');
+  const mm = String(endTime.getMonth() + 1).padStart(2, '0');
   const yyyy = endTime.getFullYear();
 
   endDate.value = `${yyyy}-${mm}-${dd}`;
-}
+};
 
-endDate.addEventListener("change", (event) => {
+endDate.addEventListener('change', (event) => {
   if (event.target.value) {
     if (startedDate.value < endDate.value) {
-      alert("End Date should be greater than the Start Date")
+      alert('End Date should be greater than the Start Date');
     }
   }
-})
+});
 
-startedDate.addEventListener("change", function (event) {
+startedDate.addEventListener('change', function (event) {
   if (event.target.value) {
     setEndDate(event.target.value);
   }
-})
+});
 
 taskForm.onsubmit = async (e) => {
   e.preventDefault();
@@ -188,6 +188,6 @@ const dd = String(currentDate.getDate()).padStart(2, '0');
 const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
 const yyyy = currentDate.getFullYear();
 
-let today = `${yyyy}-${mm}-${dd}`; 
-startedDate.value = today ;
+const today = `${yyyy}-${mm}-${dd}`;
+startedDate.value = today;
 setEndDate(currentDate);
