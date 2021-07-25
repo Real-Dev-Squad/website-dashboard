@@ -48,6 +48,10 @@ body {
   width: 100%;
 }
 
+::placeholder {
+  font-family: sans-serif;
+}
+
 .textInput {
   padding: 1em;
   width: 100%;
