@@ -172,7 +172,25 @@ body {
 }
 
 footer {
-  position: absolute;
   bottom: 0;
   width: 100%;
+  position: relative;
+}
+
+.flex--container {
+  display: flex;
+  height: 92vh;
+  flex: 1;
+}
+
+.center {
+  align-items: center;
+  justify-content: center;
+}
+
+#createTasks {
+  font-size: xx-large;
+  padding: 20px;
+  border: 3px solid black;
+  border-radius: 6px;
 }
