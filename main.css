@@ -170,3 +170,20 @@ body {
   text-decoration: none;
   font-size: large;
 }
+
+.createTaskSection{
+  height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.create-task-btn{
+  color: black;
+  font-weight: 500;
+  font-size: larger;
+  background-color: white;
+  border: 2px solid black;
+  border-radius: 5px;
+  padding: 10px 50px;
+  cursor: pointer;
+}
