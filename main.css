@@ -170,3 +170,9 @@ body {
   text-decoration: none;
   font-size: large;
 }
+
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
