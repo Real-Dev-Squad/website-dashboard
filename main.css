@@ -58,6 +58,7 @@ body {
   min-height: 65px;
   border-radius: 5px;
   border: 1px solid #666;
+  resize: vertical;
 }
 
 .radioButtons {
