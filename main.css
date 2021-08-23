@@ -36,14 +36,15 @@ body {
   align-items: flex-start;
 }
 
-textarea{
-  resize: none;
-}
+
 .inputBox label {
   font-size: 1rem;
   font-weight: 700;
 }
 
+textarea{
+  resize:none;
+}
 .inputBox input {
   padding: 1em;
   border: 1px solid #666;
