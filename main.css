@@ -36,6 +36,9 @@ body {
   align-items: flex-start;
 }
 
+textarea{
+  resize: none;
+}
 .inputBox label {
   font-size: 1rem;
   font-weight: 700;
