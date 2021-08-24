@@ -59,7 +59,9 @@ body {
   border-radius: 5px;
   border: 1px solid #666;
 }
-
+textarea{
+  resize:none;
+}
 .radioButtons {
   display: flex;
   flex-direction: row;
