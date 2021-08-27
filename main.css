@@ -170,13 +170,12 @@ body {
   text-decoration: none;
   font-size: large;
 }
-.site-heading{
+.site-heading {
   text-align: center;
 }
-body{
+body {
   height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
 }
