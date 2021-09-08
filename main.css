@@ -23,7 +23,7 @@ body {
   margin: 0 auto;
   padding: 1em 1.5em;
   border: 1px solid #f4f4f4;
-  border-radius: 2%;
+  border-radius: 20px;
   box-shadow: 0 0 15px -7px rgba(0, 0, 0, 0.65);
 }
 
