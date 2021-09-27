@@ -171,13 +171,13 @@ body {
   font-size: large;
 }
 
-.createTaskSection{
+.createTaskSection {
   height: 80vh;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.create-task-btn{
+.create-task-btn {
   color: black;
   font-weight: 500;
   font-size: larger;
