@@ -7,6 +7,9 @@
 body {
   font-family: 'Roboto', sans-serif;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
 .container {
@@ -23,7 +26,7 @@ body {
   margin: 0 auto;
   padding: 1em 1.5em;
   border: 1px solid #f4f4f4;
-  border-radius: 2%;
+  border-radius: 20px;
   box-shadow: 0 0 15px -7px rgba(0, 0, 0, 0.65);
 }
 
@@ -146,8 +149,11 @@ body {
 .info-repo {
   font-weight: 100;
   padding: auto;
-  margin: 5 auto;
   text-align: center;
+}
+
+footer {
+  margin-top: auto;
 }
 
 @keyframes spin {
@@ -169,4 +175,21 @@ body {
   padding-left: 50%;
   text-decoration: none;
   font-size: large;
+}
+
+.createTaskSection {
+  height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.create-task-btn {
+  color: black;
+  font-weight: 500;
+  font-size: larger;
+  background-color: white;
+  border: 2px solid black;
+  border-radius: 5px;
+  padding: 10px 50px;
+  cursor: pointer;
 }
