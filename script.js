@@ -53,7 +53,7 @@ const setEndDate = (startDate) => {
 
 endDate.addEventListener('change', (event) => {
   if (event.target.value) {
-    if (startedDate.value < endDate.value) {
+    if (startedDate.value > endDate.value) {
       alert('End Date should be greater than the Start Date');
     }
   }
