@@ -193,4 +193,10 @@ footer {
   border-radius: 5px;
   padding: 10px 50px;
   cursor: pointer;
+  transition: all 0.5s ease;
+}
+.create-task-btn:hover {
+  color: white;
+  background-color: #1d1283;
+  border: none;
 }
