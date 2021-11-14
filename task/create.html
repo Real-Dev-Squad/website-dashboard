@@ -101,7 +101,7 @@
           </select>
         </div>
         <div class="inputBox class" id="assigneeInput">
-          <label for="assignee">Assigned To:</label>
+            <label for="assignee">Assigned To:</label> 
           <input
             type="text"
             placeholder="Assigned To"
@@ -122,6 +122,7 @@
           <label for="percentCompleted">Percent Completed:</label>
           <input
             value="0"
+            min="0"
             type="number"
             id="percentCompleted"
             name="percentCompleted"
@@ -135,6 +136,7 @@
             <label for="completionAwardDinero">Dinero:</label>
             <input
               value="100"
+              min="0"
               type="number"
               id="completionAwardDinero"
               name="completionAwardDinero"
@@ -145,6 +147,7 @@
             <label for="completionAwardNeelam">Neelam:</label>
             <input
               type="number"
+              min="0"
               value="0"
               id="completionAwardNeelam"
               name="completionAwardNeelam"
@@ -160,6 +163,7 @@
             <input
               type="number"
               value="0"
+              min="0"
               id="lossRateDinero"
               name="lossRateDinero"
               placeholder="Number of Dinero coins"
@@ -170,6 +174,7 @@
             <input
               type="number"
               value="0"
+              min="0"
               id="lossRateNeelam"
               name="lossRateNeelam"
               placeholder="Number of Neelam coins"
