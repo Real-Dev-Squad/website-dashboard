@@ -110,28 +110,30 @@ taskForm.onsubmit = async (e) => {
   };
 
   if (dataToBeSent.type == 'feature') {
-    dataToBeSent.assignee= assignee.trim() ?  assignee : ' '
+    dataToBeSent.assignee = assignee.trim() ? assignee : ' ';
   }
 
   if (dataToBeSent.type == 'group') {
-    dataToBeSent.participants = participants.trim() ? participants.split(',') : []
+    dataToBeSent.participants = participants.trim()
+      ? participants.split(',')
+      : [];
   }
 
-  if(dataToBeSent.purpose.trim() === ''){
-    delete dataToBeSent.purpose
+  if (dataToBeSent.purpose.trim() === '') {
+    delete dataToBeSent.purpose;
   }
 
-  if(dataToBeSent.featureUrl.trim() === ''){
-    delete dataToBeSent.featureUrl
+  if (dataToBeSent.featureUrl.trim() === '') {
+    delete dataToBeSent.featureUrl;
   }
 
-  dataToBeSent.links=dataToBeSent.links.filter((link)=>link)
+  dataToBeSent.links = dataToBeSent.links.filter((link) => link);
 
-  if(dataToBeSent.links.length !== 0){
-    dataToBeSent.links=dataToBeSent.links[0].split(',')
-    dataToBeSent.links=dataToBeSent.links.filter((link)=>link)
-  }else{
-    delete dataToBeSent.links
+  if (dataToBeSent.links.length !== 0) {
+    dataToBeSent.links = dataToBeSent.links[0].split(',');
+    dataToBeSent.links = dataToBeSent.links.filter((link) => link);
+  } else {
+    delete dataToBeSent.links;
   }
 
   try {
@@ -147,7 +149,7 @@ taskForm.onsubmit = async (e) => {
     const result = await response.json();
 
     alert(result.message);
-    window.location.reload(true)
+    window.location.reload(true);
   } catch (error) {
     alert(`Error: ${error}`);
   } finally {
