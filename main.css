@@ -42,7 +42,11 @@ body {
 .inputBox label {
   font-size: 1rem;
   font-weight: 700;
+  width: 100%;
+  text-align: left;
 }
+
+
 
 .inputBox input {
   padding: 1em;
@@ -199,4 +203,25 @@ footer {
   color: white;
   background-color: #1d1283;
   border: none;
+}
+
+#remainingDays {
+  /* all:unset; */
+  float: left;
+  margin-block: -.5em .75em;
+  padding-left: .5em;
+  font-size: 14px;
+}
+
+.notEditing{
+  display: none;
+}
+
+.editing {
+  display: block;
+}
+
+.display{
+  font-size: 14px;
+  
 }
