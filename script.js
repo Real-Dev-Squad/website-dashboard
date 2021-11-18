@@ -52,26 +52,47 @@ const setEndDate = (startDate) => {
   const startTime = new Date(startDate);
   const startTimeArray = startTime.toLocaleDateString().split('/');
 
-  const endTime = new Date(startTimeArray[2], +startTimeArray[0] - 1, +startTimeArray[1] + 7);
+  const endTime = new Date(
+    startTimeArray[2],
+    +startTimeArray[0] - 1,
+    +startTimeArray[1] + 7,
+  );
   endTimeArray = endTime.toLocaleDateString().split('/');
-  endDate.value = `${endTimeArray[2]}-${endTimeArray[0].padStart(2, '0')}-${endTimeArray[1].padStart(2, '0')}`;
-  
+  endDate.value = `${endTimeArray[2]}-${endTimeArray[0].padStart(
+    2,
+    '0',
+  )}-${endTimeArray[1].padStart(2, '0')}`;
+  if (endDate.parentElement.querySelector('em'))
+    endDate.parentElement.querySelector('em').innerHTML = `${
+      endTimeArray[2]
+    }-${endTimeArray[0].padStart(2, '0')}-${endTimeArray[1].padStart(2, '0')}`;
+
   const remainingDays = document.getElementById('remainingDays').children[0];
-  remainingDays.innerHTML = Math.round((endTime - startTime)/(1000*60*60*24));
+  remainingDays.innerHTML = Math.round(
+    (endTime - startTime) / (1000 * 60 * 60 * 24),
+  );
 };
 
 endDate.addEventListener('change', (event) => {
   if (event.target.value) {
     const remainingDays = document.getElementById('remainingDays').children[0];
-    if (startedDate.value > endDate.value || startedDate.value === endDate.value) {
+    if (
+      startedDate.value > endDate.value ||
+      startedDate.value === endDate.value
+    ) {
       alert('End Date should be greater than the Start Date');
-      endDate.value = `${startedDate.value.slice(0, startedDate.value.length-1)}${+startedDate.value[startedDate.value.length-1] + 1}` ;
+      endDate.value = `${startedDate.value.slice(
+        0,
+        startedDate.value.length - 1,
+      )}${+startedDate.value[startedDate.value.length - 1] + 1}`;
       remainingDays.innerHTML = 1;
     }
 
     const startTime = new Date(startedDate.value);
     const endTime = new Date(endDate.value);
-    remainingDays.innerHTML = Math.round((endTime - startTime)/(1000*60*60*24));
+    remainingDays.innerHTML = Math.round(
+      (endTime - startTime) / (1000 * 60 * 60 * 24),
+    );
   }
 });
 
@@ -82,12 +103,18 @@ startedDate.addEventListener('change', function (event) {
 });
 
 isNoteworthy.addEventListener('click', (event) => {
-  if(event.target.checked) {
+  if (event.target.checked) {
     document.getElementById('completionAwardDinero').value = 2500;
+    document
+      .getElementById('completionAwardDinero')
+      .parentElement.querySelector('em').innerHTML = ' ' + 2500;
   } else {
     document.getElementById('completionAwardDinero').value = 1000;
+    document
+      .getElementById('completionAwardDinero')
+      .parentElement.querySelector('em').innerHTML = ' ' + 1000;
   }
-})
+});
 
 taskForm.onsubmit = async (e) => {
   e.preventDefault();
@@ -216,31 +243,28 @@ const today = `${yyyy}-${mm}-${dd}`;
 startedDate.value = today;
 setEndDate(currentDate);
 
-const edits = document.querySelectorAll('.inputBox label.editable')
-const inputs = document.querySelectorAll('.notEditing')
+const edits = document.querySelectorAll('.inputBox label.editable');
+const inputs = document.querySelectorAll('.notEditing');
 
 edits.forEach((edit, index) => {
   const preview = document.createElement('em');
   preview.innerHTML = ' ' + edit.nextElementSibling.value;
-  index ===  0 ?  preview.style = "font-size:14px; font-weight: 500; white-space: pre-wrap; text-align:left; margin-top:.5em": preview.style = "font-size:14px; font-weight: 500; white-space: pre-wrap;"
+  preview.classList.add('preview');
+  index === 0
+    ? (preview.style = 'text-align:left; margin-top:.5em')
+    : (preview.style = 'margin: 0;');
   index === 0 ? edit.parentElement.append(preview) : edit.append(preview);
 
-  const element = document.createElement('span')
-  element.innerHTML = 'Edit'
-  element.style = `
-    width: fit-content;
-    height: fit-content;
-    position: relative;
-    float: right;
-    right:  5px;
-    cursor: pointer;`
+  const element = document.createElement('span');
+  element.innerHTML = 'Edit';
+  element.classList.add('edit-button');
 
-  element.addEventListener('click', (event) =>{
+  element.addEventListener('click', (event) => {
+    event.target.classList.toggle('edit-button__active');
     preview.classList.toggle('notEditing');
     const input = event.target.parentElement.nextElementSibling;
     input.classList.toggle('notEditing');
     preview.innerHTML = ' ' + input.value;
-  })
+  });
   edit.append(element);
-  console.log(edit.nextElementSibling)
-})
+});

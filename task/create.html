@@ -17,7 +17,7 @@
             class="input"
             type="text"
             name="title"
-            placeholder="Your task name"
+            placeholder="eg: Testing setup for dashboard"
             id="title"
           />
         </div>
@@ -36,7 +36,7 @@
             class="textInput notEditing"
             id="purpose"
             name="purpose"
-            placeholder="What is your task about?"
+            placeholder="eg: To test behaviour of code"
           ></textarea>
           <span id="purposeDisplay" class="display"></span>
         </div>
@@ -50,7 +50,6 @@
             class="notEditing"
           />
           <span id="featureUrlDisplay" class="display"></span>
-
         </div>
         <div class="inputBox">
           <div class="radioButtons">
@@ -58,7 +57,7 @@
               <label for="feature">Feature</label>
               <input
                 required
-                class="input "
+                class="input"
                 type="radio"
                 id="feature"
                 name="type"
@@ -70,7 +69,7 @@
               <label for="group">Group</label>
               <input
                 required
-                class="input "
+                class="input"
                 type="radio"
                 id="group"
                 name="type"
@@ -90,11 +89,12 @@
             class="notEditing"
           />
           <span id="linksDisplay" class="display"></span>
-
         </div>
         <div class="inputBox">
-          <label for="startedOn" class="editable">Started:<span class="required">*</span> </label>
-          
+          <label for="startedOn" class="editable"
+            >Started:<span class="required">*</span>
+          </label>
+
           <input
             required
             class="input notEditing"
@@ -104,12 +104,22 @@
           />
         </div>
         <div class="inputBox">
-          <label for="endsOn" class="editable">Ends on:<span class="required">*</span> </label>
-          <input required class="input notEditing" type="date" name="endsOn" id="endsOn" />
+          <label for="endsOn" class="editable"
+            >Ends on:<span class="required">*</span>
+          </label>
+          <input
+            required
+            class="input notEditing"
+            type="date"
+            name="endsOn"
+            id="endsOn"
+          />
         </div>
-        <span id='remainingDays'><strong>7</strong> days remaining</span>
+        <span id="remainingDays"><strong>7</strong> days remaining</span>
         <div class="inputBox">
-          <label for="status" class="editable">Status:<span class="required">*</span></label>
+          <label for="status" class="editable"
+            >Status:<span class="required">*</span></label
+          >
           <select required class="input notEditing" id="status" name="status">
             <option value="blocked">Blocked</option>
             <option selected value="active">Active</option>
@@ -138,7 +148,9 @@
           />
         </div>
         <div class="inputBox">
-          <label for="percentCompleted" class="editable">Percent Completed:</label>
+          <label for="percentCompleted" class="editable"
+            >Percent Completed:</label
+          >
           <input
             value="0"
             type="number"
@@ -200,7 +212,7 @@
             />
           </div>
         </div>
-        
+
         <div class="inputBox loaderContainer">
           <input
             type="submit"
