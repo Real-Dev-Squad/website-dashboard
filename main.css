@@ -42,6 +42,9 @@ body {
 .inputBox label {
   font-size: 1rem;
   font-weight: 700;
+  width: 100%;
+  text-align: left;
+  position: relative;
 }
 
 .inputBox input {
@@ -199,4 +202,47 @@ footer {
   color: white;
   background-color: #1d1283;
   border: none;
+}
+
+#remainingDays {
+  /* all:unset; */
+  float: left;
+  margin-block: -0.5em 0.75em;
+  padding-left: 0.5em;
+  font-size: 0.875em;
+}
+
+.notEditing {
+  display: none;
+}
+
+.inputBox label .edit-button {
+  width: fit-content;
+  height: fit-content;
+  font-size: 0.625em;
+  opacity: 60%;
+  margin-block: 0.25em;
+  right: 5px;
+  cursor: pointer;
+  display: block;
+  transition: opacity ease 0.25s;
+}
+
+.inputBox .preview {
+  font-size: 0.875em;
+  font-weight: 400;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  width: 80%;
+  position: relative;
+  /* overflow-wrap: break-word; */
+  overflow: hidden;
+}
+
+.inputBox label .edit-button:hover {
+  opacity: 100%;
+}
+
+.inputBox label .edit-button.edit-button__active {
+  opacity: 100%;
 }

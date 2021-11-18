@@ -17,28 +17,39 @@
             class="input"
             type="text"
             name="title"
-            placeholder="Title"
+            placeholder="eg: Testing setup for dashboard"
             id="title"
           />
         </div>
         <div class="inputBox">
-          <label for="purpose">Purpose:</label>
-          <textarea
-            type="text"
-            class="textInput"
-            id="purpose"
-            name="purpose"
-            placeholder="Purpose"
-          ></textarea>
+          <div class="checkBox">
+            <label for="isNoteworthy">Is noteworthy:</label>
+            <span
+              ><input type="checkbox" id="isNoteworthy" name="isNoteworthy"
+            /></span>
+          </div>
         </div>
         <div class="inputBox">
-          <label for="featureUrl">Feature URL:</label>
+          <label for="purpose" class="editable">Purpose:</label>
+          <textarea
+            type="text"
+            class="textInput notEditing"
+            id="purpose"
+            name="purpose"
+            placeholder="eg: To test behaviour of code"
+          ></textarea>
+          <span id="purposeDisplay" class="display"></span>
+        </div>
+        <div class="inputBox">
+          <label for="featureUrl" class="editable">Feature URL:</label>
           <input
             type="url"
             id="featureUrl"
             name="featureUrl"
             placeholder="Feature URL"
+            class="notEditing"
           />
+          <span id="featureUrlDisplay" class="display"></span>
         </div>
         <div class="inputBox">
           <div class="radioButtons">
@@ -69,121 +80,139 @@
           </div>
         </div>
         <div class="inputBox">
-          <label for="links">Links:</label>
+          <label for="links" class="editable">Links:</label>
           <input
             type="text"
             name="links"
             id="links"
             placeholder="Comma separated links"
+            class="notEditing"
           />
+          <span id="linksDisplay" class="display"></span>
         </div>
         <div class="inputBox">
-          <label for="startedOn">Started:<span class="required">*</span></label>
+          <label for="startedOn" class="editable"
+            >Started:<span class="required">*</span>
+          </label>
+
           <input
             required
-            class="input"
+            class="input notEditing"
             type="date"
             name="startedOn"
             id="startedOn"
           />
         </div>
         <div class="inputBox">
-          <label for="endsOn">Ended:<span class="required">*</span></label>
-          <input required class="input" type="date" name="endsOn" id="endsOn" />
+          <label for="endsOn" class="editable"
+            >Ends on:<span class="required">*</span>
+          </label>
+          <input
+            required
+            class="input notEditing"
+            type="date"
+            name="endsOn"
+            id="endsOn"
+          />
         </div>
+        <span id="remainingDays"><strong>7</strong> days remaining</span>
         <div class="inputBox">
-          <label for="status">Status:<span class="required">*</span></label>
-          <select required class="input" id="status" name="status">
+          <label for="status" class="editable"
+            >Status:<span class="required">*</span></label
+          >
+          <select required class="input notEditing" id="status" name="status">
             <option value="blocked">Blocked</option>
-            <option value="active">Active</option>
-            <option selected value="pending">Pending</option>
+            <option selected value="active">Active</option>
+            <option value="pending">Pending</option>
             <option value="unassigned">Unassigned</option>
           </select>
         </div>
         <div class="inputBox class" id="assigneeInput">
-          <label for="assignee">Assigned To:</label>
+          <label for="assignee" class="editable">Assigned To:</label>
           <input
             type="text"
             placeholder="Assigned To"
             id="assignee"
             name="assignee"
+            class="notEditing"
           />
         </div>
         <div class="inputBox" id="participantsInput">
-          <label for="participants">Participants:</label>
+          <label for="participants" class="editable">Participants:</label>
           <input
             type="text"
             placeholder="Comma separated participants username"
             id="participants"
             name="participants"
+            class="notEditing"
           />
         </div>
         <div class="inputBox">
-          <label for="percentCompleted">Percent Completed:</label>
+          <label for="percentCompleted" class="editable"
+            >Percent Completed:</label
+          >
           <input
             value="0"
             type="number"
             id="percentCompleted"
             name="percentCompleted"
             placeholder="Percent completed"
+            class="notEditing"
           />
         </div>
         <div class="inputBox">
-          <label for="completionAward">Completion Award:</label>
+          <label for="completionAward">Completion Award</label>
           <br />
           <div class="inputBox">
-            <label for="completionAwardDinero">Dinero:</label>
+            <label for="completionAwardDinero" class="editable">Dinero:</label>
             <input
-              value="100"
+              value="1000"
               type="number"
               id="completionAwardDinero"
               name="completionAwardDinero"
               placeholder="Number of Dinero coins"
+              class="notEditing"
             />
           </div>
           <div class="inputBox">
-            <label for="completionAwardNeelam">Neelam:</label>
+            <label for="completionAwardNeelam" class="editable">Neelam:</label>
             <input
               type="number"
               value="0"
               id="completionAwardNeelam"
               name="completionAwardNeelam"
               placeholder="Number of Neelam coins"
+              class="notEditing"
             />
           </div>
         </div>
         <div class="inputBox">
-          <label for="lossRate">Loss Rate:</label>
+          <label for="lossRate">Loss Rate</label>
           <br />
           <div class="inputBox">
-            <label for="lossRateDinero">Dinero</label>
+            <label for="lossRateDinero" class="editable">Dinero</label>
             <input
               type="number"
-              value="0"
+              value="100"
               id="lossRateDinero"
               name="lossRateDinero"
               placeholder="Number of Dinero coins"
+              class="notEditing"
             />
           </div>
           <div class="inputBox">
-            <label for="lossRateNeelam">Neelam</label>
+            <label for="lossRateNeelam" class="editable">Neelam</label>
             <input
               type="number"
               value="0"
               id="lossRateNeelam"
               name="lossRateNeelam"
               placeholder="Number of Neelam coins"
+              class="notEditing"
             />
           </div>
         </div>
-        <div class="inputBox">
-          <div class="checkBox">
-            <label for="isNoteworthy">Is noteworthy:</label>
-            <span
-              ><input type="checkbox" id="isNoteworthy" name="isNoteworthy"
-            /></span>
-          </div>
-        </div>
+
         <div class="inputBox loaderContainer">
           <input
             type="submit"
