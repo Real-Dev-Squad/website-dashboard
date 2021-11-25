@@ -43,12 +43,6 @@ const endDate = document.getElementById('endsOn');
 const isNoteworthy = document.getElementById('isNoteworthy');
 
 const setEndDate = (startDate) => {
-  // const startTimeEpoch = new Date(startDate).getTime();
-  // const endTime = new Date(startTimeEpoch + 1000 * 60 * 60 * 24 * 7);
-  // const dd = String(endTime.getDate()).padStart(2, '0');
-  // const mm = String(endTime.getMonth() + 1).padStart(2, '0');
-  // const yyyy = endTime.getFullYear();
-
   const startTime = new Date(startDate);
   const startTimeArray = startTime.toLocaleDateString().split('/');
 
@@ -68,7 +62,7 @@ const setEndDate = (startDate) => {
     }-${endTimeArray[0].padStart(2, '0')}-${endTimeArray[1].padStart(2, '0')}`;
 
   const remainingDays = document.getElementById('remainingDays').children[0];
-  remainingDays.innerHTML = Math.round(
+  remainingDays.innerHTML = Math.ceil(
     (endTime - startTime) / (1000 * 60 * 60 * 24),
   );
 };
@@ -288,3 +282,13 @@ edits.forEach((edit, index) => {
   });
   edit.append(element);
 });
+
+function handleDateChange(event) {
+  const preview = event.target.previousElementSibling.children[1];
+  const edit = event.target.previousElementSibling.children[2];
+  edit.classList.toggle('edit-button__active');
+  preview.classList.toggle('notEditing');
+  const input = event.target;
+  input.classList.toggle('notEditing');
+  preview.innerHTML = ' ' + input.value;
+}

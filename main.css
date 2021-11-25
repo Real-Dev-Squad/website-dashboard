@@ -207,8 +207,8 @@ footer {
 #remainingDays {
   /* all:unset; */
   float: left;
-  margin-block: -0.5em 0.75em;
-  padding-left: 0.5em;
+  margin-block: -3.9em 0.75em;
+  padding-left: 12.5em;
   font-size: 0.875em;
 }
 
@@ -221,11 +221,11 @@ footer {
   height: fit-content;
   font-size: 0.625em;
   opacity: 60%;
-  margin-block: 0.25em;
   right: 5px;
   cursor: pointer;
   display: block;
   transition: opacity ease 0.25s;
+  padding: 5px 10px 5px 0px;
 }
 
 .inputBox .preview {
