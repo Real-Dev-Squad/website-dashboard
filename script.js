@@ -284,11 +284,11 @@ edits.forEach((edit, index) => {
 });
 
 function handleDateChange(event) {
-  const preview = event.target.previousElementSibling.children[1];
-  const edit = event.target.previousElementSibling.children[2];
+  const input = event.target;
+  const preview = input.previousElementSibling.children[1];
+  const edit = input.previousElementSibling.children[2];
   edit.classList.toggle('edit-button__active');
   preview.classList.toggle('notEditing');
-  const input = event.target;
   input.classList.toggle('notEditing');
   preview.innerHTML = ' ' + input.value;
 }
