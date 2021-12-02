@@ -45,28 +45,24 @@ const isNoteworthy = document.getElementById('isNoteworthy');
 const setEndDate = (startDate) => {
   const startTime = new Date(startDate);
   const startTimeArray = startTime.toLocaleDateString().split('/');
-
+  
   const endTime = new Date(
     startTimeArray[2],
     +startTimeArray[0] - 1,
     +startTimeArray[1] + 7,
   );
   endTimeArray = endTime.toLocaleDateString().split('/');
-  endDate.value = `${endTimeArray[2]}-${endTimeArray[0].padStart(
-    2,
-    '0',
-  )}-${endTimeArray[1].padStart(2, '0')}`;
+  endDate.value = `${endTimeArray[2]}-${endTimeArray[0].padStart(2,'0')}-${endTimeArray[1].padStart(2, '0')}`;
   if (endDate.parentElement.querySelector('em'))
     endDate.parentElement.querySelector('em').innerHTML = `${
       endTimeArray[2]
     }-${endTimeArray[0].padStart(2, '0')}-${endTimeArray[1].padStart(2, '0')}`;
 
-  const remainingDays = document.getElementById('remainingDays').children[0];
-  remainingDays.innerHTML = Math.ceil(
-    (endTime - startTime) / (1000 * 60 * 60 * 24),
-  );
-};
+/*   const remainingDays = document.getElementById('remainingDays').children[0];*/
+  const diffTime = Math.abs(endDate-startDate);
+  const remainingDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
 
+};
 endDate.addEventListener('change', (event) => {
   if (event.target.value) {
     const remainingDays = document.getElementById('remainingDays').children[0];
@@ -84,7 +80,7 @@ endDate.addEventListener('change', (event) => {
 
     const startTime = new Date(startedDate.value);
     const endTime = new Date(endDate.value);
-    remainingDays.innerHTML = Math.round(
+    remainingDays.innerHTML = Math.ceil(
       (endTime - startTime) / (1000 * 60 * 60 * 24),
     );
   }
