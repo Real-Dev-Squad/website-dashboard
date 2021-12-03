@@ -206,11 +206,10 @@ footer {
 
 #remainingDays {
   /* all:unset; */
-  float: right;
-  margin-block: 0.1em 0.75em;
-  padding-right: 19.5em;
+  float: left;
+  margin-block: -3.88em 1.75em;
+  padding-left: 15em;
   font-size: 0.875em;
-  font-weight: 400;
 }
 
 .notEditing {
