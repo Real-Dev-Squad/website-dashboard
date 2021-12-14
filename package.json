@@ -6,7 +6,8 @@
   "scripts": {
     "check": "prettier --check .",
     "fix": "prettier --write .",
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "repository": {
     "type": "git",
