@@ -60,9 +60,6 @@ const setEndDate = (startDate) => {
     endDate.parentElement.querySelector('em').innerHTML = `${
       endTimeArray[2]
     }-${endTimeArray[0].padStart(2, '0')}-${endTimeArray[1].padStart(2, '0')}`;
-
-  const diffTime = Math.abs(endDate - startDate);
-  const remainingDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 };
 
 endDate.addEventListener('change', (event) => {

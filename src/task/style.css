@@ -7,6 +7,7 @@
 body {
   font-family: 'Roboto', sans-serif;
   margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -169,43 +170,7 @@ footer {
   }
 }
 
-#tasksNav {
-  background-color: #1d1283;
-  height: 32px;
-}
-
-#createTask {
-  color: white;
-  padding-left: 50%;
-  text-decoration: none;
-  font-size: large;
-}
-
-.createTaskSection {
-  height: 80vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.create-task-btn {
-  color: black;
-  font-weight: 500;
-  font-size: larger;
-  background-color: white;
-  border: 2px solid black;
-  border-radius: 5px;
-  padding: 10px 50px;
-  cursor: pointer;
-  transition: all 0.5s ease;
-}
-.create-task-btn:hover {
-  color: white;
-  background-color: #1d1283;
-  border: none;
-}
-
 #remainingDays {
-  /* all:unset; */
   float: left;
   margin-block: -3.88em 1.75em;
   padding-left: 15em;
