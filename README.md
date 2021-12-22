@@ -14,4 +14,6 @@ Dashboard helps to create and assigns task to the members and can be accessed on
 
 - First follow the contribution link on how to contribute given above.
 
-- We can run development server using **npm run dev** command
+- You need to install Live Server extension in you VSCode and start server from src/index.html or you can simply go into the file where you have cloned and run index.html in your browser.
+
+- Live Server method is much preferred as it makes work easy and auto-reload.
