@@ -1,4 +1,4 @@
-const BASE_URL = 'https://api.realdevsquad.com';
+const API_BASE_URL = window.API_BASE_URL;
 
 function getObjectOfFormData(formId) {
   const object = {};
@@ -177,7 +177,7 @@ taskForm.onsubmit = async (e) => {
   }
 
   try {
-    const response = await fetch(`${BASE_URL}/tasks`, {
+    const response = await fetch(`${API_BASE_URL}/tasks`, {
       method: 'POST',
       credentials: 'include',
       body: JSON.stringify(dataToBeSent),

@@ -51,3 +51,13 @@ footer {
   background-color: #1d1283;
   border: none;
 }
+
+.info-repo {
+  font-weight: 100;
+  padding: auto;
+  text-align: center;
+}
+
+footer {
+  margin-top: auto;
+}

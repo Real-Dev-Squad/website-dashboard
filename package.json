@@ -6,8 +6,7 @@
   "scripts": {
     "check": "prettier --check .",
     "fix": "prettier --write .",
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -22,7 +21,6 @@
   "pre-commit": "check",
   "homepage": "https://github.com/Real-Dev-Squad/website-dashboard#readme",
   "devDependencies": {
-    "nodemon": "^2.0.15",
     "pre-commit": "^1.2.2",
     "prettier": "2.3.1"
   },
