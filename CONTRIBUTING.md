@@ -5,18 +5,27 @@ If you find a bug anywhere, you can fix it.
 # File Structure
 
 ```
-├── css                                All the styling goes here
-│   ├── wallet.css
-├── js                                 All the working logic goes here
-│   ├── wallet.js
-├── tasks                              For assigning tasks to the members HTML page
-│   ├── create.html
-├── CONTRIBUTING.md                    CONTRIBUTING file for the repository
-├── index.html                         For Homepage HTML file
-├── main.css                           All the styling goes here except wallet page
-├── README.md                          README file for the repository
-├── script.js                          All the working logic goes here except wallet page
-├── wallets.html                       Wallets page for members HTML Page
+📦website-dashboard
+ ┣ 📂src                Here codes specific to Website-Dashboard resides
+ ┃ ┣ 📂helpers          Any script that acts as helper will go here
+ ┃ ┃ ┗ 📜loadENV.js
+ ┃ ┣ 📂task             /task/create where new task can created
+ ┃ ┃ ┣ 📜index.html
+ ┃ ┃ ┣ 📜script.js
+ ┃ ┃ ┗ 📜style.css
+ ┃ ┣ 📂wallet           /wallets where wallet information from crypto site can be fetched
+ ┃ ┃ ┣ 📜index.html
+ ┃ ┃ ┣ 📜script.js
+ ┃ ┃ ┗ 📜style.css
+ ┃ ┣ 📜index.html       / Homepage for website-dashboard
+ ┃ ┗ 📜style.css        Styles for Home page
+ ┣ 📜.gitignore
+ ┣ 📜.prettierrc.json
+ ┣ 📜CONTRIBUTING.md    Contains information for contributing to the repository
+ ┣ 📜package-lock.json
+ ┣ 📜package.json
+ ┣ 📜README.md          README file for the repository
+ ┗ 📜server.js          Helpful for hoisting service
 ```
 
 # How can you make your first **Pull Request**
