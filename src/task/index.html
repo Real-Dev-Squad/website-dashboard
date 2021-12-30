@@ -91,53 +91,43 @@
           <span id="linksDisplay" class="display"></span>
         </div>
         <div class="inputBox">
-          <label for="startedOn" class="editable"
-            >Started:<span class="required">*</span>
+          <label for="status" class="editable">
+            Status:<span class="required">*</span>
           </label>
-
-          <input
+          <select
             required
             class="input notEditing"
-            type="date"
-            name="startedOn"
-            id="startedOn"
-            onchange="handleDateChange(event);"
-          />
-        </div>
-        <div class="inputBox">
-          <label for="endsOn" class="editable"
-            >Ends on:<span class="required">*</span>
-          </label>
-          <input
-            required
-            class="input notEditing"
-            type="date"
-            name="endsOn"
-            id="endsOn"
-            onchange="handleDateChange(event);"
-          />
-        </div>
-        <span id="remainingDays"><strong>7</strong> days remaining</span>
-        <div class="inputBox">
-          <label for="status" class="editable"
-            >Status:<span class="required">*</span></label
+            id="status"
+            name="status"
+            onchange="handleStatusChange(event)"
           >
-          <select required class="input notEditing" id="status" name="status">
-            <option value="blocked">Blocked</option>
-            <option selected value="active">Active</option>
-            <option value="pending">Pending</option>
-            <option value="unassigned">Unassigned</option>
+            <option selected value="AVAILABLE">Available</option>
+            <option value="ASSIGNED">Assigned</option>
           </select>
         </div>
         <div class="inputBox class" id="assigneeInput">
-          <label for="assignee" class="editable">Assignee:</label>
+          <label for="assignee">Assignee:<span class="required">*</span></label>
           <input
             type="text"
             placeholder="eg: Marcus"
             id="assignee"
             name="assignee"
-            class="notEditing"
           />
+        </div>
+        <div id="endsOnWrapper">
+          <div class="inputBox">
+            <label for="endsOn"
+              >Ends on:<span class="required">*</span>
+              <span id="remainingDays"><strong>14</strong> days remaining</span>
+            </label>
+            <input
+              class="input"
+              type="date"
+              name="endsOn"
+              id="endsOn"
+              onchange="handleDateChange(event);"
+            />
+          </div>
         </div>
         <div class="inputBox" id="participantsInput">
           <label for="participants" class="editable">Participants:</label>

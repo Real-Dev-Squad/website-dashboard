@@ -172,10 +172,7 @@ footer {
 }
 
 #remainingDays {
-  float: left;
-  margin-block: -3.88em 1.75em;
-  padding-left: 15em;
-  font-size: 0.875em;
+  font-weight: 100;
 }
 
 .notEditing {
