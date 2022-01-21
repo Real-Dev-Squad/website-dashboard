@@ -284,7 +284,7 @@ addEventToInput(input, 'change', stateHandle);
 const handleDateChange = (event) => {
   const input = event.target;
   const previewDate = document.getElementById('remainingDays').children[0];
-  previewDate.innerHTML = getRemainingDays(input.value);
+  previewDate.innerHTML = !!input.value ? getRemainingDays(input.value) : 14;
 };
 
 function handleStatusChange(event = { target: { value: 'AVAILABLE' } }) {
