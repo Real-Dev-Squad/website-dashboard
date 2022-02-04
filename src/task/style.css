@@ -122,6 +122,10 @@ body {
   display: none;
 }
 
+.visibity-hidden {
+  visibility: hidden;
+}
+
 /* --- Loading spinner --- */
 
 .loaderContainer {
