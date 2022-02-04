@@ -187,7 +187,6 @@ taskForm.onsubmit = async (e) => {
   } else {
     delete dataToBeSent.links;
   }
-  console.log(dataToBeSent);
 
   try {
     const response = await fetch(`${API_BASE_URL}/tasks`, {
@@ -300,3 +299,5 @@ function handleStatusChange(event = { target: { value: 'AVAILABLE' } }) {
     document.getElementById('endsOn').value = '';
   }
 }
+
+document.getElementById('visibity-hidden').classList.remove('visibity-hidden');

@@ -7,7 +7,7 @@
     <title>Tasks</title>
   </head>
 
-  <body>
+  <body class="visibity-hidden" id="visibity-hidden">
     <div class="container">
       <form action="" id="taskForm">
         <div class="inputBox">
@@ -106,7 +106,9 @@
           </select>
         </div>
         <div class="inputBox class" id="assigneeInput">
-          <label for="assignee">Assignee:<span class="required">*</span></label>
+          <label for="assignee hidden"
+            >Assignee:<span class="required">*</span></label
+          >
           <input
             type="text"
             placeholder="eg: Marcus"
