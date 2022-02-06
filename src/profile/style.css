@@ -11,18 +11,18 @@ body {
 nav {
   display: flex;
   justify-content: center;
-    margin-top: 2rem;
-    text-align: center;
+  margin-top: 2rem;
+  text-align: center;
 }
 
 nav h1 {
   position: relative;
   max-width: max-content;
-font-weight: 500;
+  font-weight: 500;
 }
 
 nav h1::before {
-  content: "";
+  content: '';
   position: absolute;
   left: 10%;
   bottom: -10px;
@@ -32,21 +32,21 @@ nav h1::before {
 }
 
 .wrapperDiv {
-    display: flex;
+  display: flex;
   flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  justify-content: center;
+  align-items: center;
   gap: 1rem;
-  }
+}
 
 .cardDiv {
   width: 80%;
-  padding:0 3rem;
+  padding: 0 3rem;
   display: flex;
   flex-direction: column;
 }
 
-.userNameContainer{
+.userNameContainer {
   font-size: 1.5rem;
   font-weight: 500;
 }
@@ -54,7 +54,7 @@ nav h1::before {
 .dataContainer {
   display: flex;
   flex-direction: column;
-  border: 1px solid #C4C4C4;
+  border: 1px solid #c4c4c4;
   border-radius: 20px;
 }
 
@@ -89,16 +89,17 @@ nav h1::before {
   padding: 10px 12px;
   border: none;
   border-radius: 10px;
-  background-color: #38A127;
+  background-color: #38a127;
   color: white;
   font-size: 1rem;
 }
 
 .buttonsContainer button:nth-child(2) {
-  background-color: #FD5757;
+  background-color: #fd5757;
 }
 
-.oldDataContainer, .newDataContainer {
+.oldDataContainer,
+.newDataContainer {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -106,35 +107,33 @@ nav h1::before {
 }
 
 .oldDataContainer {
-  border-right: 1px solid #C4C4C4;
+  border-right: 1px solid #c4c4c4;
 }
 
 footer {
   width: 100%;
-  padding: .5rem;
+  padding: 0.5rem;
 }
 
 footer .info-repo {
   font-weight: bold;
   text-align: center;
+}
+
+/* responsive media query for mobile phones */
+
+@media screen and (max-width: 640px) {
+  .cardDiv {
+    padding: 1rem;
+    width: 100%;
   }
 
-  /* responsive media query for mobile phones */
-
-  @media screen and (max-width: 640px) {
-    .cardDiv {
-      padding: 1rem;
-      width: 100%;
-    }
-  
-      .dataInnerContainer {
-        display: flex;
-        flex-direction: column;
-      }
-  
-      .oldDataContainer {
-        border-right: none;
-      }
+  .dataInnerContainer {
+    display: flex;
+    flex-direction: column;
   }
-  
 
+  .oldDataContainer {
+    border-right: none;
+  }
+}
