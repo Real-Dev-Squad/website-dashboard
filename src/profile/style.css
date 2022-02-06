@@ -91,6 +91,7 @@ nav h1::before {
   border-radius: 10px;
   background-color: #38A127;
   color: white;
+  font-size: 1rem;
 }
 
 .buttonsContainer button:nth-child(2) {
@@ -118,7 +119,7 @@ footer .info-repo {
   text-align: center;
   }
 
-  /* responsiven media query for mobile phones */
+  /* responsive media query for mobile phones */
 
   @media screen and (max-width: 640px) {
     .cardDiv {
