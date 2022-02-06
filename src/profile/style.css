@@ -1,0 +1,139 @@
+*,
+::after,
+::before {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+    margin-top: 2rem;
+    text-align: center;
+}
+
+nav h1 {
+  position: relative;
+  max-width: max-content;
+font-weight: 500;
+}
+
+nav h1::before {
+  content: "";
+  position: absolute;
+  left: 10%;
+  bottom: -10px;
+  width: 80%;
+  height: 2px;
+  background-color: #000000;
+}
+
+.wrapperDiv {
+    display: flex;
+  flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  gap: 1rem;
+  }
+
+.cardDiv {
+  width: 80%;
+  padding:0 3rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.userNameContainer{
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.dataContainer {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #C4C4C4;
+  border-radius: 20px;
+}
+
+.userInfoListContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  list-style: none;
+  align-self: center;
+  max-width: max-content;
+  gap: 8px;
+}
+
+.userInfoListContainer li {
+  align-self: flex-start;
+}
+
+.dataInnerContainer {
+  display: flex;
+  padding: 1rem;
+  gap: 20px;
+}
+
+.buttonsContainer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem;
+  gap: 10px;
+}
+
+.buttonsContainer button {
+  padding: 10px 12px;
+  border: none;
+  border-radius: 10px;
+  background-color: #38A127;
+  color: white;
+}
+
+.buttonsContainer button:nth-child(2) {
+  background-color: #FD5757;
+}
+
+.oldDataContainer, .newDataContainer {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.oldDataContainer {
+  border-right: 1px solid #C4C4C4;
+}
+
+footer {
+  width: 100%;
+  padding: .5rem;
+}
+
+footer .info-repo {
+  font-weight: bold;
+  text-align: center;
+  }
+
+  /* responsiven media query for mobile phones */
+
+  @media screen and (max-width: 640px) {
+    .cardDiv {
+      padding: 1rem;
+      width: 100%;
+    }
+  
+      .dataInnerContainer {
+        display: flex;
+        flex-direction: column;
+      }
+  
+      .oldDataContainer {
+        border-right: none;
+      }
+  }
+  
+

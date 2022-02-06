@@ -13,10 +13,6 @@ body {
   height: 100vh;
 }
 
-footer {
-  margin-top: auto;
-}
-
 #tasksNav {
   background-color: #1d1283;
   height: 32px;
@@ -51,6 +47,31 @@ footer {
   background-color: #1d1283;
   border: none;
 }
+
+/* profile section */
+.profileSection {
+  height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.profile-task-btn {
+  color: black;
+  font-weight: 500;
+  font-size: larger;
+  background-color: white;
+  border: 2px solid black;
+  border-radius: 5px;
+  padding: 10px 50px;
+  cursor: pointer;
+  transition: all 0.5s ease;
+}
+.profile-task-btn:hover {
+  color: white;
+  background-color: #1d1283;
+  border: none;
+}
+
 
 .info-repo {
   font-weight: 100;
