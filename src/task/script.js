@@ -1,6 +1,12 @@
 const API_BASE_URL = window.API_BASE_URL;
 
 const getRemainingDays = (selectedDateInString) => {
+  const selectedDateInStringArray = selectedDateInString.split('-');
+  const month = selectedDateInStringArray[1];
+  if (month.length === 2 && month.split('')[0] === '0') {
+    selectedDateInStringArray[1] = selectedDateInStringArray[1].split('')[1];
+  }
+  selectedDateInString = selectedDateInStringArray.join('-');
   const selectedDate = new Date(selectedDateInString);
   const currentDate = new Date();
   const remainingDays = Math.ceil(
