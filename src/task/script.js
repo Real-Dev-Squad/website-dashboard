@@ -207,7 +207,9 @@ taskForm.onsubmit = async (e) => {
     const result = await response.json();
 
     alert(result.message);
-    window.location.reload(true);
+    if (response.ok) { 
+      window.location.reload(true);
+    }
   } catch (error) {
     alert(`Error: ${error}`);
   } finally {
