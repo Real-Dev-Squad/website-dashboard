@@ -206,7 +206,7 @@ taskForm.onsubmit = async (e) => {
 
     const result = await response.json();
 
-    if (response.status>=200 && response.status<400) {
+    if (response.status >= 200 && response.status < 400) {
       window.location.reload(true);
     }
     alert(result.message);
