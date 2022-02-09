@@ -303,3 +303,78 @@ function handleStatusChange(event = { target: { value: 'AVAILABLE' } }) {
 }
 
 document.getElementById('visibity-hidden').classList.remove('visibity-hidden');
+
+const assigneeEl = document.getElementById('assignee');
+
+function debounce(func, delay) {
+  let searchDelay;
+  return (...args) => {
+    if (searchDelay) {
+      clearTimeout(searchDelay);
+    }
+
+    searchDelay = setTimeout(() => {
+      func(...args);
+    }, delay);
+  };
+}
+
+async function autoComplete(searchInput) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/tasks`);
+    const data = await response.json();
+    removeAssignee();
+    if (searchInput !== '') {
+      const matches = data.tasks.filter((task) => {
+        if (task.assignee) {
+          return task.assignee
+            .toLowerCase()
+            .startsWith(searchInput.toLowerCase());
+        }
+      });
+      assigneeHTML(matches);
+    }
+  } catch {
+    alert('User not found');
+  }
+}
+
+function assigneeHTML(matches) {
+  const listItems = document.getElementById('list-items');
+  if (matches.length) {
+    const searchList = getUniqueAssignees(matches);
+    searchList.map((list) => {
+      const listItem = document.createElement('p');
+      listItem.classList.add('list-item');
+      listItem.style.cursor = 'pointer';
+      listItem.setAttribute('onclick', "displayAssignee('" + list + "')");
+      listItem.innerText = list;
+      listItems.appendChild(listItem);
+    });
+  }
+}
+
+function displayAssignee(assignee) {
+  assigneeEl.value = assignee;
+  removeAssignee();
+}
+
+function removeAssignee() {
+  const assignees = document.querySelectorAll('.list-item');
+  assignees.forEach((assignee) => {
+    assignee.remove();
+  });
+}
+
+function getUniqueAssignees(matches) {
+  const uniqueAssignees = new Set();
+  matches.map((match) => {
+    uniqueAssignees.add(match.assignee);
+  });
+  return [...uniqueAssignees];
+}
+
+assigneeEl.addEventListener(
+  'input',
+  debounce((event) => autoComplete(event.target.value), 500),
+);
