@@ -213,3 +213,19 @@ footer {
 .inputBox label .edit-button.edit-button__active {
   opacity: 100%;
 }
+
+#list-items {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.list-item {
+  text-align: left;
+  padding: 12px;
+  font-size: 20px;
+  margin: 0;
+}
+
+.list-item:hover {
+  background-color: #ddd;
+}
