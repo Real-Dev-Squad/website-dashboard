@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://api.realdevsquad.com';
 
 async function getProfileDiffs() {
   try {
@@ -115,7 +115,7 @@ function createCard({ oldData, newData, username, profileDiffId }) {
   approveBtn.onclick = async () => {
     document.getElementById('cover-spin').style.display = 'block';
     try {
-      const response = await fetch(`http://localhost:8000/users/${username}`, {
+      const response = await fetch(`${API_BASE_URL}/users/${username}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -152,7 +152,32 @@ function createCard({ oldData, newData, username, profileDiffId }) {
     }
   };
 
-  rejectBtn.onclick = async () => {};
+  rejectBtn.onclick = async () => {
+    document.getElementById('cover-spin').style.display = 'block';
+    try {
+      const response = await fetch(`${API_BASE_URL}/users/rejectDiff`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          profileDiffId,
+        }),
+      });
+
+      if (response.ok) {
+        alert('User Data Rejected!!!');
+        window.location.reload();
+      } else {
+        alert('Something went wrong. Please check console errors.');
+      }
+    } catch (error) {
+      alert('Something went wrong. Please check console errors.');
+    } finally {
+      document.getElementById('cover-spin').style.display = 'none';
+    }
+  };
 
   buttonsContainer.appendChild(approveBtn);
   buttonsContainer.appendChild(rejectBtn);
