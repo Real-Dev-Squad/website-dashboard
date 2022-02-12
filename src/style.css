@@ -15,7 +15,8 @@ body {
 
 #tasksNav {
   background-color: #1d1283;
-  height: 32px;
+  padding: 10px;
+  height: 40px;
 }
 
 #createTask {
@@ -25,12 +26,18 @@ body {
   font-size: large;
 }
 
-.createTaskSection {
+.buttonSection {
   height: 80vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 20px;
 }
+
+button {
+  width: 250px;
+}
+
 .create-task-btn {
   color: black;
   font-weight: 500;
@@ -41,6 +48,7 @@ body {
   padding: 10px 50px;
   cursor: pointer;
   transition: all 0.5s ease;
+  outline: none;
 }
 .create-task-btn:hover {
   color: white;

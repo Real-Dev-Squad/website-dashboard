@@ -1,5 +1,30 @@
-// using mock data for the time being
-import data from './mockData.json' assert { type: 'json' };
+const API_BASE_URL = 'http://localhost:8000';
+
+async function getProfileDiffs() {
+  try {
+    const userResponse = await fetch(`${API_BASE_URL}/users`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+
+    const { users } = await userResponse.json();
+    const profileDiffsResponse = await fetch(`${API_BASE_URL}/profileDiffs`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+
+    const { profileDiffs } = await profileDiffsResponse.json();
+    return { users, profileDiffs };
+  } catch (error) {
+    alert(`Error: ${error}`);
+  }
+}
 
 const wrapper = document.createElement('div');
 wrapper.classList.add('wrapperDiv');
@@ -16,7 +41,7 @@ function formatPropertyField(property) {
     .join(' ');
 }
 
-function createCard({ oldData, newData }) {
+function createCard({ oldData, newData, username, profileDiffId }) {
   const cardContainer = createCardComponent({
     className: 'cardDiv',
     tagName: 'div',
@@ -26,7 +51,7 @@ function createCard({ oldData, newData }) {
   const userName = document.createElement('p');
   userName.classList.add('userNameContainer');
   cardContainer.appendChild(userName);
-  userName.innerText = `Username: ${oldData.first_name.toLowerCase()}`;
+  userName.innerText = `Username: ${username}`;
 
   const dataContainer = document.createElement('div');
   dataContainer.classList.add('dataContainer');
@@ -51,7 +76,9 @@ function createCard({ oldData, newData }) {
   //looping through the old data to display in list
   for (const listItem in oldData) {
     const li = document.createElement('li');
-    li.innerText = `${formatPropertyField(listItem)}: ${oldData[listItem]}`;
+    li.innerText = `${formatPropertyField(listItem)}: ${
+      oldData[listItem] || (listItem === 'yoe' ? NaN : '')
+    }`;
     oldUserInfoList.appendChild(li);
   }
 
@@ -70,7 +97,9 @@ function createCard({ oldData, newData }) {
   //looping through the new data to display in list
   for (const listItem in newData) {
     const li = document.createElement('li');
-    li.innerText = `${formatPropertyField(listItem)}: ${newData[listItem]}`;
+    li.innerText = `${formatPropertyField(listItem)}: ${
+      newData[listItem] || (listItem === 'yoe' ? NaN : '')
+    }`;
     newUserInfoList.appendChild(li);
   }
 
@@ -83,13 +112,52 @@ function createCard({ oldData, newData }) {
   approveBtn.innerText = 'Approve';
   rejectBtn.innerText = 'Reject';
 
+  approveBtn.onclick = async () => {
+    document.getElementById('cover-spin').style.display = 'block';
+    try {
+      const response = await fetch(`http://localhost:8000/users/${username}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          id: profileDiffId,
+          first_name: newData.first_name || '',
+          last_name: newData.last_name || '',
+          email: newData.email || '',
+          phone: newData.phone || '',
+          yoe: newData.yoe || NaN,
+          company: newData.company || '',
+          designation: newData.designation || '',
+          github_id: newData.github_id || '',
+          linkedin_id: newData.linkedin_id || '',
+          twitter_id: newData.twitter_id || '',
+          instagram_id: newData.instagram_id || '',
+          website: newData.website || '',
+        }),
+      });
+
+      if (response.ok) {
+        alert('User Data Approved !!!');
+        window.location.reload();
+      } else {
+        console.log('1');
+        alert('Something went wrong. Please check console errors.');
+      }
+    } catch (error) {
+      alert('Something went wrong. Please check console errors.');
+    } finally {
+      document.getElementById('cover-spin').style.display = 'none';
+    }
+  };
+
+  rejectBtn.onclick = async () => {};
+
   buttonsContainer.appendChild(approveBtn);
   buttonsContainer.appendChild(rejectBtn);
+  document.getElementById('loader').style.display = 'none';
 }
-
-data.forEach((item) => {
-  createCard(item);
-});
 
 // creating a resuable card container component for showing multiple cards
 function createCardComponent({ className, tagName, innerText, parent }) {
@@ -108,3 +176,55 @@ function createCardComponent({ className, tagName, innerText, parent }) {
 
   return component;
 }
+
+function wantedData(data) {
+  const {
+    id,
+    first_name,
+    last_name,
+    email,
+    phone,
+    yoe,
+    company,
+    designation,
+    github_id,
+    linkedin_id,
+    twitter_id,
+    instagram_id,
+    website,
+  } = data;
+  return {
+    id,
+    first_name,
+    last_name,
+    email,
+    phone,
+    yoe,
+    company,
+    designation,
+    github_id,
+    linkedin_id,
+    twitter_id,
+    instagram_id,
+    website,
+  };
+}
+
+async function createPage() {
+  const { users, profileDiffs } = await getProfileDiffs();
+  if (profileDiffs.length === 0) {
+    document.getElementById('loader').innerHTML = 'No Profile Diffs !!!';
+  }
+
+  profileDiffs.forEach((profileDiff) => {
+    const { username } = profileDiff;
+    const user = users.find((user) => user.username === username);
+
+    const { id: userId, ...oldData } = wantedData(user);
+    const { id: profileDiffId, ...newData } = wantedData(profileDiff);
+
+    createCard({ oldData, newData, username, profileDiffId });
+  });
+}
+
+createPage();
