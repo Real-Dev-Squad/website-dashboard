@@ -321,22 +321,38 @@ function debounce(func, delay) {
 
 async function autoComplete(searchInput) {
   try {
-    const response = await fetch(`${API_BASE_URL}/tasks`);
+    const response = await fetch(`${API_BASE_URL}/members`);
     const data = await response.json();
     removeAssignee();
     if (searchInput !== '') {
-      const matches = data.tasks.filter((task) => {
-        if (task.assignee) {
-          return task.assignee
+      const matches = data.members.filter((task) => {
+        if (task.username) {
+          clearUserlist();
+          return task.username
             .toLowerCase()
             .startsWith(searchInput.toLowerCase());
         }
       });
+      if (searchInput != '' && !matches.length) {
+        const userName = document.createElement('small');
+        userName.classList.add('user-list');
+        clearUserlist();
+        userName.innerText = 'User not found';
+        const listItems = document.getElementById('assigneeInput');
+        listItems.appendChild(userName);
+      }
       assigneeHTML(matches);
     }
   } catch {
-    alert('User not found');
+    return;
   }
+}
+
+function clearUserlist() {
+  const userList = document.querySelectorAll('.user-list');
+  userList.forEach((user) => {
+    user.remove();
+  });
 }
 
 function assigneeHTML(matches) {
@@ -369,7 +385,7 @@ function removeAssignee() {
 function getUniqueAssignees(matches) {
   const uniqueAssignees = new Set();
   matches.map((match) => {
-    uniqueAssignees.add(match.assignee);
+    uniqueAssignees.add(match.username);
   });
   return [...uniqueAssignees];
 }
