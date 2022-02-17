@@ -319,52 +319,51 @@ function debounce(func, delay) {
   };
 }
 
-async function autoComplete(searchInput) {
+async function fetchMembers(searchInput) {
   try {
     const response = await fetch(`${API_BASE_URL}/members`);
     const data = await response.json();
-    removeAssignee();
-    if (searchInput !== '') {
+    clearSuggestionList();
+    if (searchInput.trim() !== '') {
       const matches = data.members.filter((task) => {
         if (task.username) {
-          clearUserlist();
+          clearUserNotFound();
           return task.username
             .toLowerCase()
-            .startsWith(searchInput.toLowerCase());
+            .includes(searchInput.toLowerCase());
         }
       });
       if (searchInput != '' && !matches.length) {
         const userName = document.createElement('small');
-        userName.classList.add('user-list');
-        clearUserlist();
+        userName.classList.add('suggestion-list');
+        clearUserNotFound();
         userName.innerText = 'User not found';
         const listItems = document.getElementById('assigneeInput');
         listItems.appendChild(userName);
       }
-      assigneeHTML(matches);
+      createSuggestionsList(matches);
     }
   } catch {
     return;
   }
 }
 
-function clearUserlist() {
-  const userList = document.querySelectorAll('.user-list');
-  userList.forEach((user) => {
-    user.remove();
+function clearUserNotFound() {
+  const suggestedList = document.querySelectorAll('.suggestion-list');
+  suggestedList.forEach((suggestion) => {
+    suggestion.remove();
   });
 }
 
-function assigneeHTML(matches) {
+function createSuggestionsList(matches) {
   const listItems = document.getElementById('list-items');
   if (matches.length) {
-    const searchList = getUniqueAssignees(matches);
-    searchList.map((list) => {
+    matches.map(({ username }) => {
       const listItem = document.createElement('p');
       listItem.classList.add('list-item');
       listItem.style.cursor = 'pointer';
-      listItem.setAttribute('onclick', "displayAssignee('" + list + "')");
-      listItem.innerText = list;
+      listItem.setAttribute('onclick', `displayAssignee('${username}')`);
+      listItem.innerText = username;
       listItems.appendChild(listItem);
     });
   }
@@ -372,25 +371,17 @@ function assigneeHTML(matches) {
 
 function displayAssignee(assignee) {
   assigneeEl.value = assignee;
-  removeAssignee();
+  clearSuggestionList();
 }
 
-function removeAssignee() {
+function clearSuggestionList() {
   const assignees = document.querySelectorAll('.list-item');
   assignees.forEach((assignee) => {
     assignee.remove();
   });
 }
 
-function getUniqueAssignees(matches) {
-  const uniqueAssignees = new Set();
-  matches.map((match) => {
-    uniqueAssignees.add(match.username);
-  });
-  return [...uniqueAssignees];
-}
-
 assigneeEl.addEventListener(
   'input',
-  debounce((event) => autoComplete(event.target.value), 500),
+  debounce((event) => fetchMembers(event.target.value), 500),
 );

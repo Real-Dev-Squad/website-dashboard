@@ -250,8 +250,8 @@ footer {
   background-color: #ddd;
 }
 
-.user-list {
-  margin-top: 0.5rem;
+.suggestion-list {
+  margin: 0.2rem;
   color: rgb(255, 92, 92);
-  font-size: 1rem;
+  font-size: 0.75rem;
 }
