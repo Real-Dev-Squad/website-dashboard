@@ -6,7 +6,8 @@
   "scripts": {
     "check": "prettier --check .",
     "fix": "prettier --write .",
-    "test": "node test.js"
+    "test": "node test.js",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
   },
   "dependencies": {
     "puppeteer": "^12.0.1",
-    "puppeteer-core": "^12.0.1"
+    "puppeteer-core": "^12.0.1",
+    "express": "^4.17.1"
   }
 }

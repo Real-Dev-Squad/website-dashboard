@@ -9,7 +9,7 @@ let config = {
 
 puppeteer.launch(config.launchOptions).then(async (browser) => {
   const page = await browser.newPage();
-  await page.goto('https://dashboard.realdevsquad.com/task/create.html');
+  await page.goto('https://dashboard.realdevsquad.com/src/task/index.html');
   await page.type('#title', 'Testing', { delay: 1000 });
   await page.click('#group', { clickCount: 1 });
   await page.click('#submit', { clickCount: 1 });
