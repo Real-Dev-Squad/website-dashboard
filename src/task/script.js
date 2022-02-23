@@ -307,13 +307,13 @@ document.getElementById('visibity-hidden').classList.remove('visibity-hidden');
 const assigneeEl = document.getElementById('assignee');
 
 function debounce(func, delay) {
-  let searchDelay;
+  let timerId;
   return (...args) => {
-    if (searchDelay) {
-      clearTimeout(searchDelay);
+    if (timerId) {
+      clearTimeout(timerId);
     }
 
-    searchDelay = setTimeout(() => {
+    timerId = setTimeout(() => {
       func(...args);
     }, delay);
   };
@@ -334,12 +334,11 @@ async function fetchMembers(searchInput) {
         }
       });
       if (searchInput != '' && !matches.length) {
-        const userName = document.createElement('small');
-        userName.classList.add('suggestion-list');
-        clearUserNotFound();
-        userName.innerText = 'User not found';
-        const listItems = document.getElementById('assigneeInput');
-        listItems.appendChild(userName);
+        const unknownUser = document.createElement('small');
+        unknownUser.classList.add('unknownUsers-list');
+        unknownUser.innerText = 'User not found';
+        const assigneeInput = document.getElementById('assigneeInput');
+        assigneeInput.appendChild(unknownUser);
       }
       createSuggestionsList(matches);
     }
@@ -349,7 +348,7 @@ async function fetchMembers(searchInput) {
 }
 
 function clearUserNotFound() {
-  const suggestedList = document.querySelectorAll('.suggestion-list');
+  const suggestedList = document.querySelectorAll('.unknownUsers-list');
   suggestedList.forEach((suggestion) => {
     suggestion.remove();
   });
@@ -362,22 +361,22 @@ function createSuggestionsList(matches) {
       const listItem = document.createElement('p');
       listItem.classList.add('list-item');
       listItem.style.cursor = 'pointer';
-      listItem.setAttribute('onclick', `displayAssignee('${username}')`);
+      listItem.setAttribute('onclick', `setAssignee('${username}')`);
       listItem.innerText = username;
       listItems.appendChild(listItem);
     });
   }
 }
 
-function displayAssignee(assignee) {
+function setAssignee(assignee) {
   assigneeEl.value = assignee;
   clearSuggestionList();
 }
 
 function clearSuggestionList() {
-  const assignees = document.querySelectorAll('.list-item');
-  assignees.forEach((assignee) => {
-    assignee.remove();
+  const userNames = document.querySelectorAll('.list-item');
+  userNames.forEach((user) => {
+    user.remove();
   });
 }
 
