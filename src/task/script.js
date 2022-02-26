@@ -303,3 +303,84 @@ function handleStatusChange(event = { target: { value: 'AVAILABLE' } }) {
 }
 
 document.getElementById('visibity-hidden').classList.remove('visibity-hidden');
+
+const assigneeEl = document.getElementById('assignee');
+
+function debounce(func, delay) {
+  let timerId;
+  return (...args) => {
+    if (timerId) {
+      clearTimeout(timerId);
+    }
+
+    timerId = setTimeout(() => {
+      func(...args);
+    }, delay);
+  };
+}
+
+async function fetchMembers(searchInput) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/members`);
+    const data = await response.json();
+    clearSuggestionList();
+    if (searchInput.trim() !== '') {
+      const matches = data.members.filter((task) => {
+        if (task.username) {
+          clearUserNotFound();
+          return task.username
+            .toLowerCase()
+            .includes(searchInput.toLowerCase());
+        }
+      });
+      if (searchInput != '' && !matches.length) {
+        const unknownUser = document.createElement('small');
+        unknownUser.classList.add('unknownUsers-list');
+        unknownUser.innerText = 'User not found';
+        const assigneeInput = document.getElementById('assigneeInput');
+        assigneeInput.appendChild(unknownUser);
+      }
+      createSuggestionsList(matches);
+    }
+  } catch {
+    return;
+  }
+}
+
+function clearUserNotFound() {
+  const suggestedList = document.querySelectorAll('.unknownUsers-list');
+  suggestedList.forEach((suggestion) => {
+    suggestion.remove();
+  });
+}
+
+function createSuggestionsList(matches) {
+  const listItems = document.getElementById('list-items');
+  if (matches.length) {
+    matches.map(({ username }) => {
+      const listItem = document.createElement('p');
+      listItem.classList.add('list-item');
+      listItem.style.cursor = 'pointer';
+      listItem.setAttribute('onclick', `setAssignee('${username}')`);
+      listItem.innerText = username;
+      listItems.appendChild(listItem);
+    });
+  }
+}
+
+function setAssignee(assignee) {
+  assigneeEl.value = assignee;
+  clearSuggestionList();
+}
+
+function clearSuggestionList() {
+  const userNames = document.querySelectorAll('.list-item');
+  userNames.forEach((user) => {
+    user.remove();
+  });
+}
+
+assigneeEl.addEventListener(
+  'input',
+  debounce((event) => fetchMembers(event.target.value), 500),
+);

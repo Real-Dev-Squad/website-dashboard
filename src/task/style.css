@@ -213,3 +213,45 @@ footer {
 .inputBox label .edit-button.edit-button__active {
   opacity: 100%;
 }
+
+#assigneeInput {
+  position: relative;
+}
+
+#list-items {
+  width: 100%;
+  margin-top: 2rem;
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99;
+  top: 50%;
+  left: 0%;
+  right: 0;
+  border-radius: 5px;
+  background-color: #fff;
+  box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.list-item {
+  text-align: left;
+  padding: 1rem 0.5rem;
+  font-size: 1rem;
+  border-bottom: 1px solid #d4d4d4;
+  margin: 0;
+}
+
+#list-items:nth-last-child() {
+  border-bottom: 0;
+}
+
+.list-item:hover {
+  background-color: #ddd;
+}
+
+.unknownUsers-list {
+  margin: 0.2rem;
+  color: rgb(255, 92, 92);
+  font-size: 0.75rem;
+}
