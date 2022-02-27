@@ -1,16 +1,7 @@
-const API_BASE_URL = 'https://api.realdevsquad.com';
+const API_BASE_URL = 'http://localhost:8000';
 
 async function getProfileDiffs() {
   try {
-    const userResponse = await fetch(`${API_BASE_URL}/users`, {
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-        'Content-type': 'application/json',
-      },
-    });
-
-    const { users } = await userResponse.json();
     const profileDiffsResponse = await fetch(`${API_BASE_URL}/profileDiffs`, {
       method: 'GET',
       credentials: 'include',
@@ -20,7 +11,7 @@ async function getProfileDiffs() {
     });
 
     const { profileDiffs } = await profileDiffsResponse.json();
-    return { users, profileDiffs };
+    return { profileDiffs };
   } catch (error) {
     alert(`Error: ${error}`);
   }
@@ -125,8 +116,8 @@ function createCard({ oldData, newData, username, profileDiffId }) {
           id: profileDiffId,
           first_name: newData.first_name || '',
           last_name: newData.last_name || '',
-          email: newData.email || '',
-          phone: newData.phone || '',
+          /* email: newData.email || '',
+          phone: newData.phone || '', */
           yoe: newData.yoe || NaN,
           company: newData.company || '',
           designation: newData.designation || '',
@@ -137,6 +128,8 @@ function createCard({ oldData, newData, username, profileDiffId }) {
           website: newData.website || '',
         }),
       });
+
+      console.log(response);
 
       if (response.ok) {
         alert('User Data Approved !!!');
@@ -207,8 +200,8 @@ function wantedData(data) {
     id,
     first_name,
     last_name,
-    email,
-    phone,
+    /*  email,
+    phone, */
     yoe,
     company,
     designation,
@@ -222,8 +215,8 @@ function wantedData(data) {
     id,
     first_name,
     last_name,
-    email,
-    phone,
+    /*   email,
+    phone, */
     yoe,
     company,
     designation,
@@ -236,20 +229,28 @@ function wantedData(data) {
 }
 
 async function createPage() {
-  const { users, profileDiffs } = await getProfileDiffs();
-  if (profileDiffs.length === 0) {
+  const { profileDiffs } = await getProfileDiffs();
+  if (profileDiffs === undefined || profileDiffs.length === 0) {
     document.getElementById('loader').innerHTML = 'No Profile Diffs !!!';
+  } else {
+    profileDiffs.forEach(async (profileDiff) => {
+      const { username } = profileDiff;
+      const userResponse = await fetch(`${API_BASE_URL}/users/${username}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-type': 'application/json',
+        },
+      });
+
+      const { user } = await userResponse.json();
+
+      const { id: userId, ...oldData } = wantedData(user);
+      const { id: profileDiffId, ...newData } = wantedData(profileDiff);
+
+      createCard({ oldData, newData, username, profileDiffId });
+    });
   }
-
-  profileDiffs.forEach((profileDiff) => {
-    const { username } = profileDiff;
-    const user = users.find((user) => user.username === username);
-
-    const { id: userId, ...oldData } = wantedData(user);
-    const { id: profileDiffId, ...newData } = wantedData(profileDiff);
-
-    createCard({ oldData, newData, username, profileDiffId });
-  });
 }
 
 createPage();
