@@ -129,8 +129,6 @@ function createCard({ oldData, newData, username, profileDiffId }) {
         }),
       });
 
-      console.log(response);
-
       if (response.ok) {
         alert('User Data Approved !!!');
         window.location.reload();
@@ -229,27 +227,41 @@ function wantedData(data) {
 }
 
 async function createPage() {
-  const { profileDiffs } = await getProfileDiffs();
-  if (profileDiffs === undefined || profileDiffs.length === 0) {
-    document.getElementById('loader').innerHTML = 'No Profile Diffs !!!';
-  } else {
-    profileDiffs.forEach(async (profileDiff) => {
-      const { username } = profileDiff;
-      const userResponse = await fetch(`${API_BASE_URL}/users/${username}`, {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'Content-type': 'application/json',
-        },
+  const res = await fetch(`${API_BASE_URL}/users/self`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: {
+      'Content-type': 'application/json',
+    },
+  });
+
+  const self_user = await res.json();
+
+  if (self_user?.roles['super-user']) {
+    const { profileDiffs } = await getProfileDiffs();
+    if (profileDiffs === undefined || profileDiffs.length === 0) {
+      document.getElementById('loader').innerHTML = 'No Profile Diffs !!!';
+    } else {
+      profileDiffs.forEach(async (profileDiff) => {
+        const { username } = profileDiff;
+        const userResponse = await fetch(`${API_BASE_URL}/users/${username}`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-type': 'application/json',
+          },
+        });
+
+        const { user } = await userResponse.json();
+
+        const { id: userId, ...oldData } = wantedData(user);
+        const { id: profileDiffId, ...newData } = wantedData(profileDiff);
+
+        createCard({ oldData, newData, username, profileDiffId });
       });
-
-      const { user } = await userResponse.json();
-
-      const { id: userId, ...oldData } = wantedData(user);
-      const { id: profileDiffId, ...newData } = wantedData(profileDiff);
-
-      createCard({ oldData, newData, username, profileDiffId });
-    });
+    }
+  } else {
+    document.getElementById('loader').innerHTML = 'You are not authorized !';
   }
 }
 
