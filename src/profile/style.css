@@ -27,7 +27,7 @@ body {
 nav {
   display: flex;
   justify-content: center;
-  margin-top: 2rem;
+  margin-top: 32px;
   text-align: center;
 }
 
@@ -52,18 +52,18 @@ nav h1::before {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
+  gap: 16px;
 }
 
 .cardDiv {
   width: 80%;
-  padding: 0 3rem;
+  padding: 0 48px;
   display: flex;
   flex-direction: column;
 }
 
 .userNameContainer {
-  font-size: 1.5rem;
+  font-size: 24px;
   font-weight: 500;
 }
 
@@ -97,7 +97,7 @@ nav h1::before {
 .buttonsContainer {
   display: flex;
   justify-content: flex-end;
-  padding: 1rem;
+  padding: 16px;
   gap: 10px;
 }
 
@@ -107,7 +107,7 @@ nav h1::before {
   border-radius: 10px;
   background-color: #38a127;
   color: white;
-  font-size: 1rem;
+  font-size: 16px;
   cursor: pointer;
 }
 
@@ -133,11 +133,11 @@ nav h1::before {
 
 footer {
   width: 100%;
-  padding: 0.5rem;
+  padding: 8px;
 }
 
 footer .info-repo {
-  font-weight: bold;
+  font-weight: 100;
   text-align: center;
 }
 
@@ -145,7 +145,7 @@ footer .info-repo {
 
 @media screen and (max-width: 640px) {
   .cardDiv {
-    padding: 1rem;
+    padding: 16px;
     width: 100%;
   }
 

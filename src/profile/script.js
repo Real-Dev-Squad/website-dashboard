@@ -116,8 +116,6 @@ function createCard({ oldData, newData, username, profileDiffId }) {
           id: profileDiffId,
           first_name: newData.first_name || '',
           last_name: newData.last_name || '',
-          /* email: newData.email || '',
-          phone: newData.phone || '', */
           yoe: newData.yoe || NaN,
           company: newData.company || '',
           designation: newData.designation || '',
@@ -133,7 +131,6 @@ function createCard({ oldData, newData, username, profileDiffId }) {
         alert('User Data Approved !!!');
         window.location.reload();
       } else {
-        console.log('1');
         alert('Something went wrong. Please check console errors.');
       }
     } catch (error) {
@@ -198,8 +195,6 @@ function wantedData(data) {
     id,
     first_name,
     last_name,
-    /*  email,
-    phone, */
     yoe,
     company,
     designation,
