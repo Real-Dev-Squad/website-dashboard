@@ -37,11 +37,11 @@
         <div class="radioButtons">
           <div class="feature" onclick="hideUnusedField('assignee');">
             <label for="feature">Feature</label>
-            <input required class="input" type="radio" id="feature" name="type" value="feature" checked />
+            <input required class="input field" type="radio" id="feature" name="type" value="feature" checked />
           </div>
           <div class="group" onclick="hideUnusedField('participants');">
             <label for="group">Group</label>
-            <input required class="input" type="radio" id="group" name="type" value="group" />
+            <input required class="input field" type="radio" id="group" name="type" value="group" />
           </div>
           <span class="required">*</span>
         </div>
@@ -61,9 +61,14 @@
         </select>
       </div>
       <div class="inputBox class" id="assigneeInput">
-        <label for="assignee hidden">Assignee:<span class="required">*</span></label>
+        <label for="assignee hidden" class="assignee">Assignee:<span class="required">*</span></label>
         <input type="text" placeholder="eg: Marcus" id="assignee" name="assignee" autocomplete="off" />
         <div id="list-items"></div>
+      </div>
+      <div class="inputBox" id="participantsInput">
+        <label for="participants" class="editable">Participants:</label>
+        <input type="text" placeholder="Comma separated participants username" id="participants" name="participants"
+          class="notEditing" />
       </div>
       <div id="endsOnWrapper">
         <div class="inputBox">
@@ -72,11 +77,6 @@
           </label>
           <input class="input" type="date" name="endsOn" id="endsOn" onchange="handleDateChange(event);" />
         </div>
-      </div>
-      <div class="inputBox" id="participantsInput">
-        <label for="participants" class="editable">Participants:</label>
-        <input type="text" placeholder="Comma separated participants username" id="participants" name="participants"
-          class="notEditing" />
       </div>
       <div class="inputBox">
         <label for="percentCompleted" class="editable">Percent Completed:</label>
