@@ -32,7 +32,7 @@ function formatPropertyField(property) {
     .join(' ');
 }
 
-function createCard({ oldData, newData, username, profileDiffId }) {
+function createCard({ oldData, newData, userId, username, profileDiffId }) {
   const cardContainer = createCardComponent({
     className: 'cardDiv',
     tagName: 'div',
@@ -106,7 +106,7 @@ function createCard({ oldData, newData, username, profileDiffId }) {
   approveBtn.onclick = async () => {
     document.getElementById('cover-spin').style.display = 'block';
     try {
-      const response = await fetch(`${API_BASE_URL}/users/${username}`, {
+      const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -124,6 +124,7 @@ function createCard({ oldData, newData, username, profileDiffId }) {
           twitter_id: newData.twitter_id || '',
           instagram_id: newData.instagram_id || '',
           website: newData.website || '',
+          message: '',
         }),
       });
 
@@ -151,6 +152,7 @@ function createCard({ oldData, newData, username, profileDiffId }) {
         credentials: 'include',
         body: JSON.stringify({
           profileDiffId,
+          message: '',
         }),
       });
 
@@ -238,21 +240,25 @@ async function createPage() {
       document.getElementById('loader').innerHTML = 'No Profile Diffs !!!';
     } else {
       profileDiffs.forEach(async (profileDiff) => {
-        const { username } = profileDiff;
-        const userResponse = await fetch(`${API_BASE_URL}/users/${username}`, {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-type': 'application/json',
+        const { userId } = profileDiff;
+        const userResponse = await fetch(
+          `${API_BASE_URL}/users/userId/${userId}`,
+          {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              'Content-type': 'application/json',
+            },
           },
-        });
+        );
 
         const { user } = await userResponse.json();
+        const { username } = user;
 
-        const { id: userId, ...oldData } = wantedData(user);
+        const { id, ...oldData } = wantedData(user);
         const { id: profileDiffId, ...newData } = wantedData(profileDiff);
 
-        createCard({ oldData, newData, username, profileDiffId });
+        createCard({ oldData, newData, userId, username, profileDiffId });
       });
     }
   } else {
