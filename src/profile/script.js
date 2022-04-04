@@ -105,7 +105,7 @@ function createCard({ oldData, newData, userId, username, profileDiffId }) {
 
   approveBtn.onclick = async () => {
     const reason = prompt('Reason for Approval');
-    if(reason != NULL){
+    if (reason != NULL) {
       document.getElementById('cover-spin').style.display = 'block';
       try {
         const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
@@ -146,7 +146,7 @@ function createCard({ oldData, newData, userId, username, profileDiffId }) {
 
   rejectBtn.onclick = async () => {
     const reason = prompt('Reason for Rejection');
-    if(reason != NULL){
+    if (reason != NULL) {
       document.getElementById('cover-spin').style.display = 'block';
       try {
         const response = await fetch(`${API_BASE_URL}/users/rejectDiff`, {
