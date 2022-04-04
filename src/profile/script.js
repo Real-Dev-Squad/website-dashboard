@@ -104,68 +104,74 @@ function createCard({ oldData, newData, userId, username, profileDiffId }) {
   rejectBtn.innerText = 'Reject';
 
   approveBtn.onclick = async () => {
-    document.getElementById('cover-spin').style.display = 'block';
-    try {
-      const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          id: profileDiffId,
-          first_name: newData.first_name || '',
-          last_name: newData.last_name || '',
-          yoe: newData.yoe || NaN,
-          company: newData.company || '',
-          designation: newData.designation || '',
-          github_id: newData.github_id || '',
-          linkedin_id: newData.linkedin_id || '',
-          twitter_id: newData.twitter_id || '',
-          instagram_id: newData.instagram_id || '',
-          website: newData.website || '',
-          message: '',
-        }),
-      });
+    const reason = prompt('Reason for Approval');
+    if(reason != NULL){
+      document.getElementById('cover-spin').style.display = 'block';
+      try {
+        const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            id: profileDiffId,
+            first_name: newData.first_name || '',
+            last_name: newData.last_name || '',
+            yoe: newData.yoe || NaN,
+            company: newData.company || '',
+            designation: newData.designation || '',
+            github_id: newData.github_id || '',
+            linkedin_id: newData.linkedin_id || '',
+            twitter_id: newData.twitter_id || '',
+            instagram_id: newData.instagram_id || '',
+            website: newData.website || '',
+            message: reason,
+          }),
+        });
 
-      if (response.ok) {
-        alert('User Data Approved !!!');
-        window.location.reload();
-      } else {
+        if (response.ok) {
+          alert('User Data Approved !!!');
+          window.location.reload();
+        } else {
+          alert('Something went wrong. Please check console errors.');
+        }
+      } catch (error) {
         alert('Something went wrong. Please check console errors.');
+      } finally {
+        document.getElementById('cover-spin').style.display = 'none';
       }
-    } catch (error) {
-      alert('Something went wrong. Please check console errors.');
-    } finally {
-      document.getElementById('cover-spin').style.display = 'none';
     }
   };
 
   rejectBtn.onclick = async () => {
-    document.getElementById('cover-spin').style.display = 'block';
-    try {
-      const response = await fetch(`${API_BASE_URL}/users/rejectDiff`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          profileDiffId,
-          message: '',
-        }),
-      });
+    const reason = prompt('Reason for Rejection');
+    if(reason != NULL){
+      document.getElementById('cover-spin').style.display = 'block';
+      try {
+        const response = await fetch(`${API_BASE_URL}/users/rejectDiff`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            profileDiffId,
+            message: reason,
+          }),
+        });
 
-      if (response.ok) {
-        alert('User Data Rejected!!!');
-        window.location.reload();
-      } else {
+        if (response.ok) {
+          alert('User Data Rejected!!!');
+          window.location.reload();
+        } else {
+          alert('Something went wrong. Please check console errors.');
+        }
+      } catch (error) {
         alert('Something went wrong. Please check console errors.');
+      } finally {
+        document.getElementById('cover-spin').style.display = 'none';
       }
-    } catch (error) {
-      alert('Something went wrong. Please check console errors.');
-    } finally {
-      document.getElementById('cover-spin').style.display = 'none';
     }
   };
 
