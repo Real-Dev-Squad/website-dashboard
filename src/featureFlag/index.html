@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Feature Flag</title>
+
+    <script src="helper.js" async></script>
+    <script src="script.js" async></script>
+  </head>
+
+  <body>
+    <div class="wrapper">
+      <div class="header">
+        <select class="dropdown" name="flag" id="flag-dropdown">
+          <option selected hidden>Select Flag</option>
+        </select>
+
+        <div class="add-button">Add Flag</div>
+      </div>
+
+      <form class="form" id="flag-form">
+        <div class="field field--row">
+          <div class="text-input">
+            <div class="text-input__heading">Title</div>
+            <input
+              class="text-input__field"
+              type="text"
+              name="title"
+              required
+            />
+          </div>
+
+          <div class="checkbox">
+            <label class="checkbox__label" for="toggle-box">Enabled</label>
+            <input
+              class="checkbox__tick-box checkbox__tick-box--reversed"
+              type="checkbox"
+              name="enabled"
+              id="toggle-box"
+              checked
+            />
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field__heading">Permission by Role</div>
+
+          <div class="checkbox">
+            <input
+              class="checkbox__tick-box"
+              type="checkbox"
+              name="role"
+              id="checkbox-super_user"
+              value="super_user"
+            />
+            <label class="checkbox__label" for="checkbox-super_user"
+              >Super Users</label
+            >
+          </div>
+
+          <div class="checkbox">
+            <input
+              class="checkbox__tick-box"
+              type="checkbox"
+              name="role"
+              id="checkbox-member"
+              value="member"
+            />
+            <label class="checkbox__label" for="checkbox-member">Members</label>
+          </div>
+
+          <div class="checkbox">
+            <input
+              class="checkbox__tick-box"
+              type="checkbox"
+              name="role"
+              id="checkbox-no_role"
+              value="no_role"
+            />
+            <label class="checkbox__label" for="checkbox-no_role"
+              >No Role</label
+            >
+          </div>
+        </div>
+
+        <button type="submit" class="submit-button">Submit</button>
+      </form>
+    </div>
+  </body>
+</html>

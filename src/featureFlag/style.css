@@ -1,0 +1,110 @@
+* {
+  list-style: none;
+  text-decoration: none;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Open Sans', sans-serif;
+}
+
+:root {
+  --primary-color: #1d1283;
+  --secondary-color: #e30062;
+}
+
+body {
+  display: flex;
+  align-items: center;
+}
+
+.wrapper {
+  width: clamp(300px, 80%, 800px);
+  box-shadow: 0 0 15px -7px rgba(13, 22, 37, 0.65);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  font: 700 14px Roboto, sans-serif;
+  border-bottom: 2px solid var(--secondary-color);
+  padding: 20px 10px;
+}
+
+.dropdown {
+  width: clamp(150px, 30%, 200px);
+  border-radius: 4px;
+}
+
+.add-button {
+  background-color: var(--primary-color);
+  border: 2px solid black;
+  border-radius: 4px;
+  user-select: none;
+  color: white;
+  padding: 8px;
+}
+
+.add-button:hover {
+  color: #49a82e;
+}
+
+.add-button--active {
+  color: #49a82e;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+/* Form */
+
+.form {
+  margin: 20px 0;
+  user-select: none;
+  padding: 0 10px;
+}
+
+.field {
+  margin-bottom: 40px;
+}
+
+.field--row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.field__heading {
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.text-input__field {
+  margin-top: 8px;
+  padding: 4px;
+}
+
+.checkbox {
+  padding: 4px 0;
+  display: flex;
+  align-items: center;
+}
+
+.checkbox__tick-box {
+  margin-right: 4px;
+  height: 20px;
+  width: 20px;
+}
+.checkbox__tick-box--reversed {
+  margin-left: 20px;
+  margin-right: 0px;
+}
+
+.submit-button {
+  padding: 8px;
+}
+
+@media screen and (max-width: 480px) {
+  .field--row {
+    flex-direction: column;
+  }
+}
