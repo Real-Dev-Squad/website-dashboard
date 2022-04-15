@@ -1,15 +1,67 @@
 const API_BASE_URL = window.API_BASE_URL;
 
+const getRemainingDays = (selectedDateInString) => {
+  const selectedDate = new Date(selectedDateInString);
+  const currentDate = new Date(getFutureDateString(0));
+  const remainingDays = Math.ceil(
+    Math.abs(selectedDate - currentDate) / (1000 * 3600 * 24),
+  );
+  return remainingDays;
+};
+
+const getFutureDateString = (numberOfDays = 14) => {
+  const futureDateInMillis = new Date().setDate(
+    new Date().getDate() + numberOfDays,
+  );
+  const futureDateStringArray = new Date(futureDateInMillis)
+    .toLocaleDateString('en-IN')
+    .split('/');
+  if (futureDateStringArray[0].length === 1) {
+    futureDateStringArray[0] = '0' + futureDateStringArray[0];
+  }
+  if (futureDateStringArray[1].length === 1) {
+    futureDateStringArray[1] = '0' + futureDateStringArray[1];
+  }
+  const futureDateString = futureDateStringArray.reverse().join('-');
+  return futureDateString;
+};
+
+const getDaysInEpoch = (remainingDays) => {
+  const daysInSecond = new Date() / 1000 + remainingDays * 86400;
+  return daysInSecond;
+};
+
+const setDefaultDates = () => {
+  if (document.getElementById('status').value === 'ASSIGNED') {
+    const endsOn = document.getElementById('endsOn');
+    endsOn.value = getFutureDateString(14);
+    endsOn.min = getFutureDateString(1);
+    endsOn.max = getFutureDateString(365);
+    const previewDate = document.getElementById('remainingDays').children[0];
+    previewDate.innerHTML = getRemainingDays(getFutureDateString(14));
+  } else {
+    handleStatusChange();
+  }
+};
+setDefaultDates();
+
 function getObjectOfFormData(formId) {
   const object = {};
   const data = new FormData(formId);
+  const isStatusAssigned =
+    document.getElementById('status').value === 'ASSIGNED';
 
   data.forEach((value, key) => {
     if (!Reflect.has(object, key)) {
-      if (key === 'startedOn' || key === 'endsOn') {
-        let date = new Date(value);
-        let myEpoch = String(date.getTime() / 1000.0);
-        value = myEpoch;
+      if (key === 'endsOn') {
+        const endsOn = document.getElementById('endsOn');
+        if (isStatusAssigned && endsOn.validity.valid) {
+          value = getDaysInEpoch(getRemainingDays(endsOn.value));
+        } else {
+          value = isStatusAssigned
+            ? getDaysInEpoch(getRemainingDays(getFutureDateString()))
+            : null;
+        }
       }
       object[key] = value;
       return;
@@ -19,14 +71,9 @@ function getObjectOfFormData(formId) {
     }
     object[key].push(value);
   });
-
   return object;
 }
 
-/**
- * Hide/shows the loader of the form submit button
- * @param {Boolean} show whether to show loader or hide
- */
 const showSubmitLoader = (show = true) => {
   const loadingWrapper = document.getElementById('submit-loader');
   if (show) {
@@ -38,58 +85,7 @@ const showSubmitLoader = (show = true) => {
   }
 };
 
-const startedDate = document.getElementById('startedOn');
-const endDate = document.getElementById('endsOn');
 const isNoteworthy = document.getElementById('isNoteworthy');
-
-const setEndDate = (startDate) => {
-  const startTime = new Date(startDate);
-  const startTimeArray = startTime.toLocaleDateString().split('/');
-
-  const endTime = new Date(
-    startTimeArray[2],
-    +startTimeArray[0] - 1,
-    +startTimeArray[1] + 7,
-  );
-  endTimeArray = endTime.toLocaleDateString().split('/');
-  endDate.value = `${endTimeArray[2]}-${endTimeArray[0].padStart(
-    2,
-    '0',
-  )}-${endTimeArray[1].padStart(2, '0')}`;
-  if (endDate.parentElement.querySelector('em'))
-    endDate.parentElement.querySelector('em').innerHTML = `${
-      endTimeArray[2]
-    }-${endTimeArray[0].padStart(2, '0')}-${endTimeArray[1].padStart(2, '0')}`;
-};
-
-endDate.addEventListener('change', (event) => {
-  if (event.target.value) {
-    const remainingDays = document.getElementById('remainingDays').children[0];
-    if (
-      startedDate.value > endDate.value ||
-      startedDate.value === endDate.value
-    ) {
-      alert('End Date should be greater than the Start Date');
-      endDate.value = `${startedDate.value.slice(
-        0,
-        startedDate.value.length - 1,
-      )}${+startedDate.value[startedDate.value.length - 1] + 1}`;
-      remainingDays.innerHTML = 1;
-    }
-
-    const startTime = new Date(startedDate.value);
-    const endTime = new Date(endDate.value);
-    remainingDays.innerHTML = Math.ceil(
-      (endTime - startTime) / (1000 * 60 * 60 * 24),
-    );
-  }
-});
-
-startedDate.addEventListener('change', function (event) {
-  if (event.target.value) {
-    setEndDate(event.target.value);
-  }
-});
 
 isNoteworthy.addEventListener('click', (event) => {
   if (event.target.checked) {
@@ -108,7 +104,6 @@ isNoteworthy.addEventListener('click', (event) => {
 taskForm.onsubmit = async (e) => {
   e.preventDefault();
   showSubmitLoader();
-
   const {
     title,
     purpose,
@@ -116,7 +111,6 @@ taskForm.onsubmit = async (e) => {
     type,
     links,
     endsOn,
-    startedOn,
     status,
     assignee,
     participants,
@@ -128,14 +122,20 @@ taskForm.onsubmit = async (e) => {
     isNoteworthy,
   } = getObjectOfFormData(taskForm);
 
+  if (status === 'ASSIGNED' && !assignee.trim()) {
+    alert('Assignee can not be empty');
+    showSubmitLoader(false);
+    document.getElementById('assignee').focus();
+    return;
+  }
+
   const dataToBeSent = {
     title,
     purpose,
     featureUrl,
     type,
     links: Array.isArray(links) ? links : [links],
-    endsOn: Number(endsOn),
-    startedOn: Number(startedOn),
+    endsOn,
     status,
     percentCompleted: Number(percentCompleted),
     completionAward: {
@@ -148,6 +148,18 @@ taskForm.onsubmit = async (e) => {
     },
     isNoteworthy: isNoteworthy == 'on',
   };
+
+  if (status === 'ASSIGNED') {
+    dataToBeSent.startedOn = new Date() / 1000;
+  }
+
+  if (!endsOn) {
+    delete dataToBeSent.endsOn;
+  }
+
+  if (status === 'AVIALABLE') {
+    delete dataToBeSent.endsOn;
+  }
 
   if (dataToBeSent.type == 'feature') {
     dataToBeSent.assignee = assignee.trim() ? assignee : ' ';
@@ -189,7 +201,9 @@ taskForm.onsubmit = async (e) => {
     const result = await response.json();
 
     alert(result.message);
-    window.location.reload(true);
+    if (response.ok) {
+      window.location.reload(true);
+    }
   } catch (error) {
     alert(`Error: ${error}`);
   } finally {
@@ -205,9 +219,8 @@ let addEventToInput = (input, event, fn) => {
 
 let stateHandle = () => {
   const arrInput = Object.values(input);
-
-  let results = arrInput.filter(function (item, index, array) {
-    if (item.value === '') {
+  let results = arrInput.filter(function (item) {
+    if (item.value === '' && item.name !== 'endsOn') {
       return true;
     }
   });
@@ -238,52 +251,136 @@ let hideUnusedField = (radio) => {
 };
 
 const input = document.getElementsByClassName('input');
-
 const button = document.getElementById('submit');
-button.disabled = true; //setting button state to disabled
+button.disabled = true;
 addEventToInput(input, 'change', stateHandle);
 
-const currentDate = new Date();
-const dd = String(currentDate.getDate()).padStart(2, '0');
-const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
-const yyyy = currentDate.getFullYear();
+(() => {
+  const edits = document.querySelectorAll('.inputBox label.editable');
+  const inputs = document.querySelectorAll('.notEditing');
+  edits.forEach((edit, index) => {
+    const preview = document.createElement('em');
+    preview.innerHTML = ' ' + edit.nextElementSibling.value;
+    preview.classList.add('preview');
+    index === 0
+      ? (preview.style = 'text-align:left; margin-top:.5em')
+      : (preview.style = 'margin: 0;');
+    index === 0 ? edit.parentElement.append(preview) : edit.append(preview);
 
-const today = `${yyyy}-${mm}-${dd}`;
-startedDate.value = today;
-setEndDate(currentDate);
+    const element = document.createElement('span');
+    element.innerHTML = 'Edit';
+    element.classList.add('edit-button');
 
-const edits = document.querySelectorAll('.inputBox label.editable');
-const inputs = document.querySelectorAll('.notEditing');
-
-edits.forEach((edit, index) => {
-  const preview = document.createElement('em');
-  preview.innerHTML = ' ' + edit.nextElementSibling.value;
-  preview.classList.add('preview');
-  index === 0
-    ? (preview.style = 'text-align:left; margin-top:.5em')
-    : (preview.style = 'margin: 0;');
-  index === 0 ? edit.parentElement.append(preview) : edit.append(preview);
-
-  const element = document.createElement('span');
-  element.innerHTML = 'Edit';
-  element.classList.add('edit-button');
-
-  element.addEventListener('click', (event) => {
-    event.target.classList.toggle('edit-button__active');
-    preview.classList.toggle('notEditing');
-    const input = event.target.parentElement.nextElementSibling;
-    input.classList.toggle('notEditing');
-    preview.innerHTML = ' ' + input.value;
+    element.addEventListener('click', (event) => {
+      event.target.classList.toggle('edit-button__active');
+      preview.classList.toggle('notEditing');
+      const input = event.target.parentElement.nextElementSibling;
+      input.classList.toggle('notEditing');
+      preview.innerHTML = ' ' + input.value;
+    });
+    edit.append(element);
   });
-  edit.append(element);
-});
+})();
 
-function handleDateChange(event) {
+const handleDateChange = (event) => {
   const input = event.target;
-  const preview = input.previousElementSibling.children[1];
-  const edit = input.previousElementSibling.children[2];
-  edit.classList.toggle('edit-button__active');
-  preview.classList.toggle('notEditing');
-  input.classList.toggle('notEditing');
-  preview.innerHTML = ' ' + input.value;
+  const previewDate = document.getElementById('remainingDays').children[0];
+  previewDate.innerHTML = !!input.value ? getRemainingDays(input.value) : 14;
+};
+
+function handleStatusChange(event = { target: { value: 'AVAILABLE' } }) {
+  const assignee = document.getElementById('assigneeInput');
+  const endsOnWrapper = document.getElementById('endsOnWrapper');
+  if (event.target.value === 'ASSIGNED') {
+    setDefaultDates();
+    assignee.style.display = '';
+    endsOnWrapper.style.display = '';
+  } else {
+    assignee.style.display = 'none';
+    endsOnWrapper.style.display = 'none';
+    document.getElementById('endsOn').value = '';
+  }
 }
+
+document.getElementById('visibity-hidden').classList.remove('visibity-hidden');
+
+const assigneeEl = document.getElementById('assignee');
+
+function debounce(func, delay) {
+  let timerId;
+  return (...args) => {
+    if (timerId) {
+      clearTimeout(timerId);
+    }
+
+    timerId = setTimeout(() => {
+      func(...args);
+    }, delay);
+  };
+}
+
+async function fetchMembers(searchInput) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/members`);
+    const data = await response.json();
+    clearSuggestionList();
+    if (searchInput.trim() !== '') {
+      const matches = data.members.filter((task) => {
+        if (task.username) {
+          clearUserNotFound();
+          return task.username
+            .toLowerCase()
+            .includes(searchInput.toLowerCase());
+        }
+      });
+      if (searchInput != '' && !matches.length) {
+        const unknownUser = document.createElement('small');
+        unknownUser.classList.add('unknownUsers-list');
+        unknownUser.innerText = 'User not found';
+        const assigneeInput = document.getElementById('assigneeInput');
+        assigneeInput.appendChild(unknownUser);
+      }
+      createSuggestionsList(matches);
+    }
+  } catch {
+    return;
+  }
+}
+
+function clearUserNotFound() {
+  const suggestedList = document.querySelectorAll('.unknownUsers-list');
+  suggestedList.forEach((suggestion) => {
+    suggestion.remove();
+  });
+}
+
+function createSuggestionsList(matches) {
+  const listItems = document.getElementById('list-items');
+  if (matches.length) {
+    matches.map(({ username }) => {
+      const listItem = document.createElement('p');
+      listItem.classList.add('list-item');
+      listItem.style.cursor = 'pointer';
+      listItem.setAttribute('onclick', `setAssignee('${username}')`);
+      listItem.innerText = username;
+      listItems.appendChild(listItem);
+    });
+  }
+}
+
+function setAssignee(assignee) {
+  assigneeEl.value = assignee;
+  clearSuggestionList();
+}
+
+function clearSuggestionList() {
+  const userNames = document.querySelectorAll('.list-item');
+  userNames.forEach((user) => {
+    user.remove();
+  });
+}
+
+assigneeEl.addEventListener(
+  'input',
+  debounce((event) => fetchMembers(event.target.value), 500),
+);
