@@ -96,7 +96,7 @@ body {
 }
 .checkbox__tick-box--reversed {
   margin-left: 20px;
-  margin-right: 0px;
+  margin-right: 0;
 }
 
 .submit-button {

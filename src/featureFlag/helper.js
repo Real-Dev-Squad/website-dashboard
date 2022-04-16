@@ -40,7 +40,7 @@ function customCreateElement({ type = 'div', attribute = {}, text = null }) {
 }
 
 async function fetchFlags() {
-  // const data = await fetch(API_BASE_URL + "/flag").then(res => res.josn());
+  // const data = await fetch(`${API_BASE_URL}/flag`).then(res => res.json());
   // return data.flags;
   return mockData;
 }
@@ -58,7 +58,6 @@ function renderFlags(flags) {
 }
 
 // Listeners
-
 function configureListeners() {
   handleAddFlagButtonClick();
 }
@@ -71,7 +70,6 @@ function handleAddFlagButtonClick() {
 }
 
 // Submit
-
 function getFlagFormData(form, applicationState) {
   const data = new FormData(form);
   const result = {};
