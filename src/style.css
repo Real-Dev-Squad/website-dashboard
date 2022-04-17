@@ -13,13 +13,10 @@ body {
   height: 100vh;
 }
 
-footer {
-  margin-top: auto;
-}
-
 #tasksNav {
   background-color: #1d1283;
-  height: 32px;
+  padding: 10px;
+  height: 40px;
 }
 
 #createTask {
@@ -29,12 +26,18 @@ footer {
   font-size: large;
 }
 
-.createTaskSection {
+.buttonSection {
   height: 80vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 20px;
 }
+
+button {
+  width: 250px;
+}
+
 .create-task-btn {
   color: black;
   font-weight: 500;
@@ -45,8 +48,33 @@ footer {
   padding: 10px 50px;
   cursor: pointer;
   transition: all 0.5s ease;
+  outline: none;
 }
 .create-task-btn:hover {
+  color: white;
+  background-color: #1d1283;
+  border: none;
+}
+
+/* profile section */
+.profileSection {
+  height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.profile-task-btn {
+  color: black;
+  font-weight: 500;
+  font-size: larger;
+  background-color: white;
+  border: 2px solid black;
+  border-radius: 5px;
+  padding: 10px 50px;
+  cursor: pointer;
+  transition: all 0.5s ease;
+}
+.profile-task-btn:hover {
   color: white;
   background-color: #1d1283;
   border: none;
