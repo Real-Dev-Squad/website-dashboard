@@ -9,7 +9,9 @@
 
 :root {
   --primary-color: #1d1283;
-  --secondary-color: #e30062;
+  --bg-color: rgb(243 242 255);
+  --text-grey-color: rgb(95, 95, 95);
+  --add-btn-color: #002e62;
 }
 
 body {
@@ -18,21 +20,26 @@ body {
 }
 
 .wrapper {
-  width: clamp(300px, 80%, 800px);
-  box-shadow: 0 0 15px -7px rgba(13, 22, 37, 0.65);
+  width: clamp(300px, 90%, 800px);
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   font: 700 14px Roboto, sans-serif;
-  border-bottom: 2px solid var(--secondary-color);
   padding: 20px 10px;
+  box-shadow: 0 8px 6px -6px rgb(0 0 0 / 65%);
+  background-color: var(--bg-color);
 }
 
 .dropdown {
+  background-color: rgb(255, 255, 255);
+  color: var(--text-grey-color);
+  font: 700 14px Roboto, sans-serif;
   width: clamp(150px, 30%, 200px);
   border-radius: 4px;
+  outline: none;
+  cursor: pointer;
 }
 
 .add-button {
@@ -50,9 +57,6 @@ body {
 
 .add-button--active {
   color: #49a82e;
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 4px;
 }
 
 /* Form */
@@ -64,13 +68,18 @@ body {
 }
 
 .field {
-  margin-bottom: 40px;
+  padding: 20px 0;
 }
 
 .field--row {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+}
+
+.field--end {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .field__heading {
@@ -100,11 +109,22 @@ body {
 }
 
 .submit-button {
+  color: var(--add-btn-color);
+  border: 2px solid var(--add-btn-color);
+  background-color: white;
+  border-radius: 6px;
+  font-weight: 900;
   padding: 8px;
+}
+
+.submit-button:hover {
+  color: white;
+  background-color: var(--add-btn-color);
 }
 
 @media screen and (max-width: 480px) {
   .field--row {
     flex-direction: column;
+    justify-content: space-between;
   }
 }
