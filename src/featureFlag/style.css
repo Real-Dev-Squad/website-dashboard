@@ -11,7 +11,7 @@
   --primary-color: #1d1283;
   --bg-color: rgb(243 242 255);
   --text-grey-color: rgb(95, 95, 95);
-  --add-btn-color: #002e62;
+  --add-btn-color: #94a0af;
 }
 
 body {
@@ -40,6 +40,7 @@ body {
   border-radius: 4px;
   outline: none;
   cursor: pointer;
+  padding: 8px;
 }
 
 .add-button {
@@ -68,7 +69,7 @@ body {
 }
 
 .field {
-  padding: 20px 0;
+  padding: 30px 0;
 }
 
 .field--row {
@@ -88,7 +89,6 @@ body {
 }
 
 .text-input__field {
-  margin-top: 8px;
   padding: 4px;
 }
 
@@ -118,6 +118,11 @@ body {
 }
 
 .submit-button:hover {
+  color: white;
+  background-color: var(--add-btn-color);
+}
+
+.submit-button__disabled {
   color: white;
   background-color: var(--add-btn-color);
 }

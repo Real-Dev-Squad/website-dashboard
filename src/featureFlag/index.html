@@ -7,18 +7,30 @@
     <link rel="stylesheet" href="style.css" />
     <title>Feature Flag</title>
 
-    <script src="helper.js" async></script>
-    <script src="script.js" async></script>
+    <script src="helper.js" defer></script>
+    <script src="script.js" defer></script>
   </head>
 
   <body>
     <div class="wrapper">
       <div class="header">
-        <select class="dropdown" name="flag" id="flag-dropdown">
-          <option selected hidden>Select Flag</option>
+        <select
+          class="dropdown"
+          name="flag"
+          id="flag-dropdown"
+          onchange="handleFlagChange(this)"
+        >
+          <option selected hidden id="flag-dropdown-default">Edit Flag</option>
         </select>
 
-        <div class="add-button">Add Flag</div>
+        <div
+          class="add-button"
+          onclick="handleAddFlag()"
+          id="create-flag"
+          style="display: none"
+        >
+          Create New Flag
+        </div>
       </div>
 
       <form class="form" id="flag-form">
@@ -30,16 +42,18 @@
               type="text"
               name="title"
               required
+              id="flag-title"
             />
+            <input type="hidden" name="flagId" id="form-flagId" />
           </div>
 
           <div class="checkbox">
-            <label class="checkbox__label" for="toggle-box">Enabled</label>
+            <label class="checkbox__label" for="form-enabled">Enabled</label>
             <input
               class="checkbox__tick-box checkbox__tick-box--reversed"
               type="checkbox"
               name="enabled"
-              id="toggle-box"
+              id="form-enabled"
               checked
             />
           </div>
@@ -86,7 +100,9 @@
           </div>
         </div>
         <div class="field field--end">
-          <button type="submit" class="submit-button">Submit</button>
+          <button type="submit" class="submit-button" id="form-submit">
+            Submit
+          </button>
         </div>
       </form>
     </div>
