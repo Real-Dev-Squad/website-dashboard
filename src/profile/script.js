@@ -68,7 +68,7 @@ function createCard({ oldData, newData, userId, username, profileDiffId }) {
   for (const listItem in oldData) {
     const li = document.createElement('li');
     li.innerText = `${formatPropertyField(listItem)}: ${
-      oldData[listItem] || (listItem === 'yoe' ? NaN : '')
+      oldData[listItem] || (listItem === 'yoe' ? '' : '')
     }`;
     oldUserInfoList.appendChild(li);
   }
@@ -89,7 +89,7 @@ function createCard({ oldData, newData, userId, username, profileDiffId }) {
   for (const listItem in newData) {
     const li = document.createElement('li');
     li.innerText = `${formatPropertyField(listItem)}: ${
-      newData[listItem] || (listItem === 'yoe' ? NaN : '')
+      newData[listItem] || (listItem === 'yoe' ? '' : '')
     }`;
     newUserInfoList.appendChild(li);
   }
@@ -116,16 +116,6 @@ function createCard({ oldData, newData, userId, username, profileDiffId }) {
           credentials: 'include',
           body: JSON.stringify({
             id: profileDiffId,
-            first_name: newData.first_name || '',
-            last_name: newData.last_name || '',
-            yoe: newData.yoe || NaN,
-            company: newData.company || '',
-            designation: newData.designation || '',
-            github_id: newData.github_id || '',
-            linkedin_id: newData.linkedin_id || '',
-            twitter_id: newData.twitter_id || '',
-            instagram_id: newData.instagram_id || '',
-            website: newData.website || '',
             message: reason,
           }),
         });
@@ -203,6 +193,8 @@ function wantedData(data) {
     id,
     first_name,
     last_name,
+    email,
+    phone,
     yoe,
     company,
     designation,
@@ -216,8 +208,8 @@ function wantedData(data) {
     id,
     first_name,
     last_name,
-    /*   email,
-    phone, */
+    email,
+    phone, 
     yoe,
     company,
     designation,
@@ -240,7 +232,7 @@ async function createPage() {
 
   const self_user = await res.json();
 
-  if (self_user?.roles['super-user']) {
+  if (self_user?.roles['super_user']) {
     const { profileDiffs } = await getProfileDiffs();
     if (profileDiffs === undefined || profileDiffs.length === 0) {
       document.getElementById('loader').innerHTML = 'No Profile Diffs !!!';
