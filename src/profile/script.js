@@ -209,7 +209,7 @@ function wantedData(data) {
     first_name,
     last_name,
     email,
-    phone, 
+    phone,
     yoe,
     company,
     designation,
