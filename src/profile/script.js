@@ -68,7 +68,7 @@ function createCard({ oldData, newData, userId, username, profileDiffId }) {
   for (const listItem in oldData) {
     const li = document.createElement('li');
     li.innerText = `${formatPropertyField(listItem)}: ${
-      oldData[listItem] || (listItem === 'yoe' ? '' : '')
+      oldData[listItem] || ''
     }`;
     oldUserInfoList.appendChild(li);
   }
@@ -89,7 +89,7 @@ function createCard({ oldData, newData, userId, username, profileDiffId }) {
   for (const listItem in newData) {
     const li = document.createElement('li');
     li.innerText = `${formatPropertyField(listItem)}: ${
-      newData[listItem] || (listItem === 'yoe' ? '' : '')
+      newData[listItem] || ''
     }`;
     newUserInfoList.appendChild(li);
   }
