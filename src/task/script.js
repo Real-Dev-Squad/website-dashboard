@@ -120,6 +120,7 @@ taskForm.onsubmit = async (e) => {
     lossRateDinero,
     lossRateNeelam,
     isNoteworthy,
+    estimatedNoOfDays,
   } = getObjectOfFormData(taskForm);
 
   if (status === 'ASSIGNED' && !assignee.trim()) {
@@ -147,10 +148,12 @@ taskForm.onsubmit = async (e) => {
       neelam: Number(lossRateNeelam),
     },
     isNoteworthy: isNoteworthy == 'on',
+    estimatedNoOfDays: Number(estimatedNoOfDays),
   };
 
   if (status === 'ASSIGNED') {
     dataToBeSent.startedOn = new Date() / 1000;
+    delete dataToBeSent.estimatedNoOfDays;
   }
 
   if (!endsOn) {
@@ -291,14 +294,17 @@ const handleDateChange = (event) => {
 function handleStatusChange(event = { target: { value: 'AVAILABLE' } }) {
   const assignee = document.getElementById('assigneeInput');
   const endsOnWrapper = document.getElementById('endsOnWrapper');
+  assignee.style.display = 'none';
+  endsOnWrapper.style.display = 'none';
+  document.getElementById('endsOn').value = '';
+
   if (event.target.value === 'ASSIGNED') {
     setDefaultDates();
     assignee.style.display = '';
     endsOnWrapper.style.display = '';
-  } else {
-    assignee.style.display = 'none';
-    endsOnWrapper.style.display = 'none';
-    document.getElementById('endsOn').value = '';
+    estimatedNoOfDaysInput.style.display = 'none';
+  } else if (event.target.value === 'AVAILABLE') {
+    estimatedNoOfDaysInput.style.display = '';
   }
 }
 
