@@ -302,9 +302,9 @@ function handleStatusChange(event = { target: { value: 'AVAILABLE' } }) {
     setDefaultDates();
     assignee.style.display = '';
     endsOnWrapper.style.display = '';
-    estimatedNoOfDaysInput.style.display = 'none';
+    estimatedDays.style.display = 'none';
   } else if (event.target.value === 'AVAILABLE') {
-    estimatedNoOfDaysInput.style.display = '';
+    estimatedDays.style.display = '';
   }
 }
 
