@@ -300,11 +300,11 @@ function handleStatusChange(event = { target: { value: 'AVAILABLE' } }) {
 
   if (event.target.value === 'ASSIGNED') {
     setDefaultDates();
-    assignee.style.display = '';
-    endsOnWrapper.style.display = '';
+    assignee.style.display = 'unset';
+    endsOnWrapper.style.display = 'unset';
     estimatedDays.style.display = 'none';
   } else if (event.target.value === 'AVAILABLE') {
-    estimatedDays.style.display = '';
+    estimatedDays.style.display = 'unset';
   }
 }
 
