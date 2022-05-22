@@ -292,18 +292,18 @@ const handleDateChange = (event) => {
 };
 
 function handleStatusChange(event = { target: { value: 'AVAILABLE' } }) {
-  const assignee = document.getElementById('assigneeInput');
+  const assigneeInput = document.getElementById('assigneeInput');
   const endsOnWrapper = document.getElementById('endsOnWrapper');
-  assignee.style.display = 'none';
-  endsOnWrapper.style.display = 'none';
   document.getElementById('endsOn').value = '';
 
   if (event.target.value === 'ASSIGNED') {
     setDefaultDates();
-    assignee.style.display = 'unset';
+    assigneeInput.style.display = 'unset';
     endsOnWrapper.style.display = 'unset';
     estimatedDays.style.display = 'none';
-  } else if (event.target.value === 'AVAILABLE') {
+  } else {
+    assigneeInput.style.display = 'none';
+    endsOnWrapper.style.display = 'none';
     estimatedDays.style.display = 'unset';
   }
 }
