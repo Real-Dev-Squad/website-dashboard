@@ -32,6 +32,13 @@ function formatPropertyField(property) {
     .join(' ');
 }
 
+function getDataItem(data, itemName) {
+  return (
+    data[itemName] ||
+    (itemName === 'yoe' && data[itemName] === 0 ? data[itemName] : ' ')
+  );
+}
+
 function createCard({ oldData, newData, userId, username, profileDiffId }) {
   const cardContainer = createCardComponent({
     className: 'cardDiv',
@@ -67,9 +74,10 @@ function createCard({ oldData, newData, userId, username, profileDiffId }) {
   //looping through the old data to display in list
   for (const listItem in oldData) {
     const li = document.createElement('li');
-    li.innerText = `${formatPropertyField(listItem)}: ${
-      oldData[listItem] || ''
-    }`;
+    li.innerText = `${formatPropertyField(listItem)}: ${getDataItem(
+      oldData,
+      listItem,
+    )}`;
     oldUserInfoList.appendChild(li);
   }
 
@@ -88,9 +96,10 @@ function createCard({ oldData, newData, userId, username, profileDiffId }) {
   //looping through the new data to display in list
   for (const listItem in newData) {
     const li = document.createElement('li');
-    li.innerText = `${formatPropertyField(listItem)}: ${
-      newData[listItem] || ''
-    }`;
+    li.innerText = `${formatPropertyField(listItem)}: ${getDataItem(
+      newData,
+      listItem,
+    )}`;
     newUserInfoList.appendChild(li);
   }
 
