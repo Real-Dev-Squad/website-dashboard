@@ -33,8 +33,8 @@ function getDataItem(data, itemName) {
   if (item) {
     return item;
   } else {
-    if (item === YEARS_OF_EXPERIENCE && item === 0) return item;
-    else return ' ';
+    if (itemName === YEARS_OF_EXPERIENCE && item === 0) return item;
+    else return '';
   }
 }
 
@@ -50,6 +50,7 @@ function displayList(data, userInfoList) {
   }
 }
 
+//function to create a card
 function createCard({ oldData, newData, userId, username, profileDiffId }) {
   const wrapper = document.createElement('div');
   wrapper.classList.add('wrapperDiv');

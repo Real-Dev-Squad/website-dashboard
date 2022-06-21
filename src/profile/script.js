@@ -1,4 +1,4 @@
-import { SUPER_USER } from 'constants.js';
+import { SUPER_USER } from './constants.js';
 
 import {
   getProfileDiffs,
