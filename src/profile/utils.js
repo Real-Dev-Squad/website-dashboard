@@ -1,24 +1,23 @@
-import {API_BASE_URL} from "./constants.js";
+import { API_BASE_URL, YEARS_OF_EXPERIENCE } from './constants.js';
 
-//function to get the profile differences 
+//function to get the profile differences
 async function getProfileDiffs() {
-    try {
-      const profileDiffsResponse = await fetch(`${API_BASE_URL}/profileDiffs`, {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'Content-type': 'application/json',
-        },
-      });
-  
-      const { profileDiffs } = await profileDiffsResponse.json();
-      return { profileDiffs };
-    } catch (error) {
-      alert(`Error: ${error}`);
-    }
-  }
+  try {
+    const profileDiffsResponse = await fetch(`${API_BASE_URL}/profileDiffs`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
 
-  
+    const { profileDiffs } = await profileDiffsResponse.json();
+    return { profileDiffs };
+  } catch (error) {
+    alert(`Error: ${error}`);
+  }
+}
+
 //resusable function to extract the key property field and displaying the data
 function formatPropertyField(property) {
   return property
@@ -31,21 +30,16 @@ function formatPropertyField(property) {
 function getDataItem(data, itemName) {
   const item = data[itemName];
 
-  if(item){
+  if (item) {
     return item;
+  } else {
+    if (item === YEARS_OF_EXPERIENCE && item === 0) return item;
+    else return ' ';
   }
-  else{
-    if(item === 'yoe' && item === 0)
-      return item;
-    else
-      return ' ';
-  }
-  
-
 }
 
 //To display the list of data(old and new)
-function displayList(data, userInfoList){
+function displayList(data, userInfoList) {
   for (const listItem in data) {
     const li = document.createElement('li');
     li.innerText = `${formatPropertyField(listItem)}: ${getDataItem(
@@ -54,8 +48,7 @@ function displayList(data, userInfoList){
     )}`;
     userInfoList.appendChild(li);
   }
-};
-
+}
 
 function createCard({ oldData, newData, userId, username, profileDiffId }) {
   const wrapper = document.createElement('div');
@@ -64,7 +57,7 @@ function createCard({ oldData, newData, userId, username, profileDiffId }) {
   //fixing footer at bottom to handle even if there is no data present
   const footerDiv = document.querySelector('#footer');
   document.body.insertBefore(wrapper, footerDiv);
-  
+
   const cardContainer = createCardComponent({
     className: 'cardDiv',
     tagName: 'div',
@@ -113,7 +106,6 @@ function createCard({ oldData, newData, userId, username, profileDiffId }) {
 
   //looping through the new data to display in list
   displayList(newData, newUserInfoList);
-
 
   const buttonsContainer = document.createElement('div');
   buttonsContainer.classList.add('buttonsContainer');
@@ -243,9 +235,8 @@ function wantedData(data) {
   };
 }
 
-
 //To GET self_user
-async function getSelfUser(){
+async function getSelfUser() {
   const res = await fetch(`${API_BASE_URL}/users/self`, {
     method: 'GET',
     credentials: 'include',
@@ -253,25 +244,22 @@ async function getSelfUser(){
       'Content-type': 'application/json',
     },
   });
-  
+
   const self_user = await res.json();
   return self_user;
 }
 
 //TO GET user from userid
-async function getUser(userId){
-  const userResponse = await fetch(
-    `${API_BASE_URL}/users/userId/${userId}`,
-    {
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-        'Content-type': 'application/json',
-      },
+async function getUser(userId) {
+  const userResponse = await fetch(`${API_BASE_URL}/users/userId/${userId}`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: {
+      'Content-type': 'application/json',
     },
-  );
+  });
   const { user } = await userResponse.json();
   return user;
 }
 
-export {getProfileDiffs, getSelfUser, getUser, wantedData, createCard};
+export { getProfileDiffs, getSelfUser, getUser, wantedData, createCard };
