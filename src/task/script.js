@@ -101,6 +101,13 @@ isNoteworthy.addEventListener('click', (event) => {
   }
 });
 
+document.getElementById('submit').addEventListener('keypress', (e) => {
+  let key = e.key;
+  if (key === 'Enter') {
+    e.preventDefault();
+  }
+});
+
 taskForm.onsubmit = async (e) => {
   e.preventDefault();
   showSubmitLoader();
@@ -217,10 +224,21 @@ let addEventToInput = (input, event, fn) => {
   });
 };
 
+let wasAssigneeSet = false;
+
 let stateHandle = () => {
   const arrInput = Object.values(input);
   let results = arrInput.filter(function (item) {
-    if (item.value === '' && item.name !== 'endsOn') {
+    if (
+      item.value === '' &&
+      item.name !== 'endsOn' &&
+      item.name !== 'assignee'
+    ) {
+      return true;
+    } else if (
+      item.value === 'ASSIGNED' &&
+      (wasAssigneeSet === false || assigneeEl.value === '')
+    ) {
       return true;
     }
   });
@@ -292,6 +310,7 @@ const handleDateChange = (event) => {
 
 function handleStatusChange(event = { target: { value: 'AVAILABLE' } }) {
   const assignee = document.getElementById('assigneeInput');
+  const assigneeEl = document.getElementById('assignee');
   const endsOnWrapper = document.getElementById('endsOnWrapper');
   const featureRadio = document.getElementById('feature');
   if (event.target.value === 'ASSIGNED') {
@@ -304,6 +323,7 @@ function handleStatusChange(event = { target: { value: 'AVAILABLE' } }) {
     assignee.style.display = 'none';
     endsOnWrapper.style.display = 'none';
     document.getElementById('endsOn').value = '';
+    assigneeEl.value = '';
   }
   if (event.target.value === 'ASSIGNED' && featureRadio.checked) {
     assignee.style.display = 'flex';
@@ -329,9 +349,10 @@ function debounce(func, delay) {
 
 async function fetchMembers(searchInput) {
   try {
-    const response = await fetch(`${API_BASE_URL}/members`);
+    const response = await fetch(`${API_BASE_URL}/members`); // await fetch(`http://127.0.0.1:5500/src/task/mockMember.json`); //
     const data = await response.json();
     clearSuggestionList();
+    wasAssigneeSet = false;
     if (searchInput.trim() !== '') {
       const matches = data.members.filter((task) => {
         if (task.username) {
@@ -378,6 +399,8 @@ function createSuggestionsList(matches) {
 
 function setAssignee(assignee) {
   assigneeEl.value = assignee;
+  wasAssigneeSet = true;
+  stateHandle();
   clearSuggestionList();
 }
 
