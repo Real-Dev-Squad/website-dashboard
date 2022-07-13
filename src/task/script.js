@@ -237,7 +237,7 @@ let stateHandle = () => {
 };
 
 let hideUnusedField = (radio) => {
- const assigneeInput = document.getElementById('assigneeInput');
+  const assigneeInput = document.getElementById('assigneeInput');
   const participantsInput = document.getElementById('participantsInput');
   if (
     'assignee' === radio &&
@@ -296,7 +296,7 @@ function handleStatusChange(event = { target: { value: 'AVAILABLE' } }) {
   const featureRadio = document.getElementById('feature');
   if (event.target.value === 'ASSIGNED') {
     setDefaultDates();
-     assignee.classList.add('show-assignee-field');
+    assignee.classList.add('show-assignee-field');
     assignee.style.display = 'none';
     endsOnWrapper.style.display = '';
   } else {
