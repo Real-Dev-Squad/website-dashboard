@@ -119,6 +119,16 @@
           />
           <div id="list-items"></div>
         </div>
+        <div class="inputBox" id="participantsInput">
+          <label for="participants" class="editable">Participants:</label>
+          <input
+            type="text"
+            placeholder="Comma separated participants username"
+            id="participants"
+            name="participants"
+            class="notEditing"
+          />
+        </div>
         <div id="endsOnWrapper">
           <div class="inputBox">
             <label for="endsOn"
@@ -133,16 +143,6 @@
               onchange="handleDateChange(event);"
             />
           </div>
-        </div>
-        <div class="inputBox" id="participantsInput">
-          <label for="participants" class="editable">Participants:</label>
-          <input
-            type="text"
-            placeholder="Comma separated participants username"
-            id="participants"
-            name="participants"
-            class="notEditing"
-          />
         </div>
         <div class="inputBox">
           <label for="percentCompleted" class="editable"

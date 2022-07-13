@@ -237,16 +237,18 @@ let stateHandle = () => {
 };
 
 let hideUnusedField = (radio) => {
-  if ('assignee' === radio) {
-    document.getElementById('assigneeInput').style.display = 'flex';
-  } else {
-    document.getElementById('assigneeInput').style.display = 'none';
-  }
+  const assigneeInput = document.getElementById('assigneeInput');
+  const participantsInput = document.getElementById('participantsInput');
+  if (
+    'assignee' === radio &&
+    assigneeInput.classList.contains('show-assignee-field')
+  ) {
+    assigneeInput.style.display = 'flex';
 
-  if ('participants' === radio) {
-    document.getElementById('participantsInput').style.display = 'flex';
-  } else {
-    document.getElementById('participantsInput').style.display = 'none';
+    participantsInput.style.display = 'none';
+  } else if ('participants' === radio) {
+    participantsInput.style.display = 'flex';
+    assigneeInput.style.display = 'none';
   }
 };
 
@@ -291,14 +293,20 @@ const handleDateChange = (event) => {
 function handleStatusChange(event = { target: { value: 'AVAILABLE' } }) {
   const assignee = document.getElementById('assigneeInput');
   const endsOnWrapper = document.getElementById('endsOnWrapper');
+  const featureRadio = document.getElementById('feature');
   if (event.target.value === 'ASSIGNED') {
     setDefaultDates();
-    assignee.style.display = '';
+    assignee.classList.add('show-assignee-field');
+    assignee.style.display = 'none';
     endsOnWrapper.style.display = '';
   } else {
+    assignee.classList.remove('show-assignee-field');
     assignee.style.display = 'none';
     endsOnWrapper.style.display = 'none';
     document.getElementById('endsOn').value = '';
+  }
+  if (event.target.value === 'ASSIGNED' && featureRadio.checked) {
+    assignee.style.display = 'flex';
   }
 }
 
