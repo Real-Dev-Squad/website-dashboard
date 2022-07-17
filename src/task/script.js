@@ -290,6 +290,7 @@ addEventToInput(input, 'change', stateHandle);
     const element = document.createElement('span');
     element.innerHTML = 'Edit';
     element.classList.add('edit-button');
+    index === 3 ? (element.id = 'statusId') : '';
 
     element.addEventListener('click', (event) => {
       event.target.classList.toggle('edit-button__active');
@@ -349,7 +350,7 @@ function debounce(func, delay) {
 
 async function fetchMembers(searchInput) {
   try {
-    const response = await fetch(`${API_BASE_URL}/members`); // await fetch(`http://127.0.0.1:5500/src/task/mockMember.json`); //
+    const response = await fetch(`${API_BASE_URL}/members`);
     const data = await response.json();
     clearSuggestionList();
     wasAssigneeSet = false;
