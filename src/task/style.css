@@ -242,6 +242,11 @@ footer {
   margin: 0;
 }
 
+#list-items {
+  max-height: 200px;
+  overflow-y: scroll;
+}
+
 #list-items:nth-last-child() {
   border-bottom: 0;
 }
