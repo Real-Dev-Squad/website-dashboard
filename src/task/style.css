@@ -220,6 +220,9 @@ footer {
 
 #list-items {
   width: 100%;
+  max-height: 12.5rem;
+  overflow-y: scroll;
+  overflow-x: hidden;
   margin-top: 2rem;
   position: absolute;
   border: 1px solid #d4d4d4;
@@ -240,11 +243,6 @@ footer {
   font-size: 1rem;
   border-bottom: 1px solid #d4d4d4;
   margin: 0;
-}
-
-#list-items {
-  max-height: 200px;
-  overflow-y: scroll;
 }
 
 #list-items:nth-last-child() {
