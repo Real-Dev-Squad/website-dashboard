@@ -101,6 +101,13 @@ isNoteworthy.addEventListener('click', (event) => {
   }
 });
 
+document.getElementById('submit').addEventListener('keypress', (e) => {
+  let key = e.key;
+  if (key === 'Enter') {
+    e.preventDefault();
+  }
+});
+
 taskForm.onsubmit = async (e) => {
   e.preventDefault();
   showSubmitLoader();
@@ -217,10 +224,21 @@ let addEventToInput = (input, event, fn) => {
   });
 };
 
+let wasAssigneeSet = false;
+
 let stateHandle = () => {
   const arrInput = Object.values(input);
   let results = arrInput.filter(function (item) {
-    if (item.value === '' && item.name !== 'endsOn') {
+    if (
+      item.value === '' &&
+      item.name !== 'endsOn' &&
+      item.name !== 'assignee'
+    ) {
+      return true;
+    } else if (
+      item.value === 'ASSIGNED' &&
+      (wasAssigneeSet === false || assigneeEl.value === '')
+    ) {
       return true;
     }
   });
@@ -237,16 +255,18 @@ let stateHandle = () => {
 };
 
 let hideUnusedField = (radio) => {
-  if ('assignee' === radio) {
-    document.getElementById('assigneeInput').style.display = 'flex';
-  } else {
-    document.getElementById('assigneeInput').style.display = 'none';
-  }
+  const assigneeInput = document.getElementById('assigneeInput');
+  const participantsInput = document.getElementById('participantsInput');
+  if (
+    'assignee' === radio &&
+    assigneeInput.classList.contains('show-assignee-field')
+  ) {
+    assigneeInput.style.display = 'flex';
 
-  if ('participants' === radio) {
-    document.getElementById('participantsInput').style.display = 'flex';
-  } else {
-    document.getElementById('participantsInput').style.display = 'none';
+    participantsInput.style.display = 'none';
+  } else if ('participants' === radio) {
+    participantsInput.style.display = 'flex';
+    assigneeInput.style.display = 'none';
   }
 };
 
@@ -270,6 +290,7 @@ addEventToInput(input, 'change', stateHandle);
     const element = document.createElement('span');
     element.innerHTML = 'Edit';
     element.classList.add('edit-button');
+    index === 3 ? (element.id = 'statusId') : '';
 
     element.addEventListener('click', (event) => {
       event.target.classList.toggle('edit-button__active');
@@ -290,15 +311,23 @@ const handleDateChange = (event) => {
 
 function handleStatusChange(event = { target: { value: 'AVAILABLE' } }) {
   const assignee = document.getElementById('assigneeInput');
+  const assigneeEl = document.getElementById('assignee');
   const endsOnWrapper = document.getElementById('endsOnWrapper');
+  const featureRadio = document.getElementById('feature');
   if (event.target.value === 'ASSIGNED') {
     setDefaultDates();
-    assignee.style.display = '';
+    assignee.classList.add('show-assignee-field');
+    assignee.style.display = 'none';
     endsOnWrapper.style.display = '';
   } else {
+    assignee.classList.remove('show-assignee-field');
     assignee.style.display = 'none';
     endsOnWrapper.style.display = 'none';
     document.getElementById('endsOn').value = '';
+    assigneeEl.value = '';
+  }
+  if (event.target.value === 'ASSIGNED' && featureRadio.checked) {
+    assignee.style.display = 'flex';
   }
 }
 
@@ -324,6 +353,7 @@ async function fetchMembers(searchInput) {
     const response = await fetch(`${API_BASE_URL}/members`);
     const data = await response.json();
     clearSuggestionList();
+    wasAssigneeSet = false;
     if (searchInput.trim() !== '') {
       const matches = data.members.filter((task) => {
         if (task.username) {
@@ -370,6 +400,8 @@ function createSuggestionsList(matches) {
 
 function setAssignee(assignee) {
   assigneeEl.value = assignee;
+  wasAssigneeSet = true;
+  stateHandle();
   clearSuggestionList();
 }
 
