@@ -104,6 +104,8 @@ body {
   font-size: medium;
 }
 
+#category,
+#level,
 #status {
   width: 100%;
   padding: 1em;
