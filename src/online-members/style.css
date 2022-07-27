@@ -67,8 +67,16 @@
 
 .members-search {
   margin: 10px;
-  height: 2rem;
+  height: 4rem;
   width: 15rem;
   position: sticky;
   top: 0;
+  background: #fff;
+  display: flex;
+  align-items: center;
+}
+
+.members-search-input {
+  height: 2rem;
+  width: 15rem;
 }
