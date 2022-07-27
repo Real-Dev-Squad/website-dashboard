@@ -109,6 +109,7 @@ async function generateMemberTaskData(username) {
   if (isTaskDataBeingFetched) {
     return;
   }
+
   showLoadingSpinner('#task-container');
 
   isTaskDataBeingFetched = true;
@@ -147,13 +148,16 @@ function addEventListnerToMembersList() {
 }
 
 function generateSearchInputElement() {
+  const div = document.createElement('div');
+  div.classList = MEMBERS_SEARCH_CLASS_LIST;
   const input = document.createElement('input');
-  input.classList = MEMBERS_SEARCH_CLASS_LIST;
+  input.classList = MEMBERS_SEARCH_INPUT_CLASS_LIST;
   input.type = 'text';
   input.id = 'searchMembers';
   input.onkeyup = searchFunction;
   input.placeholder = 'Search for memberrs';
-  return input;
+  div.appendChild(input);
+  return div;
 }
 
 generateMembersList();

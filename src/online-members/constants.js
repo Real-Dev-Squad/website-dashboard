@@ -11,6 +11,7 @@ const TASKS_CLASS_LIST = ['task'];
 const TASKS_CONTAINER_CLASS_LIST = ['tasks-container'];
 
 const MEMBERS_SEARCH_CLASS_LIST = ['members-search'];
+const MEMBERS_SEARCH_INPUT_CLASS_LIST = ['members-search-input'];
 
 const RDS_API_MEMBERS = 'https://api.realdevsquad.com/members';
 const RDS_API_TASKS_USERS = 'https://api.realdevsquad.com/tasks';
