@@ -8,7 +8,7 @@
   </head>
 
   <body class="visibity-hidden" id="visibity-hidden">
-    <div class="container">
+    <div class="container loaderContainer">
       <form action="" id="taskForm">
         <div class="inputBox">
           <label for="title">Title:<span class="required">*</span></label>
@@ -115,9 +115,20 @@
             placeholder="eg: Marcus"
             id="assignee"
             name="assignee"
+            class="input"
             autocomplete="off"
           />
           <div id="list-items"></div>
+        </div>
+        <div class="inputBox" id="participantsInput">
+          <label for="participants" class="editable">Participants:</label>
+          <input
+            type="text"
+            placeholder="Comma separated participants username"
+            id="participants"
+            name="participants"
+            class="notEditing"
+          />
         </div>
         <div id="endsOnWrapper">
           <div class="inputBox">
@@ -133,16 +144,6 @@
               onchange="handleDateChange(event);"
             />
           </div>
-        </div>
-        <div class="inputBox" id="participantsInput">
-          <label for="participants" class="editable">Participants:</label>
-          <input
-            type="text"
-            placeholder="Comma separated participants username"
-            id="participants"
-            name="participants"
-            class="notEditing"
-          />
         </div>
         <div class="inputBox">
           <label for="percentCompleted" class="editable"
@@ -215,16 +216,13 @@
           </div>
         </div>
 
-        <div class="inputBox loaderContainer">
+        <div class="inputBox">
           <input
             type="submit"
             class="submit disabled"
             value="Submit"
             id="submit"
           />
-          <div class="hidden" id="submit-loader">
-            <div class="loader"></div>
-          </div>
         </div>
       </form>
 
@@ -239,7 +237,9 @@
           >
         </p>
       </footer>
-
+      <div class="hidden" id="submit-loader">
+        <div class="loader"></div>
+      </div>
       <script src="../helpers/loadENV.js"></script>
       <script src="script.js"></script>
     </div>
