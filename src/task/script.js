@@ -356,6 +356,7 @@ async function fetchMembers(searchInput) {
     const data = await response.json();
     clearSuggestionList();
     wasAssigneeSet = false;
+    assigneeEl.style.backgroundImage = 'none';
     if (searchInput.trim() !== '') {
       const matches = data.members.filter((task) => {
         if (task.username) {
@@ -389,20 +390,28 @@ function clearUserNotFound() {
 function createSuggestionsList(matches) {
   const listItems = document.getElementById('list-items');
   if (matches.length) {
-    matches.map(({ username }) => {
+    matches.map(({ username, picture = {} }) => {
+      const defaultUrl =
+        'https://members.realdevsquad.com/images/Avatar.png?90.2370159455815';
+      const imageUrl =
+        picture.hasOwnProperty('url') && picture.url ? picture.url : defaultUrl;
       const listItem = document.createElement('p');
       listItem.classList.add('list-item');
       listItem.style.cursor = 'pointer';
-      listItem.setAttribute('onclick', `setAssignee('${username}')`);
+      listItem.setAttribute(
+        'onclick',
+        `setAssignee('${username}', '${imageUrl}')`,
+      );
       listItem.innerText = username;
       listItems.appendChild(listItem);
     });
   }
 }
 
-function setAssignee(assignee) {
+function setAssignee(assignee, img) {
   assigneeEl.value = assignee;
   wasAssigneeSet = true;
+  assigneeEl.style.backgroundImage = `url(${img})`;
   stateHandle();
   clearSuggestionList();
 }

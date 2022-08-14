@@ -258,3 +258,10 @@ footer {
   color: rgb(255, 92, 92);
   font-size: 0.75rem;
 }
+
+#assignee {
+  background-repeat: no-repeat;
+  background-position: right;
+  background-size: 42px;
+  padding-right: 17px;
+}
