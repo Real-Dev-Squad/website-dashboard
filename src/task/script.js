@@ -391,10 +391,12 @@ function createSuggestionsList(matches) {
   const listItems = document.getElementById('list-items');
   if (matches.length) {
     matches.map(({ username, picture = {} }) => {
-      const defaultUrl =
+      const defaultImageUrl =
         'https://members.realdevsquad.com/images/Avatar.png?90.2370159455815';
       const imageUrl =
-        picture.hasOwnProperty('url') && picture.url ? picture.url : defaultUrl;
+        picture.hasOwnProperty('url') && picture.url
+          ? picture.url
+          : defaultImageUrl;
       const listItem = document.createElement('p');
       listItem.classList.add('list-item');
       listItem.style.cursor = 'pointer';
@@ -408,10 +410,10 @@ function createSuggestionsList(matches) {
   }
 }
 
-function setAssignee(assignee, img) {
+function setAssignee(assignee, imgUrl) {
   assigneeEl.value = assignee;
   wasAssigneeSet = true;
-  assigneeEl.style.backgroundImage = `url(${img})`;
+  assigneeEl.style.backgroundImage = `url(${imgUrl})`;
   stateHandle();
   clearSuggestionList();
 }
