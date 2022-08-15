@@ -37,13 +37,14 @@
 
 .members {
   margin: 10px;
+  padding: 0 5px;
   border: 2px solid black;
   border-radius: 5px;
   height: 2rem;
   width: 15rem;
   align-items: center;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   cursor: pointer;
   background: #8abbcd;
 }
@@ -56,6 +57,16 @@
   background: transparent;
   color: transparent;
   border: transparent;
+}
+
+.members-online {
+  width: 10px;
+  height: 10px;
+  background-color: rgb(58, 247, 58);
+  border-radius: 50%;
+}
+.members-online-hidden {
+  display: none;
 }
 
 .members.scale {

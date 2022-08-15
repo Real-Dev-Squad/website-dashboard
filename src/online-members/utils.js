@@ -21,13 +21,22 @@ async function makeApiCall(
 
 async function getMembersData() {
   let membersList = null;
+  const memberObject = {};
   const membersRequest = await makeApiCall(RDS_API_MEMBERS);
   if (membersRequest.status === 200) {
     membersList = await membersRequest.json();
     membersList = membersList.members;
     membersList = membersList.filter((member) => !member.incompleteUserDetails);
+    membersList.forEach((member) => {
+      if (!member.incompleteUserDetails) {
+        memberObject[`${member.username}`] = {
+          isOnline: false,
+          ...member,
+        };
+      }
+    });
   }
-  return membersList;
+  return memberObject;
 }
 
 async function getMemberTaskData(username) {
