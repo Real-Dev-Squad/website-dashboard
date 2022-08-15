@@ -1,6 +1,6 @@
 'use strict';
 
-let members = [];
+let members = {};
 let memberTasks = [];
 let isTaskDataBeingFetched = false;
 
@@ -10,7 +10,7 @@ function createTextNode(text) {
 
 function createProfileImage(url, alt) {
   const img = document.createElement('img');
-  img.classList = PROFILE_IMAGE_CLASS;
+  img.classList.add(...PROFILE_IMAGE_CLASS);
   img.src = member.picture
     ? getCloudinaryImgURL(url, RDS_PROFILE_IMAGE_SIZE)
     : RDS_PROFILE_DEFAULT_IMAGE;
@@ -18,13 +18,14 @@ function createProfileImage(url, alt) {
 }
 
 function createMemberNode(member) {
-  const div = document.createElement('div');
-  div.classList = MEMBERS_CLASS_LIST;
-  div.dataset.username = member.username;
-  // div.appendChild(img);
-  div.appendChild(createTextNode(member.username));
+  const memberDiv = document.createElement('div');
+  memberDiv.classList.add(...MEMBERS_CLASS_LIST);
+  memberDiv.dataset.username = member.username;
+  const memberOnlineDiv = document.createElement('div');
+  memberOnlineDiv.classList.add(...MEMBERS_ONLINE_CLASS_LIST);
+  memberDiv.append(createTextNode(member.username), memberOnlineDiv);
 
-  return div;
+  return memberDiv;
 }
 
 function createALinkNode(url, title) {
@@ -56,15 +57,16 @@ function createTaskNode(task) {
 
 function getMembersListContent(members, classList = []) {
   const fragment = new DocumentFragment();
-  members.forEach((member) => {
+  const membersList = Object.keys(members);
+  membersList.forEach((member) => {
     const li = document.createElement('li');
-    li.append(createMemberNode(member));
+    li.append(createMemberNode(members[member]));
     fragment.append(li);
   });
 
   const ul = document.createElement('ul');
   ul.id = MEMBERS_LIST_ID;
-  ul.classList = MEMBERS_UL_CLASS_LIST;
+  ul.classList.add(...MEMBERS_UL_CLASS_LIST);
   ul.appendChild(fragment);
 
   return ul;
@@ -77,7 +79,7 @@ function getTaskDataContent(tasks, classList = []) {
   const fragment = new DocumentFragment();
   tasks.forEach((task) => {
     const div = document.createElement('div');
-    div.classList = TASKS_CLASS_LIST;
+    div.classList.add(...TASKS_CLASS_LIST);
     div.append(createTaskNode(task));
     fragment.append(div);
   });
@@ -149,9 +151,9 @@ function addEventListnerToMembersList() {
 
 function generateSearchInputElement() {
   const div = document.createElement('div');
-  div.classList = MEMBERS_SEARCH_CLASS_LIST;
+  div.classList.add(...MEMBERS_SEARCH_CLASS_LIST);
   const input = document.createElement('input');
-  input.classList = MEMBERS_SEARCH_INPUT_CLASS_LIST;
+  input.classList.add(...MEMBERS_SEARCH_INPUT_CLASS_LIST);
   input.type = 'text';
   input.id = 'searchMembers';
   input.onkeyup = searchFunction;
