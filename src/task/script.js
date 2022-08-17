@@ -268,10 +268,12 @@ let hideUnusedField = (radio) => {
     assigneeInput.classList.contains('show-assignee-field')
   ) {
     assigneeInput.style.display = 'flex';
-
     participantsInput.style.display = 'none';
   } else if ('participants' === radio) {
     participantsInput.style.display = 'flex';
+    assigneeInput.style.display = 'none';
+  } else {
+    participantsInput.style.display = 'none';
     assigneeInput.style.display = 'none';
   }
 };
