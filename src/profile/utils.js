@@ -44,15 +44,29 @@ function getDataItem(data, itemName) {
   }
 }
 
-function displayList(data, userInfoList) {
-  for (const listItem in data) {
-    const innerText = `${formatPropertyField(listItem)}: ${getDataItem(
-      data,
-      listItem,
-    )}`;
+function displayList(primaryData, userInfoList, secondaryData) {
+  const prevSibling = userInfoList.previousSibling.innerHTML;
+  const isOldData = prevSibling.toLowerCase().includes('old');
+  const isNewData = prevSibling.toLowerCase().includes('new');
+
+  for (const listItem in primaryData) {
+    const oldValue = getDataItem(primaryData, listItem);
+    const newValue = getDataItem(secondaryData, listItem);
+    const isValueEqual = String(oldValue).trim() === String(newValue).trim();
+
+    let diffClass;
+    if (!isValueEqual) {
+      diffClass = isOldData ? 'oldDiff' : 'newDiff';
+    }
+
+    const innerHTML = `
+      <span>${formatPropertyField(listItem)}:</span>
+      <span class=${diffClass}>${getDataItem(primaryData, listItem)}</span>
+    `;
+
     const li = createCardComponent({
       tagName: 'li',
-      innerText,
+      innerHTML,
       parent: userInfoList,
     });
   }
@@ -110,7 +124,7 @@ function createCard({ oldData, newData, userId, username, profileDiffId }) {
     parent: oldDataContainer,
   });
 
-  displayList(oldData, oldUserInfoList);
+  displayList(oldData, oldUserInfoList, newData);
 
   const newDataContainer = createCardComponent({
     tagName: 'div',
@@ -130,7 +144,7 @@ function createCard({ oldData, newData, userId, username, profileDiffId }) {
     parent: newDataContainer,
   });
 
-  displayList(newData, newUserInfoList);
+  displayList(newData, newUserInfoList, oldData);
 
   const buttonsContainer = createCardComponent({
     tagName: 'div',
@@ -214,7 +228,7 @@ function createCard({ oldData, newData, userId, username, profileDiffId }) {
   document.getElementById('loader').style.display = 'none';
 }
 
-function createCardComponent({ className, tagName, innerText, parent }) {
+function createCardComponent({ className, tagName, innerText, parent, innerHTML }) {
   const component = document.createElement(tagName);
   if (className) {
     component.classList.add(className);
@@ -222,6 +236,10 @@ function createCardComponent({ className, tagName, innerText, parent }) {
 
   if (innerText) {
     component.innerText = innerText;
+  }
+
+  if (innerHTML) {
+    component.innerHTML = innerHTML;
   }
 
   if (parent) {

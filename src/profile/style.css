@@ -157,6 +157,19 @@ nav h1::before {
   border-right: 1px solid #c4c4c4;
 }
 
+.oldDiff {
+  background-color: #fd5757;
+  padding: 4px;
+  border-radius: 2px;
+  color: #fff;
+}
+
+.newDiff {
+  background-color: #38a127;
+  padding: 2px 4px;
+  border-radius: 2px;
+  color: #fff;
+}
 footer {
   width: 100%;
   padding: 8px;
