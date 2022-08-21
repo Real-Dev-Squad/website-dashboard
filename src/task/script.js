@@ -1,4 +1,6 @@
 const API_BASE_URL = window.API_BASE_URL;
+const assigneeAvatar = document.getElementById('assigneeAvatar');
+const assigneeAvatarLoader = document.getElementById('assigneeAvatarLoader');
 
 const getRemainingDays = (selectedDateInString) => {
   const selectedDate = new Date(selectedDateInString);
@@ -356,7 +358,8 @@ async function fetchMembers(searchInput) {
     const data = await response.json();
     clearSuggestionList();
     wasAssigneeSet = false;
-    assigneeEl.style.backgroundImage = 'none';
+    assigneeAvatar.style.backgroundImage = 'none';
+    assigneeAvatarLoader.style.display = 'none';
     if (searchInput.trim() !== '') {
       const matches = data.members.filter((task) => {
         if (task.username) {
@@ -390,8 +393,9 @@ function clearUserNotFound() {
 function createSuggestionsList(matches) {
   const listItems = document.getElementById('list-items');
   if (matches.length) {
+    assigneeAvatarLoader.style.display = 'initial';
     matches.map(({ username, picture = {} }) => {
-      const defaultImagePath = '../images/Avatar.png';
+      const defaultImagePath = '../images/avatar.png';
       const imageUrl =
         picture.hasOwnProperty('url') && picture.url
           ? picture.url
@@ -412,7 +416,9 @@ function createSuggestionsList(matches) {
 function setAssignee(assignee, imgUrl) {
   assigneeEl.value = assignee;
   wasAssigneeSet = true;
-  assigneeEl.style.backgroundImage = `url(${imgUrl})`;
+  assigneeAvatar.style.display = 'initial';
+  assigneeAvatarLoader.style.display = 'none';
+  assigneeAvatar.style.backgroundImage = `url(${imgUrl})`;
   stateHandle();
   clearSuggestionList();
 }
