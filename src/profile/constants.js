@@ -7,3 +7,5 @@ export const APPROVAL_PROMPT_TEXT = 'Reason for Approval';
 export const ALERT_APPROVED = 'User Data Approved !!!';
 export const ALERT_ERROR = 'Something went wrong. Please check console errors.';
 export const ALERT_REJECTED = 'User Data Rejected!!!';
+export const OLD_DIFF_CLASS = 'oldDiff';
+export const NEW_DIFF_CLASS = 'newDiff';
