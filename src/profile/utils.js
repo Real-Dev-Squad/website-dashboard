@@ -228,7 +228,13 @@ function createCard({ oldData, newData, userId, username, profileDiffId }) {
   document.getElementById('loader').style.display = 'none';
 }
 
-function createCardComponent({ className, tagName, innerText, parent, innerHTML }) {
+function createCardComponent({
+  className,
+  tagName,
+  innerText,
+  parent,
+  innerHTML,
+}) {
   const component = document.createElement(tagName);
   if (className) {
     component.classList.add(className);
