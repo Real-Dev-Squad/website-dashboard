@@ -7,6 +7,8 @@ import {
   ALERT_APPROVED,
   ALERT_ERROR,
   ALERT_REJECTED,
+  OLD_DIFF_CLASS,
+  NEW_DIFF_CLASS,
 } from './constants.js';
 
 async function getProfileDiffs() {
@@ -56,7 +58,7 @@ function displayList(primaryData, userInfoList, secondaryData) {
 
     let diffClass;
     if (!isValueEqual) {
-      diffClass = isOldData ? 'oldDiff' : 'newDiff';
+      diffClass = isOldData ? OLD_DIFF_CLASS : NEW_DIFF_CLASS;
     }
 
     const innerHTML = `
