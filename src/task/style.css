@@ -260,8 +260,7 @@ footer {
 }
 
 #assigneeAvatar {
-  background-position: right;
-  background-size: 42px;
+  background: right / 42px;
   position: absolute;
   top: 33%;
   width: 40px;
