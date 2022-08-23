@@ -1,3 +1,9 @@
+:root {
+  --color-green: #38a127;
+  --color-red: #fd5757;
+  --color-white: #ffffff;
+}
+
 *,
 ::after,
 ::before {
@@ -158,17 +164,17 @@ nav h1::before {
 }
 
 .oldDiff {
-  background-color: #fd5757;
+  background-color: var(--color-red);
   padding: 4px;
   border-radius: 2px;
-  color: #fff;
+  color: var(--color-white);
 }
 
 .newDiff {
-  background-color: #38a127;
+  background-color: var(--color-green);
   padding: 2px 4px;
   border-radius: 2px;
-  color: #fff;
+  color: var(--color-white);
 }
 footer {
   width: 100%;
