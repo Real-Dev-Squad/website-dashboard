@@ -61,16 +61,24 @@ function displayList(primaryData, userInfoList, secondaryData) {
       diffClass = isOldData ? OLD_DIFF_CLASS : NEW_DIFF_CLASS;
     }
 
-    const innerHTML = `
-      <span>${formatPropertyField(listItem)}:</span>
-      <span class=${diffClass}>${getDataItem(primaryData, listItem)}</span>
-    `;
+    const fragment = new DocumentFragment();
+
+    let spanKey = document.createElement('span');
+    spanKey.textContent = `${formatPropertyField(listItem)}:`;
+    fragment.appendChild(spanKey);
+
+    let spanValue = document.createElement('span');
+    if (diffClass) {
+      spanValue.classList.add(`${diffClass}`);
+    }
+    spanValue.textContent = `${getDataItem(primaryData, listItem)}`;
+    fragment.appendChild(spanValue);
 
     const li = createCardComponent({
       tagName: 'li',
-      innerHTML,
       parent: userInfoList,
     });
+    li.append(fragment);
   }
 }
 
@@ -230,13 +238,7 @@ function createCard({ oldData, newData, userId, username, profileDiffId }) {
   document.getElementById('loader').style.display = 'none';
 }
 
-function createCardComponent({
-  className,
-  tagName,
-  innerText,
-  parent,
-  innerHTML,
-}) {
+function createCardComponent({ className, tagName, innerText, parent }) {
   const component = document.createElement(tagName);
   if (className) {
     component.classList.add(className);
@@ -244,10 +246,6 @@ function createCardComponent({
 
   if (innerText) {
     component.innerText = innerText;
-  }
-
-  if (innerHTML) {
-    component.innerHTML = innerHTML;
   }
 
   if (parent) {
