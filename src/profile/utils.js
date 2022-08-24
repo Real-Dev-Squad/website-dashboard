@@ -63,11 +63,11 @@ function displayList(primaryData, userInfoList, secondaryData) {
 
     const fragment = new DocumentFragment();
 
-    let spanKey = document.createElement('span');
+    const spanKey = document.createElement('span');
     spanKey.textContent = `${formatPropertyField(listItem)}: `;
     fragment.appendChild(spanKey);
 
-    let spanValue = document.createElement('span');
+    const spanValue = document.createElement('span');
     if (diffClass) {
       spanValue.classList.add(`${diffClass}`);
     }
