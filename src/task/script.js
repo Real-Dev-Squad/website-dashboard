@@ -358,8 +358,8 @@ async function fetchMembers(searchInput) {
     const data = await response.json();
     clearSuggestionList();
     wasAssigneeSet = false;
-    assigneeAvatar.style.backgroundImage = 'none';
-    assigneeAvatarLoader.style.display = 'none';
+    removeDisplay(assigneeAvatar);
+    removeDisplay(assigneeAvatarLoader);
     if (searchInput.trim() !== '') {
       const matches = data.members.filter((task) => {
         if (task.username) {
@@ -393,7 +393,7 @@ function clearUserNotFound() {
 function createSuggestionsList(matches) {
   const listItems = document.getElementById('list-items');
   if (matches.length) {
-    assigneeAvatarLoader.style.display = 'initial';
+    addDisplay(assigneeAvatarLoader);
     matches.map(({ username, picture = {} }) => {
       const defaultImagePath = '../images/avatar.png';
       const imageUrl =
@@ -416,8 +416,8 @@ function createSuggestionsList(matches) {
 function setAssignee(assignee, imgUrl) {
   assigneeEl.value = assignee;
   wasAssigneeSet = true;
-  assigneeAvatar.style.display = 'initial';
-  assigneeAvatarLoader.style.display = 'none';
+  addDisplay(assigneeAvatar);
+  removeDisplay(assigneeAvatarLoader);
   assigneeAvatar.style.backgroundImage = `url(${imgUrl})`;
   stateHandle();
   clearSuggestionList();
@@ -434,3 +434,11 @@ assigneeEl.addEventListener(
   'input',
   debounce((event) => fetchMembers(event.target.value), 500),
 );
+
+function addDisplay(element) {
+  element.classList.remove('element-display-remove');
+}
+
+function removeDisplay(element) {
+  element.classList.add('element-display-remove');
+}
