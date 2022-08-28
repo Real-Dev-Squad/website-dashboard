@@ -46,39 +46,53 @@ function getDataItem(data, itemName) {
   }
 }
 
-function displayList(primaryData, userInfoList, secondaryData) {
-  const prevSibling = userInfoList.previousSibling.innerHTML;
-  const isOldData = prevSibling.toLowerCase().includes('old');
-  const isNewData = prevSibling.toLowerCase().includes('new');
+function checkDifferentValues(primaryData, secondaryData) {
+  const diffValues = new Set();
 
   for (const listItem in primaryData) {
     const oldValue = getDataItem(primaryData, listItem);
     const newValue = getDataItem(secondaryData, listItem);
     const isValueEqual = String(oldValue).trim() === String(newValue).trim();
 
-    let diffClass;
     if (!isValueEqual) {
+      diffValues.add(listItem);
+    }
+  }
+
+  return diffValues;
+}
+
+function displayList(profileData, userInfoList, diffValues) {
+  const prevSibling = userInfoList.previousSibling.innerHTML;
+  const isOldData = prevSibling.toLowerCase().includes('old');
+  const isNewData = prevSibling.toLowerCase().includes('new');
+
+  for (const listItem in profileData) {
+    let diffClass;
+    if (diffValues.has(listItem)) {
       diffClass = isOldData ? OLD_DIFF_CLASS : NEW_DIFF_CLASS;
     }
 
     const fragment = new DocumentFragment();
 
-    const spanKey = document.createElement('span');
-    spanKey.textContent = `${formatPropertyField(listItem)}: `;
-    fragment.appendChild(spanKey);
+    const spanKey = createCardComponent({
+      tagName: 'span',
+      innerText: `${formatPropertyField(listItem)}: `,
+      parent: fragment,
+    });
 
-    const spanValue = document.createElement('span');
-    if (diffClass) {
-      spanValue.classList.add(`${diffClass}`);
-    }
-    spanValue.textContent = `${getDataItem(primaryData, listItem)}`;
-    fragment.appendChild(spanValue);
+    const spanValue = createCardComponent({
+      tagName: 'span',
+      innerText: `${getDataItem(profileData, listItem)}`,
+      className: diffClass ? diffClass : '',
+      parent: fragment,
+    });
 
     const li = createCardComponent({
       tagName: 'li',
       parent: userInfoList,
+      child: fragment,
     });
-    li.append(fragment);
   }
 }
 
@@ -128,13 +142,15 @@ function createCard({ oldData, newData, userId, username, profileDiffId }) {
     parent: oldDataContainer,
   });
 
+  const diffValues = checkDifferentValues(oldData, newData);
+
   const oldUserInfoList = createCardComponent({
     tagName: 'ul',
     className: 'userInfoListContainer',
     parent: oldDataContainer,
   });
 
-  displayList(oldData, oldUserInfoList, newData);
+  displayList(oldData, oldUserInfoList, diffValues);
 
   const newDataContainer = createCardComponent({
     tagName: 'div',
@@ -154,7 +170,7 @@ function createCard({ oldData, newData, userId, username, profileDiffId }) {
     parent: newDataContainer,
   });
 
-  displayList(newData, newUserInfoList, oldData);
+  displayList(newData, newUserInfoList, diffValues);
 
   const buttonsContainer = createCardComponent({
     tagName: 'div',
@@ -238,7 +254,7 @@ function createCard({ oldData, newData, userId, username, profileDiffId }) {
   document.getElementById('loader').style.display = 'none';
 }
 
-function createCardComponent({ className, tagName, innerText, parent }) {
+function createCardComponent({ className, tagName, innerText, parent, child }) {
   const component = document.createElement(tagName);
   if (className) {
     component.classList.add(className);
@@ -250,6 +266,10 @@ function createCardComponent({ className, tagName, innerText, parent }) {
 
   if (parent) {
     parent.appendChild(component);
+  }
+
+  if (child) {
+    component.appendChild(child);
   }
 
   return component;
