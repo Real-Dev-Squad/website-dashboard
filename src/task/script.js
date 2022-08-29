@@ -395,11 +395,10 @@ function createSuggestionsList(matches) {
   if (matches.length) {
     addDisplay(assigneeAvatarLoader);
     matches.map(({ username, picture = {} }) => {
-      const defaultImagePath = '../images/avatar.png';
       const imageUrl =
         picture.hasOwnProperty('url') && picture.url
           ? picture.url
-          : defaultImagePath;
+          : DEFAULT_ASSIGNEE_IMAGE_PATH;
       const listItem = document.createElement('p');
       listItem.classList.add('list-item');
       listItem.style.cursor = 'pointer';
