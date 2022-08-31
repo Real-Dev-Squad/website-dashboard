@@ -5,14 +5,14 @@
 let currentOnlineList = [];
 let previousOnlineList = [];
 
-function setUpEventSource(url) {
-  const evtSource = new EventSource(url);
+function setUpOnlineMembersEventSource(url) {
+  const eventSource = new EventSource(url, { withCredentials: true });
 
-  evtSource.onopen = (e) => {
-    console.log('The connection has been established.');
+  eventSource.onopen = (e) => {
+    console.info('The connection has been established.');
   };
 
-  evtSource.onmessage = function (event) {
+  eventSource.onmessage = function (event) {
     const objectData = JSON.parse(event.data);
     currentOnlineList = objectData.users;
 
@@ -28,15 +28,16 @@ function setUpEventSource(url) {
     updateMembersOnlineStatus(currentOnlineList);
   };
 
-  evtSource.onerror = (e) => {
+  eventSource.onerror = (e) => {
     console.log('An error occurred while attempting to connect.', e);
     eventSource.close();
   };
 
-  return evtSource;
+  return eventSource;
 }
 
-const eventSource = setUpEventSource(RDS_SSE_ONLINE_URL);
+const onlineMembersEventSource =
+  setUpOnlineMembersEventSource(RDS_SSE_ONLINE_URL);
 
 function updateMembersOnlineStatus(onlieMembersList) {
   let toPositionOfOnlineMember = 0;
