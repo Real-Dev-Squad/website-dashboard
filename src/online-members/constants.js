@@ -28,8 +28,7 @@ const RDS_API_MEMBERS = 'https://api.realdevsquad.com/members';
 const RDS_API_TASKS_USERS = 'https://api.realdevsquad.com/tasks';
 const RDS_CLOUDINARY_CLOUD_URL = `https://res.cloudinary.com/realdevsquad/image/upload`;
 
-// TODO: Local link, will update to RDS LIKE once its hosted
-const RDS_SSE_ONLINE_URL = 'http://localhost:5100/online-members/prakash';
+const RDS_SSE_ONLINE_URL = 'https://online.realdevsquad.com/online-members';
 
 // Image Size constants
 const RDS_PROFILE_IMAGE_SIZE = 'w_40,h_40';
