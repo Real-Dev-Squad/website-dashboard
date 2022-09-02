@@ -91,3 +91,14 @@
   height: 2rem;
   width: 15rem;
 }
+
+.members-profile {
+  border-radius: 50%;
+  width: 25px;
+  margin-right: 5px;
+}
+
+.members-profile-and-name {
+  display: flex;
+  align-items: center;
+}

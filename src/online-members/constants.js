@@ -14,6 +14,9 @@ const MEMBERS_ONLINE_CLASS_LIST = [
   MEMBERS_ONLINE_HIDDEN_CLASS,
 ];
 
+const PROFILE_NAME_CLASS = 'members-profile-and-name';
+const PROFILE_NAME_CLASS_LIST = [PROFILE_NAME_CLASS];
+
 // Members Search Constants
 const MEMBERS_SEARCH_CLASS_LIST = ['members-search'];
 const MEMBERS_SEARCH_INPUT_CLASS_LIST = ['members-search-input'];
@@ -34,4 +37,5 @@ const RDS_SSE_ONLINE_URL = 'https://online.realdevsquad.com/online-members';
 const RDS_PROFILE_IMAGE_SIZE = 'w_40,h_40';
 const RDS_PROFILE_DEFAULT_IMAGE = '';
 
-const PROFILE_IMAGE_CLASS = [];
+const PROFILE_IMAGE_CLASS = 'members-profile';
+const PROFILE_IMAGE_CLASS_LIST = [PROFILE_IMAGE_CLASS];
