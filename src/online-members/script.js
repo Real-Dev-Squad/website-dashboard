@@ -21,7 +21,6 @@ function createMemberNode(member) {
   const div = document.createElement('div');
   div.classList = MEMBERS_CLASS_LIST;
   div.dataset.username = member.username;
-  // div.appendChild(img);
   div.appendChild(createTextNode(member.username));
 
   return div;
@@ -110,7 +109,7 @@ async function generateMemberTaskData(username) {
     return;
   }
 
-  showLoadingSpinner('#task-container');
+  showLoadingSpinner(`#${TASKS_CONTAINER_ID}`);
 
   isTaskDataBeingFetched = true;
 
@@ -121,22 +120,22 @@ async function generateMemberTaskData(username) {
 
   const memberTaskData = await getMemberTaskData(username);
   isTaskDataBeingFetched = false;
-  hideLoadingSpinner('#task-container');
+  hideLoadingSpinner(`#${TASKS_CONTAINER_ID}`);
   tasksDiv.appendChild(getTaskDataContent(memberTaskData));
 }
 
 async function generateMembersList() {
-  showLoadingSpinner('#members-container');
+  showLoadingSpinner(`#${MEMBERS_CONTAINER_ID}`);
   members = await getMembersData();
-  hideLoadingSpinner('#members-container');
+  hideLoadingSpinner(`#${MEMBERS_CONTAINER_ID}`);
   const membersDiv = document.getElementById(MEMBERS_CONTAINER_ID);
   const searchInputBox = generateSearchInputElement();
   membersDiv.append(searchInputBox, getMembersListContent(members));
-  addEventListnerToMembersList();
+  addEventListenerToMembersList();
 }
 
-function addEventListnerToMembersList() {
-  const membersList = document.querySelector('#members-container > ul');
+function addEventListenerToMembersList() {
+  const membersList = document.querySelector(`#${MEMBERS_CONTAINER_ID} > ul`);
   membersList.addEventListener('click', (event) => {
     const membersDiv = event.target.nodeName === 'DIV';
     if (!membersDiv) {
@@ -153,9 +152,9 @@ function generateSearchInputElement() {
   const input = document.createElement('input');
   input.classList = MEMBERS_SEARCH_INPUT_CLASS_LIST;
   input.type = 'text';
-  input.id = 'searchMembers';
+  input.id = 'search-members';
   input.onkeyup = searchFunction;
-  input.placeholder = 'Search for memberrs';
+  input.placeholder = 'Search for members';
   div.appendChild(input);
   return div;
 }
