@@ -163,19 +163,20 @@ nav h1::before {
   border-right: 1px solid #c4c4c4;
 }
 
-.oldDiff {
-  background-color: var(--color-red);
+.diff {
   padding: 4px;
   border-radius: 2px;
   color: var(--color-white);
 }
 
+.oldDiff {
+  background-color: var(--color-red);
+}
+
 .newDiff {
   background-color: var(--color-green);
-  padding: 2px 4px;
-  border-radius: 2px;
-  color: var(--color-white);
 }
+
 footer {
   width: 100%;
   padding: 8px;

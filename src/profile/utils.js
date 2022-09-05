@@ -7,6 +7,9 @@ import {
   ALERT_APPROVED,
   ALERT_ERROR,
   ALERT_REJECTED,
+  OLD_DATA,
+  NEW_DATA,
+  DIFF_CLASS,
   OLD_DIFF_CLASS,
   NEW_DIFF_CLASS,
 } from './constants.js';
@@ -62,15 +65,11 @@ function checkDifferentValues(primaryData, secondaryData) {
   return diffValues;
 }
 
-function displayList(profileData, userInfoList, diffValues) {
-  const prevSibling = userInfoList.previousSibling.innerHTML;
-  const isOldData = prevSibling.toLowerCase().includes('old');
-  const isNewData = prevSibling.toLowerCase().includes('new');
-
+function displayList(profileData, userInfoList, diffValues, listType) {
   for (const listItem in profileData) {
     let diffClass;
     if (diffValues.has(listItem)) {
-      diffClass = isOldData ? OLD_DIFF_CLASS : NEW_DIFF_CLASS;
+      diffClass = listType === OLD_DATA ? OLD_DIFF_CLASS : NEW_DIFF_CLASS;
     }
 
     const fragment = new DocumentFragment();
@@ -84,7 +83,7 @@ function displayList(profileData, userInfoList, diffValues) {
     const spanValue = createCardComponent({
       tagName: 'span',
       innerText: `${getDataItem(profileData, listItem)}`,
-      className: diffClass ? diffClass : '',
+      classNames: diffClass ? [DIFF_CLASS, diffClass] : '',
       parent: fragment,
     });
 
@@ -150,7 +149,7 @@ function createCard({ oldData, newData, userId, username, profileDiffId }) {
     parent: oldDataContainer,
   });
 
-  displayList(oldData, oldUserInfoList, diffValues);
+  displayList(oldData, oldUserInfoList, diffValues, OLD_DATA);
 
   const newDataContainer = createCardComponent({
     tagName: 'div',
@@ -170,7 +169,7 @@ function createCard({ oldData, newData, userId, username, profileDiffId }) {
     parent: newDataContainer,
   });
 
-  displayList(newData, newUserInfoList, diffValues);
+  displayList(newData, newUserInfoList, diffValues, NEW_DATA);
 
   const buttonsContainer = createCardComponent({
     tagName: 'div',
@@ -254,10 +253,21 @@ function createCard({ oldData, newData, userId, username, profileDiffId }) {
   document.getElementById('loader').style.display = 'none';
 }
 
-function createCardComponent({ className, tagName, innerText, parent, child }) {
+function createCardComponent({
+  className,
+  classNames,
+  tagName,
+  innerText,
+  parent,
+  child,
+}) {
   const component = document.createElement(tagName);
   if (className) {
     component.classList.add(className);
+  }
+
+  if (classNames) {
+    classNames.forEach((c) => component.classList.add(c));
   }
 
   if (innerText) {
