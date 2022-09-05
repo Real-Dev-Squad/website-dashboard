@@ -13,23 +13,30 @@ function setUpOnlineMembersEventSource(url) {
   };
 
   eventSource.onmessage = function (event) {
-    const objectData = JSON.parse(event.data);
-    currentOnlineList = objectData.users;
+    try {
+      const objectData = JSON.parse(event.data);
+      currentOnlineList = objectData.users;
 
-    previousOnlineList.forEach((member) => {
-      members[member].isOnline = false;
-    });
+      previousOnlineList.forEach((member) => {
+        members[member].isOnline = false;
+      });
 
-    currentOnlineList.forEach((member) => {
-      members[member].isOnline = true;
-    });
+      currentOnlineList.forEach((member) => {
+        members[member].isOnline = true;
+      });
 
-    previousOnlineList = currentOnlineList;
-    updateMembersOnlineStatus(currentOnlineList);
+      previousOnlineList = currentOnlineList;
+      updateMembersOnlineStatus(currentOnlineList, members);
+    } catch (error) {
+      console.error(
+        'Error occurred while processing data, please contact admin',
+        error,
+      );
+    }
   };
 
   eventSource.onerror = (e) => {
-    console.log('An error occurred while attempting to connect.', e);
+    console.error('An error occurred while attempting to connect.', e);
     eventSource.close();
   };
 
@@ -39,26 +46,25 @@ function setUpOnlineMembersEventSource(url) {
 const onlineMembersEventSource =
   setUpOnlineMembersEventSource(RDS_SSE_ONLINE_URL);
 
-function updateMembersOnlineStatus(onlieMembersList) {
-  let toPositionOfOnlineMember = 0;
-  const memebrsUl = document.getElementById(MEMBERS_LIST_ID);
-  const memberLi = memebrsUl.getElementsByTagName('li');
+function updateMembersOnlineStatus(onlieMembersList, members) {
+  let targetPositionOfOnlineMember = 0;
+  const membersUl = document.getElementById(MEMBERS_LIST_ID);
+  const memberLi = membersUl.getElementsByTagName('li');
   // Hiding online status for all members
-  for (let i = 0; i < memberLi.length; i++) {
-    const memberDiv = memberLi[i].getElementsByClassName(MEMBERS_CLASS)[0];
+  for (const member of memberLi) {
+    const memberDiv = member.getElementsByClassName(MEMBERS_CLASS)[0];
     const memberUsername = memberDiv.dataset.username;
 
     const memberOnlineStatusDiv =
-      memberLi[i].getElementsByClassName(MEMBERS_ONLINE_CLASS)[0];
+      member.getElementsByClassName(MEMBERS_ONLINE_CLASS)[0];
     memberOnlineStatusDiv.classList.add(MEMBERS_ONLINE_HIDDEN_CLASS);
 
-    // Showing online status for online memebrs
+    // Showing online status for online members
     if (members[memberUsername].isOnline) {
       memberOnlineStatusDiv.classList.remove(MEMBERS_ONLINE_HIDDEN_CLASS);
 
-      const membersParentDiv = memberDiv.parentNode.parentNode;
       // Moving online users to the top of list
-      memebrsUl.insertBefore(memberLi[i], memberLi[toPositionOfOnlineMember++]);
+      membersUl.insertBefore(member, memberLi[targetPositionOfOnlineMember++]);
     }
   }
 }

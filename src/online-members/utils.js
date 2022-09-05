@@ -28,12 +28,10 @@ async function getMembersData() {
     membersList = membersList.members;
     membersList = membersList.filter((member) => !member.incompleteUserDetails);
     membersList.forEach((member) => {
-      if (!member.incompleteUserDetails) {
-        memberObject[`${member.username}`] = {
-          isOnline: false,
-          ...member,
-        };
-      }
+      memberObject[`${member.username}`] = {
+        isOnline: false,
+        ...member,
+      };
     });
   }
   return memberObject;
@@ -52,20 +50,23 @@ async function getMemberTaskData(username) {
 const rdsApiTaskDetails = (username = null) =>
   `${RDS_API_TASKS_USERS}/${username}`;
 
-const getCloudinaryImgURL = (publicId, configs) =>
-  `${RDS_CLOUDINARY_CLOUD_URL}${configs ? `/${configs}` : ''}/${publicId}`;
+const getCloudinaryImgURL = (publicId, configs) => {
+  const imageSizeOptions = configs ? `/${configs}` : '';
+  return `${RDS_CLOUDINARY_CLOUD_URL}${imageSizeOptions}/${publicId}`;
+};
 
 function searchFunction() {
-  let divText, i, txtValue;
-  const input = document.getElementById('searchMembers');
+  let divText, txtValue;
+  const input = document.getElementById('search-members');
   const filter = input.value.toUpperCase();
   const ul = document.getElementById(MEMBERS_LIST_ID);
   const li = ul.getElementsByTagName('li');
-  for (i = 0; i < li.length; i++) {
-    divText = li[i].getElementsByTagName('div')[0];
+  const liArray = Array.from(li);
+  liArray.forEach((liItem) => {
+    divText = liItem.getElementsByTagName('div')[0];
     txtValue = divText.textContent || divText.innerText;
-    const displayText =
+    const displayStyle =
       txtValue.toUpperCase().indexOf(filter) > -1 ? '' : 'none';
-    li[i].style.display = displayText;
-  }
+    liItem.style.display = displayStyle;
+  });
 }
