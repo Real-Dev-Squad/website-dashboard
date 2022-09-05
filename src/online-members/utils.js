@@ -28,12 +28,10 @@ async function getMembersData() {
     membersList = membersList.members;
     membersList = membersList.filter((member) => !member.incompleteUserDetails);
     membersList.forEach((member) => {
-      if (!member.incompleteUserDetails) {
-        memberObject[`${member.username}`] = {
-          isOnline: false,
-          ...member,
-        };
-      }
+      memberObject[`${member.username}`] = {
+        isOnline: false,
+        ...member,
+      };
     });
   }
   return memberObject;
