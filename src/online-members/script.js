@@ -14,14 +14,12 @@ function createTextNode(text) {
   return document.createTextNode(text);
 }
 
-function createProfileImage(src = '', alt = '') {
+function createProfileImage(publicId = '', alt = '') {
   const img = createElement({
     type: 'img',
     classList: PROFILE_IMAGE_CLASS_LIST,
   });
-  img.src = src
-    ? getCloudinaryImgURL(src, RDS_PROFILE_IMAGE_SIZE)
-    : RDS_PROFILE_DEFAULT_IMAGE;
+  img.src = getMemberProfileImageLink(publicId);
   img.setAttribute('alt', alt);
   return img;
 }
@@ -183,9 +181,9 @@ function generateSearchInputElement() {
     classList: MEMBERS_SEARCH_INPUT_CLASS_LIST,
   });
   searchInputField.type = 'text';
-  searchInputField.id = 'searchMembers';
+  searchInputField.id = 'search-members';
   searchInputField.onkeyup = searchFunction;
-  searchInputField.placeholder = 'Search for memberrs';
+  searchInputField.placeholder = 'Search for members';
 
   const div = createElement({
     type: 'div',

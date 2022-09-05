@@ -55,6 +55,12 @@ const getCloudinaryImgURL = (publicId, configs) => {
   return `${RDS_CLOUDINARY_CLOUD_URL}${imageSizeOptions}/${publicId}`;
 };
 
+function getMemberProfileImageLink(publicId) {
+  return publicId
+    ? getCloudinaryImgURL(publicId, RDS_PROFILE_IMAGE_SIZE)
+    : RDS_PROFILE_DEFAULT_IMAGE;
+}
+
 function searchFunction() {
   let divText, txtValue;
   const input = document.getElementById('search-members');
