@@ -1,7 +1,5 @@
-const API_BASE_URL = window.API_BASE_URL;
 const assigneeAvatar = document.getElementById('assigneeAvatar');
 const assigneeAvatarLoader = document.getElementById('assigneeAvatarLoader');
-
 const getRemainingDays = (selectedDateInString) => {
   const selectedDate = new Date(selectedDateInString);
   const currentDate = new Date(getFutureDateString(0));
@@ -358,8 +356,8 @@ async function fetchMembers(searchInput) {
     const data = await response.json();
     clearSuggestionList();
     wasAssigneeSet = false;
-    removeDisplay(assigneeAvatar);
-    removeDisplay(assigneeAvatarLoader);
+    removeClass(assigneeAvatar, DISPLAY_REMOVE_CLASS);
+    removeClass(assigneeAvatarLoader, DISPLAY_REMOVE_CLASS);
     if (searchInput.trim() !== '') {
       const matches = data.members.filter((task) => {
         if (task.username) {
@@ -393,7 +391,7 @@ function clearUserNotFound() {
 function createSuggestionsList(matches) {
   const listItems = document.getElementById('list-items');
   if (matches.length) {
-    addDisplay(assigneeAvatarLoader);
+    addClass(assigneeAvatarLoader, DISPLAY_REMOVE_CLASS);
     matches.map(({ username, picture = {} }) => {
       const imageUrl =
         picture.hasOwnProperty('url') && picture.url
@@ -401,7 +399,6 @@ function createSuggestionsList(matches) {
           : DEFAULT_ASSIGNEE_IMAGE_PATH;
       const listItem = document.createElement('p');
       listItem.classList.add('list-item');
-      listItem.style.cursor = 'pointer';
       listItem.setAttribute(
         'onclick',
         `setAssignee('${username}', '${imageUrl}')`,
@@ -415,8 +412,8 @@ function createSuggestionsList(matches) {
 function setAssignee(assignee, imgUrl) {
   assigneeEl.value = assignee;
   wasAssigneeSet = true;
-  addDisplay(assigneeAvatar);
-  removeDisplay(assigneeAvatarLoader);
+  addClass(assigneeAvatar, DISPLAY_REMOVE_CLASS);
+  removeClass(assigneeAvatarLoader, DISPLAY_REMOVE_CLASS);
   assigneeAvatar.style.backgroundImage = `url(${imgUrl})`;
   stateHandle();
   clearSuggestionList();
@@ -434,10 +431,10 @@ assigneeEl.addEventListener(
   debounce((event) => fetchMembers(event.target.value), 500),
 );
 
-function addDisplay(element) {
-  element.classList.remove('element-display-remove');
+function addClass(element, className) {
+  element.classList.remove(className);
 }
 
-function removeDisplay(element) {
-  element.classList.add('element-display-remove');
+function removeClass(element, className) {
+  element.classList.add(className);
 }
