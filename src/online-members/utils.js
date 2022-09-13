@@ -14,7 +14,7 @@ async function makeApiCall(
     });
     return response;
   } catch (err) {
-    console.error('Something went wrong. Please contact admin', err);
+    console.error(MESSAGE_SOMETHING_WENT_WRONG, err);
     return err;
   }
 }
@@ -50,7 +50,7 @@ const getCloudinaryImgURL = (publicId, configs) => {
 
 function searchFunction() {
   let divText, txtValue;
-  const input = document.getElementById('search-members');
+  const input = document.getElementById(MEMBERS_SEARCH_ID);
   const filter = input.value.toUpperCase();
   const ul = document.getElementById(MEMBERS_LIST_ID);
   const li = ul.getElementsByTagName('li');

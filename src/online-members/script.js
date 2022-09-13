@@ -26,7 +26,7 @@ function createMemberNode(member) {
   return div;
 }
 
-function createALinkNode(url, title) {
+function createAnchorLinkNode(url, title) {
   if (!url) {
     return '';
   }
@@ -47,7 +47,7 @@ function createTaskNode(task) {
     task.purpose ? `Purpose: ${task.purpose}` : '',
   );
   pPurpose.appendChild(purpose);
-  const a = createALinkNode(task.featureUrl, 'Feature link');
+  const a = createAnchorLinkNode(task.featureUrl, 'Feature link');
   const div = document.createElement('div');
   div.append(pTitle, pPurpose, a);
   return div;
@@ -82,9 +82,7 @@ function getTaskDataContent(tasks, classList = []) {
   });
   if (!fragment.hasChildNodes()) {
     const p = document.createElement('p');
-    p.appendChild(
-      createTextNode('No tasks found, create some for them please :P'),
-    );
+    p.appendChild(createTextNode(MESSAGE_NO_TASK));
     fragment.appendChild(p);
   }
   div.append(h3, fragment);
@@ -93,7 +91,7 @@ function getTaskDataContent(tasks, classList = []) {
 
 function showLoadingSpinner(selector) {
   const loader = document.createElement('div');
-  loader.appendChild(createTextNode('LOADING...'));
+  loader.appendChild(createTextNode(MESSAGE_LOADING));
   document.querySelector(selector).appendChild(loader);
 }
 
@@ -152,9 +150,9 @@ function generateSearchInputElement() {
   const input = document.createElement('input');
   input.classList = MEMBERS_SEARCH_INPUT_CLASS_LIST;
   input.type = 'text';
-  input.id = 'search-members';
+  input.id = MEMBERS_SEARCH_ID;
   input.onkeyup = searchFunction;
-  input.placeholder = 'Search for members';
+  input.placeholder = MEMBERS_SEARCH_PLACEHOLDER;
   div.appendChild(input);
   return div;
 }

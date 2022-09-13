@@ -12,6 +12,8 @@ const TASKS_CONTAINER_CLASS_LIST = ['tasks-container'];
 
 const MEMBERS_SEARCH_CLASS_LIST = ['members-search'];
 const MEMBERS_SEARCH_INPUT_CLASS_LIST = ['members-search-input'];
+const MEMBERS_SEARCH_ID = 'search-members';
+const MEMBERS_SEARCH_PLACEHOLDER = 'Search for members';
 
 const RDS_API_MEMBERS = 'https://api.realdevsquad.com/members';
 const RDS_API_TASKS_USERS = 'https://api.realdevsquad.com/tasks';
@@ -21,3 +23,10 @@ const RDS_PROFILE_IMAGE_SIZE = 'w_40,h_40';
 const RDS_PROFILE_DEFAULT_IMAGE = '';
 
 const PROFILE_IMAGE_CLASS = [];
+
+/* MESSAGES CONSTANTS */
+
+const MESSAGE_SOMETHING_WENT_WRONG =
+  'Something went wrong. Please contact admin';
+const MESSAGE_NO_TASK = 'No tasks found, create some for them please :P';
+const MESSAGE_LOADING = 'LOADING...';
