@@ -46,7 +46,7 @@ function setUpOnlineMembersEventSource(url) {
 const onlineMembersEventSource =
   setUpOnlineMembersEventSource(RDS_SSE_ONLINE_URL);
 
-function updateMembersOnlineStatus(onlieMembersList, members) {
+function updateMembersOnlineStatus(onlineMembersList, members) {
   let targetPositionOfOnlineMember = 0;
   const membersUl = document.getElementById(MEMBERS_LIST_ID);
   const memberLi = membersUl.getElementsByTagName('li');
