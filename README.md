@@ -2,9 +2,9 @@
 
 https://dashboard.realdevsquad.com/
 
-# What does dashboard does?
+# What does the dashboard do?
 
-Dashboard helps to create and assigns task to the members and can be accessed only by authorized members.
+Dashboard helps to create and assigns task to the members and can be accessed only by authorized members. You can also track currently assigned tasks per member.
 
 # How to Contribute?
 
