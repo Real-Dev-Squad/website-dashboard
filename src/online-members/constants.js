@@ -23,7 +23,6 @@ const MEMBERS_SEARCH_INPUT_CLASS_LIST = ['members-search-input'];
 const MEMBERS_SEARCH_ID = 'search-members';
 const MEMBERS_SEARCH_PLACEHOLDER = 'Search for members';
 
-
 // Task Constants
 const TASKS_CONTAINER_ID = 'task-container';
 const TASKS_CLASS_LIST = ['task'];
