@@ -20,6 +20,9 @@ const PROFILE_NAME_CLASS_LIST = [PROFILE_NAME_CLASS];
 // Members Search Constants
 const MEMBERS_SEARCH_CLASS_LIST = ['members-search'];
 const MEMBERS_SEARCH_INPUT_CLASS_LIST = ['members-search-input'];
+const MEMBERS_SEARCH_ID = 'search-members';
+const MEMBERS_SEARCH_PLACEHOLDER = 'Search for members';
+
 
 // Task Constants
 const TASKS_CONTAINER_ID = 'task-container';
@@ -39,3 +42,9 @@ const RDS_PROFILE_DEFAULT_IMAGE = '';
 
 const PROFILE_IMAGE_CLASS = 'members-profile';
 const PROFILE_IMAGE_CLASS_LIST = [PROFILE_IMAGE_CLASS];
+
+/* MESSAGES CONSTANTS */
+const MESSAGE_SOMETHING_WENT_WRONG =
+  'Something went wrong. Please contact admin';
+const MESSAGE_NO_TASK = 'No tasks found, create some for them please :P';
+const MESSAGE_LOADING = 'LOADING...';
