@@ -1,29 +1,53 @@
 'use strict';
 
-let members = [];
+let members = {};
 let memberTasks = [];
 let isTaskDataBeingFetched = false;
+
+function createElement({ type, classList = [] }) {
+  const element = document.createElement(type);
+  element.classList.add(...classList);
+  return element;
+}
 
 function createTextNode(text) {
   return document.createTextNode(text);
 }
 
-function createProfileImage(url, alt) {
-  const img = document.createElement('img');
-  img.classList = PROFILE_IMAGE_CLASS;
-  img.src = member.picture
-    ? getCloudinaryImgURL(url, RDS_PROFILE_IMAGE_SIZE)
-    : RDS_PROFILE_DEFAULT_IMAGE;
+function createProfileImage(publicId = '', alt = '') {
+  const img = createElement({
+    type: 'img',
+    classList: PROFILE_IMAGE_CLASS_LIST,
+  });
+  img.src = getMemberProfileImageLink(publicId);
   img.setAttribute('alt', alt);
+  return img;
 }
 
 function createMemberNode(member) {
-  const div = document.createElement('div');
-  div.classList = MEMBERS_CLASS_LIST;
-  div.dataset.username = member.username;
-  div.appendChild(createTextNode(member.username));
+  const memberDiv = createElement({
+    type: 'div',
+    classList: MEMBERS_CLASS_LIST,
+  });
+  memberDiv.dataset.username = member.username;
 
-  return div;
+  const memberOnlineDiv = createElement({
+    type: 'div',
+    classList: MEMBERS_ONLINE_CLASS_LIST,
+  });
+
+  const memberImage = createProfileImage(member?.picture?.publicId);
+  const usernameText = createTextNode(member.username);
+
+  const profileAndNameDiv = createElement({
+    type: 'div',
+    classList: PROFILE_NAME_CLASS_LIST,
+  });
+  profileAndNameDiv.append(memberImage, usernameText);
+
+  memberDiv.append(profileAndNameDiv, memberOnlineDiv);
+
+  return memberDiv;
 }
 
 function createAnchorLinkNode(url, title) {
@@ -31,7 +55,7 @@ function createAnchorLinkNode(url, title) {
     return '';
   }
   const featureUrl = createTextNode(title);
-  const a = document.createElement('a');
+  const a = createElement({ type: 'a' });
   a.appendChild(featureUrl);
   a.href = url;
   a.title = title;
@@ -39,49 +63,54 @@ function createAnchorLinkNode(url, title) {
 }
 
 function createTaskNode(task) {
-  const pTitle = document.createElement('p');
+  const pTitle = createElement({ type: 'p' });
   const title = createTextNode(task.title ? `Title: ${task.title}` : '');
   pTitle.appendChild(title);
-  const pPurpose = document.createElement('p');
+  const pPurpose = createElement({ type: 'p' });
+
   const purpose = createTextNode(
     task.purpose ? `Purpose: ${task.purpose}` : '',
   );
   pPurpose.appendChild(purpose);
+
   const a = createAnchorLinkNode(task.featureUrl, 'Feature link');
-  const div = document.createElement('div');
+
+  const div = createElement({ type: 'div' });
   div.append(pTitle, pPurpose, a);
+
   return div;
 }
 
 function getMembersListContent(members, classList = []) {
   const fragment = new DocumentFragment();
-  members.forEach((member) => {
-    const li = document.createElement('li');
-    li.append(createMemberNode(member));
+
+  const membersList = Object.keys(members);
+
+  membersList.forEach((member) => {
+    const li = createElement({ type: 'li' });
+    li.append(createMemberNode(members[member]));
     fragment.append(li);
   });
 
-  const ul = document.createElement('ul');
+  const ul = createElement({ type: 'ul', classList: MEMBERS_UL_CLASS_LIST });
   ul.id = MEMBERS_LIST_ID;
-  ul.classList = MEMBERS_UL_CLASS_LIST;
   ul.appendChild(fragment);
 
   return ul;
 }
 
 function getTaskDataContent(tasks, classList = []) {
-  const div = document.createElement('div');
-  const h3 = document.createElement('h3');
+  const div = createElement({ type: 'div' });
+  const h3 = createElement({ type: 'h3' });
   h3.appendChild(createTextNode('TASKS'));
   const fragment = new DocumentFragment();
   tasks.forEach((task) => {
-    const div = document.createElement('div');
-    div.classList = TASKS_CLASS_LIST;
+    const div = createElement({ type: 'div', classList: TASKS_CLASS_LIST });
     div.append(createTaskNode(task));
     fragment.append(div);
   });
   if (!fragment.hasChildNodes()) {
-    const p = document.createElement('p');
+    const p = createElement({ type: 'p' });
     p.appendChild(createTextNode(MESSAGE_NO_TASK));
     fragment.appendChild(p);
   }
@@ -90,7 +119,7 @@ function getTaskDataContent(tasks, classList = []) {
 }
 
 function showLoadingSpinner(selector) {
-  const loader = document.createElement('div');
+  const loader = createElement({ type: 'div' });
   loader.appendChild(createTextNode(MESSAGE_LOADING));
   document.querySelector(selector).appendChild(loader);
 }
@@ -145,15 +174,20 @@ function addEventListenerToMembersList() {
 }
 
 function generateSearchInputElement() {
-  const div = document.createElement('div');
-  div.classList = MEMBERS_SEARCH_CLASS_LIST;
-  const input = document.createElement('input');
-  input.classList = MEMBERS_SEARCH_INPUT_CLASS_LIST;
-  input.type = 'text';
-  input.id = MEMBERS_SEARCH_ID;
-  input.onkeyup = searchFunction;
-  input.placeholder = MEMBERS_SEARCH_PLACEHOLDER;
-  div.appendChild(input);
+  const searchInputField = createElement({
+    type: 'input',
+    classList: MEMBERS_SEARCH_INPUT_CLASS_LIST,
+  });
+  searchInputField.type = 'text';
+  searchInputField.id = MEMBERS_SEARCH_ID;
+  searchInputField.onkeyup = searchFunction;
+  searchInputField.placeholder = MEMBERS_SEARCH_PLACEHOLDER;
+
+  const div = createElement({
+    type: 'div',
+    classList: MEMBERS_SEARCH_CLASS_LIST,
+  });
+  div.appendChild(searchInputField);
   return div;
 }
 

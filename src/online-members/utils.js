@@ -21,13 +21,20 @@ async function makeApiCall(
 
 async function getMembersData() {
   let membersList = null;
+  const memberObject = {};
   const membersRequest = await makeApiCall(RDS_API_MEMBERS);
   if (membersRequest.status === 200) {
     membersList = await membersRequest.json();
     membersList = membersList.members;
     membersList = membersList.filter((member) => !member.incompleteUserDetails);
+    membersList.forEach((member) => {
+      memberObject[`${member.username}`] = {
+        isOnline: false,
+        ...member,
+      };
+    });
   }
-  return membersList;
+  return memberObject;
 }
 
 async function getMemberTaskData(username) {
@@ -48,9 +55,15 @@ const getCloudinaryImgURL = (publicId, configs) => {
   return `${RDS_CLOUDINARY_CLOUD_URL}${imageSizeOptions}/${publicId}`;
 };
 
+function getMemberProfileImageLink(publicId) {
+  return publicId
+    ? getCloudinaryImgURL(publicId, RDS_PROFILE_IMAGE_SIZE)
+    : RDS_PROFILE_DEFAULT_IMAGE;
+}
+
 function searchFunction() {
   let divText, txtValue;
-  const input = document.getElementById(MEMBERS_SEARCH_ID);
+  const input = document.getElementById('search-members');
   const filter = input.value.toUpperCase();
   const ul = document.getElementById(MEMBERS_LIST_ID);
   const li = ul.getElementsByTagName('li');
