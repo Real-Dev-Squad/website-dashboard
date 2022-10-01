@@ -169,21 +169,12 @@ async function generateMembersList() {
 
 function addEventListenerToMembersList() {
   const membersList = document.querySelector(`#${MEMBERS_CONTAINER_ID} > UL`);
-  const memberContainer = document.getElementById(MEMBERS_CONTAINER_ID);
   membersList.addEventListener('click', (event) => {
-    let count = 5;
-    let username;
-    let eventTarget = event.target;
-    // Looping through parent nodes to get username or loop until parentNode or until counter runs out
-    while (count > 0) {
-      username = eventTarget.dataset.username;
-      if (username || eventTarget === memberContainer) {
-        break;
-      }
-      count = count - 1;
-      eventTarget = eventTarget.parentElement;
+    const memberElement = event.target.closest(`.${MEMBERS_CLASS}`);
+    if (!memberElement) {
+      return;
     }
-
+    const username = memberElement.dataset.username;
     if (!username) {
       throw new Error('Some error occurred, please try again or contact admin');
     }
