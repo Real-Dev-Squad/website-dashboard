@@ -1,0 +1,165 @@
+:root {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+.event_card {
+  border: 2px solid gray;
+  padding: 5px;
+  width: 80%;
+  margin: 0 auto;
+  margin-top: 2rem;
+  box-shadow: 5px 5px 10px #252525;
+}
+.title {
+  margin: 0;
+  font-weight: 800;
+  color: black;
+  text-transform: capitalize;
+  margin-bottom: 1px;
+}
+
+.detail {
+  margin: 0;
+  color: gray;
+}
+
+.event_card button {
+  border: none;
+  background-color: #ffffff;
+  align-self: flex-end;
+  color: blue
+}
+
+#loader {
+  display: flex;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+
+#loader p {
+  font-weight: 800;
+  font-size: 3rem;
+}
+
+.overlay {
+  display: none;
+  background: #000000b3;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+}
+
+#modal {
+  max-width: 250px;
+  height: 60%;
+  padding: 0.4rem 0.2rem;
+  margin: 0 auto;
+  background: #dedcdc;
+  color: black;
+  position: relative;
+  top: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 3px solid grey;
+  box-shadow: 0px 0px 10px #ffffff;
+}
+
+.userImg {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  margin-top: 0;
+  border: 2px solid grey;
+}
+
+#modal-loading {
+  align-self: center;
+  justify-self: center;
+}
+
+.username {
+  font-weight: 600;
+  font-size: 1.2rem;
+  border-bottom: 1px solid grey;
+}
+
+.role_div_item {
+  border: 0.2px solid gray;
+  margin: 0.2rem;
+  border-radius: 5%;
+  padding: 0.2rem;
+  background-color: #dee0df;
+  font-size: 0.7rem;
+}
+
+.roles_div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.skill-title {
+  align-self: flex-start;
+  margin-left: 1px;
+  font-weight: 900;
+  margin-bottom: 0.4rem;
+}
+
+.cancel {
+  width: 20px;
+  height: 20px;
+  align-self: flex-end;
+  margin-top: 0;
+}
+
+.user_details {
+  overflow-y: scroll;
+  margin-top: 0.2rem;
+  background-color: white;
+  height: 100%;
+  padding: 0.7rem;
+}
+
+.addBtn {
+  font-size: 1rem;
+  width: fit-content;
+  height: fit-content;
+  border: none;
+  cursor: pointer;
+}
+
+.addRoleDiv {
+position: fixed;
+  min-width: 500px;
+  height: 200px;
+  top: 50%;
+  left: 50%;
+  margin-top: -100px;
+  margin-left: -250px;
+  padding: 1rem;
+  background: #dedcdc;
+  color: black;
+  border: 3px solid grey;
+  box-shadow: 0px 0px 10px #ffffff;
+  display: flex;
+  flex-direction: column;
+
+}
+
+.addSkillTitle {
+  text-transform: capitalize;
+}
+.select-skill,
+.select-level {
+  padding: 10px;
+  margin: 10px;
+  overflow-y: scroll;
+}
