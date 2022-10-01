@@ -99,10 +99,10 @@ function getMembersListContent(members, classList = []) {
   return ul;
 }
 
-function getTaskDataContent(tasks, classList = []) {
+function getTaskDataContent({ tasks, username, classList = [] }) {
   const div = createElement({ type: 'div' });
   const h3 = createElement({ type: 'h3' });
-  h3.appendChild(createTextNode('TASKS'));
+  h3.appendChild(createTextNode(`TASKS - ${username}`));
   const fragment = new DocumentFragment();
   tasks.forEach((task) => {
     const div = createElement({ type: 'div', classList: TASKS_CLASS_LIST });
@@ -136,6 +136,12 @@ async function generateMemberTaskData(username) {
     return;
   }
 
+  if (!username) {
+    throw new Error(
+      'Some error occurred while fetching user data, please try again or contact admin',
+    );
+  }
+
   showLoadingSpinner(`#${TASKS_CONTAINER_ID}`);
 
   isTaskDataBeingFetched = true;
@@ -148,7 +154,7 @@ async function generateMemberTaskData(username) {
   const memberTaskData = await getMemberTaskData(username);
   isTaskDataBeingFetched = false;
   hideLoadingSpinner(`#${TASKS_CONTAINER_ID}`);
-  tasksDiv.appendChild(getTaskDataContent(memberTaskData));
+  tasksDiv.appendChild(getTaskDataContent({ tasks: memberTaskData, username }));
 }
 
 async function generateMembersList() {
@@ -162,13 +168,25 @@ async function generateMembersList() {
 }
 
 function addEventListenerToMembersList() {
-  const membersList = document.querySelector(`#${MEMBERS_CONTAINER_ID} > ul`);
+  const membersList = document.querySelector(`#${MEMBERS_CONTAINER_ID} > UL`);
+  const memberContainer = document.getElementById(MEMBERS_CONTAINER_ID);
   membersList.addEventListener('click', (event) => {
-    const membersDiv = event.target.nodeName === 'DIV';
-    if (!membersDiv) {
-      return;
+    let count = 5;
+    let username;
+    let eventTarget = event.target;
+    // Looping through parent nodes to get username or loop until parentNode or until counter runs out
+    while (count > 0) {
+      username = eventTarget.dataset.username;
+      if (username || eventTarget === memberContainer) {
+        break;
+      }
+      count = count - 1;
+      eventTarget = eventTarget.parentElement;
     }
-    const username = event.target.dataset.username;
+
+    if (!username) {
+      throw new Error('Some error occurred, please try again or contact admin');
+    }
     generateMemberTaskData(username);
   });
 }
