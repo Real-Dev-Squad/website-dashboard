@@ -138,7 +138,7 @@ async function generateMemberTaskData(username) {
 
   if (!username) {
     throw new Error(
-      'Some error occurred while fetching user data, please try again or contact admin',
+      'Some error occurred while getting user data, please try again or contact admin',
     );
   }
 
