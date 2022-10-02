@@ -136,12 +136,6 @@ async function generateMemberTaskData(username) {
     return;
   }
 
-  if (!username) {
-    throw new Error(
-      'Some error occurred while getting user data, please try again or contact admin',
-    );
-  }
-
   showLoadingSpinner(`#${TASKS_CONTAINER_ID}`);
 
   isTaskDataBeingFetched = true;
