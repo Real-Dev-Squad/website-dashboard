@@ -143,10 +143,10 @@ details[open] .dropDown {
   font-size: 18px;
   color: #ffffff;
   text-transform: capitalize;
-  margin-bottom: 0;
+  margin-bottom: 0.5rem;
   align-self: flex-end;
   margin-left: 1px;
-  font-family: sans-serif;
+  font-family: 'roboto mono';
   font-weight: 300;
 }
 
@@ -158,41 +158,14 @@ details[open] .dropDown {
 
 /* Input Styles */
 
-.input-div {
+.skillTitle {
   margin-top: 30px;
-  border-radius: 50px;
-  background-color: #ffffff;
-  border: 1px solid gray;
-  padding: 0.2rem;
-  overflow: hidden;
-  width: 85%;
-  display: flex;
-  justify-content: space-between;
-  /* align-items: center; */
-}
-
-.inputEl {
-  border: none;
-  width: 80%;
-  font-size: 0.8rem;
-  padding-left: 0.5rem;
-}
-
-.inputEl:focus, 
-.inputEl:active {
-  outline: none;
-}
-
-.addBtn {
-  background-color: #ffffff;
-  border: none;
-  padding: 0;
-  
-}
-
-.addBtnImg {
-  width: 20px;
-  height: 20px;
+  margin-bottom: 0;
+  align-self: flex-start;
+  font-size: 1.4rem;
+  font-weight: 400;
+  font-family: 'roboto mono';
+  margin-left: 10px;
 }
 
 /* Roles div styling */
@@ -200,7 +173,6 @@ details[open] .dropDown {
 .roles-div {
   display: flex;
   flex-wrap: wrap;
-  margin-top: 30px;
   padding: 0.2rem;
   overflow-y: auto;
 }
@@ -239,6 +211,14 @@ details[open] .dropDown {
   font-weight: 600;
 }
 
+.addBtn {
+  font-size: 1.5rem;
+  padding: 0;
+  border: none;
+  background-color: #D9D9D9;
+  cursor: pointer;
+}
+
 /* Activity Button */
 
 .activityBtnDiv {
@@ -255,4 +235,15 @@ details[open] .dropDown {
   background-color: #DF0057;
   color: white;
   padding: 0.2rem 1rem;
+  font-family: 'roboto mono';
+}
+
+
+/* role add div */
+
+.role-add-div {
+  position: absolute;
+  background-color: black;
+  z-index: 100;
+  height: 100%;
 }

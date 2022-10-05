@@ -59,7 +59,7 @@ function createEventCard(title, eventdescription, purpose, username) {
   const sumarryContainer = createElement({type: "div", attributes: {class: "sumarryContainer"}})
 
   const name = createElement({type: "button", attributes: {class: "name"}, innerText: username})
-  name.addEventListener("click", createModal)
+  name.addEventListener("click", () => createModal(username))
   const log = createElement({type: "p", attributes: {class: "log"}, innerText: eventdescription})
   const icon = createElement({type: "img", attributes: {class: "dropDown", src: "./assets/down.png", alt: "dropdown icon"}})
   const detailsContainer = createElement({type: "div", attributes: {class: "details-div-container"}})
@@ -68,6 +68,7 @@ function createEventCard(title, eventdescription, purpose, username) {
   const taskTitleDiv = createElement({type: "div", attributes: {class: "task-title-div"}})
   const tasktitle = createElement({type: "span", attributes: {class: "task-title"}, innerText: "Title: "})
   const titleDetail = createElement({type: "span", attributes: {class: "task-title-detail"}, innerText: title})
+
   taskTitleDiv.appendChild(tasktitle)
   taskTitleDiv.appendChild(titleDetail)
 
@@ -93,6 +94,12 @@ function createEventCard(title, eventdescription, purpose, username) {
   container.append(eventcard)
 }
 
+function removeSkill (e) {
+  // this is not how it's going to be done, when we have the userSkills this function is going to change
+  alert(e.target.parentElement.textContent)
+  e.target.parentElement.remove()
+}
+
 function createUserActivityBtn() {
   const activityBtnDiv = createElement({type: "div", attributes: {class: "activityBtnDiv"}})
   const activityBtn = createElement({type: "button", attributes: {class: "activityBtn"}, innerText: "show user activity"})
@@ -100,15 +107,24 @@ function createUserActivityBtn() {
   return activityBtnDiv;
 }
 
+function openAddRoleDiv() {
+  // make a div which covers 100% of the modal and is going to contains two drop downs and 
+  // a submit button which will make a request to the backend and save the skill in userSkills collection
+}
+
 function createRolesDiv(roles) {
   const Allroles = [...roles]
   const rolesDiv = createElement({type: "div", attributes: {class: "roles-div"}})
-  Allroles.map(role => {
+  Allroles.map((role, index) => {
     const element = createElement({type: "div", attributes: {class: "roles-div-item"}, innerText: role})
-    const removeBtn = createElement({type: "button", attributes: {class: "removeBtn"}, innerText: "x"})
+    const removeBtn = createElement({type: "button", attributes: {class: "removeBtn", id: index}, innerText: "x"})
+    removeBtn.addEventListener("click", removeSkill)
     element.appendChild(removeBtn)
     rolesDiv.append(element)
   })
+  const addBtn = createElement({type: "button", attributes: {class: "addBtn"}, innerText: "+"})
+  addBtn.addEventListener("click", openAddRoleDiv)
+  rolesDiv.appendChild(addBtn)
   return rolesDiv
 }
 
@@ -124,19 +140,20 @@ function createInput() {
   return inputDiv
 }
 
-function createModal () {
+async function createModal (username) {
   overlay.style.display = "block"
-  const userImg = createElement({type: "img", attributes: {src: "https://res.cloudinary.com/dj8wcjoc8/image/upload/v1664903864/40eysn_1_vxg36h.jpg", alt: "user img", class: "userImg"}})
-  const userName = createElement({type: "p", attributes: {class: "username"}, innerText: "vinayak"})
+  const { user } = await getUserData(username)
+  // another call for roles will be made when we have userSkills collection
+  const userImg = createElement({type: "img", attributes: {src: user.picture.url, alt: "user img", class: "userImg"}})
+  const userName = createElement({type: "p", attributes: {class: "username"}, innerText: user.username})
   
   document.querySelector(".top-div").prepend(userName)
   document.querySelector(".top-div").prepend(userImg)
 
+  const skillTitle = createElement({type: "p", attributes: {class: "skillTitle"}, innerText: "Skills"})
+  modal.appendChild(skillTitle)
 
-  const input = createInput()
-  modal.appendChild(input)
-
-  const rolesArray = ["React-level1", "Ember-level2", "Remix-level3", "NodeJs-level3", ]
+  const rolesArray = ["React-level1", "Ember-level2", "Remix-level3", "NodeJs-level3", "random-levl1", ]
   const roles = createRolesDiv(rolesArray)
   modal.appendChild(roles)
 
@@ -146,12 +163,12 @@ function createModal () {
 }
 
 function closeModal() {
-  document.querySelector(".username").remove();
-  document.querySelector(".userImg").remove();
-  document.querySelector(".input-div").remove();
+  overlay.style.display = "none"
   document.querySelector(".roles-div").remove();
   document.querySelector(".activityBtnDiv").remove();
-  overlay.style.display = "none"
+  document.querySelector(".username").remove();
+  document.querySelector(".skillTitle").remove();
+  document.querySelector(".userImg").remove();
 }
 
 async function getData(data) {
