@@ -3,6 +3,9 @@ const container = document.getElementById("taskEvents-container")
 const modal = document.getElementById("modal")
 const overlay = document.querySelector(".overlay")
 
+const closeBtn = document.getElementById("closeBtn")
+closeBtn.addEventListener("click", closeModal)
+
 async function getTaskLogs() {
   const res = await fetch(`${BASE_URL}/logs/tasks`, {
     method: 'GET',
@@ -14,6 +17,18 @@ async function getTaskLogs() {
 
   const task_logs = await res.json();
   return task_logs;
+}
+
+async function getTaskData(id) {
+  const res = await fetch(`${BASE_URL}/tasks/details/${id}`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: {
+      'Content-type': 'application/json'
+    }
+  })
+  const task_details = await res.json();
+  return task_details;
 }
 
 async function getUserData(username) {
@@ -38,127 +53,114 @@ function createElement({type, attributes={}, innerText}) {
     return element
 }
 
-function createEventCard(eventTitle, eventdescription, isStatus, username) {
-  const eventcard = createElement({type: "div", attributes: {class: "event_card"}})
-  const title = createElement({type: "p", attributes: {class: "title"}, innerText: eventTitle})
-  const detail = createElement({type: "p", attributes: {class: "detail"}, innerText: eventdescription})
+function createEventCard(title, eventdescription, purpose, username) {
+  const eventcard = createElement({type: "details", attributes: {class: "event_card"}})
+  const summary = createElement({type: "summary", attributes: {class: "summary"}})
+  const sumarryContainer = createElement({type: "div", attributes: {class: "sumarryContainer"}})
 
-  eventcard.appendChild(title)
-  eventcard.appendChild(detail)
-  if(isStatus) {
-    const openProfile = createElement({type: "button", attributes: {class: "button"}, innerText: "update skill"})
-    openProfile.addEventListener("click", () => renderModal(username))
-    eventcard.appendChild(openProfile)
-  }
+  const name = createElement({type: "button", attributes: {class: "name"}, innerText: username})
+  name.addEventListener("click", createModal)
+  const log = createElement({type: "p", attributes: {class: "log"}, innerText: eventdescription})
+  const icon = createElement({type: "img", attributes: {class: "dropDown", src: "./assets/down.png", alt: "dropdown icon"}})
+  const detailsContainer = createElement({type: "div", attributes: {class: "details-div-container"}})
+  const details = createElement({type: "div", attributes: {class: "details-div"}})
+
+  const taskTitleDiv = createElement({type: "div", attributes: {class: "task-title-div"}})
+  const tasktitle = createElement({type: "span", attributes: {class: "task-title"}, innerText: "Title: "})
+  const titleDetail = createElement({type: "span", attributes: {class: "task-title-detail"}, innerText: title})
+  taskTitleDiv.appendChild(tasktitle)
+  taskTitleDiv.appendChild(titleDetail)
+
+  const taskPurposeDiv = createElement({type: "div", attributes: {class: "task-purpose-div"}})
+  const taskPurpose = createElement({type: "span", attributes: {class: "task-purpose"}, innerText: "Purpose: "})
+  const taskPurposeDetail = createElement({type: "span", attributes: {class: "task-purpose-detail"}, innerText: purpose})
+
+  taskPurposeDiv.appendChild(taskPurpose)
+  taskPurposeDiv.appendChild(taskPurposeDetail)
+
+  details.appendChild(taskTitleDiv)
+  details.appendChild(taskPurposeDiv)
+
+  detailsContainer.appendChild(details)
+
+  sumarryContainer.appendChild(name)
+  sumarryContainer.appendChild(log)
+  summary.appendChild(sumarryContainer)
+  summary.appendChild(icon)
+
+  eventcard.appendChild(summary)
+  eventcard.appendChild(detailsContainer)
   container.append(eventcard)
 }
 
-function openRolesList() {
-  const img = createElement({type: "img", attributes: {class: "cancel", src: "./assets/cancel.png", alt: "cancel icon"}})
-  const skillArray = ["react", "remix", "ember", "nodejs", "django"]
-  const level = [1, 2, 3, 4, 5]
-  const addRoleDiv = createElement({type: "div", attributes: {class: "addRoleDiv"}})
-  img.addEventListener("click", () => addRoleDiv.style.display = "none")
-  addRoleDiv.appendChild(img)
-  const addSkillTitle = createElement({type: "h3", attributes: {class: "addSkillTitle"}, innerText: "add skills to user"})
-  const selectSkill = createElement({type: "select", attributes: {class: "select-skill"}})
-  const selectLevel = createElement({type: "select", attributes: {class: "select-level"}})
-
-  for(let i = 0; i < skillArray.length; i++) {
-    let option = createElement({type: "option", attributes: {class: "option", value: skillArray[i]}, innerText: skillArray[i]})
-    selectSkill.appendChild(option)
-  }
-  
-  for(let i = 0; i < level.length; i++) {
-    let option = createElement({type: "option", attributes: {class: "option", value: level[i]}, innerText: level[i]})
-    selectLevel.appendChild(option)
-  }
-
-  addRoleDiv.appendChild(addSkillTitle)
-  addRoleDiv.appendChild(selectSkill)
-  addRoleDiv.appendChild(selectLevel)
-  overlay.appendChild(addRoleDiv)
-}
-
-function addRoles(roles) {
+function createRolesDiv(roles) {
   const Allroles = [...roles]
-  const rolesDiv = createElement({type: "div", attributes: {class: "roles_div"}})
-  // function renderRoles() {
-  //   rolesDiv.innerHTML = ""
-  // }
+  const rolesDiv = createElement({type: "div", attributes: {class: "roles-div"}})
   Allroles.map(role => {
-    const element = createElement({type: "div", attributes: {class: "role_div_item"}, innerText: role})
+    const element = createElement({type: "div", attributes: {class: "roles-div-item"}, innerText: role})
+    const removeBtn = createElement({type: "button", attributes: {class: "removeBtn"}, innerText: "x"})
+    element.appendChild(removeBtn)
     rolesDiv.append(element)
   })
-  const addBtn = createElement({type: "button", attributes: {class: "addBtn"}, innerText: "+"})
-  addBtn.addEventListener("click", () => {
-    openRolesList()
-  })
-  rolesDiv.appendChild(addBtn)
-  return rolesDiv;
+  return rolesDiv
 }
 
-function createModal(imgURl, userName, skillTags) {
-  const userImg = createElement({type: "img", attributes: {class: "userImg", src: imgURl, alt: "user img"}})
-  const userDetailSection = createElement({type: "div", attributes: {class: "user_details"}})
-  const username = createElement({type: "p", attributes: {class: "username",}, innerText: `${userName}`});
-  const title = createElement({type: "h3", attributes: {class: "skill-title"}, innerText: "Skills"})
-  const rolesDiv = addRoles(skillTags)
-  userDetailSection.appendChild(username)
-  userDetailSection.appendChild(title)
-  userDetailSection.appendChild(rolesDiv)
-  modal.appendChild(userImg)
-  modal.appendChild(userDetailSection)
+function createInput() {
+  const inputDiv = createElement({type: "div", attributes: {class: "input-div"}})
+  const inputEl = createElement({type: "input", attributes: {class: "inputEl", placeholder: "start typing to add a new skill"}})
+  const addBtn = createElement({type: "button", attributes: {class: "addBtn"}})
+  addBtn.addEventListener("click", () => console.log("do something here"))
+  const addBtnImg = createElement({type: "img", attributes: {class: "addBtnImg", src: "./assets/add.png", alt: "add button image"}})
+  addBtn.appendChild(addBtnImg)
+  inputDiv.appendChild(inputEl)
+  inputDiv.appendChild(addBtn)
+  return inputDiv
 }
 
+function createModal () {
+  overlay.style.display = "block"
+  const userImg = createElement({type: "img", attributes: {src: "https://res.cloudinary.com/dj8wcjoc8/image/upload/v1664903864/40eysn_1_vxg36h.jpg", alt: "user img", class: "userImg"}})
+  const userName = createElement({type: "p", attributes: {class: "username"}, innerText: "vinayak"})
+  document.querySelector(".top-div").prepend(userName)
+  document.querySelector(".top-div").prepend(userImg)
 
-function closeModal () {
-  overlay.style.display = "none";
+
+  const input = createInput()
+  modal.appendChild(input)
+
+  const rolesArray = ["React-level1", "Ember-level2", "Remix-level3", "NodeJs-level3"]
+  const roles = createRolesDiv(rolesArray)
+  modal.appendChild(roles)
+
 }
-async function renderModal(userName) {
-  try {
-    overlay.style.display = "block"
-    modal.innerHTML = `<p id="modal-loading>Loading</p>`
-    const img = createElement({type: "img", attributes: {class: "cancel", src: "./assets/cancel.png", alt: "cancel icon"}})
-    img.addEventListener("click", closeModal)
-    modal.appendChild(img)
-    const {user} = await getUserData(userName)
-    console.log(user)
-    console.log("hey")
-    const {picture, username} = user;
-    const roles = ["react-level1", "nodejs-level1", "remix-level1", "ember-level7"]
-    createModal("https://res.cloudinary.com/dj8wcjoc8/image/upload/v1664562169/IMG-20200708-WA0043_ywhc0s.jpg", username, roles)
-  } catch (err) {
-    alert("an error occured")
-    console.log(err)
-  } finally {
-    document.getElementById("modal-loading").style.display = "none"
-  }
+
+function closeModal() {
+  document.querySelector(".username").remove();
+  document.querySelector(".userImg").remove();
+  document.querySelector(".input-div").remove();
+  document.querySelector(".roles-div").remove();
+  overlay.style.display = "none"
+}
+
+async function getData(data) {
+  const message = data.body.message;
+  const userName = data.meta.username;
+  const taskId = data.meta.taskId;
+  const { taskData } = await getTaskData(taskId)
+
+  return {
+    ...taskData,
+    message,
+    userName
+  };
 }
 
 async function renderCard () {
   try {
     const {logs} = await getTaskLogs()
-    
-    logs.map(log => {
-      let title;
-      let status;
-      let percentCompleted;
-    
-      if(log.body.status) {
-        title = 'status changed'
-        status = `${log.meta.username} changed status to ${log.body.status}`
-        createEventCard(title, status, true, log.meta.username)
-        return;
-      }
-    
-      if(log.body.percentCompleted) {
-        title = 'percent completed changed'
-        percentCompleted = `${log.meta.username} completed ${log.body.percentCompleted}% task`
-        createEventCard(title, percentCompleted);
-        return;
-      }
-    })
+    const promises = logs.map((log) => getData(log))
+    const allTaskData = await Promise.all(promises)
+    allTaskData.map(data => createEventCard(data.title, data.message, data.purpose, data.userName))
   } catch (error) {
     console.log(error)
     alert("error happened")
