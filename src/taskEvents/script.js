@@ -93,6 +93,13 @@ function createEventCard(title, eventdescription, purpose, username) {
   container.append(eventcard)
 }
 
+function createUserActivityBtn() {
+  const activityBtnDiv = createElement({type: "div", attributes: {class: "activityBtnDiv"}})
+  const activityBtn = createElement({type: "button", attributes: {class: "activityBtn"}, innerText: "show user activity"})
+  activityBtnDiv.appendChild(activityBtn)
+  return activityBtnDiv;
+}
+
 function createRolesDiv(roles) {
   const Allroles = [...roles]
   const rolesDiv = createElement({type: "div", attributes: {class: "roles-div"}})
@@ -121,6 +128,7 @@ function createModal () {
   overlay.style.display = "block"
   const userImg = createElement({type: "img", attributes: {src: "https://res.cloudinary.com/dj8wcjoc8/image/upload/v1664903864/40eysn_1_vxg36h.jpg", alt: "user img", class: "userImg"}})
   const userName = createElement({type: "p", attributes: {class: "username"}, innerText: "vinayak"})
+  
   document.querySelector(".top-div").prepend(userName)
   document.querySelector(".top-div").prepend(userImg)
 
@@ -128,9 +136,12 @@ function createModal () {
   const input = createInput()
   modal.appendChild(input)
 
-  const rolesArray = ["React-level1", "Ember-level2", "Remix-level3", "NodeJs-level3"]
+  const rolesArray = ["React-level1", "Ember-level2", "Remix-level3", "NodeJs-level3", ]
   const roles = createRolesDiv(rolesArray)
   modal.appendChild(roles)
+
+  const activityBtn = createUserActivityBtn();
+  modal.appendChild(activityBtn)
 
 }
 
@@ -139,6 +150,7 @@ function closeModal() {
   document.querySelector(".userImg").remove();
   document.querySelector(".input-div").remove();
   document.querySelector(".roles-div").remove();
+  document.querySelector(".activityBtnDiv").remove();
   overlay.style.display = "none"
 }
 

@@ -124,6 +124,7 @@ details[open] .dropDown {
   border-radius: 50%;
   padding: 0.4rem;
   transform: translateY(30%);
+  margin-left: .4rem;
 }
 #closeBtn {
   border: none;
@@ -139,14 +140,14 @@ details[open] .dropDown {
 }
 
 .username {
-  font-size: 20px;
+  font-size: 18px;
   color: #ffffff;
   text-transform: capitalize;
   margin-bottom: 0;
   align-self: flex-end;
-  margin-left: 5px;
-  font-style: italic;
-  font-family: 'Roboto', sans-serif;
+  margin-left: 1px;
+  font-family: sans-serif;
+  font-weight: 300;
 }
 
 .user-details-div {
@@ -201,6 +202,7 @@ details[open] .dropDown {
   flex-wrap: wrap;
   margin-top: 30px;
   padding: 0.2rem;
+  overflow-y: auto;
 }
 
 .roles-div-item {
@@ -210,6 +212,8 @@ details[open] .dropDown {
   margin: .4rem;
   font-size: 0.8rem;
   position: relative;
+  user-select: none;
+  font-weight: 600;
 }
 
 .removeBtn {
@@ -217,7 +221,9 @@ details[open] .dropDown {
 }
 
 .roles-div-item:hover > .removeBtn {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: absolute;
   border-radius: 50%;
   height: 15px;
@@ -225,10 +231,28 @@ details[open] .dropDown {
   top: -3px;
   right: -5px;
   cursor: pointer;
-  border: none;  
+  border: none;
   padding: 0;
-  font-size: .5rem;
+  font-size: .6rem;
   background-color: #DF0057;
   color: white;
   font-weight: 600;
+}
+
+/* Activity Button */
+
+.activityBtnDiv {
+  margin-top: auto;
+  margin-bottom: 0.5rem;
+  margin-left: 0.5rem;
+  align-self: flex-start;
+  padding: 0.5rem;
+}
+
+.activityBtn {
+  border-radius: 50px;
+  border: none;
+  background-color: #DF0057;
+  color: white;
+  padding: 0.2rem 1rem;
 }
