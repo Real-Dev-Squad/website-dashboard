@@ -1,48 +1,12 @@
-import {BASE_URL} from './url.js'
+import { getTaskLogs, getUserData, getTaskData } from './utils.js'
 const container = document.getElementById("taskEvents-container")
 const modal = document.getElementById("modal")
 const overlay = document.querySelector(".overlay")
 
 const closeBtn = document.getElementById("closeBtn")
 closeBtn.addEventListener("click", closeModal)
-
-async function getTaskLogs() {
-  const res = await fetch(`${BASE_URL}/logs/tasks`, {
-    method: 'GET',
-    credentials: 'include',
-    headers: {
-      'Content-type': 'application/json',
-    },
-  });
-
-  const task_logs = await res.json();
-  return task_logs;
-}
-
-async function getTaskData(id) {
-  const res = await fetch(`${BASE_URL}/tasks/details/${id}`, {
-    method: 'GET',
-    credentials: 'include',
-    headers: {
-      'Content-type': 'application/json'
-    }
-  })
-  const task_details = await res.json();
-  return task_details;
-}
-
-async function getUserData(username) {
-  console.log(username)
-  const res = await fetch(`${BASE_URL}/users/${username}`, {
-    method: 'GET',
-    credentials: 'include',
-    headers: {
-      'Content-type': 'application/json'
-    }
-  })
-  const userData = await res.json();
-  return userData
-}
+const closeBtn2 = document.getElementById("closeBtn2")
+closeBtn2.addEventListener("click", closeOtherModal)
 
 function createElement({type, attributes={}, innerText}) {
     const element = document.createElement(type)
@@ -53,7 +17,33 @@ function createElement({type, attributes={}, innerText}) {
     return element
 }
 
-function createEventCard(title, eventdescription, purpose, username) {
+function closeOtherModal () {
+  document.getElementById("generic-modal").style.visibility = "collapse"
+  const containerDiv = document.getElementById("container-div")
+  containerDiv.innerHTML = ""
+}
+
+function closeModal() {
+  overlay.style.display = "none"
+  document.querySelector(".roles-div").remove();
+  document.querySelector(".activityBtnDiv").remove();
+  document.querySelector(".username").remove();
+  document.querySelector(".skillTitle").remove();
+  document.querySelector(".userImg").remove();
+}
+
+function addLoader(container) {
+  const loader = createElement({type: "div", attributes: {class: "loader"}})
+  const loaderP = createElement({type: "p", attributes: {class: "loaderP"}, innerText: "Loading..."})
+  loader.appendChild(loaderP)
+  container.appendChild(loader)
+}
+
+function removeLoader() {
+  document.querySelector(".loader").remove()
+}
+
+function createEventCard(container, title, eventdescription, purpose, username, category, level) {
   const eventcard = createElement({type: "details", attributes: {class: "event_card"}})
   const summary = createElement({type: "summary", attributes: {class: "summary"}})
   const sumarryContainer = createElement({type: "div", attributes: {class: "sumarryContainer"}})
@@ -72,6 +62,8 @@ function createEventCard(title, eventdescription, purpose, username) {
   taskTitleDiv.appendChild(tasktitle)
   taskTitleDiv.appendChild(titleDetail)
 
+  details.appendChild(taskTitleDiv)
+
   const taskPurposeDiv = createElement({type: "div", attributes: {class: "task-purpose-div"}})
   const taskPurpose = createElement({type: "span", attributes: {class: "task-purpose"}, innerText: "Purpose: "})
   const taskPurposeDetail = createElement({type: "span", attributes: {class: "task-purpose-detail"}, innerText: purpose})
@@ -79,8 +71,27 @@ function createEventCard(title, eventdescription, purpose, username) {
   taskPurposeDiv.appendChild(taskPurpose)
   taskPurposeDiv.appendChild(taskPurposeDetail)
 
-  details.appendChild(taskTitleDiv)
   details.appendChild(taskPurposeDiv)
+
+  if(category) {
+    const taskCategoryDiv = createElement({type: "div", attributes: {class: "task-cateogory-div"}})
+    const taskCategory = createElement({type: "span", attributes: {class: "task-category"}, innerText: "category: "})
+    const taskCategoryDetail = createElement({type: "span", attributes: {class: "task-category-detail"}, innerText: category})
+  
+    taskCategoryDiv.appendChild(taskCategory)
+    taskCategoryDiv.appendChild(taskCategoryDetail)
+    details.appendChild(taskCategoryDiv)
+  }
+
+  if(level) {
+    const taskLevelDiv = createElement({type: "div", attributes: {class: "task-level-div"}})
+    const taskLevel = createElement({type: "span", attributes: {class: "task-level"}, innerText: "Level: "})
+    const taskLevelDetail = createElement({type: "span", attributes: {class: "task-level-detail"}, innerText: level})
+  
+    taskLevelDiv.appendChild(taskLevel)
+    taskLevelDiv.appendChild(taskLevelDetail)
+    details.appendChild(taskLevelDiv)
+  }
 
   detailsContainer.appendChild(details)
 
@@ -92,52 +103,6 @@ function createEventCard(title, eventdescription, purpose, username) {
   eventcard.appendChild(summary)
   eventcard.appendChild(detailsContainer)
   container.append(eventcard)
-}
-
-function removeSkill (e) {
-  // this is not how it's going to be done, when we have the userSkills this function is going to change
-  alert(e.target.parentElement.textContent)
-  e.target.parentElement.remove()
-}
-
-function createUserActivityBtn() {
-  const activityBtnDiv = createElement({type: "div", attributes: {class: "activityBtnDiv"}})
-  const activityBtn = createElement({type: "button", attributes: {class: "activityBtn"}, innerText: "show user activity"})
-  activityBtnDiv.appendChild(activityBtn)
-  return activityBtnDiv;
-}
-
-function openAddRoleDiv() {
-  // make a div which covers 100% of the modal and is going to contains two drop downs and 
-  // a submit button which will make a request to the backend and save the skill in userSkills collection
-}
-
-function createRolesDiv(roles) {
-  const Allroles = [...roles]
-  const rolesDiv = createElement({type: "div", attributes: {class: "roles-div"}})
-  Allroles.map((role, index) => {
-    const element = createElement({type: "div", attributes: {class: "roles-div-item"}, innerText: role})
-    const removeBtn = createElement({type: "button", attributes: {class: "removeBtn", id: index}, innerText: "x"})
-    removeBtn.addEventListener("click", removeSkill)
-    element.appendChild(removeBtn)
-    rolesDiv.append(element)
-  })
-  const addBtn = createElement({type: "button", attributes: {class: "addBtn"}, innerText: "+"})
-  addBtn.addEventListener("click", openAddRoleDiv)
-  rolesDiv.appendChild(addBtn)
-  return rolesDiv
-}
-
-function createInput() {
-  const inputDiv = createElement({type: "div", attributes: {class: "input-div"}})
-  const inputEl = createElement({type: "input", attributes: {class: "inputEl", placeholder: "start typing to add a new skill"}})
-  const addBtn = createElement({type: "button", attributes: {class: "addBtn"}})
-  addBtn.addEventListener("click", () => console.log("do something here"))
-  const addBtnImg = createElement({type: "img", attributes: {class: "addBtnImg", src: "./assets/add.png", alt: "add button image"}})
-  addBtn.appendChild(addBtnImg)
-  inputDiv.appendChild(inputEl)
-  inputDiv.appendChild(addBtn)
-  return inputDiv
 }
 
 async function createModal (username) {
@@ -157,18 +122,90 @@ async function createModal (username) {
   const roles = createRolesDiv(rolesArray)
   modal.appendChild(roles)
 
-  const activityBtn = createUserActivityBtn();
+  const activityBtn = createUserActivityBtn(username);
   modal.appendChild(activityBtn)
 
 }
 
-function closeModal() {
-  overlay.style.display = "none"
-  document.querySelector(".roles-div").remove();
-  document.querySelector(".activityBtnDiv").remove();
-  document.querySelector(".username").remove();
-  document.querySelector(".skillTitle").remove();
-  document.querySelector(".userImg").remove();
+function createRolesDiv(roles) {
+  const Allroles = [...roles]
+  const rolesDiv = createElement({type: "div", attributes: {class: "roles-div"}})
+  Allroles.map((role, index) => {
+    const element = createElement({type: "div", attributes: {class: "roles-div-item"}, innerText: role})
+    const removeBtn = createElement({type: "button", attributes: {class: "removeBtn", id: index}, innerText: "x"})
+    removeBtn.addEventListener("click", removeSkill)
+    element.appendChild(removeBtn)
+    rolesDiv.append(element)
+  })
+  const addBtn = createElement({type: "button", attributes: {class: "addBtn"}, innerText: "+"})
+  addBtn.addEventListener("click", openAddRoleDiv)
+  rolesDiv.appendChild(addBtn)
+  return rolesDiv
+}
+
+function createUserActivityBtn(username) {
+  const activityBtnDiv = createElement({type: "div", attributes: {class: "activityBtnDiv"}})
+  const activityBtn = createElement({type: "button", attributes: {class: "activityBtn"}, innerText: "show user activity"})
+  activityBtn.addEventListener("click", () => openUserActivityModal(username))
+  activityBtnDiv.appendChild(activityBtn)
+  return activityBtnDiv;
+}
+
+
+function removeSkill (e) {
+  // this is not how it's going to be done, when we have the userSkills this function is going to change
+  alert(e.target.parentElement.textContent)
+  e.target.parentElement.remove()
+}
+
+
+
+function openAddRoleDiv() {
+  const skills = ["frontend", "backend", "System Design"] // this is temporary data that will be removed once we have userSkill collection in our DB
+  const level = [1, 2, 3, 4, 5]
+  // a submit button which will make a request to the backend and save the skill in userSkills collection
+  const containerDiv = document.getElementById("container-div")
+  document.getElementById("generic-modal").style.visibility = "visible"
+  const mainTitle = createElement({type: "h1", attributes: {class: "main-title"}, innerText: "Add Skills"})
+  const skillCategoryDiv = createElement({type: "div", attributes: {class: "skill-category-div"}})
+  const skillCategoryTitle = createElement({type: "p", attributes: {class: "skill-category-title"}, innerText: "Choose a skill to add"})
+  const skillCategorySelect = createElement({type: "select", attributes: {class: "skill-category-select"}})
+
+  for(let i =0; i < skills.length; i++) {
+    const option = createElement({type: "option", attributes: {class: "options"}, innerText: skills[i]})
+    skillCategorySelect.appendChild(option)
+  }
+
+  skillCategoryDiv.appendChild(skillCategoryTitle)
+  skillCategoryDiv.appendChild(skillCategorySelect)
+
+  const skillLevelDiv = createElement({type: "div", attributes: {class: "skill-level-div"}})
+  const skillLevelTitle = createElement({type: "p", attributes: {class: "skill-level-title"}, innerText: "choose skill level"})
+  const skillLevelSelect = createElement({type: "select", attributes: {class: "skill-level-select"}})
+
+  for (let i = 0; i < level.length; i++) {
+    const option = createElement({type: "option", attributes: {class: "option"}, innerText: level[i]})
+    skillLevelSelect.appendChild(option)
+  }
+
+  skillLevelDiv.appendChild(skillLevelTitle)
+  skillLevelDiv.appendChild(skillLevelSelect)
+
+  const submitBtn = createElement({type: "button", attributes: {class: "submitBtn"}, innerText: "Add Skill"})
+ 
+  containerDiv.appendChild(mainTitle)
+  containerDiv.appendChild(skillCategoryDiv)
+  containerDiv.appendChild(skillLevelDiv)
+  containerDiv.appendChild(submitBtn)
+}
+
+async function openUserActivityModal(username) {
+  document.getElementById("closeBtn2").disabled = true;
+  document.getElementById("generic-modal").style.visibility = "visible"
+  const containerDiv = document.getElementById("container-div")
+  
+  await renderCard(containerDiv,`${username}'s Task Logs`, username)
+  document.getElementById("closeBtn2").disabled = false;
 }
 
 async function getData(data) {
@@ -184,18 +221,22 @@ async function getData(data) {
   };
 }
 
-async function renderCard () {
+async function renderCard (container, title, username) {
   try {
-    const {logs} = await getTaskLogs()
+    addLoader(container)
+    const mainTitle = createElement({type: "h1", attributes: {class: "main-title"}, innerText: title})
+    const {logs} = await getTaskLogs(username)
+    console.log(logs)
     const promises = logs.map((log) => getData(log))
     const allTaskData = await Promise.all(promises)
-    allTaskData.map(data => createEventCard(data.title, data.message, data.purpose, data.userName))
+    allTaskData.map(data => createEventCard(container, data.title, data.message, data.purpose, data.userName, data.taskLevel.category, data.taskLevel.level))
+    container.prepend(mainTitle)
   } catch (error) {
     console.log(error)
     alert("error happened")
   } finally {
-    document.getElementById("loader").style.display = 'none'
+    removeLoader()
   }
 }
 
-renderCard()
+renderCard(container, "All Task Logs")
