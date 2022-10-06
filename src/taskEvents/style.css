@@ -29,12 +29,11 @@ body {
 .summary {
   display: flex;
   align-items: center;
-
 }
 .name {
   margin: 0;
   font-weight: 800;
-  color: #1B1378;
+  color: #1b1378;
   text-transform: capitalize;
   margin-bottom: 1px;
   border: none;
@@ -45,7 +44,7 @@ body {
 
 .log {
   margin: 0;
-  color: #1B1378;
+  color: #1b1378;
   font-size: 15px;
 }
 
@@ -77,7 +76,7 @@ details[open] .dropDown {
 .task-purpose,
 .task-category,
 .task-level {
-  color: #1B1378;
+  color: #1b1378;
   font-weight: 700;
 }
 
@@ -85,7 +84,7 @@ details[open] .dropDown {
 .task-purpose-detail,
 .task-category-detail,
 .task-level-detail {
-  color: #1B1378;
+  color: #1b1378;
 }
 
 .loader {
@@ -111,7 +110,7 @@ details[open] .dropDown {
   max-width: 250px;
   height: 60%;
   margin: 0 auto;
-  background: #D9D9D9;
+  background: #d9d9d9;
   color: black;
   position: relative;
   top: 20%;
@@ -123,7 +122,7 @@ details[open] .dropDown {
 }
 
 .top-div {
-  background-color: #1B1378;
+  background-color: #1b1378;
   width: 100%;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
@@ -136,12 +135,12 @@ details[open] .dropDown {
   border-radius: 50%;
   padding: 0.4rem;
   transform: translateY(30%);
-  margin-left: .4rem;
+  margin-left: 0.4rem;
 }
 #closeBtn,
 #closeBtn2 {
   border: none;
-  background-color: #1B1378;
+  background-color: #1b1378;
   align-self: flex-start;
   margin-left: auto;
   padding: 0.4rem;
@@ -153,7 +152,7 @@ details[open] .dropDown {
 }
 
 #closeBtn2 {
-  background-color: #D9D9D9;
+  background-color: #d9d9d9;
   padding: 0;
   margin-top: 0;
 }
@@ -180,7 +179,6 @@ details[open] .dropDown {
   justify-content: space-around;
 }
 
-
 /* Input Styles */
 
 .skillTitle {
@@ -203,10 +201,10 @@ details[open] .dropDown {
 }
 
 .roles-div-item {
-  background-color: #E5FCF5;
-  padding: .4rem .6rem;
+  background-color: #e5fcf5;
+  padding: 0.4rem 0.6rem;
   border-radius: 50px;
-  margin: .4rem;
+  margin: 0.4rem;
   font-size: 0.8rem;
   position: relative;
   user-select: none;
@@ -230,8 +228,8 @@ details[open] .dropDown {
   cursor: pointer;
   border: none;
   padding: 0;
-  font-size: .6rem;
-  background-color: #DF0057;
+  font-size: 0.6rem;
+  background-color: #df0057;
   color: white;
   font-weight: 600;
 }
@@ -240,7 +238,7 @@ details[open] .dropDown {
   font-size: 1.5rem;
   padding: 0;
   border: none;
-  background-color: #D9D9D9;
+  background-color: #d9d9d9;
   cursor: pointer;
 }
 
@@ -257,12 +255,11 @@ details[open] .dropDown {
 .activityBtn {
   border-radius: 50px;
   border: none;
-  background-color: #DF0057;
+  background-color: #df0057;
   color: white;
   padding: 0.2rem 1rem;
   font-family: 'roboto mono';
 }
-
 
 /* role add div */
 
@@ -283,8 +280,8 @@ details[open] .dropDown {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  padding: .5rem;
-  background: #D9D9D9;
+  padding: 0.5rem;
+  background: #d9d9d9;
   color: black;
   display: flex;
   flex-direction: column;
@@ -320,7 +317,7 @@ details[open] .dropDown {
 .submitBtn {
   justify-self: flex-end;
   align-self: center;
-  background-color: #1B1378;
+  background-color: #1b1378;
   color: white;
   width: 80%;
   margin-top: 2rem;
