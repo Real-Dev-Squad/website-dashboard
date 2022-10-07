@@ -1,39 +1,4 @@
-function createElement({ type, attributes = {}, innerText }) {
-  const element = document.createElement(type);
-  Object.keys(attributes).forEach((item) => {
-    element.setAttribute(item, attributes[item]);
-  });
-  element.textContent = innerText;
-  return element;
-}
-
-function addLoader(container) {
-  const loader = createElement({
-    type: 'div',
-    attributes: { class: 'loader' },
-  });
-  const loaderP = createElement({
-    type: 'p',
-    attributes: { class: 'loaderP' },
-    innerText: 'Loading...',
-  });
-  loader.appendChild(loaderP);
-  container.appendChild(loader);
-}
-
-function addErrorMessage(container) {
-  const errorDiv = createElement({
-    type: 'div',
-    attributes: { class: 'error-div' },
-  });
-  const errorMsg = createElement({
-    type: 'p',
-    attributes: { class: 'error-message' },
-    innerText: 'Something went wrong!',
-  });
-  errorDiv.appendChild(errorMsg);
-  container.appendChild(errorDiv);
-}
+import { createElement } from './utils.js';
 
 function createSummarySection(username, log, isAllTasks, createModalFunction) {
   const summary = createElement({
@@ -173,10 +138,33 @@ function createDetailsSection(title, purpose, category, level) {
   return detailsContainer;
 }
 
-export {
-  createElement,
-  addLoader,
-  addErrorMessage,
-  createSummarySection,
-  createDetailsSection,
-};
+function createEventCard(
+  container,
+  title,
+  eventdescription,
+  purpose,
+  username,
+  category,
+  level,
+  isAllTasks,
+  createModal,
+) {
+  const eventcard = createElement({
+    type: 'details',
+    attributes: { class: 'event_card' },
+  });
+
+  const summary = createSummarySection(
+    username,
+    eventdescription,
+    isAllTasks,
+    createModal,
+  );
+  const details = createDetailsSection(title, purpose, category, level);
+
+  eventcard.appendChild(summary);
+  eventcard.appendChild(details);
+  container.append(eventcard);
+}
+
+export { createEventCard };

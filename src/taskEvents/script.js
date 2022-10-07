@@ -1,16 +1,16 @@
 import {
   getTaskLogs,
   getUserData,
-  getTaskData,
   getSelfDetails,
-} from './utils.js';
-import {
-  addLoader,
-  createDetailsSection,
   createElement,
-  createSummarySection,
+  getData,
+  addLoader,
   addErrorMessage,
-} from './helper.js';
+  removeLoader,
+} from './utils.js';
+
+import { createEventCard } from './EventCard.js';
+
 const container = document.getElementById('taskEvents-container');
 const modal = document.getElementById('modal');
 const overlay = document.querySelector('.overlay');
@@ -19,58 +19,6 @@ const closeBtn = document.getElementById('closeBtn');
 closeBtn.addEventListener('click', closeModal);
 const closeBtn2 = document.getElementById('closeBtn2');
 closeBtn2.addEventListener('click', closeGenericModal);
-
-function closeGenericModal() {
-  document.getElementById('generic-modal').style.visibility = 'collapse';
-  const containerDiv = document.getElementById('container-div');
-  containerDiv.innerHTML = '';
-}
-
-function closeModal() {
-  overlay.style.display = 'none';
-  const errorDiv = document.querySelector('.error-div');
-  if (errorDiv) {
-    errorDiv.remove();
-    return;
-  }
-  document.querySelector('.roles-div').remove();
-  document.querySelector('.activityBtnDiv').remove();
-  document.querySelector('.username').remove();
-  document.querySelector('.skillTitle').remove();
-  document.querySelector('.userImg').remove();
-}
-
-function removeLoader() {
-  document.querySelector('.loader').remove();
-}
-
-function createEventCard(
-  container,
-  title,
-  eventdescription,
-  purpose,
-  username,
-  category,
-  level,
-  isAllTasks,
-) {
-  const eventcard = createElement({
-    type: 'details',
-    attributes: { class: 'event_card' },
-  });
-
-  const summary = createSummarySection(
-    username,
-    eventdescription,
-    isAllTasks,
-    createModal,
-  );
-  const details = createDetailsSection(title, purpose, category, level);
-
-  eventcard.appendChild(summary);
-  eventcard.appendChild(details);
-  container.append(eventcard);
-}
 
 async function createModal(username) {
   try {
@@ -141,7 +89,7 @@ function createRolesDiv(roles) {
     attributes: { class: 'addBtn' },
     innerText: '+',
   });
-  addBtn.addEventListener('click', openAddSkillDiv);
+  addBtn.addEventListener('click', openAddSkillModal);
   rolesDiv.appendChild(addBtn);
   return rolesDiv;
 }
@@ -161,13 +109,33 @@ function createUserActivityBtn(username) {
   return activityBtnDiv;
 }
 
+function closeModal() {
+  overlay.style.display = 'none';
+  const errorDiv = document.querySelector('.error-div');
+  if (errorDiv) {
+    errorDiv.remove();
+    return;
+  }
+  document.querySelector('.roles-div').remove();
+  document.querySelector('.activityBtnDiv').remove();
+  document.querySelector('.username').remove();
+  document.querySelector('.skillTitle').remove();
+  document.querySelector('.userImg').remove();
+}
+
+function closeGenericModal() {
+  document.getElementById('generic-modal').style.visibility = 'collapse';
+  const containerDiv = document.getElementById('container-div');
+  containerDiv.innerHTML = '';
+}
+
 function removeSkill(e) {
   // this is not how it's going to be done, when we have the userSkills this function is going to change
   alert(e.target.parentElement.textContent);
   e.target.parentElement.remove();
 }
 
-function openAddSkillDiv() {
+function openAddSkillModal() {
   const skills = ['frontend', 'backend', 'System Design']; // this is temporary data that will be removed once we have userSkill collection in our DB
   const level = [1, 2, 3, 4, 5];
   // a submit button which will make a request to the backend and save the skill in userSkills collection
@@ -253,19 +221,6 @@ async function openUserActivityModal(username) {
   document.getElementById('closeBtn2').disabled = false;
 }
 
-async function getData(data) {
-  const message = data.body.message;
-  const userName = data.meta.username;
-  const taskId = data.meta.taskId;
-  const { taskData } = await getTaskData(taskId);
-
-  return {
-    ...taskData,
-    message,
-    userName,
-  };
-}
-
 async function renderCard(container, title, username, isAllTasks) {
   try {
     addLoader(container);
@@ -287,6 +242,7 @@ async function renderCard(container, title, username, isAllTasks) {
         data.taskLevel.category,
         data.taskLevel.level,
         isAllTasks,
+        createModal,
       ),
     );
     container.prepend(mainTitle);
