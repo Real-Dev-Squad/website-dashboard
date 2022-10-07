@@ -1,14 +1,5 @@
 const BASE_URL = 'http://localhost:4000';
 
-function createElement({ type, attributes = {}, innerText }) {
-  const element = document.createElement(type);
-  Object.keys(attributes).forEach((item) => {
-    element.setAttribute(item, attributes[item]);
-  });
-  element.textContent = innerText;
-  return element;
-}
-
 async function getTaskLogs(username) {
   let url;
   if (username) {
@@ -66,4 +57,4 @@ async function getSelfDetails() {
   return self_details;
 }
 
-export { createElement, getTaskLogs, getTaskData, getUserData, getSelfDetails };
+export { getTaskLogs, getTaskData, getUserData, getSelfDetails };

@@ -2,9 +2,15 @@ import {
   getTaskLogs,
   getUserData,
   getTaskData,
-  createElement,
   getSelfDetails,
 } from './utils.js';
+import {
+  addLoader,
+  createDetailsSection,
+  createElement,
+  createSummarySection,
+  addErrorMessage,
+} from './helper.js';
 const container = document.getElementById('taskEvents-container');
 const modal = document.getElementById('modal');
 const overlay = document.querySelector('.overlay');
@@ -34,36 +40,8 @@ function closeModal() {
   document.querySelector('.userImg').remove();
 }
 
-function addLoader(container) {
-  const loader = createElement({
-    type: 'div',
-    attributes: { class: 'loader' },
-  });
-  const loaderP = createElement({
-    type: 'p',
-    attributes: { class: 'loaderP' },
-    innerText: 'Loading...',
-  });
-  loader.appendChild(loaderP);
-  container.appendChild(loader);
-}
-
 function removeLoader() {
   document.querySelector('.loader').remove();
-}
-
-function addErrorMessage(container) {
-  const errorDiv = createElement({
-    type: 'div',
-    attributes: { class: 'error-div' },
-  });
-  const errorMsg = createElement({
-    type: 'p',
-    attributes: { class: 'error-message' },
-    innerText: 'Something went wrong!',
-  });
-  errorDiv.appendChild(errorMsg);
-  container.appendChild(errorDiv);
 }
 
 function createEventCard(
@@ -74,139 +52,23 @@ function createEventCard(
   username,
   category,
   level,
+  isAllTasks,
 ) {
   const eventcard = createElement({
     type: 'details',
     attributes: { class: 'event_card' },
   });
-  const summary = createElement({
-    type: 'summary',
-    attributes: { class: 'summary' },
-  });
-  const summaryContainer = createElement({
-    type: 'div',
-    attributes: { class: 'summaryContainer' },
-  });
 
-  const name = createElement({
-    type: 'button',
-    attributes: { class: 'name' },
-    innerText: username,
-  });
-  name.addEventListener('click', () => createModal(username));
-  const log = createElement({
-    type: 'p',
-    attributes: { class: 'log' },
-    innerText: eventdescription,
-  });
-  const icon = createElement({
-    type: 'img',
-    attributes: {
-      class: 'dropDown',
-      src: './assets/down.png',
-      alt: 'dropdown icon',
-    },
-  });
-  const detailsContainer = createElement({
-    type: 'div',
-    attributes: { class: 'details-div-container' },
-  });
-  const details = createElement({
-    type: 'div',
-    attributes: { class: 'details-div' },
-  });
-
-  const taskTitleDiv = createElement({
-    type: 'div',
-    attributes: { class: 'task-title-div' },
-  });
-  const tasktitle = createElement({
-    type: 'span',
-    attributes: { class: 'task-title' },
-    innerText: 'Title: ',
-  });
-  const titleDetail = createElement({
-    type: 'span',
-    attributes: { class: 'task-title-detail' },
-    innerText: title,
-  });
-
-  taskTitleDiv.appendChild(tasktitle);
-  taskTitleDiv.appendChild(titleDetail);
-
-  details.appendChild(taskTitleDiv);
-
-  const taskPurposeDiv = createElement({
-    type: 'div',
-    attributes: { class: 'task-purpose-div' },
-  });
-  const taskPurpose = createElement({
-    type: 'span',
-    attributes: { class: 'task-purpose' },
-    innerText: 'Purpose: ',
-  });
-  const taskPurposeDetail = createElement({
-    type: 'span',
-    attributes: { class: 'task-purpose-detail' },
-    innerText: purpose,
-  });
-
-  taskPurposeDiv.appendChild(taskPurpose);
-  taskPurposeDiv.appendChild(taskPurposeDetail);
-
-  details.appendChild(taskPurposeDiv);
-
-  if (category) {
-    const taskCategoryDiv = createElement({
-      type: 'div',
-      attributes: { class: 'task-cateogory-div' },
-    });
-    const taskCategory = createElement({
-      type: 'span',
-      attributes: { class: 'task-category' },
-      innerText: 'category: ',
-    });
-    const taskCategoryDetail = createElement({
-      type: 'span',
-      attributes: { class: 'task-category-detail' },
-      innerText: category,
-    });
-
-    taskCategoryDiv.appendChild(taskCategory);
-    taskCategoryDiv.appendChild(taskCategoryDetail);
-    details.appendChild(taskCategoryDiv);
-  }
-
-  if (level) {
-    const taskLevelDiv = createElement({
-      type: 'div',
-      attributes: { class: 'task-level-div' },
-    });
-    const taskLevel = createElement({
-      type: 'span',
-      attributes: { class: 'task-level' },
-      innerText: 'Level: ',
-    });
-    const taskLevelDetail = createElement({
-      type: 'span',
-      attributes: { class: 'task-level-detail' },
-      innerText: level,
-    });
-
-    taskLevelDiv.appendChild(taskLevel);
-    taskLevelDiv.appendChild(taskLevelDetail);
-    details.appendChild(taskLevelDiv);
-  }
-
-  detailsContainer.appendChild(details);
-
-  summaryContainer.appendChild(name);
-  summaryContainer.appendChild(log);
-  summary.appendChild(summaryContainer);
-  summary.appendChild(icon);
+  const summary = createSummarySection(
+    username,
+    eventdescription,
+    isAllTasks,
+    createModal,
+  );
+  const details = createDetailsSection(title, purpose, category, level);
 
   eventcard.appendChild(summary);
-  eventcard.appendChild(detailsContainer);
+  eventcard.appendChild(details);
   container.append(eventcard);
 }
 
@@ -404,7 +266,7 @@ async function getData(data) {
   };
 }
 
-async function renderCard(container, title, username) {
+async function renderCard(container, title, username, isAllTasks) {
   try {
     addLoader(container);
     const mainTitle = createElement({
@@ -424,6 +286,7 @@ async function renderCard(container, title, username) {
         data.userName,
         data.taskLevel.category,
         data.taskLevel.level,
+        isAllTasks,
       ),
     );
     container.prepend(mainTitle);
@@ -441,7 +304,7 @@ async function render() {
     addLoader(container);
     const selfDetails = await getSelfDetails();
     if (selfDetails.roles.super_user) {
-      renderCard(container, 'All Task Logs');
+      renderCard(container, 'All Task Logs', null, true);
     } else {
       const elementContainer = createElement({
         type: 'div',
@@ -456,7 +319,7 @@ async function render() {
       container.appendChild(elementContainer);
     }
   } catch (err) {
-    addErrorMessage();
+    addErrorMessage(container);
   } finally {
     removeLoader();
   }
