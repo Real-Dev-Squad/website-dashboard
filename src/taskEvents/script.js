@@ -131,7 +131,6 @@ function closeGenericModal() {
 
 function removeSkill(e) {
   // this is not how it's going to be done, when we have the userSkills this function is going to change
-  alert(e.target.parentElement.textContent);
   e.target.parentElement.remove();
 }
 
