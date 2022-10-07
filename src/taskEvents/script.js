@@ -1,4 +1,10 @@
-import { getTaskLogs, getUserData, getTaskData } from './utils.js';
+import {
+  getTaskLogs,
+  getUserData,
+  getTaskData,
+  createElement,
+  getSelfDetails,
+} from './utils.js';
 const container = document.getElementById('taskEvents-container');
 const modal = document.getElementById('modal');
 const overlay = document.querySelector('.overlay');
@@ -6,18 +12,9 @@ const overlay = document.querySelector('.overlay');
 const closeBtn = document.getElementById('closeBtn');
 closeBtn.addEventListener('click', closeModal);
 const closeBtn2 = document.getElementById('closeBtn2');
-closeBtn2.addEventListener('click', closeOtherModal);
+closeBtn2.addEventListener('click', closeGenericModal);
 
-function createElement({ type, attributes = {}, innerText }) {
-  const element = document.createElement(type);
-  Object.keys(attributes).forEach((item) => {
-    element.setAttribute(item, attributes[item]);
-  });
-  element.textContent = innerText;
-  return element;
-}
-
-function closeOtherModal() {
+function closeGenericModal() {
   document.getElementById('generic-modal').style.visibility = 'collapse';
   const containerDiv = document.getElementById('container-div');
   containerDiv.innerHTML = '';
@@ -25,6 +22,11 @@ function closeOtherModal() {
 
 function closeModal() {
   overlay.style.display = 'none';
+  const errorDiv = document.querySelector('.error-div');
+  if (errorDiv) {
+    errorDiv.remove();
+    return;
+  }
   document.querySelector('.roles-div').remove();
   document.querySelector('.activityBtnDiv').remove();
   document.querySelector('.username').remove();
@@ -50,6 +52,20 @@ function removeLoader() {
   document.querySelector('.loader').remove();
 }
 
+function addErrorMessage(container) {
+  const errorDiv = createElement({
+    type: 'div',
+    attributes: { class: 'error-div' },
+  });
+  const errorMsg = createElement({
+    type: 'p',
+    attributes: { class: 'error-message' },
+    innerText: 'Something went wrong!',
+  });
+  errorDiv.appendChild(errorMsg);
+  container.appendChild(errorDiv);
+}
+
 function createEventCard(
   container,
   title,
@@ -67,9 +83,9 @@ function createEventCard(
     type: 'summary',
     attributes: { class: 'summary' },
   });
-  const sumarryContainer = createElement({
+  const summaryContainer = createElement({
     type: 'div',
-    attributes: { class: 'sumarryContainer' },
+    attributes: { class: 'summaryContainer' },
   });
 
   const name = createElement({
@@ -184,9 +200,9 @@ function createEventCard(
 
   detailsContainer.appendChild(details);
 
-  sumarryContainer.appendChild(name);
-  sumarryContainer.appendChild(log);
-  summary.appendChild(sumarryContainer);
+  summaryContainer.appendChild(name);
+  summaryContainer.appendChild(log);
+  summary.appendChild(summaryContainer);
   summary.appendChild(icon);
 
   eventcard.appendChild(summary);
@@ -195,41 +211,46 @@ function createEventCard(
 }
 
 async function createModal(username) {
-  overlay.style.display = 'block';
-  const { user } = await getUserData(username);
-  // another call for roles will be made when we have userSkills collection
-  const userImg = createElement({
-    type: 'img',
-    attributes: { src: user.picture.url, alt: 'user img', class: 'userImg' },
-  });
-  const userName = createElement({
-    type: 'p',
-    attributes: { class: 'username' },
-    innerText: user.username,
-  });
+  try {
+    overlay.style.display = 'block';
+    const { user } = await getUserData(username);
+    // another call for roles will be made when we have userSkills collection
+    const userImg = createElement({
+      type: 'img',
+      attributes: { src: user.picture.url, alt: 'user img', class: 'userImg' },
+    });
+    const userName = createElement({
+      type: 'p',
+      attributes: { class: 'username' },
+      innerText: user.username,
+    });
 
-  document.querySelector('.top-div').prepend(userName);
-  document.querySelector('.top-div').prepend(userImg);
+    document.querySelector('.top-div').prepend(userName);
+    document.querySelector('.top-div').prepend(userImg);
 
-  const skillTitle = createElement({
-    type: 'p',
-    attributes: { class: 'skillTitle' },
-    innerText: 'Skills',
-  });
-  modal.appendChild(skillTitle);
+    const skillTitle = createElement({
+      type: 'p',
+      attributes: { class: 'skillTitle' },
+      innerText: 'Skills',
+    });
+    modal.appendChild(skillTitle);
 
-  const rolesArray = [
-    'React-level1',
-    'Ember-level2',
-    'Remix-level3',
-    'NodeJs-level3',
-    'random-levl1',
-  ];
-  const roles = createRolesDiv(rolesArray);
-  modal.appendChild(roles);
+    const rolesArray = [
+      'React-level1',
+      'Ember-level2',
+      'Remix-level3',
+      'NodeJs-level3',
+      'random-levl1',
+    ];
+    const roles = createRolesDiv(rolesArray);
+    modal.appendChild(roles);
 
-  const activityBtn = createUserActivityBtn(username);
-  modal.appendChild(activityBtn);
+    const activityBtn = createUserActivityBtn(username);
+    modal.appendChild(activityBtn);
+  } catch (err) {
+    addErrorMessage(modal);
+    console.log(err);
+  }
 }
 
 function createRolesDiv(roles) {
@@ -258,7 +279,7 @@ function createRolesDiv(roles) {
     attributes: { class: 'addBtn' },
     innerText: '+',
   });
-  addBtn.addEventListener('click', openAddRoleDiv);
+  addBtn.addEventListener('click', openAddSkillDiv);
   rolesDiv.appendChild(addBtn);
   return rolesDiv;
 }
@@ -284,7 +305,7 @@ function removeSkill(e) {
   e.target.parentElement.remove();
 }
 
-function openAddRoleDiv() {
+function openAddSkillDiv() {
   const skills = ['frontend', 'backend', 'System Design']; // this is temporary data that will be removed once we have userSkill collection in our DB
   const level = [1, 2, 3, 4, 5];
   // a submit button which will make a request to the backend and save the skill in userSkills collection
@@ -353,6 +374,8 @@ function openAddRoleDiv() {
     innerText: 'Add Skill',
   });
 
+  // once we have the tags collection we can make an API call here to add that skill tag to user, when the super user clicks on submit
+
   containerDiv.appendChild(mainTitle);
   containerDiv.appendChild(skillCategoryDiv);
   containerDiv.appendChild(skillLevelDiv);
@@ -390,7 +413,6 @@ async function renderCard(container, title, username) {
       innerText: title,
     });
     const { logs } = await getTaskLogs(username);
-    console.log(logs);
     const promises = logs.map((log) => getData(log));
     const allTaskData = await Promise.all(promises);
     allTaskData.map((data) =>
@@ -406,11 +428,38 @@ async function renderCard(container, title, username) {
     );
     container.prepend(mainTitle);
   } catch (error) {
-    console.log(error);
-    alert('error happened');
+    // this will help when we have an error, because we are making the button disabled while making the call
+    document.getElementById('closeBtn2').disabled = false;
+    addErrorMessage(container);
   } finally {
     removeLoader();
   }
 }
 
-renderCard(container, 'All Task Logs');
+async function render() {
+  try {
+    addLoader(container);
+    const selfDetails = await getSelfDetails();
+    if (selfDetails.roles.super_user) {
+      renderCard(container, 'All Task Logs');
+    } else {
+      const elementContainer = createElement({
+        type: 'div',
+        attributes: { class: 'unAuthorizedDiv' },
+      });
+      const element = createElement({
+        type: 'p',
+        attributes: { class: 'unAuthroized' },
+        innerText: 'You are not authorized to view this page',
+      });
+      elementContainer.appendChild(element);
+      container.appendChild(elementContainer);
+    }
+  } catch (err) {
+    addErrorMessage();
+  } finally {
+    removeLoader();
+  }
+}
+
+render();

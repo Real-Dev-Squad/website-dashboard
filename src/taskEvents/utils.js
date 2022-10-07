@@ -1,5 +1,14 @@
 const BASE_URL = 'http://localhost:4000';
 
+function createElement({ type, attributes = {}, innerText }) {
+  const element = document.createElement(type);
+  Object.keys(attributes).forEach((item) => {
+    element.setAttribute(item, attributes[item]);
+  });
+  element.textContent = innerText;
+  return element;
+}
+
 async function getTaskLogs(username) {
   let url;
   if (username) {
@@ -20,7 +29,7 @@ async function getTaskLogs(username) {
 }
 
 async function getTaskData(id) {
-  const res = await fetch(`${BASE_URL}/tasks/details/${id}`, {
+  const res = await fetch(`${BASE_URL}/tasks/${id}/details`, {
     method: 'GET',
     credentials: 'include',
     headers: {
@@ -44,4 +53,17 @@ async function getUserData(username) {
   return userData;
 }
 
-export { getTaskLogs, getTaskData, getUserData };
+async function getSelfDetails() {
+  const res = await fetch(`${BASE_URL}/users/self`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: {
+      'Content-type': 'application/json',
+    },
+  });
+
+  const self_details = await res.json();
+  return self_details;
+}
+
+export { createElement, getTaskLogs, getTaskData, getUserData, getSelfDetails };

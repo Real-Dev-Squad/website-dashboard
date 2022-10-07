@@ -1,5 +1,13 @@
 :root {
-  box-sizing: border-box;
+  --dark-blue: #1b1378;
+  --light-aqua: #d4f9f2;
+  --scandal: #e5fcf5;
+  --white: #ffffff;
+  --black-transparent: #000000a8;
+  --black: #000000;
+  --lightgray: #d9d9d9;
+  --Razzmatazz: #df0057;
+  --gray: #808080;
 }
 
 body {
@@ -13,7 +21,7 @@ body {
 }
 .event_card {
   font-family: 'roboto mono';
-  background-color: #d4f9f2;
+  background-color: var(--light-aqua);
   padding: 0.5rem;
   width: 90%;
   margin: 0 auto;
@@ -33,18 +41,18 @@ body {
 .name {
   margin: 0;
   font-weight: 800;
-  color: #1b1378;
+  color: var(--dark-blue);
   text-transform: capitalize;
   margin-bottom: 1px;
   border: none;
-  background-color: #d4f9f2;
+  background-color: var(--light-aqua);
   padding: 0;
   cursor: pointer;
 }
 
 .log {
   margin: 0;
-  color: #1b1378;
+  color: var(--dark-blue);
   font-size: 15px;
 }
 
@@ -67,7 +75,7 @@ details[open] .dropDown {
 }
 
 .details-div {
-  background-color: white;
+  background-color: var(--white);
   padding: 0.4rem;
   border-radius: 10px;
 }
@@ -76,7 +84,7 @@ details[open] .dropDown {
 .task-purpose,
 .task-category,
 .task-level {
-  color: #1b1378;
+  color: var(--dark-blue);
   font-weight: 700;
 }
 
@@ -84,21 +92,32 @@ details[open] .dropDown {
 .task-purpose-detail,
 .task-category-detail,
 .task-level-detail {
-  color: #1b1378;
+  color: var(--dark-blue);
 }
 
-.loader {
+.loader,
+.unAuthorizedDiv {
   margin: auto auto;
 }
 
-.loader p {
+.loader p,
+.unAuthorizedDiv p {
   font-weight: 800;
   font-size: 3em;
 }
 
+.error-div {
+  margin: 0 auto;
+}
+
+.error-message {
+  font-size: 1em;
+  color: red;
+}
+
 .overlay {
   display: none;
-  background: #000000a8;
+  background: var(--black-transparent);
   position: fixed;
   left: 0;
   top: 0;
@@ -110,8 +129,8 @@ details[open] .dropDown {
   max-width: 250px;
   height: 60%;
   margin: 0 auto;
-  background: #d9d9d9;
-  color: black;
+  background: var(--lightgray);
+  color: var(--black);
   position: relative;
   top: 20%;
   display: flex;
@@ -119,10 +138,11 @@ details[open] .dropDown {
   align-items: center;
   overflow: hidden;
   border-radius: 15px;
+  opacity: 1.6;
 }
 
 .top-div {
-  background-color: #1b1378;
+  background-color: var(--dark-blue);
   width: 100%;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
@@ -140,7 +160,7 @@ details[open] .dropDown {
 #closeBtn,
 #closeBtn2 {
   border: none;
-  background-color: #1b1378;
+  background-color: var(--dark-blue);
   align-self: flex-start;
   margin-left: auto;
   padding: 0.4rem;
@@ -152,7 +172,7 @@ details[open] .dropDown {
 }
 
 #closeBtn2 {
-  background-color: #d9d9d9;
+  background-color: var(--lightgray);
   padding: 0;
   margin-top: 0;
 }
@@ -165,7 +185,7 @@ details[open] .dropDown {
 
 .username {
   font-size: 18px;
-  color: #ffffff;
+  color: var(--white);
   text-transform: capitalize;
   margin-bottom: 0.5rem;
   align-self: flex-end;
@@ -201,7 +221,7 @@ details[open] .dropDown {
 }
 
 .roles-div-item {
-  background-color: #e5fcf5;
+  background-color: var(--scandal);
   padding: 0.4rem 0.6rem;
   border-radius: 50px;
   margin: 0.4rem;
@@ -229,8 +249,8 @@ details[open] .dropDown {
   border: none;
   padding: 0;
   font-size: 0.6rem;
-  background-color: #df0057;
-  color: white;
+  background-color: var(--Razzmatazz);
+  color: var(--white);
   font-weight: 600;
 }
 
@@ -238,7 +258,7 @@ details[open] .dropDown {
   font-size: 1.5rem;
   padding: 0;
   border: none;
-  background-color: #d9d9d9;
+  background-color: var(--lightgray);
   cursor: pointer;
 }
 
@@ -255,8 +275,8 @@ details[open] .dropDown {
 .activityBtn {
   border-radius: 50px;
   border: none;
-  background-color: #df0057;
-  color: white;
+  background-color: var(--Razzmatazz);
+  color: var(--white);
   padding: 0.2rem 1rem;
   font-family: 'roboto mono';
 }
@@ -265,7 +285,7 @@ details[open] .dropDown {
 
 .role-add-div {
   position: absolute;
-  background-color: black;
+  background-color: var(--black);
   z-index: 100;
   height: 100%;
 }
@@ -281,14 +301,14 @@ details[open] .dropDown {
   top: 50%;
   transform: translate(-50%, -50%);
   padding: 0.5rem;
-  background: #d9d9d9;
-  color: black;
+  background: var(--lightgray);
+  color: var(--black);
   display: flex;
   flex-direction: column;
   font-family: 'roboto mono';
-  border: 1px solid grey;
+  border: 1px solid var(--gray);
   overflow-y: auto;
-  border: 3px solid grey;
+  border: 3px solid var(--gray);
 }
 
 #generic-modal .loaderP {
@@ -317,9 +337,19 @@ details[open] .dropDown {
 .submitBtn {
   justify-self: flex-end;
   align-self: center;
-  background-color: #1b1378;
-  color: white;
+  background-color: var(--dark-blue);
+  color: var(--white);
   width: 80%;
   margin-top: 2rem;
   padding: 0.5rem;
+}
+
+@media (max-width: 600px) {
+  #generic-modal {
+    width: 80%;
+  }
+
+  #taskEvents-container .dropDown {
+    opacity: 0;
+  }
 }
