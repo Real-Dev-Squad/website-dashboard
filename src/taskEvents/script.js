@@ -9,7 +9,7 @@ import {
   removeLoader,
 } from './utils.js';
 
-import { createEventCard } from './EventCard.js';
+import { createEventCard } from './logCard.js';
 
 const container = document.getElementById('taskEvents-container');
 const modal = document.getElementById('modal');
@@ -20,7 +20,7 @@ closeBtn.addEventListener('click', closeModal);
 const closeBtn2 = document.getElementById('closeBtn2');
 closeBtn2.addEventListener('click', closeGenericModal);
 
-async function createModal(username) {
+async function createProfileModal(username) {
   try {
     overlay.style.display = 'block';
     const { user } = await getUserData(username);
@@ -242,12 +242,12 @@ async function renderCard(container, title, username, isAllTasks) {
         data.taskLevel.category,
         data.taskLevel.level,
         isAllTasks,
-        createModal,
+        createProfileModal,
       ),
     );
     container.prepend(mainTitle);
   } catch (error) {
-    // this will help when we have an error, because we are making the button disabled while making the call
+    // in case our API call fails we need to enable that button
     document.getElementById('closeBtn2').disabled = false;
     addErrorMessage(container);
   } finally {
