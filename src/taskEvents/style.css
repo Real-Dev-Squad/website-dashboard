@@ -5,8 +5,8 @@
   --white: #ffffff;
   --black-transparent: #000000a8;
   --black: #000000;
-  --lightgray: #d9d9d9;
-  --Razzmatazz: #df0057;
+  --light-gray: #d9d9d9;
+  --razzmatazz: #df0057;
   --gray: #808080;
 }
 
@@ -14,7 +14,7 @@ body {
   margin: 0;
 }
 
-#taskEvents-container {
+#task-events-container {
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -96,12 +96,12 @@ details[open] .dropDown {
 }
 
 .loader,
-.unAuthorizedDiv {
+.unauthorized-div {
   margin: auto auto;
 }
 
 .loader p,
-.unAuthorizedDiv p {
+.unauthorized-div p {
   font-weight: 800;
   font-size: 3em;
 }
@@ -129,7 +129,7 @@ details[open] .dropDown {
   max-width: 250px;
   height: 60%;
   margin: 0 auto;
-  background: var(--lightgray);
+  background: var(--light-gray);
   color: var(--black);
   position: relative;
   top: 20%;
@@ -149,7 +149,7 @@ details[open] .dropDown {
   display: flex;
 }
 
-.userImg {
+.user-img {
   width: 60px;
   height: 60px;
   border-radius: 50%;
@@ -157,8 +157,8 @@ details[open] .dropDown {
   transform: translateY(30%);
   margin-left: 0.4rem;
 }
-#closeBtn,
-#closeBtn2 {
+#close-btn,
+#close-btn2 {
   border: none;
   background-color: var(--dark-blue);
   align-self: flex-start;
@@ -166,18 +166,18 @@ details[open] .dropDown {
   padding: 0.4rem;
 }
 
-#closeBtn > img {
+#close-btn > img {
   width: 15px;
   height: 15px;
 }
 
-#closeBtn2 {
-  background-color: var(--lightgray);
+#close-btn2 {
+  background-color: var(--light-gray);
   padding: 0;
   margin-top: 0;
 }
 
-#closeBtn2 > img {
+#close-btn2 > img {
   width: 25px;
   height: 25px;
   padding: 0;
@@ -201,7 +201,7 @@ details[open] .dropDown {
 
 /* Input Styles */
 
-.skillTitle {
+.skill-title {
   margin-top: 30px;
   margin-bottom: 0;
   align-self: flex-start;
@@ -231,11 +231,11 @@ details[open] .dropDown {
   font-weight: 600;
 }
 
-.removeBtn {
+.remove-btn {
   display: none;
 }
 
-.roles-div-item:hover > .removeBtn {
+.roles-div-item:hover > .remove-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -249,22 +249,22 @@ details[open] .dropDown {
   border: none;
   padding: 0;
   font-size: 0.6rem;
-  background-color: var(--Razzmatazz);
+  background-color: var(--razzmatazz);
   color: var(--white);
   font-weight: 600;
 }
 
-.addBtn {
+.add-btn {
   font-size: 1.5rem;
   padding: 0;
   border: none;
-  background-color: var(--lightgray);
+  background-color: var(--light-gray);
   cursor: pointer;
 }
 
 /* Activity Button */
 
-.activityBtnDiv {
+.activity-btn-div {
   margin-top: auto;
   margin-bottom: 0.5rem;
   margin-left: 0.5rem;
@@ -272,10 +272,10 @@ details[open] .dropDown {
   padding: 0.5rem;
 }
 
-.activityBtn {
+.activity-btn {
   border-radius: 50px;
   border: none;
-  background-color: var(--Razzmatazz);
+  background-color: var(--razzmatazz);
   color: var(--white);
   padding: 0.2rem 1rem;
   font-family: 'roboto mono';
@@ -301,7 +301,7 @@ details[open] .dropDown {
   top: 50%;
   transform: translate(-50%, -50%);
   padding: 0.5rem;
-  background: var(--lightgray);
+  background: var(--light-gray);
   color: var(--black);
   display: flex;
   flex-direction: column;
@@ -334,7 +334,7 @@ details[open] .dropDown {
   width: 100%;
 }
 
-.submitBtn {
+.submit-btn {
   justify-self: flex-end;
   align-self: center;
   background-color: var(--dark-blue);
@@ -349,7 +349,7 @@ details[open] .dropDown {
     width: 80%;
   }
 
-  #taskEvents-container .dropDown {
+  #task-events-container .dropDown {
     opacity: 0;
   }
 }

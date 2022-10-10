@@ -11,13 +11,13 @@ import {
 
 import { createEventCard } from './logCard.js';
 
-const container = document.getElementById('taskEvents-container');
+const container = document.getElementById('task-events-container');
 const modal = document.getElementById('modal');
 const overlay = document.querySelector('.overlay');
 
-const closeBtn = document.getElementById('closeBtn');
+const closeBtn = document.getElementById('close-btn');
 closeBtn.addEventListener('click', closeModal);
-const closeBtn2 = document.getElementById('closeBtn2');
+const closeBtn2 = document.getElementById('close-btn2');
 closeBtn2.addEventListener('click', closeGenericModal);
 
 async function createProfileModal(username) {
@@ -27,7 +27,7 @@ async function createProfileModal(username) {
     // another call for roles will be made when we have userSkills collection
     const userImg = createElement({
       type: 'img',
-      attributes: { src: user.picture.url, alt: 'user img', class: 'userImg' },
+      attributes: { src: user.picture.url, alt: 'user img', class: 'user-img' },
     });
     const userName = createElement({
       type: 'p',
@@ -40,7 +40,7 @@ async function createProfileModal(username) {
 
     const skillTitle = createElement({
       type: 'p',
-      attributes: { class: 'skillTitle' },
+      attributes: { class: 'skill-title' },
       innerText: 'Skills',
     });
     modal.appendChild(skillTitle);
@@ -77,7 +77,7 @@ function createRolesDiv(roles) {
     });
     const removeBtn = createElement({
       type: 'button',
-      attributes: { class: 'removeBtn', id: index },
+      attributes: { class: 'remove-btn', id: index },
       innerText: 'x',
     });
     removeBtn.addEventListener('click', removeSkill);
@@ -86,7 +86,7 @@ function createRolesDiv(roles) {
   });
   const addBtn = createElement({
     type: 'button',
-    attributes: { class: 'addBtn' },
+    attributes: { class: 'add-btn' },
     innerText: '+',
   });
   addBtn.addEventListener('click', openAddSkillModal);
@@ -97,11 +97,11 @@ function createRolesDiv(roles) {
 function createUserActivityBtn(username) {
   const activityBtnDiv = createElement({
     type: 'div',
-    attributes: { class: 'activityBtnDiv' },
+    attributes: { class: 'activity-btn-div' },
   });
   const activityBtn = createElement({
     type: 'button',
-    attributes: { class: 'activityBtn' },
+    attributes: { class: 'activity-btn' },
     innerText: 'show user activity',
   });
   activityBtn.addEventListener('click', () => openUserActivityModal(username));
@@ -117,10 +117,10 @@ function closeModal() {
     return;
   }
   document.querySelector('.roles-div').remove();
-  document.querySelector('.activityBtnDiv').remove();
+  document.querySelector('.activity-btn-div').remove();
   document.querySelector('.username').remove();
-  document.querySelector('.skillTitle').remove();
-  document.querySelector('.userImg').remove();
+  document.querySelector('.skill-title').remove();
+  document.querySelector('.user-img').remove();
 }
 
 function closeGenericModal() {
@@ -199,7 +199,7 @@ function openAddSkillModal() {
 
   const submitBtn = createElement({
     type: 'button',
-    attributes: { class: 'submitBtn' },
+    attributes: { class: 'submit-btn' },
     innerText: 'Add Skill',
   });
 
@@ -212,12 +212,12 @@ function openAddSkillModal() {
 }
 
 async function openUserActivityModal(username) {
-  document.getElementById('closeBtn2').disabled = true;
+  document.getElementById('close-btn2').disabled = true;
   document.getElementById('generic-modal').style.visibility = 'visible';
   const containerDiv = document.getElementById('container-div');
 
   await renderCard(containerDiv, `${username}'s Task Logs`, username);
-  document.getElementById('closeBtn2').disabled = false;
+  document.getElementById('close-btn2').disabled = false;
 }
 
 async function renderCard(container, title, username, isAllTasks) {
@@ -263,11 +263,11 @@ async function render() {
     } else {
       const elementContainer = createElement({
         type: 'div',
-        attributes: { class: 'unAuthorizedDiv' },
+        attributes: { class: 'unauthorized-div' },
       });
       const element = createElement({
         type: 'p',
-        attributes: { class: 'unAuthroized' },
+        attributes: { class: 'unauthorized' },
         innerText: 'You are not authorized to view this page',
       });
       elementContainer.appendChild(element);

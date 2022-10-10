@@ -8,7 +8,7 @@ function createSummarySection(username, log, isAllTasks, createModalFunction) {
 
   const summaryContainer = createElement({
     type: 'div',
-    attributes: { class: 'summaryContainer' },
+    attributes: { class: 'summary-container' },
   });
 
   if (isAllTasks) {
