@@ -149,9 +149,9 @@ function openAddSkillModal() {
     type: 'div',
     attributes: { class: 'skill-category-div' },
   });
-  const skillCategoryTitle = createElement({
+  const skillCategoryLabel = createElement({
     type: 'p',
-    attributes: { class: 'skill-category-title' },
+    attributes: { class: 'skill-category-label' },
     innerText: 'Choose a skill to add',
   });
   const skillCategorySelect = createElement({
@@ -168,16 +168,16 @@ function openAddSkillModal() {
     skillCategorySelect.appendChild(option);
   }
 
-  skillCategoryDiv.appendChild(skillCategoryTitle);
+  skillCategoryDiv.appendChild(skillCategoryLabel);
   skillCategoryDiv.appendChild(skillCategorySelect);
 
   const skillLevelDiv = createElement({
     type: 'div',
     attributes: { class: 'skill-level-div' },
   });
-  const skillLevelTitle = createElement({
+  const skillLevelLabel = createElement({
     type: 'p',
-    attributes: { class: 'skill-level-title' },
+    attributes: { class: 'skill-level-label' },
     innerText: 'choose skill level',
   });
   const skillLevelSelect = createElement({
@@ -194,7 +194,7 @@ function openAddSkillModal() {
     skillLevelSelect.appendChild(option);
   }
 
-  skillLevelDiv.appendChild(skillLevelTitle);
+  skillLevelDiv.appendChild(skillLevelLabel);
   skillLevelDiv.appendChild(skillLevelSelect);
 
   const submitBtn = createElement({
