@@ -57,7 +57,7 @@ function createDetailsSection(title, purpose, category, level) {
   });
   const taskTitleLabel = createElement({
     type: 'span',
-    attributes: { class: 'task-title' },
+    attributes: { class: 'task-title-label' },
     innerText: 'Title: ',
   });
   const titleDetail = createElement({
@@ -77,7 +77,7 @@ function createDetailsSection(title, purpose, category, level) {
   });
   const taskPurposeLabel = createElement({
     type: 'span',
-    attributes: { class: 'task-purpose' },
+    attributes: { class: 'task-purpose-label' },
     innerText: 'Purpose: ',
   });
   const taskPurposeDetail = createElement({
@@ -98,7 +98,7 @@ function createDetailsSection(title, purpose, category, level) {
     });
     const taskCategoryLabel = createElement({
       type: 'span',
-      attributes: { class: 'task-category' },
+      attributes: { class: 'task-category-label' },
       innerText: 'category: ',
     });
     const taskCategoryDetail = createElement({
@@ -119,7 +119,7 @@ function createDetailsSection(title, purpose, category, level) {
     });
     const taskLevelLabel = createElement({
       type: 'span',
-      attributes: { class: 'task-level' },
+      attributes: { class: 'task-level-label' },
       innerText: 'Level: ',
     });
     const taskLevelDetail = createElement({

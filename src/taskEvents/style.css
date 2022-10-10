@@ -80,10 +80,10 @@ details[open] .dropDown {
   border-radius: 10px;
 }
 
-.task-title,
-.task-purpose,
-.task-category,
-.task-level {
+.task-title-label,
+.task-purpose-label,
+.task-category-label,
+.task-level-label {
   color: var(--dark-blue);
   font-weight: 700;
 }
