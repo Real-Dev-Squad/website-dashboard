@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:4000';
+const BASE_URL = 'https://api.realdevsquad.com/';
 
 function createElement({ type, attributes = {}, innerText }) {
   const element = document.createElement(type);

@@ -55,7 +55,7 @@ function createDetailsSection(title, purpose, category, level) {
     type: 'div',
     attributes: { class: 'task-title-div' },
   });
-  const tasktitle = createElement({
+  const taskTitleLabel = createElement({
     type: 'span',
     attributes: { class: 'task-title' },
     innerText: 'Title: ',
@@ -66,7 +66,7 @@ function createDetailsSection(title, purpose, category, level) {
     innerText: title,
   });
 
-  taskTitleDiv.appendChild(tasktitle);
+  taskTitleDiv.appendChild(taskTitleLabel);
   taskTitleDiv.appendChild(titleDetail);
 
   details.appendChild(taskTitleDiv);
@@ -75,7 +75,7 @@ function createDetailsSection(title, purpose, category, level) {
     type: 'div',
     attributes: { class: 'task-purpose-div' },
   });
-  const taskPurpose = createElement({
+  const taskPurposeLabel = createElement({
     type: 'span',
     attributes: { class: 'task-purpose' },
     innerText: 'Purpose: ',
@@ -86,7 +86,7 @@ function createDetailsSection(title, purpose, category, level) {
     innerText: purpose,
   });
 
-  taskPurposeDiv.appendChild(taskPurpose);
+  taskPurposeDiv.appendChild(taskPurposeLabel);
   taskPurposeDiv.appendChild(taskPurposeDetail);
 
   details.appendChild(taskPurposeDiv);
@@ -96,7 +96,7 @@ function createDetailsSection(title, purpose, category, level) {
       type: 'div',
       attributes: { class: 'task-cateogory-div' },
     });
-    const taskCategory = createElement({
+    const taskCategoryLabel = createElement({
       type: 'span',
       attributes: { class: 'task-category' },
       innerText: 'category: ',
@@ -107,7 +107,7 @@ function createDetailsSection(title, purpose, category, level) {
       innerText: category,
     });
 
-    taskCategoryDiv.appendChild(taskCategory);
+    taskCategoryDiv.appendChild(taskCategoryLabel);
     taskCategoryDiv.appendChild(taskCategoryDetail);
     details.appendChild(taskCategoryDiv);
   }
@@ -117,7 +117,7 @@ function createDetailsSection(title, purpose, category, level) {
       type: 'div',
       attributes: { class: 'task-level-div' },
     });
-    const taskLevel = createElement({
+    const taskLevelLabel = createElement({
       type: 'span',
       attributes: { class: 'task-level' },
       innerText: 'Level: ',
@@ -128,7 +128,7 @@ function createDetailsSection(title, purpose, category, level) {
       innerText: level,
     });
 
-    taskLevelDiv.appendChild(taskLevel);
+    taskLevelDiv.appendChild(taskLevelLabel);
     taskLevelDiv.appendChild(taskLevelDetail);
     details.appendChild(taskLevelDiv);
   }
