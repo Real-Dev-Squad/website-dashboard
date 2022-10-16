@@ -104,7 +104,8 @@ body {
   font-size: medium;
 }
 
-#status {
+#status,
+#priority {
   width: 100%;
   padding: 1em;
   border-radius: 5px;
