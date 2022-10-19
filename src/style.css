@@ -80,6 +80,23 @@ button {
   border: none;
 }
 
+/* Online-members */
+.online-members-link {
+  color: black;
+  font-weight: 500;
+  font-size: larger;
+  border: 2px solid black;
+  border-radius: 5px;
+  padding: 10px 50px;
+  transition: all 0.5s ease;
+}
+
+.online-members-link:hover {
+  color: white;
+  background-color: #1d1283;
+  border: none;
+}
+
 .info-repo {
   font-weight: 100;
   padding: auto;

@@ -123,6 +123,7 @@ taskForm.onsubmit = async (e) => {
     level,
     assignee,
     participants,
+    priority,
     percentCompleted,
     completionAwardDinero,
     completionAwardNeelam,
@@ -150,6 +151,7 @@ taskForm.onsubmit = async (e) => {
       category,
       level: Number(level),
     },
+    priority,
     percentCompleted: Number(percentCompleted),
     completionAward: {
       dinero: Number(completionAwardDinero),
