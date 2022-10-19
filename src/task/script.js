@@ -119,8 +119,11 @@ taskForm.onsubmit = async (e) => {
     links,
     endsOn,
     status,
+    category,
+    level,
     assignee,
     participants,
+    priority,
     percentCompleted,
     completionAwardDinero,
     completionAwardNeelam,
@@ -144,6 +147,11 @@ taskForm.onsubmit = async (e) => {
     links: Array.isArray(links) ? links : [links],
     endsOn,
     status,
+    taskLevel: {
+      category,
+      level: Number(level),
+    },
+    priority,
     percentCompleted: Number(percentCompleted),
     completionAward: {
       dinero: Number(completionAwardDinero),

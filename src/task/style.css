@@ -104,7 +104,10 @@ body {
   font-size: medium;
 }
 
-#status {
+#category,
+#level,
+#status,
+#priority {
   width: 100%;
   padding: 1em;
   border-radius: 5px;
