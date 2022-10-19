@@ -1,6 +1,11 @@
 import { createElement } from './utils.js';
 
-function createSummarySection(username, log, isAllTasks, createModalFunction) {
+function createSummarySection({
+  username,
+  log,
+  isAllTasks,
+  createModalFunction,
+}) {
   const summary = createElement({
     type: 'summary',
     attributes: { class: 'summary' },
@@ -41,7 +46,7 @@ function createSummarySection(username, log, isAllTasks, createModalFunction) {
   return summary;
 }
 
-function createDetailsSection(title, purpose, category, level) {
+function createDetailsSection({ title, purpose, category, level }) {
   const detailsContainer = createElement({
     type: 'div',
     attributes: { class: 'details-div-container' },
@@ -138,29 +143,29 @@ function createDetailsSection(title, purpose, category, level) {
   return detailsContainer;
 }
 
-function createEventCard(
+function createEventCard({
   container,
   title,
-  eventdescription,
+  log,
   purpose,
   username,
   category,
   level,
   isAllTasks,
   createModal,
-) {
+}) {
   const eventcard = createElement({
     type: 'details',
     attributes: { class: 'event_card' },
   });
 
-  const summary = createSummarySection(
-    username,
-    eventdescription,
+  const summary = createSummarySection({
     isAllTasks,
-    createModal,
-  );
-  const details = createDetailsSection(title, purpose, category, level);
+    username,
+    createModalFunction: createModal,
+    log,
+  });
+  const details = createDetailsSection({ title, purpose, category, level });
 
   eventcard.appendChild(summary);
   eventcard.appendChild(details);

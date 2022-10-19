@@ -17,8 +17,8 @@ const overlay = document.querySelector('.overlay');
 
 const closeBtn = document.getElementById('close-btn');
 closeBtn.addEventListener('click', closeModal);
-const closeBtn2 = document.getElementById('close-btn2');
-closeBtn2.addEventListener('click', closeGenericModal);
+const genericModalCloseBtn = document.getElementById('close-generic-modal');
+genericModalCloseBtn.addEventListener('click', closeGenericModal);
 
 async function createProfileModal(username) {
   try {
@@ -27,7 +27,11 @@ async function createProfileModal(username) {
     // another call for roles will be made when we have userSkills collection
     const userImg = createElement({
       type: 'img',
-      attributes: { src: user.picture.url, alt: 'user img', class: 'user-img' },
+      attributes: {
+        src: user.picture.url || './assets/Avatar.png',
+        alt: 'user img',
+        class: 'user-img',
+      },
     });
     const userName = createElement({
       type: 'p',
@@ -212,15 +216,19 @@ function openAddSkillModal() {
 }
 
 async function openUserActivityModal(username) {
-  document.getElementById('close-btn2').disabled = true;
+  document.getElementById('close-generic-modal').disabled = true;
   document.getElementById('generic-modal').style.visibility = 'visible';
   const containerDiv = document.getElementById('container-div');
 
-  await renderCard(containerDiv, `${username}'s Task Logs`, username);
-  document.getElementById('close-btn2').disabled = false;
+  await renderCard({
+    container: containerDiv,
+    title: `${username}'s Task Logs`,
+    username,
+  });
+  document.getElementById('close-generic-modal').disabled = false;
 }
 
-async function renderCard(container, title, username, isAllTasks) {
+async function renderCard({ container, title, username, isAllTasks }) {
   try {
     addLoader(container);
     const mainTitle = createElement({
@@ -232,22 +240,22 @@ async function renderCard(container, title, username, isAllTasks) {
     const promises = logs.map((log) => getData(log));
     const allTaskData = await Promise.all(promises);
     allTaskData.map((data) =>
-      createEventCard(
+      createEventCard({
         container,
-        data.title,
-        data.message,
-        data.purpose,
-        data.userName,
-        data.taskLevel.category,
-        data.taskLevel.level,
+        title: data.title,
+        log: data.message,
+        purpose: data.purpose,
+        username: data.userName,
+        category: data.taskLevel.category,
+        level: data.taskLevel.level,
         isAllTasks,
-        createProfileModal,
-      ),
+        createModal: createProfileModal,
+      }),
     );
     container.prepend(mainTitle);
   } catch (error) {
     // in case our API call fails we need to enable that button
-    document.getElementById('closeBtn2').disabled = false;
+    document.getElementById('close-generic-modal').disabled = false;
     addErrorMessage(container);
   } finally {
     removeLoader();
@@ -259,7 +267,7 @@ async function render() {
     addLoader(container);
     const selfDetails = await getSelfDetails();
     if (selfDetails.roles.super_user) {
-      renderCard(container, 'All Task Logs', null, true);
+      renderCard({ container, title: 'All Task Logs', isAllTasks: true });
     } else {
       const elementContainer = createElement({
         type: 'div',

@@ -14,12 +14,12 @@ function addLoader(container) {
     type: 'div',
     attributes: { class: 'loader' },
   });
-  const loaderP = createElement({
+  const loadertext = createElement({
     type: 'p',
-    attributes: { class: 'loaderP' },
+    attributes: { class: 'loader-text' },
     innerText: 'Loading...',
   });
-  loader.appendChild(loaderP);
+  loader.appendChild(loadertext);
   container.appendChild(loader);
 }
 
@@ -42,12 +42,9 @@ function addErrorMessage(container) {
 }
 
 async function getTaskLogs(username) {
-  let url;
-  if (username) {
-    url = `${BASE_URL}/logs/tasks?meta.username=${username}`;
-  } else {
-    url = `${BASE_URL}/logs/tasks`;
-  }
+  const url = username
+    ? `${BASE_URL}/logs/tasks?meta.username=${username}`
+    : `${BASE_URL}/logs/tasks`;
   const res = await fetch(url, {
     method: 'GET',
     credentials: 'include',
@@ -73,7 +70,6 @@ async function getTaskData(id) {
 }
 
 async function getUserData(username) {
-  console.log(username);
   const res = await fetch(`${BASE_URL}/users/${username}`, {
     method: 'GET',
     credentials: 'include',
@@ -99,9 +95,9 @@ async function getSelfDetails() {
 }
 
 async function getData(data) {
-  const message = data.body.message;
-  const userName = data.meta.username;
-  const taskId = data.meta.taskId;
+  const message = data?.body.message;
+  const userName = data?.meta.username;
+  const taskId = data?.meta.taskId;
   const { taskData } = await getTaskData(taskId);
 
   return {
