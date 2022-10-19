@@ -106,6 +106,37 @@
             <option value="ASSIGNED">Assigned</option>
           </select>
         </div>
+        <div class="inputBox">
+          <label for="taskLevel">Task Level</label>
+          <br />
+          <div class="inputBox">
+            <label for="level" class="editable">
+              Category:<span class="required">*</span>
+            </label>
+            <select
+              required
+              class="input notEditing"
+              id="category"
+              name="category"
+            >
+              <option selected value="SYSTEM_DESIGN">System Design</option>
+              <option value="FRONTEND">Frontend</option>
+              <option value="BACKEND">Backend</option>
+            </select>
+          </div>
+          <div class="inputBox">
+            <label for="level" class="editable">
+              Level:<span class="required">*</span>
+            </label>
+            <select required class="input notEditing" id="level" name="level">
+              <option selected value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+        </div>
         <div class="inputBox class" id="assigneeInput">
           <label for="assignee hidden"
             >Assignee:<span class="required">*</span></label
