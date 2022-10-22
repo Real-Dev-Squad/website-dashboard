@@ -19,6 +19,11 @@ body {
   display: flex;
   flex-direction: column;
 }
+
+.hidden {
+  display: none;
+}
+
 .event_card {
   font-family: 'roboto mono';
   background-color: var(--light-aqua);
@@ -110,13 +115,18 @@ details[open] .dropDown {
   margin: 0 auto;
 }
 
+.no-logs-found {
+  text-align: center;
+  font-weight: 500;
+  font-size: 2rem;
+}
+
 .error-message {
   font-size: 1em;
   color: red;
 }
 
 .overlay {
-  display: none;
   background: var(--black-transparent);
   position: fixed;
   left: 0;

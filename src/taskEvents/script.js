@@ -22,7 +22,7 @@ genericModalCloseBtn.addEventListener('click', closeGenericModal);
 
 async function createProfileModal(username) {
   try {
-    overlay.style.display = 'block';
+    overlay.classList.remove('hidden');
     const { user } = await getUserData(username);
     // another call for roles will be made when we have userSkills collection
     const userImg = createElement({
@@ -114,7 +114,7 @@ function createUserActivityBtn(username) {
 }
 
 function closeModal() {
-  overlay.style.display = 'none';
+  overlay.classList.add('hidden');
   const errorDiv = document.querySelector('.error-div');
   if (errorDiv) {
     errorDiv.remove();
@@ -237,21 +237,32 @@ async function renderCard({ container, title, username, isAllTasks }) {
       innerText: title,
     });
     const { logs } = await getTaskLogs(username);
+
+    if (logs.length === 0) {
+      const noLogsFound = createElement({
+        type: 'p',
+        attributes: { class: 'no-logs-found' },
+        innerText: 'No Task Logs Found!',
+      });
+      container.appendChild(noLogsFound);
+      return;
+    }
     const promises = logs.map((log) => getData(log));
     const allTaskData = await Promise.all(promises);
-    allTaskData.map((data) =>
+
+    for (const data of allTaskData) {
       createEventCard({
         container,
         title: data.title,
         log: data.message,
         purpose: data.purpose,
         username: data.userName,
-        category: data.taskLevel.category,
-        level: data.taskLevel.level,
+        category: data.category ?? '-',
+        level: data.level ?? '-',
         isAllTasks,
         createModal: createProfileModal,
-      }),
-    );
+      });
+    }
     container.prepend(mainTitle);
   } catch (error) {
     // in case our API call fails we need to enable that button
