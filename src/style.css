@@ -3,6 +3,11 @@
 ::before {
   box-sizing: border-box;
 }
+:root {
+  --black-color: black;
+  --white-color: white;
+  --blue-color: #1d1283;
+}
 
 body {
   font-family: 'Roboto', sans-serif;
@@ -79,6 +84,23 @@ button {
   background-color: #1d1283;
   border: none;
 }
+#user-management-btn {
+  color: black;
+  font-weight: 500;
+  font-size: larger;
+  background-color: var(--white-color);
+  border: 2px solid var(--black-color);
+  border-radius: 5px;
+  padding: 10px 50px;
+  cursor: pointer;
+  transition: all 0.5s ease;
+  width: 270px;
+}
+#user-management-btn:hover {
+  color: var(--white-color);
+  background-color: var(--blue-color);
+  border: none;
+}
 
 /* Online-members */
 .online-members-link {
@@ -105,4 +127,8 @@ button {
 
 footer {
   margin-top: auto;
+}
+
+.element-display-remove {
+  display: none;
 }
