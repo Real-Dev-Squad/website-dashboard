@@ -2,7 +2,7 @@ import { createElement } from './utils.js';
 
 function createSummarySection({
   username,
-  log,
+  logArray,
   isAllTasks,
   createModalFunction,
 }) {
@@ -25,11 +25,15 @@ function createSummarySection({
     name.addEventListener('click', () => createModalFunction(username));
     summaryContainer.appendChild(name);
   }
-  const tasklog = createElement({
-    type: 'p',
-    attributes: { class: 'log' },
-    innerText: log,
-  });
+
+  for (const log of logArray) {
+    const tasklog = createElement({
+      type: 'p',
+      attributes: { class: 'log' },
+      innerText: log,
+    });
+    summaryContainer.appendChild(tasklog);
+  }
   const icon = createElement({
     type: 'img',
     attributes: {
@@ -38,8 +42,6 @@ function createSummarySection({
       alt: 'dropdown icon',
     },
   });
-
-  summaryContainer.appendChild(tasklog);
   summary.appendChild(summaryContainer);
   summary.appendChild(icon);
 
@@ -146,7 +148,7 @@ function createDetailsSection({ title, purpose, category, level }) {
 function createEventCard({
   container,
   title,
-  log,
+  logArray,
   purpose,
   username,
   category,
@@ -163,7 +165,7 @@ function createEventCard({
     isAllTasks,
     username,
     createModalFunction: createModal,
-    log,
+    logArray,
   });
   const details = createDetailsSection({ title, purpose, category, level });
 

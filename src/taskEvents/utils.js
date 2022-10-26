@@ -43,8 +43,8 @@ function addErrorMessage(container) {
 
 async function getTaskLogs(username) {
   const url = username
-    ? `${BASE_URL}/logs/tasks?meta.username=${username}`
-    : `${BASE_URL}/logs/tasks`;
+    ? `${BASE_URL}/logs/task?meta.username=${username}`
+    : `${BASE_URL}/logs/task`;
   const res = await fetch(url, {
     method: 'GET',
     credentials: 'include',
@@ -95,14 +95,14 @@ async function getSelfDetails() {
 }
 
 async function getData(data) {
-  const message = data?.body.message;
+  const messages = data?.body.messages;
   const userName = data?.meta.username;
   const taskId = data?.meta.taskId;
   const { taskData } = await getTaskData(taskId);
 
   return {
     ...taskData,
-    message,
+    messages,
     userName,
   };
 }

@@ -254,7 +254,7 @@ async function renderCard({ container, title, username, isAllTasks }) {
       createEventCard({
         container,
         title: data.title,
-        log: data.message,
+        logArray: data.messages,
         purpose: data.purpose,
         username: data.userName,
         category: data.category ?? '-',
