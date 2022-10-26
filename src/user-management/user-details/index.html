@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Management</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="header">
+      <h1>User Management</h1>
+    </header>
+    <section id="main-section">
+      <div class="user-details">
+        <div class="user-details__top-column">
+          <div class="user-details__header">
+            <div>
+              <img
+                src="../images/profile.svg"
+                alt="pofile image"
+                class="user-details__image"
+              />
+              <h2 class="user-details__username">Rachel</h2>
+            </div>
+            <div class="user-details__tags">
+              <p>Member</p>
+              <p>Developer</p>
+            </div>
+          </div>
+          <div class="user-details__socials">
+            <a
+              class="socials-icon socials-icon--twitter"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img src="../images/twitter.svg" alt="twitter" />
+              <p>Twitter</p>
+            </a>
+            <a
+              class="socials-icon socials-icon--linkedin"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img src="../images/linkedin.svg" alt="linkedin" />
+              <p>LinkedIn</p>
+            </a>
+            <a
+              class="socials-icon socials-icon--github"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img src="../images/github.svg" alt="github" />
+              <p>Github</p>
+            </a>
+          </div>
+        </div>
+        <div class="user-details__content">
+          <ul class="user-details__list">
+            <li>
+              <div class="visible-content">
+                <h2>Academics or Professional Details</h2>
+                <img
+                  src="https://cdn-icons-png.flaticon.com/128/32/32195.png"
+                  alt=""
+                />
+              </div>
+              <div class="hidden-content hide">
+                <div class="hidden-details">
+                  <h3>College / Compony</h3>
+                  <p class="user-details__professional">
+                    Graphic Era Hill University, Dehradun
+                  </p>
+                </div>
+                <div class="hidden-details">
+                  <h3>Current Year</h3>
+                  <p class="user-details__yoe">1 Year</p>
+                </div>
+                <div class="hidden-details">
+                  <h3>Looking for internship / Job</h3>
+                  <p>Yes</p>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="visible-content">
+                <h2>Skills</h2>
+                <img
+                  src="https://cdn-icons-png.flaticon.com/128/32/32195.png"
+                  alt=""
+                />
+              </div>
+              <div class="hidden-content hide">
+                <div class="hidden-details">
+                  <h3>Javascript</h3>
+                </div>
+                <div class="hidden-details">
+                  <h3>React Js</h3>
+                </div>
+                <div class="hidden-details">
+                  <h3>CSS</h3>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="visible-content">
+                <h2>Tasks</h2>
+                <img
+                  src="https://cdn-icons-png.flaticon.com/128/32/32195.png"
+                  alt=""
+                />
+              </div>
+              <div class="hidden-content hide">
+                <div class="user-tasks"></div>
+              </div>
+            </li>
+            <li>
+              <div class="visible-content">
+                <h2>Availability</h2>
+                <img
+                  src="https://cdn-icons-png.flaticon.com/128/32/32195.png"
+                  alt=""
+                />
+              </div>
+              <div class="hidden-content hide">
+                <div class="hidden-details">
+                  <h3>Out Of Office</h3>
+                  <p>No</p>
+                </div>
+                <div class="hidden-details">
+                  <h3>No of hours alloted for october 2022</h3>
+                  <p>50 hours</p>
+                </div>
+                <div class="hidden-details">
+                  <h3>Approx no of hours remaining</h3>
+                  <p>60</p>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </body>
+  <script src="constants.js"></script>
+  <script src="utils.js"></script>
+  <script src="script.js"></script>
+</html>
