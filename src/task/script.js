@@ -1,5 +1,5 @@
-const API_BASE_URL = window.API_BASE_URL;
-
+const assigneeAvatar = document.getElementById('assigneeAvatar');
+const assigneeAvatarLoader = document.getElementById('assigneeAvatarLoader');
 const getRemainingDays = (selectedDateInString) => {
   const selectedDate = new Date(selectedDateInString);
   const currentDate = new Date(getFutureDateString(0));
@@ -362,6 +362,8 @@ async function fetchMembers(searchInput) {
     const data = await response.json();
     clearSuggestionList();
     wasAssigneeSet = false;
+    removeClass(assigneeAvatar, DISPLAY_REMOVE_CLASS);
+    removeClass(assigneeAvatarLoader, DISPLAY_REMOVE_CLASS);
     if (searchInput.trim() !== '') {
       const matches = data.members.filter((task) => {
         if (task.username) {
@@ -395,20 +397,30 @@ function clearUserNotFound() {
 function createSuggestionsList(matches) {
   const listItems = document.getElementById('list-items');
   if (matches.length) {
-    matches.map(({ username }) => {
+    addClass(assigneeAvatarLoader, DISPLAY_REMOVE_CLASS);
+    matches.map(({ username, picture = {} }) => {
+      const imageUrl =
+        picture.hasOwnProperty('url') && picture.url
+          ? picture.url
+          : DEFAULT_ASSIGNEE_IMAGE_PATH;
       const listItem = document.createElement('p');
       listItem.classList.add('list-item');
-      listItem.style.cursor = 'pointer';
-      listItem.setAttribute('onclick', `setAssignee('${username}')`);
+      listItem.setAttribute(
+        'onclick',
+        `setAssignee('${username}', '${imageUrl}')`,
+      );
       listItem.innerText = username;
       listItems.appendChild(listItem);
     });
   }
 }
 
-function setAssignee(assignee) {
+function setAssignee(assignee, imgUrl) {
   assigneeEl.value = assignee;
   wasAssigneeSet = true;
+  addClass(assigneeAvatar, DISPLAY_REMOVE_CLASS);
+  removeClass(assigneeAvatarLoader, DISPLAY_REMOVE_CLASS);
+  assigneeAvatar.style.backgroundImage = `url(${imgUrl})`;
   stateHandle();
   clearSuggestionList();
 }
@@ -424,3 +436,11 @@ assigneeEl.addEventListener(
   'input',
   debounce((event) => fetchMembers(event.target.value), 500),
 );
+
+function addClass(element, className) {
+  element.classList.remove(className);
+}
+
+function removeClass(element, className) {
+  element.classList.add(className);
+}
