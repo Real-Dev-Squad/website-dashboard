@@ -11,6 +11,7 @@ function showTileView() {
   tileViewBtn.classList.add('btn-active');
   const listContainerElement = userListElement.lastChild;
   removeClass(listContainerElement, 'table-view');
+  addClass(listContainerElement, 'tile-view');
   listContainerElement.childNodes.forEach((listElement) => {
     const imgElement = listElement.firstChild;
     addClass(imgElement, 'element-display-remove');
@@ -24,6 +25,7 @@ function showTableView() {
   tileViewBtn.classList.remove('btn-active');
   tableViewBtn.classList.add('btn-active');
   const listContainerElement = userListElement.lastChild;
+  removeClass(listContainerElement, 'tile-view');
   addClass(listContainerElement, 'table-view');
   listContainerElement.childNodes.forEach((listElement) => {
     const imgElement = listElement.firstChild;
@@ -104,6 +106,7 @@ async function generateUserList(users) {
     if (tileViewActive) {
       let imgElement = listElement.firstChild;
       removeClass(ulElement, 'table-view');
+      addClass(ulElement, 'tile-view');
       removeClass(listElement, 'tile-width');
       addClass(imgElement, 'element-display-remove');
     }

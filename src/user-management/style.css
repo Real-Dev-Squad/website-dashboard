@@ -24,9 +24,8 @@
 }
 
 #main-section {
-  margin: 40px auto;
+  margin: 1.5em 4em;
   text-align: center;
-  max-width: 400px;
 }
 
 #search input {
@@ -59,13 +58,14 @@ ul {
   padding-inline-start: 0px;
   display: grid;
   list-style: none;
-  row-gap: 20px;
+  grid-gap: 40px;
 }
 
 .table-view {
-  grid-template-columns: 1fr 1fr;
-  column-gap: 50px;
-  row-gap: 50px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+.tile-view {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
 li {
@@ -80,7 +80,7 @@ li {
 }
 
 .tile-width {
-  width: 300px;
+  width: 200px;
 }
 
 .element-display-remove {
@@ -112,10 +112,8 @@ li {
 }
 
 @media screen and (max-width: 440px) {
-  .table-view {
-    grid-template-columns: 1fr;
-    column-gap: 50px;
-    row-gap: 50px;
+  .tile-view {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   }
   .tile-width {
     width: 150px;
