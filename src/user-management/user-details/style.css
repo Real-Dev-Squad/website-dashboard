@@ -2,6 +2,10 @@
   margin: 0;
 }
 
+html {
+  overflow-y: scroll;
+}
+
 :root {
   --blue-color: #1d1283;
   --white-color: white;
@@ -48,7 +52,7 @@ li {
 #main-section {
   margin: 40px auto;
   text-align: center;
-  max-width: 400px;
+  width: min(90%, 400px);
 }
 
 /* ------------- */
@@ -64,7 +68,7 @@ li {
   justify-content: space-around;
 }
 
-.user-details__image {
+.user-details__image > img {
   height: 100px;
   width: 100px;
 }
@@ -88,14 +92,14 @@ li {
   border-radius: 5px;
 }
 
-.user-details__socials {
+.user-details__social {
   display: flex;
   gap: 1rem;
   margin-top: 2rem;
   justify-content: space-between;
 }
 
-.socials-icon {
+.social {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
@@ -105,12 +109,12 @@ li {
   border-radius: 5px;
 }
 
-.socials-icon > img {
+.social > img {
   width: 25px;
   height: 25px;
 }
 
-.user-details__content {
+.user-details__accordion {
   border-top: 1px solid var(--gray-700);
   padding-top: 1rem;
 }
@@ -193,4 +197,33 @@ li {
   gap: 1rem;
   justify-content: center;
   margin-top: 2rem;
+}
+
+.loader {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-top: 10rem;
+}
+
+.error {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-top: 10rem;
+  color: var(--red-color);
+}
+
+.tasks-list .loader {
+  text-align: center;
+  margin: 5rem 0;
+}
+
+@media (max-width: 600px) {
+  .social {
+    gap: 0.5rem;
+  }
+
+  .social > img {
+    width: 20px;
+    height: 20px;
+  }
 }
