@@ -1,4 +1,8 @@
 let userData = {};
+let userAllTasks = [];
+let currentPageIndex = 1;
+let taskPerPage = 1;
+let totalPages = Math.ceil(userAllTasks.length / taskPerPage);
 
 async function getUserData() {
   try {
@@ -18,7 +22,9 @@ async function getUserTasks() {
     const res = await makeApiCall(`${API_BASE_URL}/tasks/${username}`);
     if (res.status === 200) {
       const data = await res.json();
-      generateUserTaskList(data.tasks);
+      userAllTasks = data.tasks;
+      totalPages = Math.ceil(userAllTasks.length / taskPerPage);
+      generateUserTaskList(getTasksToFetch(userAllTasks, currentPageIndex));
     }
   } catch (err) {
     console.error(err);
@@ -55,10 +61,10 @@ function fillUserData(userData) {
 }
 
 function toggleListVisibility(e) {
-  const listItems = userDetailsList.querySelectorAll('li');
+  const listItems = userDetailsList.querySelectorAll('.visible-content');
   listItems.forEach((item) => {
     item.addEventListener('click', () => {
-      const hiddenContent = item.querySelector('.hidden-content');
+      const hiddenContent = item.nextElementSibling;
       const arrowIcon = item.querySelector('img');
       arrowIcon.classList.toggle('open');
       hiddenContent.classList.toggle('hide');
@@ -66,9 +72,21 @@ function toggleListVisibility(e) {
   });
 }
 
+function getTasksToFetch(userTasks, currentIndex) {
+  const startIndex = currentIndex * taskPerPage - taskPerPage;
+  const endIndex = currentIndex * taskPerPage;
+  return userTasks.filter(
+    (_, index) => index >= startIndex && index < endIndex,
+  );
+}
+
 function generateUserTaskList(userTasks) {
+  userTasksContainer.innerHTML = '';
+  console.log(userTasksContainer);
   if (!userTasks.length) {
-    userTasksContainer.appendChild('No task Found');
+    const errorEl = document.createElement('p');
+    errorEl.textContent = 'No task Found';
+    userTasksContainer.appendChild(errorEl);
   } else {
     userTasks.forEach((task) => {
       const userTask = document.createElement('div');
@@ -110,6 +128,24 @@ function generateUserTaskList(userTasks) {
   }
 }
 
+function fetchPrevTasks() {
+  console.log('currentindex', currentPageIndex);
+  if (currentPageIndex > 1) {
+    currentPageIndex--;
+    generateUserTaskList(getTasksToFetch(userAllTasks, currentPageIndex));
+  }
+}
+
+function fetchNextTasks() {
+  console.log('currentindex', currentPageIndex, totalPages);
+  if (currentPageIndex < totalPages) {
+    currentPageIndex++;
+    generateUserTaskList(getTasksToFetch(userAllTasks, currentPageIndex));
+  }
+}
+
 getUserData();
 getUserTasks();
 toggleListVisibility();
+getPrevTaskButton.addEventListener('click', fetchPrevTasks);
+getNextTaskButton.addEventListener('click', fetchNextTasks);
