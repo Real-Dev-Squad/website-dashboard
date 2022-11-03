@@ -9,4 +9,6 @@ const userProfessionalDetails = document.querySelector(
   '.user-details__professional',
 );
 const userDetailsYoe = document.querySelector('.user-details__yoe');
+const getPrevTaskButton = document.querySelector('.pagination__prev-page');
+const getNextTaskButton = document.querySelector('.pagination__next-page');
 const defaultAvatar = '../images/profile.svg';
