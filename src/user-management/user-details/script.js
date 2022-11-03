@@ -1,4 +1,3 @@
-let userData = {};
 let userAllTasks = [];
 let currentPageIndex = 1;
 let taskPerPage = 1;
@@ -9,11 +8,15 @@ async function getUserData() {
     const res = await makeApiCall(`${API_BASE_URL}/users/${username}`);
     if (res.status === 200) {
       const data = await res.json();
-      userData = data.user;
-      fillUserData(userData);
+      userDetailsContainer.classList.remove('hide');
+      loader.classList.add('hide');
+      generateUserData(data.user);
     }
   } catch (err) {
-    console.error(err);
+    const errorEl = document.createElement('p');
+    errorEl.classList.add('error');
+    errorEl.textContent = 'No Data Found';
+    userDetailsContainer.appendChild(errorEl);
   }
 }
 
@@ -24,40 +27,57 @@ async function getUserTasks() {
       const data = await res.json();
       userAllTasks = data.tasks;
       totalPages = Math.ceil(userAllTasks.length / taskPerPage);
-      generateUserTaskList(getTasksToFetch(userAllTasks, currentPageIndex));
+      const loader = tasksList.querySelector('.loader');
+      const mainContent = tasksList.querySelector('.main');
+      loader.classList.add('hide');
+      mainContent.classList.remove('hide');
+      const tasks = getTasksToFetch(userAllTasks, currentPageIndex);
+      generateUserTaskList(tasks);
     }
   } catch (err) {
-    console.error(err);
+    const errorEl = document.createElement('p');
+    errorEl.classList.add('error');
+    errorEl.textContent = 'No Data Found';
+    tasksList.appendChild(errorEl);
   }
 }
 
-function fillUserData(userData) {
+function generateUserData(userData) {
   const userImage = userDetailsContainer.querySelector('.user-details__image');
   const username = userDetailsContainer.querySelector(
     '.user-details__username',
   );
-  const twitterSocial = userDetailsContainer.querySelector(
-    '.socials-icon--twitter',
-  );
-  const linkedinSocial = userDetailsContainer.querySelector(
-    '.socials-icon--linkedin',
-  );
-  const githubSocial = userDetailsContainer.querySelector(
-    '.socials-icon--github',
-  );
-  twitterSocial.setAttribute(
-    'href',
-    `https://twitter.com/${userData.twitter_id}`,
-  );
-  linkedinSocial.setAttribute(
-    'href',
-    `https://www.linkedin.com/in/${userData.linkedin_id}`,
-  );
-  githubSocial.setAttribute('href', `https://github.com/${userData.github_id}`);
-  userImage.src = userData.img ? userData.img : defaultAvatar;
+  const twitter = userDetailsContainer.querySelector('.social--twitter');
+  const linkedin = userDetailsContainer.querySelector('.social--linkedin');
+  const github = userDetailsContainer.querySelector('.social--github');
+  const compony = userDetailsList.querySelector('.user-details__compony');
+  const yoe = userDetailsList.querySelector('.user-details__yoe');
+
+  const img = document.createElement('img');
+  img.src = userData.img ? userData.img : defaultAvatar;
+  img.setAttribute('alt', 'profile');
+  userImage.appendChild(img);
   username.textContent = userData.username;
-  userProfessionalDetails.textContent = userData?.compony;
-  userDetailsYoe.textContent = userData?.yoe;
+  compony.textContent = userData.compony;
+  yoe.textContent = userData.yoe;
+  twitter.setAttribute(
+    'href',
+    userData.twitter_id
+      ? `https://twitter.com/${userData.twitter_id}`
+      : `https://twitter.com/`,
+  );
+  linkedin.setAttribute(
+    'href',
+    userData.linkedin_id
+      ? `https://www.linkedin.com/in/${userData.linkedin_id}`
+      : `https://www.linkedin.com/in/`,
+  );
+  github.setAttribute(
+    'href',
+    userData.github_id
+      ? `https://github.com/${userData.github_id}`
+      : `https://github.com/`,
+  );
 }
 
 function toggleListVisibility(e) {
@@ -82,9 +102,9 @@ function getTasksToFetch(userTasks, currentIndex) {
 
 function generateUserTaskList(userTasks) {
   userTasksContainer.innerHTML = '';
-  console.log(userTasksContainer);
   if (!userTasks.length) {
     const errorEl = document.createElement('p');
+    errorEl.classList.add('error');
     errorEl.textContent = 'No task Found';
     userTasksContainer.appendChild(errorEl);
   } else {
@@ -125,22 +145,34 @@ function generateUserTaskList(userTasks) {
       userTask.appendChild(taskDetails);
       userTasksContainer.appendChild(userTask);
     });
+
+    if (currentPageIndex === 1) {
+      getPrevTaskButton.disabled = true;
+    } else {
+      getPrevTaskButton.disabled = false;
+    }
+
+    if (currentPageIndex === totalPages) {
+      getNextTaskButton.disabled = true;
+    } else {
+      getNextTaskButton.disabled = false;
+    }
   }
 }
 
 function fetchPrevTasks() {
-  console.log('currentindex', currentPageIndex);
   if (currentPageIndex > 1) {
     currentPageIndex--;
-    generateUserTaskList(getTasksToFetch(userAllTasks, currentPageIndex));
+    const tasks = getTasksToFetch(userAllTasks, currentPageIndex);
+    generateUserTaskList(tasks);
   }
 }
 
 function fetchNextTasks() {
-  console.log('currentindex', currentPageIndex, totalPages);
   if (currentPageIndex < totalPages) {
     currentPageIndex++;
-    generateUserTaskList(getTasksToFetch(userAllTasks, currentPageIndex));
+    const tasks = getTasksToFetch(userAllTasks, currentPageIndex);
+    generateUserTaskList(tasks);
   }
 }
 

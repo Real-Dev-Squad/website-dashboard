@@ -13,138 +13,139 @@
     </header>
     <section id="main-section">
       <div class="user-details">
-        <div class="user-details__top-column">
-          <div class="user-details__header">
-            <div>
-              <img
-                src="../images/profile.svg"
-                alt="pofile image"
-                class="user-details__image"
-              />
-              <h2 class="user-details__username">Rachel</h2>
+        <div class="loader">Loading...</div>
+        <div class="user-details__container hide">
+          <div class="user-details__top-column">
+            <div class="user-details__header">
+              <div>
+                <div class="user-details__image"></div>
+                <h2 class="user-details__username"></h2>
+              </div>
+              <div class="user-details__tags">
+                <p>Developer</p>
+              </div>
             </div>
-            <div class="user-details__tags">
-              <p>Member</p>
-              <p>Developer</p>
+            <div class="user-details__social">
+              <a
+                class="social social--twitter"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src="../images/twitter.svg" alt="twitter" />
+                <p>Twitter</p>
+              </a>
+              <a
+                class="social social--linkedin"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src="../images/linkedin.svg" alt="linkedin" />
+                <p>LinkedIn</p>
+              </a>
+              <a
+                class="social social--github"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src="../images/github.svg" alt="github" />
+                <p>Github</p>
+              </a>
             </div>
           </div>
-          <div class="user-details__socials">
-            <a
-              class="socials-icon socials-icon--twitter"
-              href="#"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img src="../images/twitter.svg" alt="twitter" />
-              <p>Twitter</p>
-            </a>
-            <a
-              class="socials-icon socials-icon--linkedin"
-              href="#"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img src="../images/linkedin.svg" alt="linkedin" />
-              <p>LinkedIn</p>
-            </a>
-            <a
-              class="socials-icon socials-icon--github"
-              href="#"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img src="../images/github.svg" alt="github" />
-              <p>Github</p>
-            </a>
+          <div class="user-details__accordion">
+            <ul class="user-details__list">
+              <li class="academic-details">
+                <div class="visible-content">
+                  <h2>Academics or Professional Details</h2>
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/128/32/32195.png"
+                    alt=""
+                  />
+                </div>
+                <div class="hidden-content hide">
+                  <div class="hidden-details">
+                    <h3>College / Compony</h3>
+                    <p class="user-details__compony"></p>
+                  </div>
+                  <div class="hidden-details">
+                    <h3>Current Year</h3>
+                    <p class="user-details__yoe"></p>
+                  </div>
+                  <div class="hidden-details">
+                    <h3>Looking for internship / Job</h3>
+                    <p class="user-details__searching-job">Yes</p>
+                  </div>
+                </div>
+              </li>
+              <li class="user-skills">
+                <div class="visible-content">
+                  <h2>Skills</h2>
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/128/32/32195.png"
+                    alt=""
+                  />
+                </div>
+                <div class="hidden-content hide">
+                  <div class="hidden-details">
+                    <h3>Javascript</h3>
+                  </div>
+                  <div class="hidden-details">
+                    <h3>React Js</h3>
+                  </div>
+                  <div class="hidden-details">
+                    <h3>CSS</h3>
+                  </div>
+                </div>
+              </li>
+              <li class="tasks-list">
+                <div class="visible-content">
+                  <h2>Tasks</h2>
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/128/32/32195.png"
+                    alt=""
+                  />
+                </div>
+                <div class="hidden-content hide">
+                  <div class="loader">Loading...</div>
+                  <div class="main hide">
+                    <div class="user-tasks"></div>
+                    <div class="pagination">
+                      <button class="pagination__prev-page" disabled>
+                        Prev
+                      </button>
+                      <button class="pagination__next-page">Next</button>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li class="user-availability">
+                <div class="visible-content">
+                  <h2>Availability</h2>
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/128/32/32195.png"
+                    alt=""
+                  />
+                </div>
+                <div class="hidden-content hide">
+                  <div class="hidden-details">
+                    <h3>Out Of Office</h3>
+                    <p>No</p>
+                  </div>
+                  <div class="hidden-details">
+                    <h3>No of hours alloted for october 2022</h3>
+                    <p>50 hours</p>
+                  </div>
+                  <div class="hidden-details">
+                    <h3>Approx no of hours remaining</h3>
+                    <p>60</p>
+                  </div>
+                </div>
+              </li>
+            </ul>
           </div>
-        </div>
-        <div class="user-details__content">
-          <ul class="user-details__list">
-            <li>
-              <div class="visible-content">
-                <h2>Academics or Professional Details</h2>
-                <img
-                  src="https://cdn-icons-png.flaticon.com/128/32/32195.png"
-                  alt=""
-                />
-              </div>
-              <div class="hidden-content hide">
-                <div class="hidden-details">
-                  <h3>College / Compony</h3>
-                  <p class="user-details__professional">
-                    Graphic Era Hill University, Dehradun
-                  </p>
-                </div>
-                <div class="hidden-details">
-                  <h3>Current Year</h3>
-                  <p class="user-details__yoe">1 Year</p>
-                </div>
-                <div class="hidden-details">
-                  <h3>Looking for internship / Job</h3>
-                  <p>Yes</p>
-                </div>
-              </div>
-            </li>
-            <li>
-              <div class="visible-content">
-                <h2>Skills</h2>
-                <img
-                  src="https://cdn-icons-png.flaticon.com/128/32/32195.png"
-                  alt=""
-                />
-              </div>
-              <div class="hidden-content hide">
-                <div class="hidden-details">
-                  <h3>Javascript</h3>
-                </div>
-                <div class="hidden-details">
-                  <h3>React Js</h3>
-                </div>
-                <div class="hidden-details">
-                  <h3>CSS</h3>
-                </div>
-              </div>
-            </li>
-            <li>
-              <div class="visible-content">
-                <h2>Tasks</h2>
-                <img
-                  src="https://cdn-icons-png.flaticon.com/128/32/32195.png"
-                  alt=""
-                />
-              </div>
-              <div class="hidden-content hide">
-                <div class="user-tasks"></div>
-                <div class="pagination">
-                  <button class="pagination__prev-page">Prev</button>
-                  <button class="pagination__next-page">Next</button>
-                </div>
-              </div>
-            </li>
-            <li>
-              <div class="visible-content">
-                <h2>Availability</h2>
-                <img
-                  src="https://cdn-icons-png.flaticon.com/128/32/32195.png"
-                  alt=""
-                />
-              </div>
-              <div class="hidden-content hide">
-                <div class="hidden-details">
-                  <h3>Out Of Office</h3>
-                  <p>No</p>
-                </div>
-                <div class="hidden-details">
-                  <h3>No of hours alloted for october 2022</h3>
-                  <p>50 hours</p>
-                </div>
-                <div class="hidden-details">
-                  <h3>Approx no of hours remaining</h3>
-                  <p>60</p>
-                </div>
-              </div>
-            </li>
-          </ul>
         </div>
       </div>
     </section>
