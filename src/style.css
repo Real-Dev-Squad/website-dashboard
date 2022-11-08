@@ -38,22 +38,35 @@ button {
   width: 250px;
 }
 
+.online-members-btn,
+.profile-task-btn,
 .create-task-btn {
-  color: black;
-  font-weight: 500;
-  font-size: larger;
-  background-color: white;
-  border: 2px solid black;
-  border-radius: 5px;
-  padding: 10px 50px;
-  cursor: pointer;
-  transition: all 0.5s ease;
-  outline: none;
+display: inline-block;
+outline: 0;
+cursor: pointer;
+padding: 10px 20px;
+font-size: 16px;
+font-weight: 500;
+line-height: 20px;
+vertical-align: middle;
+border: 1px solid;
+border-radius: 6px;
+color: #1d1283;
+background-color: #fafbfc;
+border-color: #0e101226;
+box-shadow: rgba(27, 31, 35, 0.04) 0px 1px 0px 0px, rgba(255, 255, 255, 0.25) 0px 1px 0px 0px inset;
+transition: 0.2s cubic-bezier(0.3, 0, 0.5, 1);
+transition-property: color, background-color, border-color;
 }
+
+.online-members-btn:hover,
+.profile-task-btn:hover,
 .create-task-btn:hover {
   color: white;
   background-color: #1d1283;
-  border: none;
+  border-color: #1b1f2326;
+  box-shadow: rgba(27, 31, 35, 0.1) 0px 1px 0px 0px, rgba(255, 255, 255, 0.03) 0px 1px 0px 0px inset;
+  transition-duration: 0.1s;
 }
 
 /* profile section */
@@ -62,39 +75,6 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-.profile-task-btn {
-  color: black;
-  font-weight: 500;
-  font-size: larger;
-  background-color: white;
-  border: 2px solid black;
-  border-radius: 5px;
-  padding: 10px 50px;
-  cursor: pointer;
-  transition: all 0.5s ease;
-}
-.profile-task-btn:hover {
-  color: white;
-  background-color: #1d1283;
-  border: none;
-}
-
-/* Online-members */
-.online-members-link {
-  color: black;
-  font-weight: 500;
-  font-size: larger;
-  border: 2px solid black;
-  border-radius: 5px;
-  padding: 10px 50px;
-  transition: all 0.5s ease;
-}
-
-.online-members-link:hover {
-  color: white;
-  background-color: #1d1283;
-  border: none;
 }
 
 .info-repo {
