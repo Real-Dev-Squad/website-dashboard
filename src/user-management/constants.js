@@ -1,4 +1,5 @@
-const RDS_API_USERS = 'https://api.realdevsquad.com/users';
+const API_BASE_URL = 'https://api.realdevsquad.com';
+const RDS_API_USERS = `${API_BASE_URL}/users/`;
 const userListElement = document.getElementById('user-list');
 const loaderElement = document.getElementById('loader');
 const tileViewBtn = document.getElementById('tile-view-btn');

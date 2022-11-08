@@ -1,7 +1,7 @@
-async function showUserManagementButton() {
+export async function showUserManagementButton() {
   const isSuperUser = await checkUserIsSuperUser();
   if (isSuperUser) {
-    userManagementBtn.classList.remove('element-display-remove');
+    userManagementLink.classList.remove('element-display-remove');
   }
 }
 

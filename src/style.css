@@ -84,7 +84,7 @@ button {
   background-color: #1d1283;
   border: none;
 }
-#user-management-btn {
+#user-management-link {
   color: black;
   font-weight: 500;
   font-size: larger;
@@ -96,7 +96,7 @@ button {
   transition: all 0.5s ease;
   width: 270px;
 }
-#user-management-btn:hover {
+#user-management-link:hover {
   color: var(--white-color);
   background-color: var(--blue-color);
   border: none;

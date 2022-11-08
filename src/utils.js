@@ -12,8 +12,5 @@ async function getSelfUser() {
 
 async function checkUserIsSuperUser() {
   const self_user = await getSelfUser();
-  if (self_user?.roles['super_user']) {
-    return true;
-  }
-  return false;
+  return self_user?.roles['super_user'];
 }

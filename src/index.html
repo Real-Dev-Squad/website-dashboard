@@ -8,7 +8,7 @@
     <title>Create Tasks</title>
     <script src="constants.js" defer></script>
     <script src="utils.js" defer></script>
-    <script src="script.js" defer></script>
+    <script type="module" src="script.js" defer></script>
   </head>
   <body>
     <nav id="tasksNav">
@@ -30,14 +30,13 @@
       >
         Profile
       </button>
-      <button
-        id="user-management-btn"
+      <a
+        id="user-management-link"
         class="element-display-remove"
-        type="button"
-        onclick="location.href='user-management/index.html'"
+        href="user-management/index.html"
       >
         User Management
-      </button>
+      </a>
       <a href="online-members/online-members.html" class="online-members-link">
         Online Members
       </a>

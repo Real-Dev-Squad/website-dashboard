@@ -10,7 +10,8 @@ async function makeApiCall(
   url,
   method = 'get',
   body = null,
-  headers = [],
+  credentials = 'include',
+  headers = { 'content-type': 'application/json' },
   options = null,
 ) {
   try {
@@ -18,6 +19,7 @@ async function makeApiCall(
       method,
       body,
       headers,
+      credentials,
       ...options,
     });
     return response;
@@ -25,4 +27,17 @@ async function makeApiCall(
     console.error(MESSAGE_SOMETHING_WENT_WRONG, err);
     return err;
   }
+}
+
+function debounce(func, delay) {
+  let timerId;
+  return (...args) => {
+    if (timerId) {
+      clearTimeout(timerId);
+    }
+
+    timerId = setTimeout(() => {
+      func(...args);
+    }, delay);
+  };
 }

@@ -91,6 +91,10 @@ li {
   font-size: x-large;
   color: var(--red-color);
 }
+.user-img-dimension {
+  width: 70px;
+  height: 70px;
+}
 
 #loader {
   border: 5px solid var(--loader-gray-color); /* Light grey */

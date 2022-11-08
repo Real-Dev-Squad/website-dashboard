@@ -34,19 +34,6 @@ function showTableView() {
   });
 }
 
-function debounce(func, delay) {
-  let timerId;
-  return (...args) => {
-    if (timerId) {
-      clearTimeout(timerId);
-    }
-
-    timerId = setTimeout(() => {
-      func(...args);
-    }, delay);
-  };
-}
-
 userSearchElement.addEventListener(
   'input',
   debounce((event) => filterUsers(event.target.value), 500),
@@ -59,7 +46,7 @@ async function getUsersData() {
     const usersRequest = await makeApiCall(RDS_API_USERS);
     if (usersRequest.status === 200) {
       usersDataList = await usersRequest.json();
-      usersDataList = usersDataList.members;
+      usersDataList = usersDataList.users;
       usersDataList = usersDataList.filter((user) => user.first_name);
       usersDataList = usersDataList.map((user) => ({
         first_name: user.first_name,
@@ -93,12 +80,11 @@ async function generateUserList(users) {
     const listElement = document.createElement('li');
     const imgElement = document.createElement('img');
     imgElement.src = userData.picture ? userData.picture : defaultAvatar;
-    imgElement.setAttribute('width', 70);
-    imgElement.setAttribute('height', 70);
+    addClass(imgElement, 'user-img-dimension');
     const pElement = document.createElement('p');
-    let name =
-      userData.first_name.slice(0, 15) + ' ' + userData.last_name.slice(0, 15);
-    const node = document.createTextNode(name);
+    const node = document.createTextNode(
+      `${userData.first_name} ${userData.last_name}`,
+    );
     pElement.appendChild(node);
     listElement.appendChild(imgElement);
     listElement.appendChild(pElement);
@@ -118,7 +104,7 @@ async function generateUserList(users) {
 
 function filterUsers(searchInput) {
   usersListfilter = usersDataList.filter((user) => {
-    const name = user.first_name + (user.last_name ? user.last_name : '');
+    const name = `${user.first_name}  ${user.last_name ?? ''}`;
     return name.trim().toLowerCase().includes(searchInput.toLowerCase());
   });
   generateUserList(usersListfilter);
