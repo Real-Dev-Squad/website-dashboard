@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>User Management</title>
     <link rel="stylesheet" href="style.css" />
+    <script src="constants.js" defer></script>
+    <script src="utils.js" defer></script>
+    <script src="script.js" defer></script>
   </head>
   <body>
     <header class="header">
@@ -17,13 +20,8 @@
         <div class="user-details__container hide">
           <div class="user-details__top-column">
             <div class="user-details__header">
-              <div>
-                <div class="user-details__image"></div>
-                <h2 class="user-details__username"></h2>
-              </div>
-              <div class="user-details__tags">
-                <p>Developer</p>
-              </div>
+              <div class="user-details__image"></div>
+              <h2 class="user-details__username"></h2>
             </div>
             <div class="user-details__social">
               <a
@@ -74,30 +72,6 @@
                     <h3>Current Year</h3>
                     <p class="user-details__yoe"></p>
                   </div>
-                  <div class="hidden-details">
-                    <h3>Looking for internship / Job</h3>
-                    <p class="user-details__searching-job">Yes</p>
-                  </div>
-                </div>
-              </li>
-              <li class="user-skills">
-                <div class="visible-content">
-                  <h2>Skills</h2>
-                  <img
-                    src="https://cdn-icons-png.flaticon.com/128/32/32195.png"
-                    alt=""
-                  />
-                </div>
-                <div class="hidden-content hide">
-                  <div class="hidden-details">
-                    <h3>Javascript</h3>
-                  </div>
-                  <div class="hidden-details">
-                    <h3>React Js</h3>
-                  </div>
-                  <div class="hidden-details">
-                    <h3>CSS</h3>
-                  </div>
                 </div>
               </li>
               <li class="tasks-list">
@@ -121,36 +95,10 @@
                   </div>
                 </div>
               </li>
-              <li class="user-availability">
-                <div class="visible-content">
-                  <h2>Availability</h2>
-                  <img
-                    src="https://cdn-icons-png.flaticon.com/128/32/32195.png"
-                    alt=""
-                  />
-                </div>
-                <div class="hidden-content hide">
-                  <div class="hidden-details">
-                    <h3>Out Of Office</h3>
-                    <p>No</p>
-                  </div>
-                  <div class="hidden-details">
-                    <h3>No of hours alloted for october 2022</h3>
-                    <p>50 hours</p>
-                  </div>
-                  <div class="hidden-details">
-                    <h3>Approx no of hours remaining</h3>
-                    <p>60</p>
-                  </div>
-                </div>
-              </li>
             </ul>
           </div>
         </div>
       </div>
     </section>
   </body>
-  <script src="constants.js"></script>
-  <script src="utils.js"></script>
-  <script src="script.js"></script>
 </html>
