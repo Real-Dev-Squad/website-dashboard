@@ -59,8 +59,9 @@ li {
 /* User Details  */
 /* ------------ */
 
-.user-details__top-column {
+.user-details__main {
   padding-bottom: 2rem;
+  border-bottom: 1px solid var(--gray-700);
 }
 
 .user-details__header {
@@ -116,7 +117,6 @@ li {
 }
 
 .user-details__accordion {
-  border-top: 1px solid var(--gray-700);
   padding-top: 1rem;
 }
 
@@ -154,6 +154,12 @@ li {
 
 .hidden-content > div {
   padding: 1rem 0;
+}
+
+.hidden-content > .loader {
+  text-align: center;
+  margin-bottom: 5rem;
+  margin-top: 5rem;
 }
 
 .hidden-details + .hidden-details {

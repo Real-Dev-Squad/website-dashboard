@@ -1,95 +1,209 @@
+let userData = {};
 let userAllTasks = [];
 let currentPageIndex = 1;
 let taskPerPage = 1;
 let totalPages = Math.ceil(userAllTasks.length / taskPerPage);
 
+function createElement({ type, classList = [] }) {
+  const element = document.createElement(type);
+  element.classList.add(...classList);
+  return element;
+}
+
+function createTextNode(text) {
+  return document.createTextNode(text);
+}
+
+function removeElementClass(element, className) {
+  element.classList.remove(className);
+}
+
+function showLoader(selector) {
+  const loader = createElement({ type: 'div', classList: ['loader'] });
+  loader.appendChild(createTextNode('Loading...'));
+  document.querySelector(selector).appendChild(loader);
+}
+
+function hideLoader(selector) {
+  const container = document.querySelector(selector);
+  if (container.hasChildNodes()) {
+    container.firstElementChild.remove();
+  }
+}
+
 async function getUserData() {
+  showLoader('.user-details__personal');
   try {
     const res = await makeApiCall(`${API_BASE_URL}/users/${username}`);
     if (res.status === 200) {
       const data = await res.json();
-      userDetailsContainer.classList.remove('hide');
-      loader.classList.add('hide');
+      userData = data.user;
+      hideLoader('.user-details__personal');
       generateUserData(data.user);
+      removeElementClass(
+        document.querySelector('.user-details__accordion'),
+        'hide',
+      );
     }
   } catch (err) {
-    const errorEl = document.createElement('p');
-    errorEl.classList.add('error');
-    errorEl.textContent = 'No Data Found';
-    userDetailsContainer.appendChild(errorEl);
+    console.log(err);
+    const errorEl = createElement({ type: 'p', classList: ['error'] });
+    errorEl.appendChild(createTextNode('No Data Found'));
+    const container = document.querySelector('.user-details__personal');
+    container.appendChild(errorEl);
   }
 }
 
-async function getUserTasks() {
-  try {
-    const res = await makeApiCall(`${API_BASE_URL}/tasks/${username}`);
-    if (res.status === 200) {
-      const data = await res.json();
-      userAllTasks = data.tasks;
-      totalPages = Math.ceil(userAllTasks.length / taskPerPage);
-      const loader = tasksList.querySelector('.loader');
-      const mainContent = tasksList.querySelector('.main');
-      loader.classList.add('hide');
-      mainContent.classList.remove('hide');
-      const tasks = getTasksToFetch(userAllTasks, currentPageIndex);
-      generateUserTaskList(tasks);
-    }
-  } catch (err) {
-    const errorEl = document.createElement('p');
-    errorEl.classList.add('error');
-    errorEl.textContent = 'No Data Found';
-    tasksList.appendChild(errorEl);
-  }
+function generateUserImage(alt) {
+  const img = createElement({ type: 'img' });
+  img.src = userData.img ? userData.img : defaultAvatar;
+  img.setAttribute('alt', alt);
+  return img;
+}
+
+function createSocialMediaAnchorNode({ href, id, alt, src }) {
+  const a = createElement({ type: 'a', classList: ['social'] });
+  a.setAttribute('target', '_blank');
+  a.setAttribute('rel', 'noopener noreferrer');
+  a.setAttribute('href', `${href}/${userData[id] ? userData[id] : ''}`);
+
+  const p = createElement({ type: 'p' });
+  p.appendChild(createTextNode(alt));
+
+  const img = createElement({ type: 'img' });
+  img.src = src;
+  img.setAttribute('alt', alt);
+
+  a.append(img, p);
+
+  return a;
+}
+
+function generateSocialMediaLinksList() {
+  const div = createElement({
+    type: 'div',
+    classList: ['user-details__social'],
+  });
+
+  socialMedia.forEach((item) => {
+    const link = createSocialMediaAnchorNode({ ...iconMapper[item], id: item });
+    div.appendChild(link);
+  });
+
+  return div;
 }
 
 function generateUserData(userData) {
-  const userImage = userDetailsContainer.querySelector('.user-details__image');
-  const username = userDetailsContainer.querySelector(
-    '.user-details__username',
-  );
-  const twitter = userDetailsContainer.querySelector('.social--twitter');
-  const linkedin = userDetailsContainer.querySelector('.social--linkedin');
-  const github = userDetailsContainer.querySelector('.social--github');
-  const compony = userDetailsList.querySelector('.user-details__compony');
-  const yoe = userDetailsList.querySelector('.user-details__yoe');
+  const main = createElement({
+    type: 'div',
+    classList: ['user-details__main'],
+  });
+  const header = createElement({
+    type: 'div',
+    classList: ['user-details__header'],
+  });
+  const username = createElement({
+    type: 'h2',
+    classList: ['user-details__username'],
+  });
+  username.appendChild(createTextNode(userData.username));
 
-  const img = document.createElement('img');
-  img.src = userData.img ? userData.img : defaultAvatar;
-  img.setAttribute('alt', 'profile');
-  userImage.appendChild(img);
-  username.textContent = userData.username;
-  compony.textContent = userData.compony;
-  yoe.textContent = userData.yoe;
-  twitter.setAttribute(
-    'href',
-    userData.twitter_id
-      ? `https://twitter.com/${userData.twitter_id}`
-      : `https://twitter.com/`,
-  );
-  linkedin.setAttribute(
-    'href',
-    userData.linkedin_id
-      ? `https://www.linkedin.com/in/${userData.linkedin_id}`
-      : `https://www.linkedin.com/in/`,
-  );
-  github.setAttribute(
-    'href',
-    userData.github_id
-      ? `https://github.com/${userData.github_id}`
-      : `https://github.com/`,
-  );
+  const img = generateUserImage('profile');
+  const socials = generateSocialMediaLinksList();
+  header.append(img, username);
+  main.append(header, socials);
+  document.querySelector('.user-details__personal').appendChild(main);
+  toggleAccordionTabsVisibility();
+  generateAcademicTabDetails();
 }
 
-function toggleListVisibility(e) {
-  const listItems = userDetailsList.querySelectorAll('.visible-content');
-  listItems.forEach((item) => {
-    item.addEventListener('click', () => {
-      const hiddenContent = item.nextElementSibling;
-      const arrowIcon = item.querySelector('img');
+function toggleAccordionTabsVisibility() {
+  const accordionTabs = document
+    .querySelector('.user-details__accordion')
+    .querySelectorAll('.visible-content');
+  accordionTabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const hiddenContent = tab.nextElementSibling;
+      const arrowIcon = tab.querySelector('img');
       arrowIcon.classList.toggle('open');
       hiddenContent.classList.toggle('hide');
     });
   });
+}
+
+function generateAcademicTabDetails() {
+  const divOne = createElement({ type: 'div', classList: ['hidden-details'] });
+  const titleOne = createElement({ type: 'h3' });
+  console.log(titleOne);
+  titleOne.appendChild(createTextNode('College / Company'));
+  const company = createElement({
+    type: 'p',
+    classList: ['user-details__company'],
+  });
+  company.appendChild(createTextNode(userData.company));
+
+  divOne.append(titleOne, company);
+
+  const divTwo = createElement({ type: 'div', classList: ['hidden-details'] });
+  const titleTwo = createElement({ type: 'h3' });
+  titleTwo.appendChild(createTextNode('Current Year'));
+  const yoe = createElement({
+    type: 'p',
+    classList: ['user-details__yoe'],
+  });
+  yoe.appendChild(createTextNode(userData.yoe));
+
+  divTwo.append(titleTwo, yoe);
+
+  document
+    .querySelector('.accordion__academic > .hidden-content')
+    .append(divOne, divTwo);
+}
+
+function generateTasksTabDetails() {
+  const div = createElement({ type: 'div', classList: ['user-tasks'] });
+  const pagination = createElement({ type: 'div', classList: ['pagination'] });
+  const prevBtn = createElement({
+    type: 'button',
+    classList: ['pagination__prev-page'],
+  });
+  prevBtn.appendChild(createTextNode('Prev'));
+  prevBtn.addEventListener('click', fetchPrevTasks);
+  const nextBtn = createElement({
+    type: 'button',
+    classList: ['pagination__next-page'],
+  });
+  nextBtn.appendChild(createTextNode('Next'));
+  nextBtn.addEventListener('click', fetchNextTasks);
+
+  pagination.append(prevBtn, nextBtn);
+
+  document
+    .querySelector('.accordion__tasks > .hidden-content')
+    .append(div, pagination);
+}
+
+async function getUserTasks() {
+  showLoader('.accordion__tasks > .hidden-content');
+  try {
+    const res = await makeApiCall(`${API_BASE_URL}/tasks/${username}`);
+    if (res.status === 200) {
+      const data = await res.json();
+      hideLoader('.accordion__tasks > .hidden-content');
+      userAllTasks = data.tasks;
+      totalPages = Math.ceil(userAllTasks.length / taskPerPage);
+      const tasks = getTasksToFetch(userAllTasks, currentPageIndex);
+      generateTasksTabDetails();
+      generateUserTaskList(tasks);
+    }
+  } catch (err) {
+    const errorEl = createElement({ type: 'p', classList: ['error'] });
+    errorEl.appendChild(createTextNode('No Data Found'));
+    const container = document.querySelector(
+      '.accordion__tasks > .hidden-content',
+    );
+    container.appendChild(errorEl);
+  }
 }
 
 function getTasksToFetch(userTasks, currentIndex) {
@@ -101,63 +215,60 @@ function getTasksToFetch(userTasks, currentIndex) {
 }
 
 function generateUserTaskList(userTasks) {
-  userTasksContainer.innerHTML = '';
+  document.querySelector('.user-tasks').innerHTML = '';
   if (!userTasks.length) {
-    const errorEl = document.createElement('p');
-    errorEl.classList.add('error');
-    errorEl.textContent = 'No task Found';
-    userTasksContainer.appendChild(errorEl);
+    const errorEl = createElement({ type: 'p', classList: ['error'] });
+    errorEl.appendChild(createTextNode('No Data Found'));
+    const container = document.querySelector(
+      '.accordion__tasks > .hidden-content',
+    );
+    container.innerHTML = '';
+    container.appendChild(errorEl);
   } else {
     userTasks.forEach((task) => {
-      const userTask = document.createElement('div');
-      userTask.classList.add('user-task');
-      const title = document.createElement('h1');
-      const description = document.createElement('p');
-      const taskDetails = document.createElement('div');
-      title.classList.add('task-title');
-      description.classList.add('task-description');
-      taskDetails.classList.add('task-details');
-
-      const dueDate = document.createElement('div');
-      dueDate.classList.add('hidden-details');
-      const dueDateTitle = document.createElement('h3');
-      dueDateTitle.textContent = 'Due Date';
-      const dueDateValue = document.createElement('p');
-      dueDateValue.textContent = task.endsOn;
-      dueDate.appendChild(dueDateTitle);
-      dueDate.appendChild(dueDateValue);
-
-      const status = document.createElement('div');
-      status.classList.add('hidden-details');
-      const statusTitle = document.createElement('h3');
-      statusTitle.textContent = 'Status';
-      const statusValue = document.createElement('p');
-      statusValue.textContent = task.status;
-      status.appendChild(statusTitle);
-      status.appendChild(statusValue);
-
-      taskDetails.appendChild(dueDate);
-      taskDetails.appendChild(status);
-      title.textContent = task?.title;
-      description.textContent = task?.purpose;
-      userTask.appendChild(title);
-      userTask.appendChild(description);
-      userTask.appendChild(taskDetails);
-      userTasksContainer.appendChild(userTask);
+      const taskCard = createSingleTaskCard(task);
+      document.querySelector('.user-tasks').appendChild(taskCard);
     });
 
     if (currentPageIndex === 1) {
-      getPrevTaskButton.disabled = true;
+      document.querySelector('.pagination__prev-page').disabled = true;
     } else {
-      getPrevTaskButton.disabled = false;
+      document.querySelector('.pagination__prev-page').disabled = false;
     }
 
     if (currentPageIndex === totalPages) {
-      getNextTaskButton.disabled = true;
+      document.querySelector('.pagination__next-page').disabled = true;
     } else {
-      getNextTaskButton.disabled = false;
+      document.querySelector('.pagination__next-page').disabled = false;
     }
   }
+}
+
+function createSingleTaskCard(task) {
+  const container = createElement({ type: 'div', classList: ['user-taks'] });
+  const h2 = createElement({ type: 'h2', classList: ['task-title'] });
+  h2.appendChild(createTextNode(task?.title));
+  const p = createElement({ type: 'p', classList: ['task-description'] });
+  p.appendChild(createTextNode(task?.purpose));
+  const div = createElement({ type: 'div', classList: ['task-details'] });
+
+  const dueDate = createElement({ type: 'div', classList: ['hidden-details'] });
+  const dueDateTitle = createElement({ type: 'h3' });
+  dueDateTitle.appendChild(createTextNode('Due Date'));
+  const dueDateValue = createElement({ type: 'p' });
+  dueDateValue.appendChild(createTextNode(task.endsOn));
+  dueDate.append(dueDateTitle, dueDateValue);
+
+  const status = createElement({ type: 'div', classList: ['hidden-details'] });
+  const statusTitle = createElement({ type: 'h3' });
+  statusTitle.appendChild(createTextNode('Status'));
+  const statusValue = createElement({ type: 'p' });
+  statusValue.appendChild(createTextNode(task.status));
+  status.append(statusTitle, statusValue);
+
+  div.append(dueDate, status);
+  container.append(h2, p, div);
+  return container;
 }
 
 function fetchPrevTasks() {
@@ -178,6 +289,3 @@ function fetchNextTasks() {
 
 getUserData();
 getUserTasks();
-toggleListVisibility();
-getPrevTaskButton.addEventListener('click', fetchPrevTasks);
-getNextTaskButton.addEventListener('click', fetchNextTasks);

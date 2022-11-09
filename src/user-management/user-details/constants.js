@@ -1,10 +1,21 @@
 const API_BASE_URL = 'http://localhost:3000';
 const username = 'manish591';
-const loader = document.querySelector('.loader');
-const userDetailsContainer = document.querySelector('.user-details__container');
-const userDetailsList = document.querySelector('.user-details__list');
-const tasksList = document.querySelector('.tasks-list');
-const userTasksContainer = document.querySelector('.user-tasks');
-const getPrevTaskButton = document.querySelector('.pagination__prev-page');
-const getNextTaskButton = document.querySelector('.pagination__next-page');
 const defaultAvatar = '../images/profile.svg';
+const socialMedia = ['twitter_id', 'github_id', 'linkedin_id'];
+const iconMapper = {
+  twitter_id: {
+    alt: 'twitter',
+    src: '../images/twitter.svg',
+    href: '//twitter.com',
+  },
+  github_id: {
+    alt: 'github',
+    src: '../images/github.svg',
+    href: '//github.com',
+  },
+  linkedin_id: {
+    alt: 'linkedIn',
+    src: '../images/linkedin.svg',
+    href: '//linkedin.com/in',
+  },
+};
