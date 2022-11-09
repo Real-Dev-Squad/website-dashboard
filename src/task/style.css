@@ -43,6 +43,7 @@ body {
 
 .inputBox label {
   font-size: 1rem;
+  padding: 10px;
   font-weight: 700;
   width: 100%;
   text-align: left;
@@ -173,6 +174,7 @@ footer {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -261,3 +263,15 @@ footer {
   color: rgb(255, 92, 92);
   font-size: 0.75rem;
 }
+
+/* .inputBox input{
+  font-size: 16px;
+      line-height: 28px;
+      padding: 8px 16px;
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid rgb(227, 232, 255);
+      border-radius: 4px;
+      outline-color: rgba(0, 37, 204, 0.5);
+      background-color: rgb(255, 255, 255);
+  } */

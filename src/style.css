@@ -11,6 +11,7 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  
 }
 
 #tasksNav {
@@ -35,7 +36,7 @@ body {
 }
 
 button {
-  width: 250px;
+  width: auto;
 }
 
 .online-members-btn,
@@ -84,5 +85,8 @@ transition-property: color, background-color, border-color;
 }
 
 footer {
+  background-color: whitesmoke;
   margin-top: auto;
 }
+
+
