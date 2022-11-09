@@ -1,7 +1,7 @@
 let userData = {};
 let userAllTasks = [];
 let currentPageIndex = 1;
-let taskPerPage = 1;
+let taskPerPage = 3;
 let totalPages = Math.ceil(userAllTasks.length / taskPerPage);
 
 function createElement({ type, classList = [] }) {
@@ -46,7 +46,6 @@ async function getUserData() {
       );
     }
   } catch (err) {
-    console.log(err);
     const errorEl = createElement({ type: 'p', classList: ['error'] });
     errorEl.appendChild(createTextNode('No Data Found'));
     const container = document.querySelector('.user-details__personal');
@@ -134,7 +133,6 @@ function toggleAccordionTabsVisibility() {
 function generateAcademicTabDetails() {
   const divOne = createElement({ type: 'div', classList: ['hidden-details'] });
   const titleOne = createElement({ type: 'h3' });
-  console.log(titleOne);
   titleOne.appendChild(createTextNode('College / Company'));
   const company = createElement({
     type: 'p',
