@@ -16,82 +16,23 @@
     </header>
     <section id="main-section">
       <div class="user-details">
-        <div class="loader">Loading...</div>
-        <div class="user-details__container hide">
-          <div class="user-details__top-column">
-            <div class="user-details__header">
-              <div class="user-details__image"></div>
-              <h2 class="user-details__username"></h2>
+        <div class="user-details__personal"></div>
+        <ul class="user-details__accordion hide accordion">
+          <li class="accordion__academic">
+            <div class="visible-content">
+              <h2>Academics or Professional Details</h2>
+              <img src="../images/arrow-icon.svg" alt="expand" />
             </div>
-            <div class="user-details__social">
-              <a
-                class="social social--twitter"
-                href="#"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img src="../images/twitter.svg" alt="twitter" />
-                <p>Twitter</p>
-              </a>
-              <a
-                class="social social--linkedin"
-                href="#"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img src="../images/linkedin.svg" alt="linkedin" />
-                <p>LinkedIn</p>
-              </a>
-              <a
-                class="social social--github"
-                href="#"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img src="../images/github.svg" alt="github" />
-                <p>Github</p>
-              </a>
+            <div class="hidden-content hide"></div>
+          </li>
+          <li class="accordion__tasks">
+            <div class="visible-content">
+              <h2>Tasks</h2>
+              <img src="../images/arrow-icon.svg" alt="expand" />
             </div>
-          </div>
-          <div class="user-details__accordion">
-            <ul class="user-details__list">
-              <li class="academic-details">
-                <div class="visible-content">
-                  <h2>Academics or Professional Details</h2>
-                  <img src="../images/arrow-icon.svg" alt="expand" />
-                </div>
-                <div class="hidden-content hide">
-                  <div class="hidden-details">
-                    <h3>College / Compony</h3>
-                    <p class="user-details__compony"></p>
-                  </div>
-                  <div class="hidden-details">
-                    <h3>Current Year</h3>
-                    <p class="user-details__yoe"></p>
-                  </div>
-                </div>
-              </li>
-              <li class="tasks-list">
-                <div class="visible-content">
-                  <h2>Tasks</h2>
-                  <img src="../images/arrow-icon.svg" alt="expand" />
-                </div>
-                <div class="hidden-content hide">
-                  <div class="loader">Loading...</div>
-                  <div class="main hide">
-                    <div class="user-tasks"></div>
-                    <div class="pagination">
-                      <button class="pagination__prev-page" disabled>
-                        Prev
-                      </button>
-                      <button class="pagination__next-page">Next</button>
-                    </div>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
+            <div class="hidden-content hide"></div>
+          </li>
+        </ul>
       </div>
     </section>
   </body>
