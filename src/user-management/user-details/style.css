@@ -59,42 +59,42 @@ li {
 /* User Details  */
 /* ------------ */
 
-.user-details__main {
+.user-details-main {
   padding-bottom: 2rem;
   border-bottom: 1px solid var(--gray-700);
 }
 
-.user-details__header {
+.user-details-wrap {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.user-details__image > img {
+.user-details-image > img {
   height: 100px;
   width: 100px;
 }
 
-.user-details__username {
+.user-details-username {
   font-size: 1.75rem;
   margin-top: 0.5rem;
   font-weight: 400;
 }
 
-.user-details__tags {
+.user-details-tags {
   display: flex;
   gap: 1rem;
   flex-direction: column;
   transform: translateY(10px);
 }
 
-.user-details__tags > p {
+.user-details-tags > p {
   background-color: var(--gray-700);
   padding: 0.5rem 1.5rem;
   border-radius: 5px;
 }
 
-.user-details__social {
+.user-details-social {
   display: flex;
   gap: 1rem;
   margin-top: 2rem;
@@ -116,7 +116,7 @@ li {
   height: 25px;
 }
 
-.user-details__accordion {
+.accordion {
   padding-top: 1rem;
 }
 
@@ -156,7 +156,8 @@ li {
   padding: 1rem 0;
 }
 
-.hidden-content > .loader {
+.hidden-content > .loader,
+.hidden-content > .error {
   text-align: center;
   margin-bottom: 5rem;
   margin-top: 5rem;
