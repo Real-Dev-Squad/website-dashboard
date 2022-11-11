@@ -46,6 +46,7 @@ async function getUserData() {
       );
     }
   } catch (err) {
+    hideLoader('.user-details__personal');
     const errorEl = createElement({ type: 'p', classList: ['error'] });
     errorEl.appendChild(createTextNode('No Data Found'));
     const container = document.querySelector('.user-details__personal');
@@ -125,12 +126,18 @@ function toggleAccordionTabsVisibility() {
       const hiddenContent = tab.nextElementSibling;
       const arrowIcon = tab.querySelector('img');
       arrowIcon.classList.toggle('open');
-      hiddenContent.classList.toggle('hide');
+      if (hiddenContent) {
+        hiddenContent.classList.toggle('hide');
+      }
     });
   });
 }
 
 function generateAcademicTabDetails() {
+  const div = createElement({
+    type: 'div',
+    classList: ['hidden-content', 'hide'],
+  });
   const divOne = createElement({ type: 'div', classList: ['hidden-details'] });
   const titleOne = createElement({ type: 'h3' });
   titleOne.appendChild(createTextNode('College / Company'));
@@ -152,14 +159,17 @@ function generateAcademicTabDetails() {
   yoe.appendChild(createTextNode(userData.yoe));
 
   divTwo.append(titleTwo, yoe);
+  div.append(divOne, divTwo);
 
-  document
-    .querySelector('.accordion__academic > .hidden-content')
-    .append(divOne, divTwo);
+  document.querySelector('.accordion__academic').appendChild(div);
 }
 
 function generateTasksTabDetails() {
-  const div = createElement({ type: 'div', classList: ['user-tasks'] });
+  const div = createElement({
+    type: 'div',
+    classList: ['hidden-content', 'hide'],
+  });
+  const tasks = createElement({ type: 'div', classList: ['user-tasks'] });
   const pagination = createElement({ type: 'div', classList: ['pagination'] });
   const prevBtn = createElement({
     type: 'button',
@@ -175,19 +185,15 @@ function generateTasksTabDetails() {
   nextBtn.addEventListener('click', fetchNextTasks);
 
   pagination.append(prevBtn, nextBtn);
-
-  document
-    .querySelector('.accordion__tasks > .hidden-content')
-    .append(div, pagination);
+  div.append(tasks, pagination);
+  document.querySelector('.accordion__tasks').appendChild(div);
 }
 
 async function getUserTasks() {
-  showLoader('.accordion__tasks > .hidden-content');
   try {
     const res = await makeApiCall(`${API_BASE_URL}/tasks/${username}`);
     if (res.status === 200) {
       const data = await res.json();
-      hideLoader('.accordion__tasks > .hidden-content');
       userAllTasks = data.tasks;
       totalPages = Math.ceil(userAllTasks.length / taskPerPage);
       const tasks = getTasksToFetch(userAllTasks, currentPageIndex);
