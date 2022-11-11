@@ -48,7 +48,7 @@ async function getUserData() {
   } catch (err) {
     hideLoader('.user-details__personal');
     const errorEl = createElement({ type: 'p', classList: ['error'] });
-    errorEl.appendChild(createTextNode('No Data Found'));
+    errorEl.appendChild(createTextNode('Something Went Wrong!'));
     const container = document.querySelector('.user-details__personal');
     container.appendChild(errorEl);
   }
@@ -125,8 +125,8 @@ function toggleAccordionTabsVisibility() {
     tab.addEventListener('click', () => {
       const hiddenContent = tab.nextElementSibling;
       const arrowIcon = tab.querySelector('img');
-      arrowIcon.classList.toggle('open');
       if (hiddenContent) {
+        arrowIcon.classList.toggle('open');
         hiddenContent.classList.toggle('hide');
       }
     });
@@ -201,12 +201,14 @@ async function getUserTasks() {
       generateUserTaskList(tasks);
     }
   } catch (err) {
+    const div = createElement({
+      type: 'div',
+      classList: ['hidden-content', 'hide'],
+    });
     const errorEl = createElement({ type: 'p', classList: ['error'] });
-    errorEl.appendChild(createTextNode('No Data Found'));
-    const container = document.querySelector(
-      '.accordion__tasks > .hidden-content',
-    );
-    container.appendChild(errorEl);
+    errorEl.appendChild(createTextNode('Something Went Wrong!'));
+    div.appendChild(errorEl);
+    document.querySelector('.accordion__tasks').appendChild(div);
   }
 }
 
