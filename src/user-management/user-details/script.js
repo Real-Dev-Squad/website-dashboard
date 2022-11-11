@@ -32,24 +32,22 @@ function hideLoader(selector) {
 }
 
 async function getUserData() {
-  showLoader('.user-details__personal');
+  showLoader('.user-details-header');
   try {
     const res = await makeApiCall(`${API_BASE_URL}/users/${username}`);
     if (res.status === 200) {
       const data = await res.json();
       userData = data.user;
-      hideLoader('.user-details__personal');
+      hideLoader('.user-details-header');
       generateUserData(data.user);
-      removeElementClass(
-        document.querySelector('.user-details__accordion'),
-        'hide',
-      );
+      removeElementClass(document.querySelector('.accordion'), 'hide');
     }
   } catch (err) {
-    hideLoader('.user-details__personal');
+    console.log(err);
+    hideLoader('.user-details-header');
     const errorEl = createElement({ type: 'p', classList: ['error'] });
     errorEl.appendChild(createTextNode('Something Went Wrong!'));
-    const container = document.querySelector('.user-details__personal');
+    const container = document.querySelector('.user-details-header');
     container.appendChild(errorEl);
   }
 }
@@ -82,7 +80,7 @@ function createSocialMediaAnchorNode({ href, id, alt, src }) {
 function generateSocialMediaLinksList() {
   const div = createElement({
     type: 'div',
-    classList: ['user-details__social'],
+    classList: ['user-details-social'],
   });
 
   socialMedia.forEach((item) => {
@@ -96,30 +94,30 @@ function generateSocialMediaLinksList() {
 function generateUserData(userData) {
   const main = createElement({
     type: 'div',
-    classList: ['user-details__main'],
+    classList: ['user-details-main'],
   });
-  const header = createElement({
+  const wrapper = createElement({
     type: 'div',
-    classList: ['user-details__header'],
+    classList: ['user-details-wrap'],
   });
   const username = createElement({
     type: 'h2',
-    classList: ['user-details__username'],
+    classList: ['user-details-username'],
   });
   username.appendChild(createTextNode(userData.username));
 
   const img = generateUserImage('profile');
   const socials = generateSocialMediaLinksList();
-  header.append(img, username);
-  main.append(header, socials);
-  document.querySelector('.user-details__personal').appendChild(main);
+  wrapper.append(img, username);
+  main.append(wrapper, socials);
+  document.querySelector('.user-details-header').appendChild(main);
   toggleAccordionTabsVisibility();
   generateAcademicTabDetails();
 }
 
 function toggleAccordionTabsVisibility() {
   const accordionTabs = document
-    .querySelector('.user-details__accordion')
+    .querySelector('.accordion')
     .querySelectorAll('.visible-content');
   accordionTabs.forEach((tab) => {
     tab.addEventListener('click', () => {
@@ -143,7 +141,7 @@ function generateAcademicTabDetails() {
   titleOne.appendChild(createTextNode('College / Company'));
   const company = createElement({
     type: 'p',
-    classList: ['user-details__company'],
+    classList: ['user-details-company'],
   });
   company.appendChild(createTextNode(userData.company));
 
@@ -154,14 +152,14 @@ function generateAcademicTabDetails() {
   titleTwo.appendChild(createTextNode('Current Year'));
   const yoe = createElement({
     type: 'p',
-    classList: ['user-details__yoe'],
+    classList: ['user-details-yoe'],
   });
   yoe.appendChild(createTextNode(userData.yoe));
 
   divTwo.append(titleTwo, yoe);
   div.append(divOne, divTwo);
 
-  document.querySelector('.accordion__academic').appendChild(div);
+  document.querySelector('.accordion-academic').appendChild(div);
 }
 
 function generateTasksTabDetails() {
@@ -173,20 +171,20 @@ function generateTasksTabDetails() {
   const pagination = createElement({ type: 'div', classList: ['pagination'] });
   const prevBtn = createElement({
     type: 'button',
-    classList: ['pagination__prev-page'],
+    classList: ['pagination-prev-page'],
   });
   prevBtn.appendChild(createTextNode('Prev'));
   prevBtn.addEventListener('click', fetchPrevTasks);
   const nextBtn = createElement({
     type: 'button',
-    classList: ['pagination__next-page'],
+    classList: ['pagination-next-page'],
   });
   nextBtn.appendChild(createTextNode('Next'));
   nextBtn.addEventListener('click', fetchNextTasks);
 
   pagination.append(prevBtn, nextBtn);
   div.append(tasks, pagination);
-  document.querySelector('.accordion__tasks').appendChild(div);
+  document.querySelector('.accordion-tasks').appendChild(div);
 }
 
 async function getUserTasks() {
@@ -208,7 +206,7 @@ async function getUserTasks() {
     const errorEl = createElement({ type: 'p', classList: ['error'] });
     errorEl.appendChild(createTextNode('Something Went Wrong!'));
     div.appendChild(errorEl);
-    document.querySelector('.accordion__tasks').appendChild(div);
+    document.querySelector('.accordion-tasks').appendChild(div);
   }
 }
 
@@ -226,7 +224,7 @@ function generateUserTaskList(userTasks) {
     const errorEl = createElement({ type: 'p', classList: ['error'] });
     errorEl.appendChild(createTextNode('No Data Found'));
     const container = document.querySelector(
-      '.accordion__tasks > .hidden-content',
+      '.accordion-tasks > .hidden-content',
     );
     container.innerHTML = '';
     container.appendChild(errorEl);
@@ -237,15 +235,15 @@ function generateUserTaskList(userTasks) {
     });
 
     if (currentPageIndex === 1) {
-      document.querySelector('.pagination__prev-page').disabled = true;
+      document.querySelector('.pagination-prev-page').disabled = true;
     } else {
-      document.querySelector('.pagination__prev-page').disabled = false;
+      document.querySelector('.pagination-prev-page').disabled = false;
     }
 
     if (currentPageIndex === totalPages) {
-      document.querySelector('.pagination__next-page').disabled = true;
+      document.querySelector('.pagination-next-page').disabled = true;
     } else {
-      document.querySelector('.pagination__next-page').disabled = false;
+      document.querySelector('.pagination-next-page').disabled = false;
     }
   }
 }
