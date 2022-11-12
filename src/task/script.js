@@ -147,8 +147,6 @@ taskForm.onsubmit = async (e) => {
     links: Array.isArray(links) ? links : [links],
     endsOn,
     status,
-    category,
-    level: Number(level),
     priority,
     percentCompleted: Number(percentCompleted),
     completionAward: {
@@ -213,8 +211,21 @@ taskForm.onsubmit = async (e) => {
 
     const result = await response.json();
 
-    alert(result.message);
     if (response.ok) {
+      const body = {
+        itemid: result.id,
+        itemType: 'task',
+        tagPayload: [{ tagid: category, levelid: level }],
+      };
+      await fetch(`${API_BASE_URL}/items`, {
+        method: 'POST',
+        credentials: 'include',
+        body: JSON.stringify(body),
+        headers: {
+          'Content-type': 'application/json',
+        },
+      });
+      alert(result.message);
       window.location.reload(true);
     }
   } catch (error) {
@@ -355,6 +366,41 @@ function debounce(func, delay) {
     }, delay);
   };
 }
+
+async function fetchTags() {
+  const response = await fetch(`${API_BASE_URL}/tags`);
+  const data = await response.json();
+  const { allTags } = data;
+
+  const category = document.getElementById('category');
+
+  for (const tag of allTags) {
+    const option = document.createElement('option');
+    option.textContent = tag.name;
+    option.setAttribute('value', tag.id);
+    category.appendChild(option);
+  }
+}
+
+async function fetchLevel() {
+  const response = await fetch(`${API_BASE_URL}/levels`);
+  const data = await response.json();
+  const { allLevels } = data;
+
+  const levelsData = allLevels.sort();
+
+  const levels = document.getElementById('level');
+
+  for (const level of levelsData) {
+    const option = document.createElement('option');
+    option.text = level.name;
+    option.setAttribute('value', level.id);
+    levels.appendChild(option);
+  }
+}
+
+fetchTags();
+fetchLevel();
 
 async function fetchMembers(searchInput) {
   try {
