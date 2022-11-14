@@ -79,6 +79,12 @@ li {
   padding: 20px 10px;
 }
 
+li p {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 .tile-width {
   width: 200px;
 }
@@ -124,5 +130,11 @@ li {
   }
   #search input {
     width: 200px;
+  }
+}
+
+@media screen and (max-width: 300px) {
+  #main-section {
+    margin: 1.5em 2em;
   }
 }

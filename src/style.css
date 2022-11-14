@@ -95,6 +95,7 @@ button {
   cursor: pointer;
   transition: all 0.5s ease;
   width: 270px;
+  text-decoration: none;
 }
 #user-management-link:hover {
   color: var(--white-color);

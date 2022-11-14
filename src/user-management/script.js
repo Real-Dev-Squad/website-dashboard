@@ -1,3 +1,9 @@
+const userListElement = document.getElementById(USER_LIST_ELEMENT);
+const loaderElement = document.getElementById(LOADER_ELEMENT);
+const tileViewBtn = document.getElementById(TILE_VIEW_BTN);
+const tableViewBtn = document.getElementById(TABLE_VIEW_BTN);
+const userSearchElement = document.getElementById(USER_SEARCH_ELEMENT);
+
 let tileViewActive = false;
 let tableViewActive = true;
 
@@ -10,12 +16,13 @@ function showTileView() {
   tableViewBtn.classList.remove('btn-active');
   tileViewBtn.classList.add('btn-active');
   const listContainerElement = userListElement.lastChild;
-  removeClass(listContainerElement, 'table-view');
-  addClass(listContainerElement, 'tile-view');
+  listContainerElement.classList.remove('table-view');
+  listContainerElement.classList.add('tile-view');
+
   listContainerElement.childNodes.forEach((listElement) => {
     const imgElement = listElement.firstChild;
-    addClass(imgElement, 'element-display-remove');
-    addClass(listElement, 'tile-width');
+    imgElement.classList.add('element-display-remove');
+    listElement.classList.add('tile-width');
   });
 }
 
@@ -25,12 +32,12 @@ function showTableView() {
   tileViewBtn.classList.remove('btn-active');
   tableViewBtn.classList.add('btn-active');
   const listContainerElement = userListElement.lastChild;
-  removeClass(listContainerElement, 'tile-view');
-  addClass(listContainerElement, 'table-view');
+  listContainerElement.classList.remove('tile-view');
+  listContainerElement.classList.add('table-view');
   listContainerElement.childNodes.forEach((listElement) => {
     const imgElement = listElement.firstChild;
-    removeClass(imgElement, 'element-display-remove');
-    removeClass(listElement, 'tile-width');
+    imgElement.classList.remove('element-display-remove');
+    listElement.classList.remove('tile-width');
   });
 }
 
@@ -59,8 +66,8 @@ async function getUsersData() {
     const paraELe = document.createElement('p');
     const textNode = document.createTextNode('Something Went Wrong');
     paraELe.appendChild(textNode);
-    addClass(paraELe, 'error-text');
-    addClass(loaderElement, 'element-display-remove');
+    paraELe.classList.add('error-text');
+    loaderElement.classList.add('element-display-remove');
     userListElement.appendChild(paraELe);
   }
 }
@@ -71,7 +78,7 @@ async function generateUserList(users) {
     const paraELe = document.createElement('p');
     const textNode = document.createTextNode('No data found');
     paraELe.appendChild(textNode);
-    addClass(paraELe, 'error-text');
+    paraELe.classList.add('error-text');
     userListElement.appendChild(paraELe);
     return;
   }
@@ -79,8 +86,8 @@ async function generateUserList(users) {
   users.forEach((userData) => {
     const listElement = document.createElement('li');
     const imgElement = document.createElement('img');
-    imgElement.src = userData.picture ? userData.picture : defaultAvatar;
-    addClass(imgElement, 'user-img-dimension');
+    imgElement.src = userData.picture ? userData.picture : DEFAULT_AVATAR;
+    imgElement.classList.add('user-img-dimension');
     const pElement = document.createElement('p');
     const node = document.createTextNode(
       `${userData.first_name} ${userData.last_name}`,
@@ -88,24 +95,31 @@ async function generateUserList(users) {
     pElement.appendChild(node);
     listElement.appendChild(imgElement);
     listElement.appendChild(pElement);
-    addClass(ulElement, 'table-view');
+    ulElement.classList.add('table-view');
+
     if (tileViewActive) {
       let imgElement = listElement.firstChild;
-      removeClass(ulElement, 'table-view');
-      addClass(ulElement, 'tile-view');
-      removeClass(listElement, 'tile-width');
-      addClass(imgElement, 'element-display-remove');
+      ulElement.classList.remove('table-view');
+      ulElement.classList.add('tile-view');
+      listElement.classList.remove('tile-width');
+      imgElement.classList.add('element-display-remove');
     }
     ulElement.appendChild(listElement);
   });
-  addClass(loaderElement, 'element-display-remove');
+  loaderElement.classList.add('element-display-remove');
+
   userListElement.appendChild(ulElement);
 }
 
 function filterUsers(searchInput) {
   usersListfilter = usersDataList.filter((user) => {
-    const name = `${user.first_name}  ${user.last_name ?? ''}`;
-    return name.trim().toLowerCase().includes(searchInput.toLowerCase());
+    const name = `${user.first_name}${user.last_name ?? ''}`;
+    return name
+      .trim()
+      .toLowerCase()
+      .split(' ')
+      .join('')
+      .includes(searchInput.toLowerCase().split(' ').join(''));
   });
   generateUserList(usersListfilter);
 }
