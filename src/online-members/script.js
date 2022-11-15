@@ -99,10 +99,10 @@ function getMembersListContent(members, classList = []) {
   return ul;
 }
 
-function getTaskDataContent(tasks, classList = []) {
+function getTaskDataContent({ tasks, username, classList = [] }) {
   const div = createElement({ type: 'div' });
   const h3 = createElement({ type: 'h3' });
-  h3.appendChild(createTextNode('TASKS'));
+  h3.appendChild(createTextNode(`TASKS - ${username}`));
   const fragment = new DocumentFragment();
   tasks.forEach((task) => {
     const div = createElement({ type: 'div', classList: TASKS_CLASS_LIST });
@@ -148,7 +148,7 @@ async function generateMemberTaskData(username) {
   const memberTaskData = await getMemberTaskData(username);
   isTaskDataBeingFetched = false;
   hideLoadingSpinner(`#${TASKS_CONTAINER_ID}`);
-  tasksDiv.appendChild(getTaskDataContent(memberTaskData));
+  tasksDiv.appendChild(getTaskDataContent({ tasks: memberTaskData, username }));
 }
 
 async function generateMembersList() {
@@ -162,13 +162,16 @@ async function generateMembersList() {
 }
 
 function addEventListenerToMembersList() {
-  const membersList = document.querySelector(`#${MEMBERS_CONTAINER_ID} > ul`);
+  const membersList = document.querySelector(`#${MEMBERS_CONTAINER_ID} > UL`);
   membersList.addEventListener('click', (event) => {
-    const membersDiv = event.target.nodeName === 'DIV';
-    if (!membersDiv) {
+    const memberElement = event.target.closest(`.${MEMBERS_CLASS}`);
+    if (!memberElement) {
       return;
     }
-    const username = event.target.dataset.username;
+    const username = memberElement.dataset.username;
+    if (!username) {
+      throw new Error('Some error occurred, please try again or contact admin');
+    }
     generateMemberTaskData(username);
   });
 }

@@ -12,6 +12,14 @@
   align-items: center;
 }
 
+.task-container {
+  top: 5rem;
+  left: 5rem;
+  position: absolute;
+  overflow: scroll;
+  max-height: 85vh;
+}
+
 .task {
   margin: 50px;
   padding: 10px;
@@ -29,6 +37,10 @@
   border-radius: 5px;
   height: 80vh;
   overflow-y: scroll;
+  position: absolute;
+  top: 5rem;
+  right: 5rem;
+  min-width: 260px;
 }
 
 .members-list {

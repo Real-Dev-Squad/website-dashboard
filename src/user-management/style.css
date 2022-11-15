@@ -1,0 +1,140 @@
+* {
+  margin: 0;
+}
+
+:root {
+  --blue-color: #1d1283;
+  --white-color: white;
+  --black-color: black;
+  --light-gray-color: lightgray;
+  --button-active-color: #a8a8a8;
+  --loader-gray-color: #f3f3f3;
+  --loader-blue-color: #3498db;
+  --red-color: red;
+}
+
+.header {
+  background-color: var(--blue-color);
+  text-align: center;
+}
+
+.header h1 {
+  padding: 16px 4px;
+  color: var(--white-color);
+}
+
+#main-section {
+  margin: 1.5em 4em;
+  text-align: center;
+}
+
+#search input {
+  width: 250px;
+  height: 30px;
+  padding: 10px 10px;
+  border-radius: 10px;
+  border: 2.5px solid var(--black-color);
+  font-size: medium;
+  background-color: var(--light-gray-color);
+}
+
+#view-type-btn {
+  margin: 40px auto;
+}
+
+#view-type-btn button {
+  border: 2.5px solid var(--black-color);
+  padding: 5px 10px;
+  border-radius: 5px;
+  margin: 0 5px;
+}
+
+.btn-active {
+  background-color: var(--button-active-color);
+}
+
+ul {
+  list-style-type: none;
+  padding-inline-start: 0px;
+  display: grid;
+  list-style: none;
+  grid-gap: 40px;
+}
+
+.table-view {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+.tile-view {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+li {
+  border: 1.5px solid var(--black-color);
+  margin: 0 auto;
+  border-radius: 10px;
+  background-color: var(--light-gray-color);
+  width: 150px;
+  font-size: larger;
+  word-spacing: 5px;
+  padding: 20px 10px;
+}
+
+li p {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.tile-width {
+  width: 200px;
+}
+
+.element-display-remove {
+  display: none;
+}
+
+.error-text {
+  font-size: x-large;
+  color: var(--red-color);
+}
+.user-img-dimension {
+  width: 70px;
+  height: 70px;
+}
+
+#loader {
+  border: 5px solid var(--loader-gray-color); /* Light grey */
+  border-top: 5px solid var(--loader-blue-color); /* Blue */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 2s linear infinite;
+  margin: 150px auto;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media screen and (max-width: 440px) {
+  .tile-view {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+  .tile-width {
+    width: 150px;
+  }
+  #search input {
+    width: 200px;
+  }
+}
+
+@media screen and (max-width: 300px) {
+  #main-section {
+    margin: 1.5em 2em;
+  }
+}
