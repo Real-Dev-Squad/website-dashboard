@@ -94,15 +94,14 @@
   margin: 5 auto;
   text-align: center;
 }
-input{
-font-size: 16px;
-    line-height: 28px;
-    padding: 8px 16px;
-    width: 100%;
-    min-height: 44px;
-    border: unset;
-    border-radius: 4px;
-    outline-color: rgba(0, 37, 204, 0.5);
-    background-color: rgb(255, 255, 255);
+input {
+  font-size: 16px;
+  line-height: 28px;
+  padding: 8px 16px;
+  width: 100%;
+  min-height: 44px;
+  border: unset;
+  border-radius: 4px;
+  outline-color: rgba(0, 37, 204, 0.5);
+  background-color: rgb(255, 255, 255);
 }
-
