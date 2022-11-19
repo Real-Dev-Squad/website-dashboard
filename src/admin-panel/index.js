@@ -34,45 +34,53 @@ function createTagCreationComponent() {
 }
 
 async function createLevel() {
-  const inputValue = document.getElementById('level').value;
-  const body = {
-    name: inputValue,
-    levelnumber: inputValue,
-  };
-  console.log(inputValue);
-  const response = await fetch(`http://localhost:4000/levels`, {
-    method: 'POST',
-    credentials: 'include',
-    body: JSON.stringify(body),
-    headers: {
-      'Content-type': 'application/json',
-    },
-  });
-  const data = await response.json();
-  const { message } = data;
-  alert(message);
+  try {
+    const inputValue = document.getElementById('level').value;
+    const body = {
+      name: inputValue,
+      levelnumber: inputValue,
+    };
+
+    const response = await fetch(`http://localhost:4000/levels`, {
+      method: 'POST',
+      credentials: 'include',
+      body: JSON.stringify(body),
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+    const data = await response.json();
+    const { message } = data;
+    alert(message);
+  } catch (err) {
+    alert(err);
+  }
 }
 
 async function createSkill() {
-  const inputValue = document.getElementById('skill').value;
-  const body = {
-    name: inputValue,
-    type: 'SKILL',
-    reason: 'adding skills to users',
-  };
+  try {
+    const inputValue = document.getElementById('skill').value;
+    const body = {
+      name: inputValue,
+      type: 'SKILL',
+      reason: 'adding skills to users',
+    };
 
-  const response = await fetch(`http://localhost:4000/tags`, {
-    method: 'POST',
-    credentials: 'include',
-    body: JSON.stringify(body),
-    headers: {
-      'Content-type': 'application/json',
-    },
-  });
+    const response = await fetch(`http://localhost:4000/tags`, {
+      method: 'POST',
+      credentials: 'include',
+      body: JSON.stringify(body),
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
 
-  const data = await response.json();
-  const { message } = data;
-  alert(message);
+    const data = await response.json();
+    const { message } = data;
+    alert(message);
+  } catch (err) {
+    alert(err);
+  }
 }
 
 function createLevelSelector() {
