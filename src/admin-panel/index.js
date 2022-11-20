@@ -1,7 +1,7 @@
 import { createElement } from './utils.js';
-const container = document.getElementById('container');
 const selectElement = document.getElementById('select-tags');
 const main = document.getElementById('main');
+const BASE_URL = 'https://api.realdevsquad.com';
 
 function createTagCreationComponent() {
   const title = createElement({
@@ -41,7 +41,7 @@ async function createLevel() {
       levelnumber: inputValue,
     };
 
-    const response = await fetch(`http://localhost:4000/levels`, {
+    const response = await fetch(`${BASE_URL}/levels`, {
       method: 'POST',
       credentials: 'include',
       body: JSON.stringify(body),
@@ -66,7 +66,7 @@ async function createSkill() {
       reason: 'adding skills to users',
     };
 
-    const response = await fetch(`http://localhost:4000/tags`, {
+    const response = await fetch(`${BASE_URL}/tags`, {
       method: 'POST',
       credentials: 'include',
       body: JSON.stringify(body),
