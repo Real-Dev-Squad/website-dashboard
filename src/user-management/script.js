@@ -56,6 +56,7 @@ async function getUsersData() {
       usersDataList = usersDataList.users;
       usersDataList = usersDataList.filter((user) => user.first_name);
       usersDataList = usersDataList.map((user) => ({
+        username: user.username,
         first_name: user.first_name,
         last_name: user.last_name ? user.last_name : '',
         picture: user.picture && user.picture.url ? user.picture.url : '',
@@ -104,6 +105,9 @@ async function generateUserList(users) {
       listElement.classList.remove('tile-width');
       imgElement.classList.add('element-display-remove');
     }
+    listElement.onclick = () => {
+      window.location.href = `user-details/index.html?username=${userData.username}`;
+    };
     ulElement.appendChild(listElement);
   });
   loaderElement.classList.add('element-display-remove');

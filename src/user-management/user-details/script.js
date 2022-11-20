@@ -3,6 +3,7 @@ let userAllTasks = [];
 let currentPageIndex = 1;
 let taskPerPage = 3;
 let totalPages = Math.ceil(userAllTasks.length / taskPerPage);
+const username = new URLSearchParams(window.location.search).get('username');
 
 function createElement({ type, classList = [] }) {
   const element = document.createElement(type);
