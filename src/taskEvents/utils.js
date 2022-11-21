@@ -1,11 +1,15 @@
-const BASE_URL = 'https://api.realdevsquad.com';
+const BASE_URL = 'http://localhost:3000';
 
-function createElement({ type, attributes = {}, innerText }) {
+function createElement({ type, attributes = {}, innerText, innerHTML }) {
   const element = document.createElement(type);
   Object.keys(attributes).forEach((item) => {
     element.setAttribute(item, attributes[item]);
   });
-  element.textContent = innerText;
+  if(innerHTML){
+    element.innerHTML = innerHTML
+  } else if(innerText){
+    element.textContent = innerText;
+  }
   return element;
 }
 
@@ -107,6 +111,98 @@ async function getData(data) {
   };
 }
 
+async function getUserSkills(id){
+  try{
+    const res = await fetch(`${BASE_URL}/users/${id}/skills`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json',
+      }
+    });
+    
+    const userSkills = await res.json();
+    return userSkills;
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+async function getTagLevelOptions() {
+  try{
+    const levelsResponse = await fetch(`${BASE_URL}/levels`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json',
+      }
+    });
+    const tagsResponse = await fetch(`${BASE_URL}/tags`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json',
+      }
+    });
+    
+    const { allTags } = await tagsResponse.json();
+    let { allLevels } = await levelsResponse.json();
+    allLevels = allLevels.sort((a,b) => {
+      if(parseInt(a.name) < parseInt(b.name)) return -1;
+      if(parseInt(a.name) > parseInt(b.name)) return 1;
+      return 0
+  }) 
+    return { allLevels, allTags };
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+async function addSkillToUser(skillToAdd, levelToAdd, userid) {
+  const body = {
+    itemid: userid, 
+    itemType: "USER",
+    tagPayload: [{
+        levelid: levelToAdd?.id,
+        tagid: skillToAdd?.id
+    }]
+  }
+  try{
+    const response = await fetch(`${BASE_URL}/items`,{
+      method: 'POST',
+      credentials: 'include',
+      body: JSON.stringify(body),
+      headers: {
+        'Content-type': 'application/json',
+      } 
+    })
+    const result = await response.json()
+    console.log(result)
+  } catch(error) {
+    console.log(error)
+  }
+}
+
+async function removeSkillFromUser(tagid, userid){
+  const body = {
+    itemid: userid,
+    tagid
+  }
+  try{
+    await fetch(`${BASE_URL}/items`,{
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    })
+  }catch(error) {
+    console.log(error)
+  }
+  
+}
+
 export {
   createElement,
   addLoader,
@@ -117,4 +213,8 @@ export {
   getSelfDetails,
   getData,
   removeLoader,
+  getUserSkills,
+  getTagLevelOptions,
+  addSkillToUser,
+  removeSkillFromUser
 };

@@ -7,23 +7,49 @@ import {
   addLoader,
   addErrorMessage,
   removeLoader,
+  getUserSkills,
+  getTagLevelOptions,
+  addSkillToUser
 } from './utils.js';
+
+import roleElement from './roleElement.js';
 
 import { createEventCard } from './logCard.js';
 
+let tagLevelOptions;
 const container = document.getElementById('task-events-container');
 const modal = document.getElementById('modal');
 const overlay = document.querySelector('.overlay');
+export const modalOverlay = createElement({
+  type: 'div',
+  attributes: { 
+    class: 'modal-overlay'
+   }
+})
+const modalOverlayLoader = createElement({
+  type: 'div',
+  attributes: {
+    class: 'dot-flashing-loader'
+  }
+})
+modal.appendChild(modalOverlay)
+modalOverlay.appendChild(modalOverlayLoader)
 
 const closeBtn = document.getElementById('close-btn');
 closeBtn.addEventListener('click', closeModal);
 const genericModalCloseBtn = document.getElementById('close-generic-modal');
 genericModalCloseBtn.addEventListener('click', closeGenericModal);
 
+addEventListener("load",async (event) => {
+  tagLevelOptions = await getTagLevelOptions()
+})
+
 async function createProfileModal(username) {
   try {
     overlay.classList.remove('hidden');
     const { user } = await getUserData(username);
+    const { skills } = await getUserSkills(user.id);
+    const rolesDiv = createRolesDiv(skills, user.id);
     // another call for roles will be made when we have userSkills collection
     const userImg = createElement({
       type: 'img',
@@ -43,21 +69,24 @@ async function createProfileModal(username) {
     document.querySelector('.top-div').prepend(userImg);
 
     const skillTitle = createElement({
-      type: 'p',
+      type: 'div',
+      attributes: { class: 'skill-title-container' }
+    })
+    const title = createElement({
+      type: 'span',
       attributes: { class: 'skill-title' },
       innerText: 'Skills',
     });
-    modal.appendChild(skillTitle);
-
-    const rolesArray = [
-      'React-level1',
-      'Ember-level2',
-      'Remix-level3',
-      'NodeJs-level3',
-      'random-levl1',
-    ];
-    const roles = createRolesDiv(rolesArray);
-    modal.appendChild(roles);
+    const addBtn = createElement({
+      type: 'button',
+      attributes: { class: 'add-btn' },
+      innerText: '+',
+    });
+    addBtn.addEventListener('click',() => openAddSkillModal(user.id,rolesDiv));
+    skillTitle.appendChild(title);
+    skillTitle.appendChild(addBtn)
+    modal.appendChild(skillTitle)
+    modal.appendChild(rolesDiv);
 
     const activityBtn = createUserActivityBtn(username);
     modal.appendChild(activityBtn);
@@ -67,34 +96,20 @@ async function createProfileModal(username) {
   }
 }
 
-function createRolesDiv(roles) {
+function createRolesDiv(roles, userid) {
   const Allroles = [...roles];
   const rolesDiv = createElement({
     type: 'div',
     attributes: { class: 'roles-div' },
   });
-  Allroles.map((role, index) => {
-    const element = createElement({
-      type: 'div',
-      attributes: { class: 'roles-div-item' },
-      innerText: role,
-    });
-    const removeBtn = createElement({
-      type: 'button',
-      attributes: { class: 'remove-btn', id: index },
-      innerText: 'x',
-    });
-    removeBtn.addEventListener('click', removeSkill);
-    element.appendChild(removeBtn);
-    rolesDiv.append(element);
+  Allroles.map((role) => {
+    rolesDiv.append(
+      roleElement(
+        role.tagname,
+        role.levelname,
+        role.tagid,
+        userid));
   });
-  const addBtn = createElement({
-    type: 'button',
-    attributes: { class: 'add-btn' },
-    innerText: '+',
-  });
-  addBtn.addEventListener('click', openAddSkillModal);
-  rolesDiv.appendChild(addBtn);
   return rolesDiv;
 }
 
@@ -133,14 +148,9 @@ function closeGenericModal() {
   containerDiv.innerHTML = '';
 }
 
-function removeSkill(e) {
-  // this is not how it's going to be done, when we have the userSkills this function is going to change
-  e.target.parentElement.remove();
-}
-
-function openAddSkillModal() {
-  const skills = ['frontend', 'backend', 'System Design']; // this is temporary data that will be removed once we have userSkill collection in our DB
-  const level = [1, 2, 3, 4, 5];
+function openAddSkillModal(userid, rolesDiv) {
+  const skills = tagLevelOptions.allTags;
+  const level = tagLevelOptions.allLevels;
   // a submit button which will make a request to the backend and save the skill in userSkills collection
   const containerDiv = document.getElementById('container-div');
   document.getElementById('generic-modal').style.visibility = 'visible';
@@ -167,7 +177,7 @@ function openAddSkillModal() {
     const option = createElement({
       type: 'option',
       attributes: { class: 'options' },
-      innerText: skills[i],
+      innerText: skills[i].name,
     });
     skillCategorySelect.appendChild(option);
   }
@@ -193,7 +203,7 @@ function openAddSkillModal() {
     const option = createElement({
       type: 'option',
       attributes: { class: 'option' },
-      innerText: level[i],
+      innerText: level[i].name,
     });
     skillLevelSelect.appendChild(option);
   }
@@ -203,8 +213,8 @@ function openAddSkillModal() {
 
   const submitBtn = createElement({
     type: 'button',
-    attributes: { class: 'submit-btn' },
-    innerText: 'Add Skill',
+    attributes: { class: 'skill-submit-btn' },
+    innerHTML: 'Add Skill',
   });
 
   // once we have the tags collection we can make an API call here to add that skill tag to user, when the super user clicks on submit
@@ -213,6 +223,24 @@ function openAddSkillModal() {
   containerDiv.appendChild(skillCategoryDiv);
   containerDiv.appendChild(skillLevelDiv);
   containerDiv.appendChild(submitBtn);
+  
+  submitBtn.addEventListener('click',async () => {
+    const skillToAdd =skills?.find(skill => skill.name === skillCategorySelect.value)
+    const levelToAdd = level?.find(lvl => lvl.name === skillLevelSelect.value)
+    
+    submitBtn.innerHTML = `<div class="dot-flashing-loader"></div>`
+    submitBtn.classList.add("disabled")
+    await addSkillToUser(skillToAdd, levelToAdd, userid)
+    submitBtn.innerHTML = `Add Skill`
+    submitBtn.classList.remove("disabled")
+    rolesDiv.append(
+                  roleElement(
+                  skillToAdd.name,
+                  levelToAdd.name,
+                  skillToAdd.id,
+                  userid)
+                  )
+  })
 }
 
 async function openUserActivityModal(username) {
