@@ -176,8 +176,7 @@ async function addSkillToUser(skillToAdd, levelToAdd, userid) {
         'Content-type': 'application/json',
       } 
     })
-    const result = await response.json()
-    console.log(result)
+    await response.json()
   } catch(error) {
     console.log(error)
   }
