@@ -391,11 +391,11 @@ function debounce(func, delay) {
 async function fetchTags() {
   const response = await fetch(`${API_BASE_URL}/tags`);
   const data = await response.json();
-  const { allTags } = data;
+  const { tags } = data;
 
   const category = document.getElementById('category');
 
-  for (const tag of allTags) {
+  for (const tag of tags) {
     const option = document.createElement('option');
     option.textContent = tag.name;
     option.setAttribute('value', tag.id);
@@ -403,10 +403,31 @@ async function fetchTags() {
   }
 }
 
+function sortLevels(levels) {
+  let swapped;
+
+  for (let i = 0; i < levels.length - 1; i++) {
+    swapped = false;
+    for (let j = 0; j < levels.length - 1 - i; j++) {
+      if (Number(levels[j].name) > Number(levels[j + 1].name)) {
+        const temp = levels[j];
+        levels[j] = levels[j + 1];
+        levels[j + 1] = temp;
+        swapped = true;
+      }
+    }
+    if (!swapped) {
+      break;
+    }
+  }
+}
+
 async function fetchLevel() {
   const response = await fetch(`${API_BASE_URL}/levels`);
   const data = await response.json();
   const { levels } = data;
+
+  sortLevels(levels);
 
   const leveloption = document.getElementById('level');
 
@@ -498,7 +519,6 @@ function createSuggestedUserLists() {
   suggestedUsers.forEach((user) => {
     const listItem = document.createElement('p');
     listItem.classList.add('list-item');
-    listItem.style.cursor = 'pointer';
     listItem.setAttribute('onclick', `setAssignee('${user.username}')`);
     listItem.innerText = user.username;
     suggestedUsersContainer.appendChild(listItem);
