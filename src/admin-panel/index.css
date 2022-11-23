@@ -69,3 +69,8 @@ input::placeholder {
   margin-top: 0;
   margin-top: 0;
 }
+
+button:disabled {
+  background-color: gray;
+  cursor: not-allowed;
+}

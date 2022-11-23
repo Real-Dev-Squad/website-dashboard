@@ -36,10 +36,13 @@ function createTagCreationComponent() {
 async function createLevel() {
   try {
     const inputValue = document.getElementById('level').value;
+    const button = document.querySelector('.submit-button');
     const body = {
       name: inputValue,
       levelnumber: inputValue,
     };
+    setLoadingState();
+    button.textContent = 'Creating Level...';
 
     const response = await fetch(`${BASE_URL}/levels`, {
       method: 'POST',
@@ -54,17 +57,25 @@ async function createLevel() {
     alert(message);
   } catch (err) {
     alert(err);
+  } finally {
+    removeLoadingState();
+    button.textContent = 'Create Level';
   }
 }
 
 async function createSkill() {
   try {
     const inputValue = document.getElementById('skill').value;
+    const button = document.querySelector('.submit-button');
+
     const body = {
       name: inputValue,
       type: 'SKILL',
       reason: 'adding skills to users',
     };
+
+    setLoadingState();
+    button.textContent = 'creating skill...';
 
     const response = await fetch(`${BASE_URL}/tags`, {
       method: 'POST',
@@ -80,6 +91,9 @@ async function createSkill() {
     alert(message);
   } catch (err) {
     alert(err);
+  } finally {
+    removeLoadingState();
+    button.textContent = 'Create Skill';
   }
 }
 
@@ -130,6 +144,16 @@ function createLevelCreationComponent() {
   levelCreationContainer.appendChild(levelSelector);
   levelCreationContainer.appendChild(submit);
   return levelCreationContainer;
+}
+
+function setLoadingState() {
+  document.querySelector('.submit-button').disabled = true;
+  document.getElementById('select-tags').disabled = true;
+}
+
+function removeLoadingState() {
+  document.querySelector('.submit-button').disabled = false;
+  document.getElementById('select-tags').disabled = false;
 }
 
 selectElement.addEventListener('change', () => {
