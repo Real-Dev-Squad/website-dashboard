@@ -162,12 +162,12 @@ details[open] .dropDown {
   height: 100%;
   display: none;
   z-index: 9999;
-  pointer-events: none;
 }
 
 .modal-overlay.active{
   display: grid;
   place-content: center;
+  pointer-events: none;
 }
 
 .top-div {
