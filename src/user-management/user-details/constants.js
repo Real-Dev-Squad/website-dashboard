@@ -5,16 +5,16 @@ const iconMapper = {
   twitter_id: {
     alt: 'twitter',
     src: '../images/twitter.svg',
-    href: '//twitter.com',
+    href: 'https://twitter.com',
   },
   github_id: {
     alt: 'github',
     src: '../images/github.svg',
-    href: '//github.com',
+    href: 'https://github.com',
   },
   linkedin_id: {
     alt: 'linkedIn',
     src: '../images/linkedin.svg',
-    href: '//linkedin.com/in',
+    href: 'https://linkedin.com/in',
   },
 };
