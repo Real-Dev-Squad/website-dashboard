@@ -9,7 +9,7 @@ import {
   removeLoader,
   getUserSkills,
   getTagLevelOptions,
-  addSkillToUser
+  addSkillToUser,
 } from './utils.js';
 
 import roleElement from './roleElement.js';
@@ -22,27 +22,27 @@ const modal = document.getElementById('modal');
 const overlay = document.querySelector('.overlay');
 export const modalOverlay = createElement({
   type: 'div',
-  attributes: { 
-    class: 'modal-overlay'
-   }
-})
+  attributes: {
+    class: 'modal-overlay',
+  },
+});
 const modalOverlayLoader = createElement({
   type: 'div',
   attributes: {
-    class: 'dot-flashing-loader'
-  }
-})
-modal.appendChild(modalOverlay)
-modalOverlay.appendChild(modalOverlayLoader)
+    class: 'dot-flashing-loader',
+  },
+});
+modal.appendChild(modalOverlay);
+modalOverlay.appendChild(modalOverlayLoader);
 
 const closeBtn = document.getElementById('close-btn');
 closeBtn.addEventListener('click', closeModal);
 const genericModalCloseBtn = document.getElementById('close-generic-modal');
 genericModalCloseBtn.addEventListener('click', closeGenericModal);
 
-addEventListener("load",async (event) => {
-  tagLevelOptions = await getTagLevelOptions()
-})
+addEventListener('load', async (event) => {
+  tagLevelOptions = await getTagLevelOptions();
+});
 
 async function createProfileModal(username) {
   try {
@@ -70,8 +70,8 @@ async function createProfileModal(username) {
 
     const skillTitle = createElement({
       type: 'div',
-      attributes: { class: 'skill-title-container' }
-    })
+      attributes: { class: 'skill-title-container' },
+    });
     const title = createElement({
       type: 'span',
       attributes: { class: 'skill-title' },
@@ -82,10 +82,12 @@ async function createProfileModal(username) {
       attributes: { class: 'add-btn' },
       innerText: '+',
     });
-    addBtn.addEventListener('click',() => openAddSkillModal(user.id,rolesDiv));
+    addBtn.addEventListener('click', () =>
+      openAddSkillModal(user.id, rolesDiv),
+    );
     skillTitle.appendChild(title);
-    skillTitle.appendChild(addBtn)
-    modal.appendChild(skillTitle)
+    skillTitle.appendChild(addBtn);
+    modal.appendChild(skillTitle);
     modal.appendChild(rolesDiv);
 
     const activityBtn = createUserActivityBtn(username);
@@ -104,11 +106,8 @@ function createRolesDiv(roles, userid) {
   });
   Allroles.map((role) => {
     rolesDiv.append(
-      roleElement(
-        role.tagname,
-        role.levelname,
-        role.tagid,
-        userid));
+      roleElement(role.tagname, role.levelname, role.tagid, userid),
+    );
   });
   return rolesDiv;
 }
@@ -223,24 +222,26 @@ function openAddSkillModal(userid, rolesDiv) {
   containerDiv.appendChild(skillCategoryDiv);
   containerDiv.appendChild(skillLevelDiv);
   containerDiv.appendChild(submitBtn);
-  
-  submitBtn.addEventListener('click',async () => {
-    const skillToAdd =skills?.find(skill => skill.name === skillCategorySelect.value)
-    const levelToAdd = level?.find(lvl => lvl.name === skillLevelSelect.value)
-    
-    submitBtn.innerHTML = `<div class="dot-flashing-loader"></div>`
-    submitBtn.classList.add("disabled")
-    await addSkillToUser(skillToAdd, levelToAdd, userid)
-    submitBtn.innerHTML = `Add Skill`
-    submitBtn.classList.remove("disabled")
-    rolesDiv.append(
-                  roleElement(
-                  skillToAdd.name,
-                  levelToAdd.name,
-                  skillToAdd.id,
-                  userid)
-                  )
-  })
+
+  submitBtn.addEventListener('click', async () => {
+    const skillToAdd = skills?.find(
+      (skill) => skill.name === skillCategorySelect.value,
+    );
+    const levelToAdd = level?.find(
+      (lvl) => lvl.name === skillLevelSelect.value,
+    );
+
+    submitBtn.innerHTML = `<div class="dot-flashing-loader"></div>`;
+    submitBtn.classList.add('disabled');
+    const response = await addSkillToUser(skillToAdd, levelToAdd, userid);
+    submitBtn.innerHTML = `Add Skill`;
+    submitBtn.classList.remove('disabled');
+    if (response.ok) {
+      rolesDiv.append(
+        roleElement(skillToAdd.name, levelToAdd.name, skillToAdd.id, userid),
+      );
+    }
+  });
 }
 
 async function openUserActivityModal(username) {
