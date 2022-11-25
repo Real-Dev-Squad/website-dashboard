@@ -151,20 +151,20 @@ details[open] .dropDown {
   opacity: 1.6;
 }
 
-.modal-overlay{
+.modal-overlay {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgba(0,0,0,0.5);
+  background-color: rgba(0, 0, 0, 0.5);
   width: 100%;
   height: 100%;
   display: none;
   z-index: 9999;
 }
 
-.modal-overlay.active{
+.modal-overlay.active {
   display: grid;
   place-content: center;
   pointer-events: none;
@@ -231,7 +231,6 @@ details[open] .dropDown {
 /* Input Styles */
 
 .skill-title {
-  
   margin-bottom: 0;
   align-self: flex-start;
   font-size: 1.4rem;
@@ -350,7 +349,7 @@ details[open] .dropDown {
   flex-direction: column;
 }
 
-.skill-title-container{
+.skill-title-container {
   display: flex;
   gap: 1rem;
   margin-top: 30px;
@@ -382,7 +381,7 @@ details[open] .dropDown {
   height: 35px;
 }
 
-.skill-submit-btn.disabled{
+.skill-submit-btn.disabled {
   pointer-events: none;
   opacity: 0.25;
 }
@@ -410,11 +409,12 @@ details[open] .dropDown {
   border-radius: 5px;
   background-color: #ffffff;
   color: #ffffff;
-  animation: dotFlashing .5s infinite linear alternate;
-  animation-delay: .25s;
+  animation: dotFlashing 0.5s infinite linear alternate;
+  animation-delay: 0.25s;
 }
 
-.dot-flashing-loader::before, .dot-flashing-loader::after {
+.dot-flashing-loader::before,
+.dot-flashing-loader::after {
   content: '';
   display: inline-block;
   position: absolute;
@@ -428,7 +428,7 @@ details[open] .dropDown {
   border-radius: 5px;
   background-color: #ffffff;
   color: #ffffff;
-  animation: dotFlashing .5s infinite alternate;
+  animation: dotFlashing 0.5s infinite alternate;
   animation-delay: 0s;
 }
 
@@ -439,8 +439,8 @@ details[open] .dropDown {
   border-radius: 5px;
   background-color: #ffffff;
   color: #ffffff;
-  animation: dotFlashing .5s infinite alternate;
-  animation-delay: .5s;
+  animation: dotFlashing 0.5s infinite alternate;
+  animation-delay: 0.5s;
 }
 
 @keyframes dotFlashing {
@@ -449,7 +449,6 @@ details[open] .dropDown {
   }
   50%,
   100% {
-    background-color: rgba(0, 0, 0,0.25);
+    background-color: rgba(0, 0, 0, 0.25);
   }
 }
-
