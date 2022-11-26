@@ -1,7 +1,7 @@
 import { createElement, removeSkillFromUser } from './utils.js';
 import { modalOverlay } from './script.js';
 
-function roleElement(roleTagname, roleLevel, roleTagnameid, userid) {
+function roleElement(roleTagname, roleLevel, roleTagnameId, userId) {
   const element = createElement({
     type: 'div',
     attributes: { class: 'roles-div-item' },
@@ -17,7 +17,7 @@ function roleElement(roleTagname, roleLevel, roleTagnameid, userid) {
 
   async function handleRemoveSkill(element) {
     modalOverlay.classList.add('active');
-    const response = await removeSkillFromUser(roleTagnameid, userid);
+    const response = await removeSkillFromUser(roleTagnameId, userId);
     if (response.ok) {
       element.remove();
     }
