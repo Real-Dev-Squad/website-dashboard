@@ -403,31 +403,12 @@ async function fetchTags() {
   }
 }
 
-function sortLevels(levels) {
-  let swapped;
-
-  for (let i = 0; i < levels.length - 1; i++) {
-    swapped = false;
-    for (let j = 0; j < levels.length - 1 - i; j++) {
-      if (Number(levels[j].name) > Number(levels[j + 1].name)) {
-        const temp = levels[j];
-        levels[j] = levels[j + 1];
-        levels[j + 1] = temp;
-        swapped = true;
-      }
-    }
-    if (!swapped) {
-      break;
-    }
-  }
-}
-
 async function fetchLevel() {
   const response = await fetch(`${API_BASE_URL}/levels`);
   const data = await response.json();
   const { levels } = data;
 
-  sortLevels(levels);
+  levels.sort((a, b) => (Number(a.name) > Number(b.name) ? 1 : -1));
 
   const leveloption = document.getElementById('level');
 
