@@ -213,7 +213,7 @@ function openAddSkillModal(userid, rolesDiv) {
   const submitBtn = createElement({
     type: 'button',
     attributes: { class: 'skill-submit-btn' },
-    innerHTML: 'Add Skill',
+    innerText: 'Add Skill',
   });
 
   // once we have the tags collection we can make an API call here to add that skill tag to user, when the super user clicks on submit
@@ -230,11 +230,16 @@ function openAddSkillModal(userid, rolesDiv) {
     const levelToAdd = level?.find(
       (lvl) => lvl.name === skillLevelSelect.value,
     );
-
-    submitBtn.innerHTML = `<div class="dot-flashing-loader"></div>`;
+    const loaderElement = createElement({
+      type: 'div',
+      attributes: { class: 'dot-flashing-loader' },
+    });
+    submitBtn.innerText = '';
+    submitBtn.append(loaderElement);
     submitBtn.classList.add('disabled');
     const response = await addSkillToUser(skillToAdd, levelToAdd, userid);
-    submitBtn.innerHTML = `Add Skill`;
+    loaderElement.remove();
+    submitBtn.innerText = `Add Skill`;
     submitBtn.classList.remove('disabled');
     if (response.ok) {
       rolesDiv.append(

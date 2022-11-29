@@ -2,29 +2,35 @@ import { createElement, removeSkillFromUser } from './utils.js';
 import { modalOverlay } from './script.js';
 
 function roleElement(roleTagname, roleLevel, roleTagnameId, userId) {
-  const element = createElement({
+  const roleItemElement = createElement({
     type: 'div',
     attributes: { class: 'roles-div-item' },
-    innerHTML: `${roleTagname} <small>LVL: ${roleLevel}</small>`,
+    innerText: `${roleTagname} `,
   });
+  const roleLevelElement = createElement({
+    type: 'small',
+    innerText: `LVL: ${roleLevel}`,
+  });
+  roleItemElement.append(roleLevelElement);
+  // <small>LVL: ${roleLevel}</small>`
   const removeBtn = createElement({
     type: 'button',
     attributes: { class: 'remove-btn' },
-    innerHTML: `&#x2715`,
+    innerText: 'x',
   });
-  removeBtn.addEventListener('click', () => handleRemoveSkill(element));
-  element.appendChild(removeBtn);
+  removeBtn.addEventListener('click', () => handleRemoveSkill(roleItemElement));
+  roleItemElement.appendChild(removeBtn);
 
-  async function handleRemoveSkill(element) {
+  async function handleRemoveSkill(roleItemElement) {
     modalOverlay.classList.add('active');
     const response = await removeSkillFromUser(roleTagnameId, userId);
     if (response.ok) {
-      element.remove();
+      roleItemElement.remove();
     }
     modalOverlay.classList.remove('active');
   }
 
-  return element;
+  return roleItemElement;
 }
 
 export default roleElement;
