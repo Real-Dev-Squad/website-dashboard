@@ -1,15 +1,11 @@
 const BASE_URL = 'https://api.realdevsquad.com';
 
-function createElement({ type, attributes = {}, innerText, innerHTML }) {
+function createElement({ type, attributes = {}, innerText }) {
   const element = document.createElement(type);
   Object.keys(attributes).forEach((item) => {
     element.setAttribute(item, attributes[item]);
   });
-  if (innerHTML) {
-    element.innerHTML = innerHTML;
-  } else if (innerText) {
-    element.textContent = innerText;
-  }
+  element.textContent = innerText;
   return element;
 }
 
@@ -124,7 +120,7 @@ async function getUserSkills(id) {
     const userSkills = await res.json();
     return userSkills;
   } catch (error) {
-    console.log(error);
+    alert(error);
   }
 }
 
@@ -154,7 +150,7 @@ async function getTagLevelOptions() {
     });
     return { allLevels, allTags };
   } catch (error) {
-    console.log(error);
+    alert(error);
   }
 }
 
@@ -180,7 +176,7 @@ async function addSkillToUser(skillToAdd, levelToAdd, userid) {
     });
     return response;
   } catch (error) {
-    console.log(error);
+    alert(error);
   }
 }
 
@@ -200,7 +196,7 @@ async function removeSkillFromUser(tagid, userid) {
     });
     return response;
   } catch (error) {
-    console.log(error);
+    alert(error);
   }
 }
 
