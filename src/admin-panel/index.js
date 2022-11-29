@@ -1,7 +1,7 @@
 import { createElement } from './utils.js';
 const selectElement = document.getElementById('select-tags');
 const main = document.getElementById('main');
-const BASE_URL = 'https://api.realdevsquad.com';
+const BASE_URL = 'http://localhost:4000';
 
 function createTagCreationComponent() {
   const title = createElement({
@@ -98,12 +98,13 @@ async function createSkill() {
 }
 
 function createLevelSelector() {
+  const totalLevels = 10;
   const levelSelector = createElement({
     type: 'select',
     attributes: { class: 'level-selector' },
   });
 
-  for (let i = 0; i <= 5; i++) {
+  for (let i = 0; i <= totalLevels; i++) {
     const option = createElement({
       type: 'option',
       attributes: { class: 'option', value: i },
