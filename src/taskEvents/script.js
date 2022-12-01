@@ -12,7 +12,7 @@ import {
   addSkillToUser,
 } from './utils.js';
 
-import roleElement from './roleElement.js';
+import skillElement from './skillElement.js';
 
 import { createEventCard } from './logCard.js';
 
@@ -44,12 +44,33 @@ addEventListener('load', async (event) => {
   tagLevelOptions = await getTagLevelOptions();
 });
 
+function closeModal() {
+  overlay.classList.add('hidden');
+  const errorDiv = document.querySelector('.error-div');
+  if (errorDiv) {
+    errorDiv.remove();
+    return;
+  }
+  document.querySelector('.roles-div').remove();
+  document.querySelector('.activity-btn-div').remove();
+  document.querySelector('.username').remove();
+  document.querySelector('.skill-title').remove();
+  document.querySelector('.user-img').remove();
+}
+
+function closeGenericModal() {
+  document.getElementById('generic-modal').style.visibility = 'collapse';
+  const containerDiv = document.getElementById('container-div');
+  containerDiv.innerHTML = '';
+}
+
 async function createProfileModal(username) {
   try {
     overlay.classList.remove('hidden');
     const { user } = await getUserData(username);
     const { skills } = await getUserSkills(user.id);
-    const rolesDiv = createRolesDiv(skills, user.id);
+    console.log(skills);
+    const skillsDiv = createSkillsDiv(skills, user.id);
     // another call for roles will be made when we have userSkills collection
     const userImg = createElement({
       type: 'img',
@@ -83,12 +104,12 @@ async function createProfileModal(username) {
       innerText: '+',
     });
     addBtn.addEventListener('click', () =>
-      openAddSkillModal(user.id, rolesDiv),
+      openAddSkillModal(user.id, skillsDiv),
     );
     skillTitle.appendChild(title);
     skillTitle.appendChild(addBtn);
     modal.appendChild(skillTitle);
-    modal.appendChild(rolesDiv);
+    modal.appendChild(skillsDiv);
 
     const activityBtn = createUserActivityBtn(username);
     modal.appendChild(activityBtn);
@@ -98,58 +119,23 @@ async function createProfileModal(username) {
   }
 }
 
-function createRolesDiv(roles, userid) {
-  const Allroles = [...roles];
-  const rolesDiv = createElement({
+function createSkillsDiv(skills, userId) {
+  const allSkills = [...skills];
+  const skillsDiv = createElement({
     type: 'div',
     attributes: { class: 'roles-div' },
   });
-  Allroles.map((role) => {
-    rolesDiv.append(
-      roleElement(role.tagname, role.levelname, role.tagid, userid),
+  allSkills.map((role) => {
+    skillsDiv.append(
+      skillElement(role.tagName, role.levelName, role.tagId, userId),
     );
   });
-  return rolesDiv;
+  return skillsDiv;
 }
 
-function createUserActivityBtn(username) {
-  const activityBtnDiv = createElement({
-    type: 'div',
-    attributes: { class: 'activity-btn-div' },
-  });
-  const activityBtn = createElement({
-    type: 'button',
-    attributes: { class: 'activity-btn' },
-    innerText: 'show user activity',
-  });
-  activityBtn.addEventListener('click', () => openUserActivityModal(username));
-  activityBtnDiv.appendChild(activityBtn);
-  return activityBtnDiv;
-}
-
-function closeModal() {
-  overlay.classList.add('hidden');
-  const errorDiv = document.querySelector('.error-div');
-  if (errorDiv) {
-    errorDiv.remove();
-    return;
-  }
-  document.querySelector('.roles-div').remove();
-  document.querySelector('.activity-btn-div').remove();
-  document.querySelector('.username').remove();
-  document.querySelector('.skill-title').remove();
-  document.querySelector('.user-img').remove();
-}
-
-function closeGenericModal() {
-  document.getElementById('generic-modal').style.visibility = 'collapse';
-  const containerDiv = document.getElementById('container-div');
-  containerDiv.innerHTML = '';
-}
-
-function openAddSkillModal(userid, rolesDiv) {
-  const skills = tagLevelOptions.allTags;
-  const level = tagLevelOptions.allLevels;
+function openAddSkillModal(userId, skillsDiv) {
+  const tags = tagLevelOptions.allTags;
+  const levels = tagLevelOptions.allLevels;
   // a submit button which will make a request to the backend and save the skill in userSkills collection
   const containerDiv = document.getElementById('container-div');
   document.getElementById('generic-modal').style.visibility = 'visible';
@@ -172,11 +158,11 @@ function openAddSkillModal(userid, rolesDiv) {
     attributes: { class: 'skill-category-select' },
   });
 
-  for (let i = 0; i < skills.length; i++) {
+  for (let i = 0; i < tags.length; i++) {
     const option = createElement({
       type: 'option',
       attributes: { class: 'options' },
-      innerText: skills[i].name,
+      innerText: tags[i].name,
     });
     skillCategorySelect.appendChild(option);
   }
@@ -198,11 +184,11 @@ function openAddSkillModal(userid, rolesDiv) {
     attributes: { class: 'skill-level-select' },
   });
 
-  for (let i = 0; i < level.length; i++) {
+  for (let i = 0; i < levels.length; i++) {
     const option = createElement({
       type: 'option',
       attributes: { class: 'option' },
-      innerText: level[i].name,
+      innerText: levels[i].name,
     });
     skillLevelSelect.appendChild(option);
   }
@@ -224,10 +210,10 @@ function openAddSkillModal(userid, rolesDiv) {
   containerDiv.appendChild(submitBtn);
 
   submitBtn.addEventListener('click', async () => {
-    const skillToAdd = skills?.find(
-      (skill) => skill.name === skillCategorySelect.value,
+    const tagToAdd = tags?.find(
+      (tag) => tag.name === skillCategorySelect.value,
     );
-    const levelToAdd = level?.find(
+    const levelToAdd = levels?.find(
       (lvl) => lvl.name === skillLevelSelect.value,
     );
     const loaderElement = createElement({
@@ -237,16 +223,31 @@ function openAddSkillModal(userid, rolesDiv) {
     submitBtn.innerText = '';
     submitBtn.append(loaderElement);
     submitBtn.classList.add('disabled');
-    const response = await addSkillToUser(skillToAdd, levelToAdd, userid);
+    const response = await addSkillToUser(tagToAdd, levelToAdd, userId);
     loaderElement.remove();
     submitBtn.innerText = `Add Skill`;
     submitBtn.classList.remove('disabled');
     if (response.ok) {
-      rolesDiv.append(
-        roleElement(skillToAdd.name, levelToAdd.name, skillToAdd.id, userid),
+      skillsDiv.append(
+        skillElement(tagToAdd.name, levelToAdd.name, tagToAdd.id, userId),
       );
     }
   });
+}
+
+function createUserActivityBtn(username) {
+  const activityBtnDiv = createElement({
+    type: 'div',
+    attributes: { class: 'activity-btn-div' },
+  });
+  const activityBtn = createElement({
+    type: 'button',
+    attributes: { class: 'activity-btn' },
+    innerText: 'show user activity',
+  });
+  activityBtn.addEventListener('click', () => openUserActivityModal(username));
+  activityBtnDiv.appendChild(activityBtn);
+  return activityBtnDiv;
 }
 
 async function openUserActivityModal(username) {

@@ -1,4 +1,4 @@
-const BASE_URL = 'https://api.realdevsquad.com';
+const BASE_URL = 'http://localhost:4000';
 
 function createElement({ type, attributes = {}, innerText }) {
   const element = document.createElement(type);
@@ -107,20 +107,25 @@ async function getData(data) {
   };
 }
 
-async function getUserSkills(id) {
+async function getUserSkills(userId) {
   try {
-    const res = await fetch(`${BASE_URL}/users/${id}/skills`, {
+    const response = await fetch(`${BASE_URL}/users/${userId}/skills`, {
       method: 'GET',
       credentials: 'include',
       headers: {
         'Content-type': 'application/json',
       },
     });
-
-    const userSkills = await res.json();
+    if (response.status === 500) {
+      alert('server error');
+      console.log(response);
+      return;
+    }
+    const userSkills = await response.json();
     return userSkills;
   } catch (error) {
-    alert(error);
+    alert('something went wrong');
+    console.log(error);
   }
 }
 
@@ -148,20 +153,26 @@ async function getTagLevelOptions() {
       if (parseInt(a.name) > parseInt(b.name)) return 1;
       return 0;
     });
+    if (tagsResponse.status === 500 || levelsResponse.status === 500) {
+      alert('server error');
+      console.log(response);
+      return;
+    }
     return { allLevels, allTags };
   } catch (error) {
-    alert(error);
+    alert(`something went wrong`);
+    console.error(error);
   }
 }
 
-async function addSkillToUser(skillToAdd, levelToAdd, userid) {
+async function addSkillToUser(tagToAdd, levelToAdd, userId) {
   const body = {
-    itemid: userid,
+    itemId: userId,
     itemType: 'USER',
     tagPayload: [
       {
-        levelid: levelToAdd?.id,
-        tagid: skillToAdd?.id,
+        levelId: levelToAdd?.id,
+        tagId: tagToAdd?.id,
       },
     ],
   };
@@ -174,16 +185,22 @@ async function addSkillToUser(skillToAdd, levelToAdd, userid) {
         'Content-type': 'application/json',
       },
     });
+    if (response.status === 500) {
+      alert('server error');
+      console.log(response);
+      return;
+    }
     return response;
   } catch (error) {
-    alert(error);
+    alert('something went wrong');
+    console.error(error);
   }
 }
 
-async function removeSkillFromUser(tagid, userid) {
+async function removeSkillFromUser(tagId, userId) {
   const body = {
-    itemid: userid,
-    tagid,
+    itemId: userId,
+    tagId,
   };
   try {
     const response = await fetch(`${BASE_URL}/items`, {
@@ -194,9 +211,15 @@ async function removeSkillFromUser(tagid, userid) {
       },
       body: JSON.stringify(body),
     });
+    if (response.status === 500) {
+      alert('server error');
+      console.log(response);
+      return;
+    }
     return response;
   } catch (error) {
-    alert(error);
+    alert('something went wrong');
+    console.error(error);
   }
 }
 
