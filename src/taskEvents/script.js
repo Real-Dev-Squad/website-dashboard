@@ -69,7 +69,6 @@ async function createProfileModal(username) {
     overlay.classList.remove('hidden');
     const { user } = await getUserData(username);
     const { skills } = await getUserSkills(user.id);
-    console.log(skills);
     const skillsDiv = createSkillsDiv(skills, user.id);
     // another call for roles will be made when we have userSkills collection
     const userImg = createElement({
