@@ -1,4 +1,25 @@
 const API_BASE_URL = window.API_BASE_URL;
+const suggestedUsers = [];
+const allUser = [];
+const category = document.getElementById('category');
+
+category.addEventListener('change', async () => {
+  try {
+    showSubmitLoader();
+    const categoryValue = category.value;
+    const response = await fetch(
+      `${API_BASE_URL}/users/suggestedUsers/${categoryValue}`,
+      { credentials: 'include' },
+    );
+    const data = await response.json();
+    const { users } = data;
+    users.map((user) => suggestedUsers.push(user.user));
+  } catch (err) {
+    alert(err);
+  } finally {
+    showSubmitLoader(false);
+  }
+});
 
 const getRemainingDays = (selectedDateInString) => {
   const selectedDate = new Date(selectedDateInString);
@@ -370,11 +391,11 @@ function debounce(func, delay) {
 async function fetchTags() {
   const response = await fetch(`${API_BASE_URL}/tags`);
   const data = await response.json();
-  const { allTags } = data;
+  const { tags } = data;
 
   const category = document.getElementById('category');
 
-  for (const tag of allTags) {
+  for (const tag of tags) {
     const option = document.createElement('option');
     option.textContent = tag.name;
     option.setAttribute('value', tag.id);
@@ -385,17 +406,17 @@ async function fetchTags() {
 async function fetchLevel() {
   const response = await fetch(`${API_BASE_URL}/levels`);
   const data = await response.json();
-  const { allLevels } = data;
+  const { levels } = data;
 
-  const levelsData = allLevels.sort();
+  levels.sort((a, b) => (Number(a.name) > Number(b.name) ? 1 : -1));
 
-  const levels = document.getElementById('level');
+  const leveloption = document.getElementById('level');
 
-  for (const level of levelsData) {
+  for (const level of levels) {
     const option = document.createElement('option');
     option.text = level.name;
     option.setAttribute('value', level.id);
-    levels.appendChild(option);
+    leveloption.appendChild(option);
   }
 }
 
@@ -461,8 +482,27 @@ function setAssignee(assignee) {
 
 function clearSuggestionList() {
   const userNames = document.querySelectorAll('.list-item');
+  document.getElementById('suggested-users').classList.add('hidden');
   userNames.forEach((user) => {
     user.remove();
+  });
+}
+
+function createSuggestedUserLists() {
+  const suggestedUsersDiv = document.getElementById('suggested-users');
+  const suggestedUsersContainer = document.getElementById(
+    'suggested-users-container',
+  );
+
+  suggestedUsersContainer.innerHTML = '';
+  suggestedUsersDiv.classList.remove('hidden');
+
+  suggestedUsers.forEach((user) => {
+    const listItem = document.createElement('p');
+    listItem.classList.add('list-item');
+    listItem.setAttribute('onclick', `setAssignee('${user.username}')`);
+    listItem.innerText = user.username;
+    suggestedUsersContainer.appendChild(listItem);
   });
 }
 
@@ -470,3 +510,5 @@ assigneeEl.addEventListener(
   'input',
   debounce((event) => fetchMembers(event.target.value), 500),
 );
+
+assigneeEl.addEventListener('click', createSuggestedUserLists);

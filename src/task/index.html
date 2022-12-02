@@ -118,18 +118,17 @@
               class="input notEditing"
               id="category"
               name="category"
-            ></select>
+            >
+              <option disabled selected>Select a category</option>
+            </select>
           </div>
           <div class="inputBox">
             <label for="level" class="editable">
               Level:<span class="required">*</span>
             </label>
-            <select
-              required
-              class="input notEditing"
-              id="level"
-              name="level"
-            ></select>
+            <select required class="input notEditing" id="level" name="level">
+              <option disabled selected>Select Level</option>
+            </select>
           </div>
         </div>
         <div class="inputBox class" id="assigneeInput">
@@ -144,7 +143,12 @@
             class="input"
             autocomplete="off"
           />
-          <div id="list-items"></div>
+          <div id="list-items">
+            <div id="suggested-users" class="hidden">
+              <h4 class="suggested-users-title">Suggested users</h4>
+              <div id="suggested-users-container"></div>
+            </div>
+          </div>
         </div>
         <div class="inputBox" id="participantsInput">
           <label for="participants" class="editable">Participants:</label>
