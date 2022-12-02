@@ -1,4 +1,4 @@
-const BASE_URL = 'https://api.realdevsquad.com';
+const BASE_URL = 'http://localhost:4000';
 
 function createElement({ type, attributes = {}, innerText }) {
   const element = document.createElement(type);
@@ -146,19 +146,19 @@ async function getTagLevelOptions() {
       },
     });
 
-    const { allTags } = await tagsResponse.json();
-    let { allLevels } = await levelsResponse.json();
-    allLevels = allLevels.sort((a, b) => {
-      if (parseInt(a.name) < parseInt(b.name)) return -1;
-      if (parseInt(a.name) > parseInt(b.name)) return 1;
-      return 0;
-    });
     if (tagsResponse.status === 500 || levelsResponse.status === 500) {
       alert('server error');
       console.log(response);
       return;
     }
-    return { allLevels, allTags };
+    const { tags } = await tagsResponse.json();
+    let { levels } = await levelsResponse.json();
+    levels = levels.sort((a, b) => {
+      if (parseInt(a.name) < parseInt(b.name)) return -1;
+      if (parseInt(a.name) > parseInt(b.name)) return 1;
+      return 0;
+    });
+    return { levels, tags };
   } catch (error) {
     alert(`something went wrong`);
     console.error(error);

@@ -17,10 +17,11 @@ import skillElement from './skillElement.js';
 import { createEventCard } from './logCard.js';
 
 let tagLevelOptions;
+let userProfileElements; // list<Array> of user profile elements that are appended to modal
 const container = document.getElementById('task-events-container');
 const modal = document.getElementById('modal');
 const overlay = document.querySelector('.overlay');
-export const modalOverlay = createElement({
+const modalOverlay = createElement({
   type: 'div',
   attributes: {
     class: 'modal-overlay',
@@ -36,7 +37,7 @@ modal.appendChild(modalOverlay);
 modalOverlay.appendChild(modalOverlayLoader);
 
 const closeBtn = document.getElementById('close-btn');
-closeBtn.addEventListener('click', closeModal);
+closeBtn.addEventListener('click', () => closeModal(userProfileElements));
 const genericModalCloseBtn = document.getElementById('close-generic-modal');
 genericModalCloseBtn.addEventListener('click', closeGenericModal);
 
@@ -44,18 +45,19 @@ addEventListener('load', async (event) => {
   tagLevelOptions = await getTagLevelOptions();
 });
 
-function closeModal() {
+function closeModal(userProfileElements) {
   overlay.classList.add('hidden');
   const errorDiv = document.querySelector('.error-div');
   if (errorDiv) {
     errorDiv.remove();
     return;
   }
-  document.querySelector('.roles-div').remove();
-  document.querySelector('.activity-btn-div').remove();
-  document.querySelector('.username').remove();
-  document.querySelector('.skill-title').remove();
-  document.querySelector('.user-img').remove();
+  if (userProfileElements) {
+    // removing user profile elements that are appended to modal
+    userProfileElements.forEach((element) => {
+      element.remove();
+    });
+  }
 }
 
 function closeGenericModal() {
@@ -64,7 +66,7 @@ function closeGenericModal() {
   containerDiv.innerHTML = '';
 }
 
-async function createProfileModal(username) {
+async function appendUserProfileElements(username) {
   try {
     overlay.classList.remove('hidden');
     const { user } = await getUserData(username);
@@ -103,7 +105,7 @@ async function createProfileModal(username) {
       innerText: '+',
     });
     addBtn.addEventListener('click', () =>
-      openAddSkillModal(user.id, skillsDiv),
+      openAddSkillModal(user.id, skillsDiv, skills),
     );
     skillTitle.appendChild(title);
     skillTitle.appendChild(addBtn);
@@ -112,6 +114,13 @@ async function createProfileModal(username) {
 
     const activityBtn = createUserActivityBtn(username);
     modal.appendChild(activityBtn);
+    userProfileElements = [
+      skillTitle,
+      skillsDiv,
+      activityBtn,
+      userName,
+      userImg,
+    ];
   } catch (err) {
     addErrorMessage(modal);
     console.log(err);
@@ -119,22 +128,21 @@ async function createProfileModal(username) {
 }
 
 function createSkillsDiv(skills, userId) {
-  const allSkills = [...skills];
   const skillsDiv = createElement({
     type: 'div',
     attributes: { class: 'roles-div' },
   });
-  allSkills.map((role) => {
+  skills.map((role) => {
     skillsDiv.append(
-      skillElement(role.tagName, role.levelName, role.tagId, userId),
+      skillElement(role.tagName, role.levelName, role.tagId, userId, skills),
     );
   });
   return skillsDiv;
 }
 
-function openAddSkillModal(userId, skillsDiv) {
-  const tags = tagLevelOptions.allTags;
-  const levels = tagLevelOptions.allLevels;
+function openAddSkillModal(userId, skillsDiv, skills) {
+  const tags = tagLevelOptions.tags;
+  const levels = tagLevelOptions.levels;
   // a submit button which will make a request to the backend and save the skill in userSkills collection
   const containerDiv = document.getElementById('container-div');
   document.getElementById('generic-modal').style.visibility = 'visible';
@@ -201,8 +209,6 @@ function openAddSkillModal(userId, skillsDiv) {
     innerText: 'Add Skill',
   });
 
-  // once we have the tags collection we can make an API call here to add that skill tag to user, when the super user clicks on submit
-
   containerDiv.appendChild(mainTitle);
   containerDiv.appendChild(skillCategoryDiv);
   containerDiv.appendChild(skillLevelDiv);
@@ -215,6 +221,11 @@ function openAddSkillModal(userId, skillsDiv) {
     const levelToAdd = levels?.find(
       (lvl) => lvl.name === skillLevelSelect.value,
     );
+    const isSkillExists = skills.find((skill) => skill.tagId === tagToAdd.id);
+    if (isSkillExists) {
+      alert('skill already exists');
+      return;
+    }
     const loaderElement = createElement({
       type: 'div',
       attributes: { class: 'dot-flashing-loader' },
@@ -227,10 +238,20 @@ function openAddSkillModal(userId, skillsDiv) {
     submitBtn.innerText = `Add Skill`;
     submitBtn.classList.remove('disabled');
     if (response.ok) {
-      skillsDiv.append(
-        skillElement(tagToAdd.name, levelToAdd.name, tagToAdd.id, userId),
-      );
+      skills.push({
+        itemId: userId,
+        itemType: 'USER',
+        levelId: levelToAdd.id,
+        levelName: levelToAdd.name,
+        levelNumber: levelToAdd.levelNumber,
+        tagId: tagToAdd.id,
+        tagName: tagToAdd.name,
+        tagType: 'SKILL',
+      });
     }
+    skillsDiv.append(
+      skillElement(tagToAdd.name, levelToAdd.name, tagToAdd.id, userId, skills),
+    );
   });
 }
 
@@ -294,7 +315,7 @@ async function renderCard({ container, title, username, isAllTasks }) {
         category: data.category ?? '-',
         level: data.level ?? '-',
         isAllTasks,
-        createModal: createProfileModal,
+        appendUserProfileElements,
       });
     }
     container.prepend(mainTitle);
@@ -334,3 +355,5 @@ async function render() {
 }
 
 render();
+
+export { modalOverlay };

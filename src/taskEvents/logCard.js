@@ -4,7 +4,7 @@ function createSummarySection({
   username,
   logArray,
   isAllTasks,
-  createModalFunction,
+  appendUserProfileElements,
 }) {
   const summary = createElement({
     type: 'summary',
@@ -22,7 +22,7 @@ function createSummarySection({
       attributes: { class: 'name' },
       innerText: username,
     });
-    name.addEventListener('click', () => createModalFunction(username));
+    name.addEventListener('click', () => appendUserProfileElements(username));
     summaryContainer.appendChild(name);
   }
 
@@ -154,7 +154,7 @@ function createEventCard({
   category,
   level,
   isAllTasks,
-  createModal,
+  appendUserProfileElements,
 }) {
   const eventcard = createElement({
     type: 'details',
@@ -164,7 +164,7 @@ function createEventCard({
   const summary = createSummarySection({
     isAllTasks,
     username,
-    createModalFunction: createModal,
+    appendUserProfileElements,
     logArray,
   });
   const details = createDetailsSection({ title, purpose, category, level });
