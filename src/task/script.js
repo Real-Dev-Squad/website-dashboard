@@ -20,6 +20,7 @@ category.addEventListener('change', async () => {
     showSubmitLoader(false);
   }
 });
+let membersData = [];
 
 const getRemainingDays = (selectedDateInString) => {
   const selectedDate = new Date(selectedDateInString);
@@ -420,35 +421,38 @@ async function fetchLevel() {
   }
 }
 
-fetchTags();
-fetchLevel();
-
-async function fetchMembers(searchInput) {
+async function fetchMembers() {
   try {
     const response = await fetch(`${API_BASE_URL}/members`);
     const data = await response.json();
-    clearSuggestionList();
-    wasAssigneeSet = false;
-    if (searchInput.trim() !== '') {
-      const matches = data.members.filter((task) => {
-        if (task.username) {
-          clearUserNotFound();
-          return task.username
-            .toLowerCase()
-            .includes(searchInput.toLowerCase());
-        }
-      });
-      if (searchInput != '' && !matches.length) {
-        const unknownUser = document.createElement('small');
-        unknownUser.classList.add('unknownUsers-list');
-        unknownUser.innerText = 'User not found';
-        const assigneeInput = document.getElementById('assigneeInput');
-        assigneeInput.appendChild(unknownUser);
-      }
-      createSuggestionsList(matches);
-    }
+    membersData = data.members;
   } catch {
     return;
+  }
+}
+
+fetchTags();
+fetchLevel();
+fetchMembers();
+
+function filterMembers(searchInput) {
+  clearSuggestionList();
+  wasAssigneeSet = false;
+  if (searchInput.trim() !== '') {
+    const matches = membersData.filter((task) => {
+      if (task.username) {
+        clearUserNotFound();
+        return task.username.toLowerCase().includes(searchInput.toLowerCase());
+      }
+    });
+    if (searchInput != '' && !matches.length) {
+      const unknownUser = document.createElement('small');
+      unknownUser.classList.add('unknownUsers-list');
+      unknownUser.innerText = 'User not found';
+      const assigneeInput = document.getElementById('assigneeInput');
+      assigneeInput.appendChild(unknownUser);
+    }
+    createSuggestionsList(matches);
   }
 }
 
@@ -508,7 +512,7 @@ function createSuggestedUserLists() {
 
 assigneeEl.addEventListener(
   'input',
-  debounce((event) => fetchMembers(event.target.value), 500),
+  debounce((event) => filterMembers(event.target.value), 500),
 );
 
 assigneeEl.addEventListener('click', createSuggestedUserLists);
