@@ -4,7 +4,6 @@ const main = document.getElementById('main');
 const loading = document.getElementById('loading');
 const selectElement = document.getElementById('select-tags');
 const BASE_URL = 'https://api.realdevsquad.com';
-
 (async function setAuth() {
   try {
     const res = await fetch(`${BASE_URL}/users/self`, {
@@ -59,12 +58,12 @@ function createTagCreationComponent() {
 }
 
 async function createLevel() {
+  const button = document.querySelector('.submit-button');
   try {
     const inputValue = document.getElementById('level').value;
-    const button = document.querySelector('.submit-button');
     const body = {
       name: inputValue,
-      levelnumber: inputValue,
+      level: inputValue,
     };
     setLoadingState();
     button.textContent = 'Creating Level...';
@@ -89,9 +88,9 @@ async function createLevel() {
 }
 
 async function createSkill() {
+  const button = document.querySelector('.submit-button');
   try {
     const inputValue = document.getElementById('skill').value;
-    const button = document.querySelector('.submit-button');
 
     const body = {
       name: inputValue,
