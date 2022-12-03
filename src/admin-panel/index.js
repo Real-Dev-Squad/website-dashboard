@@ -58,9 +58,9 @@ function createTagCreationComponent() {
 }
 
 async function createLevel() {
+  const button = document.querySelector('.submit-button');
   try {
     const inputValue = document.getElementById('level').value;
-    const button = document.querySelector('.submit-button');
     const body = {
       name: inputValue,
       level: inputValue,
@@ -83,14 +83,14 @@ async function createLevel() {
     alert(err);
   } finally {
     removeLoadingState();
-    document.querySelector('.submit-button').textContent = 'Create Level';
+    button.textContent = 'Create Level';
   }
 }
 
 async function createSkill() {
+  const button = document.querySelector('.submit-button');
   try {
     const inputValue = document.getElementById('skill').value;
-    const button = document.querySelector('.submit-button');
 
     const body = {
       name: inputValue,
@@ -117,7 +117,7 @@ async function createSkill() {
     alert(err);
   } finally {
     removeLoadingState();
-    document.querySelector('.submit-button').textContent = 'Create Skill';
+    button.textContent = 'Create Skill';
   }
 }
 
