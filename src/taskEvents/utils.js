@@ -107,6 +107,122 @@ async function getData(data) {
   };
 }
 
+async function getUserSkills(userId) {
+  try {
+    const response = await fetch(`${BASE_URL}/users/${userId}/skills`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+    if (response.status === 500) {
+      alert('server error');
+      console.log(response);
+      return;
+    }
+    const userSkills = await response.json();
+    return userSkills;
+  } catch (error) {
+    alert('something went wrong');
+    console.log(error);
+  }
+}
+
+async function getTagLevelOptions() {
+  try {
+    const levelsResponse = await fetch(`${BASE_URL}/levels`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+    const tagsResponse = await fetch(`${BASE_URL}/tags`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+
+    if (tagsResponse.status === 500 || levelsResponse.status === 500) {
+      alert('server error');
+      console.log(response);
+      return;
+    }
+    const { tags } = await tagsResponse.json();
+    let { levels } = await levelsResponse.json();
+    levels = levels.sort((a, b) => {
+      if (parseInt(a.name) < parseInt(b.name)) return -1;
+      if (parseInt(a.name) > parseInt(b.name)) return 1;
+      return 0;
+    });
+    return { levels, tags };
+  } catch (error) {
+    alert(`something went wrong`);
+    console.error(error);
+  }
+}
+
+async function addSkillToUser(tagToAdd, levelToAdd, userId) {
+  const body = {
+    itemId: userId,
+    itemType: 'USER',
+    tagPayload: [
+      {
+        levelId: levelToAdd?.id,
+        tagId: tagToAdd?.id,
+      },
+    ],
+  };
+  try {
+    const response = await fetch(`${BASE_URL}/items`, {
+      method: 'POST',
+      credentials: 'include',
+      body: JSON.stringify(body),
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+    if (response.status === 500) {
+      alert('server error');
+      console.log(response);
+      return;
+    }
+    return response;
+  } catch (error) {
+    alert('something went wrong');
+    console.error(error);
+  }
+}
+
+async function removeSkillFromUser(tagId, userId) {
+  const body = {
+    itemId: userId,
+    tagId,
+  };
+  try {
+    const response = await fetch(`${BASE_URL}/items`, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    if (response.status === 500) {
+      alert('server error');
+      console.log(response);
+      return;
+    }
+    return response;
+  } catch (error) {
+    alert('something went wrong');
+    console.error(error);
+  }
+}
+
 export {
   createElement,
   addLoader,
@@ -117,4 +233,8 @@ export {
   getSelfDetails,
   getData,
   removeLoader,
+  getUserSkills,
+  getTagLevelOptions,
+  addSkillToUser,
+  removeSkillFromUser,
 };
