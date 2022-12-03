@@ -11,6 +11,9 @@
   --loader-gray-color: #f3f3f3;
   --loader-blue-color: #3498db;
   --red-color: red;
+  --text-note-color: #c2babaf2;
+  --button-gray-color: #e5e5e5;
+  --button-shadow-color: #c1c1c1;
 }
 
 .header {
@@ -56,21 +59,16 @@
 ul {
   list-style-type: none;
   padding-inline-start: 0px;
-  display: grid;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
   list-style: none;
-  grid-gap: 40px;
-}
-
-.table-view {
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-}
-.tile-view {
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
 li {
   border: 1.5px solid var(--black-color);
-  margin: 0 auto;
+  margin: 15px;
   border-radius: 10px;
   background-color: var(--light-gray-color);
   width: 150px;
@@ -89,7 +87,7 @@ li p {
   width: 200px;
 }
 
-.element-display-remove {
+.remove-element {
   display: none;
 }
 
@@ -97,6 +95,7 @@ li p {
   font-size: x-large;
   color: var(--red-color);
 }
+
 .user-img-dimension {
   width: 70px;
   height: 70px;
@@ -110,6 +109,33 @@ li p {
   height: 50px;
   animation: spin 2s linear infinite;
   margin: 150px auto;
+}
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  margin: 15px;
+}
+
+.pagination-btn {
+  font-size: 20px;
+  border-radius: 7px;
+  padding: 10px 15px;
+  border: none;
+  background-color: var(--button-active-color);
+}
+
+.pagination-btn:active {
+  background: var(--button-gray-color);
+  box-shadow: inset 0px 0px 5px var(--button-shadow-color);
+}
+
+.btn-disabled {
+  pointer-events: none;
+  background-color: var(--button-gray-color);
+}
+
+#user-note {
+  color: var(--text-note-color);
 }
 
 @keyframes spin {
@@ -130,6 +156,10 @@ li p {
   }
   #search input {
     width: 200px;
+  }
+  .pagination-btn {
+    font-size: 15px;
+    padding: 7px 12px;
   }
 }
 
