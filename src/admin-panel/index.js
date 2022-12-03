@@ -4,7 +4,6 @@ const main = document.getElementById('main');
 const loading = document.getElementById('loading');
 const selectElement = document.getElementById('select-tags');
 const BASE_URL = 'https://api.realdevsquad.com';
-
 (async function setAuth() {
   try {
     const res = await fetch(`${BASE_URL}/users/self`, {
@@ -64,7 +63,7 @@ async function createLevel() {
     const button = document.querySelector('.submit-button');
     const body = {
       name: inputValue,
-      levelnumber: inputValue,
+      level: inputValue,
     };
     setLoadingState();
     button.textContent = 'Creating Level...';
@@ -84,7 +83,7 @@ async function createLevel() {
     alert(err);
   } finally {
     removeLoadingState();
-    button.textContent = 'Create Level';
+    document.querySelector('.submit-button').textContent = 'Create Level';
   }
 }
 
@@ -118,7 +117,7 @@ async function createSkill() {
     alert(err);
   } finally {
     removeLoadingState();
-    button.textContent = 'Create Skill';
+    document.querySelector('.submit-button').textContent = 'Create Skill';
   }
 }
 
