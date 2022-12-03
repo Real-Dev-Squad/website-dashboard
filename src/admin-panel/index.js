@@ -1,7 +1,32 @@
 import { createElement } from './utils.js';
-const selectElement = document.getElementById('select-tags');
+const mainContainer = document.getElementById('main-container');
 const main = document.getElementById('main');
+const loading = document.getElementById('loading');
+const selectElement = document.getElementById('select-tags');
 const BASE_URL = 'http://localhost:4000';
+
+(async function setAuth() {
+  try {
+    const res = await fetch(`${BASE_URL}/users/self`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+
+    const selfDetails = await res.json();
+
+    if (!selfDetails.roles.super_user) {
+      mainContainer.innerHTML = 'You are not authorized to view this page';
+    }
+  } catch (err) {
+    alert('something went wrong');
+  } finally {
+    loading.classList.add('hidden');
+    mainContainer.classList.remove('hidden');
+  }
+})();
 
 function createTagCreationComponent() {
   const title = createElement({

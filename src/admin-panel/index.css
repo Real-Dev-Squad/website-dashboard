@@ -70,6 +70,10 @@ input::placeholder {
   margin-top: 0;
 }
 
+.hidden {
+  display: none;
+}
+
 button:disabled {
   background-color: gray;
   cursor: not-allowed;
