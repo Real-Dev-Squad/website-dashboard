@@ -136,7 +136,7 @@ details[open] .dropDown {
 }
 
 #modal {
-  max-width: 250px;
+  max-width: 280px;
   height: 60%;
   margin: 0 auto;
   background: var(--light-gray);
@@ -149,6 +149,25 @@ details[open] .dropDown {
   overflow: hidden;
   border-radius: 15px;
   opacity: 1.6;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+  display: none;
+  z-index: 9999;
+}
+
+.modal-overlay.active {
+  display: grid;
+  place-content: center;
+  pointer-events: none;
 }
 
 .top-div {
@@ -212,7 +231,6 @@ details[open] .dropDown {
 /* Input Styles */
 
 .skill-title {
-  margin-top: 30px;
   margin-bottom: 0;
   align-self: flex-start;
   font-size: 1.4rem;
@@ -331,6 +349,12 @@ details[open] .dropDown {
   flex-direction: column;
 }
 
+.skill-title-container {
+  display: flex;
+  gap: 1rem;
+  margin-top: 30px;
+}
+
 .skill-level-div,
 .skill-category-div {
   margin: 0 auto;
@@ -344,7 +368,7 @@ details[open] .dropDown {
   width: 100%;
 }
 
-.submit-btn {
+.skill-submit-btn {
   justify-self: flex-end;
   align-self: center;
   background-color: var(--dark-blue);
@@ -352,6 +376,14 @@ details[open] .dropDown {
   width: 80%;
   margin-top: 2rem;
   padding: 0.5rem;
+  display: grid;
+  place-content: center;
+  height: 35px;
+}
+
+.skill-submit-btn.disabled {
+  pointer-events: none;
+  opacity: 0.25;
 }
 
 @media (max-width: 600px) {
@@ -361,5 +393,62 @@ details[open] .dropDown {
 
   #task-events-container .dropDown {
     opacity: 0;
+  }
+}
+
+/**
+ * ==============================================
+ * Dot Flashing Loader
+ * ==============================================
+ */
+
+.dot-flashing-loader {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #ffffff;
+  color: #ffffff;
+  animation: dotFlashing 0.5s infinite linear alternate;
+  animation-delay: 0.25s;
+}
+
+.dot-flashing-loader::before,
+.dot-flashing-loader::after {
+  content: '';
+  display: inline-block;
+  position: absolute;
+  top: 0;
+}
+
+.dot-flashing-loader::before {
+  left: -15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #ffffff;
+  color: #ffffff;
+  animation: dotFlashing 0.5s infinite alternate;
+  animation-delay: 0s;
+}
+
+.dot-flashing-loader::after {
+  left: 15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #ffffff;
+  color: #ffffff;
+  animation: dotFlashing 0.5s infinite alternate;
+  animation-delay: 0.5s;
+}
+
+@keyframes dotFlashing {
+  0% {
+    background-color: #ffffff;
+  }
+  50%,
+  100% {
+    background-color: rgba(0, 0, 0, 0.25);
   }
 }
