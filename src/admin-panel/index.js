@@ -3,7 +3,7 @@ const mainContainer = document.getElementById('main-container');
 const main = document.getElementById('main');
 const loading = document.getElementById('loading');
 const selectElement = document.getElementById('select-tags');
-const BASE_URL = 'https://api.realdevsquad.com';
+const BASE_URL = 'http://localhost:3000';
 (async function setAuth() {
   try {
     const res = await fetch(`${BASE_URL}/users/self`, {
@@ -61,10 +61,12 @@ async function createLevel() {
   const button = document.querySelector('.submit-button');
   try {
     const inputValue = document.getElementById('level').value;
+    const levelValue = document.querySelector('.level-selector').value;
     const body = {
       name: inputValue,
-      level: inputValue,
+      level: levelValue,
     };
+    console.log(body);
     setLoadingState();
     button.textContent = 'Creating Level...';
 
