@@ -3,7 +3,7 @@ const mainContainer = document.getElementById('main-container');
 const main = document.getElementById('main');
 const loading = document.getElementById('loading');
 const selectElement = document.getElementById('select-tags');
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'https://api.realdevsquad.com';
 (async function setAuth() {
   try {
     const res = await fetch(`${BASE_URL}/users/self`, {
