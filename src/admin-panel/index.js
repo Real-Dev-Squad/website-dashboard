@@ -61,10 +61,12 @@ async function createLevel() {
   const button = document.querySelector('.submit-button');
   try {
     const inputValue = document.getElementById('level').value;
+    const levelValue = document.querySelector('.level-selector').value;
     const body = {
       name: inputValue,
-      level: inputValue,
+      level: levelValue,
     };
+    console.log(body);
     setLoadingState();
     button.textContent = 'Creating Level...';
 
