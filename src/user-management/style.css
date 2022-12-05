@@ -8,12 +8,11 @@
   --black-color: black;
   --light-gray-color: lightgray;
   --button-active-color: #a8a8a8;
-  --loader-gray-color: #f3f3f3;
+  --gray-color: #f3f3f3;
   --loader-blue-color: #3498db;
   --red-color: red;
   --text-note-color: #c2babaf2;
-  --button-gray-color: #e5e5e5;
-  --button-shadow-color: #c1c1c1;
+  --pagination-btn-active-color: #192bc2;
 }
 
 .header {
@@ -102,8 +101,8 @@ li p {
 }
 
 #loader {
-  border: 5px solid var(--loader-gray-color); /* Light grey */
-  border-top: 5px solid var(--loader-blue-color); /* Blue */
+  border: 5px solid var(--gray-color);
+  border-top: 5px solid var(--loader-blue-color);
   border-radius: 50%;
   width: 50px;
   height: 50px;
@@ -121,17 +120,19 @@ li p {
   border-radius: 7px;
   padding: 10px 15px;
   border: none;
-  background-color: var(--button-active-color);
+  background-color: var(--pagination-btn-active-color);
+  color: var(--white-color);
 }
 
 .pagination-btn:active {
-  background: var(--button-gray-color);
-  box-shadow: inset 0px 0px 5px var(--button-shadow-color);
+  background-color: var(--gray-color);
+  color: var(--pagination-btn-active-color);
 }
 
 .btn-disabled {
   pointer-events: none;
-  background-color: var(--button-gray-color);
+  background-color: var(--gray-color);
+  color: var(--pagination-btn-active-color);
 }
 
 #user-note {
