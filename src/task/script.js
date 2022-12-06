@@ -235,9 +235,9 @@ taskForm.onsubmit = async (e) => {
 
     if (response.ok) {
       const body = {
-        itemid: result.id,
+        itemId: result.id,
         itemType: 'task',
-        tagPayload: [{ tagid: category, levelid: level }],
+        tagPayload: [{ tagId: category, levelId: level }],
       };
       await fetch(`${API_BASE_URL}/items`, {
         method: 'POST',
