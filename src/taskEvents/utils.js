@@ -154,8 +154,8 @@ async function getTagLevelOptions() {
     const { tags } = await tagsResponse.json();
     let { levels } = await levelsResponse.json();
     levels = levels.sort((a, b) => {
-      if (parseInt(a.name) < parseInt(b.name)) return -1;
-      if (parseInt(a.name) > parseInt(b.name)) return 1;
+      if (a.value < b.value) return -1;
+      if (a.value > b.value) return 1;
       return 0;
     });
     return { levels, tags };
