@@ -72,7 +72,6 @@ async function appendUserProfileElements(username) {
     const { user } = await getUserData(username);
     const { skills } = await getUserSkills(user.id);
     const skillsDiv = createSkillsDiv(skills, user.id);
-    // another call for roles will be made when we have userSkills collection
     const userImg = createElement({
       type: 'img',
       attributes: {
@@ -134,7 +133,7 @@ function createSkillsDiv(skills, userId) {
   });
   skills.map((role) => {
     skillsDiv.append(
-      skillElement(role.tagName, role.levelName, role.tagId, userId, skills),
+      skillElement(role.tagName, role.levelValue, role.tagId, userId, skills),
     );
   });
   return skillsDiv;
@@ -166,11 +165,21 @@ function openAddSkillModal(userId, skillsDiv, skills) {
   });
 
   for (let i = 0; i < tags.length; i++) {
+    let isSkillExists;
+    skills.forEach((skill) => {
+      if(skill.tagName === tags[i].name){
+        isSkillExists = true;
+      }
+    })
+    if(isSkillExists){
+      continue;
+    }
     const option = createElement({
       type: 'option',
       attributes: { class: 'options' },
       innerText: tags[i].name,
     });
+    option.setAttribute('data-tag',tags[i].name)
     skillCategorySelect.appendChild(option);
   }
 
@@ -195,7 +204,7 @@ function openAddSkillModal(userId, skillsDiv, skills) {
     const option = createElement({
       type: 'option',
       attributes: { class: 'option' },
-      innerText: levels[i].name,
+      innerText: levels[i].value,
     });
     skillLevelSelect.appendChild(option);
   }
@@ -213,7 +222,7 @@ function openAddSkillModal(userId, skillsDiv, skills) {
   containerDiv.appendChild(skillCategoryDiv);
   containerDiv.appendChild(skillLevelDiv);
   containerDiv.appendChild(submitBtn);
-
+  // new skill submit handler
   submitBtn.addEventListener('click', async () => {
     const tagToAdd = tags?.find(
       (tag) => tag.name === skillCategorySelect.value,
@@ -235,7 +244,7 @@ function openAddSkillModal(userId, skillsDiv, skills) {
     submitBtn.classList.add('disabled');
     const response = await addSkillToUser(tagToAdd, levelToAdd, userId);
     loaderElement.remove();
-    submitBtn.innerText = `Add Skill`;
+    submitBtn.innerText = 'Add Skill';
     submitBtn.classList.remove('disabled');
     if (response.ok) {
       skills.push({
@@ -243,14 +252,14 @@ function openAddSkillModal(userId, skillsDiv, skills) {
         itemType: 'USER',
         levelId: levelToAdd.id,
         levelName: levelToAdd.name,
-        levelNumber: levelToAdd.levelNumber,
+        levelValue: levelToAdd.value,
         tagId: tagToAdd.id,
         tagName: tagToAdd.name,
         tagType: 'SKILL',
       });
     }
     skillsDiv.append(
-      skillElement(tagToAdd.name, levelToAdd.name, tagToAdd.id, userId, skills),
+      skillElement(tagToAdd.name, levelToAdd.name, tagToAdd.id, userId, skills, skillCategorySelect),
     );
   });
 }
@@ -292,7 +301,6 @@ async function renderCard({ container, title, username, isAllTasks }) {
       innerText: title,
     });
     const { logs } = await getTaskLogs(username);
-
     if (logs.length === 0) {
       const noLogsFound = createElement({
         type: 'p',
@@ -320,6 +328,7 @@ async function renderCard({ container, title, username, isAllTasks }) {
     }
     container.prepend(mainTitle);
   } catch (error) {
+    console.error(error);
     // in case our API call fails we need to enable that button
     document.getElementById('close-generic-modal').disabled = false;
     addErrorMessage(container);
@@ -347,7 +356,8 @@ async function render() {
       elementContainer.appendChild(element);
       container.appendChild(elementContainer);
     }
-  } catch (err) {
+  } catch (error) {
+    console.error(error);
     addErrorMessage(container);
   } finally {
     removeLoader();
