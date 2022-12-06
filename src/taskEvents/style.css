@@ -137,18 +137,19 @@ details[open] .dropDown {
 
 #modal {
   max-width: 280px;
-  height: 60%;
+  min-height: 60%;
+  position: relative;
   margin: 0 auto;
   background: var(--light-gray);
   color: var(--black);
-  position: relative;
   top: 20%;
   display: flex;
   flex-direction: column;
   align-items: center;
   overflow: hidden;
   border-radius: 15px;
-  opacity: 1.6;
+  opacity: 1;
+  font-family: 'roboto mono';
 }
 
 .modal-overlay {
@@ -235,7 +236,6 @@ details[open] .dropDown {
   align-self: flex-start;
   font-size: 1.4rem;
   font-weight: 400;
-  font-family: 'roboto mono';
   margin-left: 10px;
 }
 
