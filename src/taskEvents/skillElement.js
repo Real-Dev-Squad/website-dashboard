@@ -30,7 +30,7 @@ function skillElement(skillTagName, skillLevel, skillTagId, userId, skills) {
     handleRemoveSkill(skillItemElement),
   );
   skillItemElement.appendChild(removeBtn);
-  
+
   async function handleRemoveSkill(skillItemElement) {
     modal.style.pointerEvents='none';
     modalOverlay.classList.add('active');

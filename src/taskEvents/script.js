@@ -259,8 +259,9 @@ function openAddSkillModal(userId, skillsDiv, skills) {
       });
     }
     skillsDiv.append(
-      skillElement(tagToAdd.name, levelToAdd.name, tagToAdd.id, userId, skills, skillCategorySelect),
+      skillElement(tagToAdd.name, levelToAdd.value, tagToAdd.id, userId, skills, skillCategorySelect),
     );
+    skillCategoryDiv.querySelector(`option[data-tag=${tagToAdd.name}]`).remove() //removing the skill option which was added
   });
 }
 
