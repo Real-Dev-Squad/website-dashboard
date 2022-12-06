@@ -2,9 +2,9 @@ import { createElement } from './utils.js';
 
 function createSummarySection({
   username,
-  logArray,
+  newData,
   isAllTasks,
-  createModalFunction,
+  appendUserProfileElements,
 }) {
   const summary = createElement({
     type: 'summary',
@@ -22,18 +22,27 @@ function createSummarySection({
       attributes: { class: 'name' },
       innerText: username,
     });
-    name.addEventListener('click', () => createModalFunction(username));
+    name.addEventListener('click', () => appendUserProfileElements(username));
     summaryContainer.appendChild(name);
   }
 
-  for (const log of logArray) {
-    const tasklog = createElement({
+  const logTitle = createElement({
+    type: 'p',
+    attributes: { class: 'log' },
+    innerText: 'updated task',
+  });
+
+  summaryContainer.appendChild(logTitle);
+
+  Object.keys(newData).map((data) => {
+    const logFields = createElement({
       type: 'p',
       attributes: { class: 'log' },
-      innerText: log,
+      innerText: `${data}: ${newData[data]}`,
     });
-    summaryContainer.appendChild(tasklog);
-  }
+    summaryContainer.appendChild(logFields);
+  });
+
   const icon = createElement({
     type: 'img',
     attributes: {
@@ -148,13 +157,13 @@ function createDetailsSection({ title, purpose, category, level }) {
 function createEventCard({
   container,
   title,
-  logArray,
+  newData,
   purpose,
   username,
   category,
   level,
   isAllTasks,
-  createModal,
+  appendUserProfileElements,
 }) {
   const eventcard = createElement({
     type: 'details',
@@ -164,8 +173,8 @@ function createEventCard({
   const summary = createSummarySection({
     isAllTasks,
     username,
-    createModalFunction: createModal,
-    logArray,
+    appendUserProfileElements,
+    newData,
   });
   const details = createDetailsSection({ title, purpose, category, level });
 
