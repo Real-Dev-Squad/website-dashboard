@@ -95,14 +95,14 @@ async function getSelfDetails() {
 }
 
 async function getData(data) {
-  const messages = data?.body.messages;
+  const newData = data?.body.new;
   const userName = data?.meta.username;
   const taskId = data?.meta.taskId;
   const { taskData } = await getTaskData(taskId);
 
   return {
     ...taskData,
-    messages,
+    newData,
     userName,
   };
 }
