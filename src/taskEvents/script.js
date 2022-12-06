@@ -167,11 +167,11 @@ function openAddSkillModal(userId, skillsDiv, skills) {
   for (let i = 0; i < tags.length; i++) {
     let isSkillExists;
     skills.forEach((skill) => {
-      if(skill.tagName === tags[i].name){
+      if (skill.tagName === tags[i].name) {
         isSkillExists = true;
       }
-    })
-    if(isSkillExists){
+    });
+    if (isSkillExists) {
       continue;
     }
     const option = createElement({
@@ -179,7 +179,7 @@ function openAddSkillModal(userId, skillsDiv, skills) {
       attributes: { class: 'options' },
       innerText: tags[i].name,
     });
-    option.setAttribute('data-tag',tags[i].name)
+    option.setAttribute('data-tag', tags[i].name);
     skillCategorySelect.appendChild(option);
   }
 
@@ -259,9 +259,18 @@ function openAddSkillModal(userId, skillsDiv, skills) {
       });
     }
     skillsDiv.append(
-      skillElement(tagToAdd.name, levelToAdd.value, tagToAdd.id, userId, skills, skillCategorySelect),
+      skillElement(
+        tagToAdd.name,
+        levelToAdd.value,
+        tagToAdd.id,
+        userId,
+        skills,
+        skillCategorySelect,
+      ),
     );
-    skillCategoryDiv.querySelector(`option[data-tag=${tagToAdd.name}]`).remove() //removing the skill option which was added
+    skillCategoryDiv
+      .querySelector(`option[data-tag=${tagToAdd.name}]`)
+      .remove(); //removing the skill option which was added
   });
 }
 
