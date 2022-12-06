@@ -1,7 +1,7 @@
 import { createElement, removeSkillFromUser } from './utils.js';
 import { modalOverlay } from './script.js';
 
-const modal = document.getElementById("modal");
+const modal = document.getElementById('modal');
 /** 
   @params skillTagName: tagname of skill to be added to skill element
   @params skillLevel: level of skill to be added to skill element
@@ -32,7 +32,7 @@ function skillElement(skillTagName, skillLevel, skillTagId, userId, skills) {
   skillItemElement.appendChild(removeBtn);
 
   async function handleRemoveSkill(skillItemElement) {
-    modal.style.pointerEvents='none';
+    modal.style.pointerEvents = 'none';
     modalOverlay.classList.add('active');
     const response = await removeSkillFromUser(skillTagId, userId);
     if (response.ok) {
@@ -41,7 +41,7 @@ function skillElement(skillTagName, skillLevel, skillTagId, userId, skills) {
       skills.splice(index, 1);
       skillItemElement.remove();
     }
-    modal.style.pointerEvents='auto';
+    modal.style.pointerEvents = 'auto';
     modalOverlay.classList.remove('active');
   }
 
