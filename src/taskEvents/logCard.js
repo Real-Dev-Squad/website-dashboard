@@ -2,7 +2,7 @@ import { createElement } from './utils.js';
 
 function createSummarySection({
   username,
-  logArray,
+  newData,
   isAllTasks,
   appendUserProfileElements,
 }) {
@@ -26,14 +26,23 @@ function createSummarySection({
     summaryContainer.appendChild(name);
   }
 
-  for (const log of logArray) {
-    const tasklog = createElement({
+  const logTitle = createElement({
+    type: 'p',
+    attributes: { class: 'log' },
+    innerText: 'updated task',
+  });
+
+  summaryContainer.appendChild(logTitle);
+
+  Object.keys(newData).map((data) => {
+    const logFields = createElement({
       type: 'p',
       attributes: { class: 'log' },
-      innerText: log,
+      innerText: `${data}: ${newData[data]}`,
     });
-    summaryContainer.appendChild(tasklog);
-  }
+    summaryContainer.appendChild(logFields);
+  });
+
   const icon = createElement({
     type: 'img',
     attributes: {
@@ -148,7 +157,7 @@ function createDetailsSection({ title, purpose, category, level }) {
 function createEventCard({
   container,
   title,
-  logArray,
+  newData,
   purpose,
   username,
   category,
@@ -165,7 +174,7 @@ function createEventCard({
     isAllTasks,
     username,
     appendUserProfileElements,
-    logArray,
+    newData,
   });
   const details = createDetailsSection({ title, purpose, category, level });
 

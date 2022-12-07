@@ -20,6 +20,7 @@ category.addEventListener('change', async () => {
     showSubmitLoader(false);
   }
 });
+let membersData = [];
 
 const getRemainingDays = (selectedDateInString) => {
   const selectedDate = new Date(selectedDateInString);
@@ -234,9 +235,9 @@ taskForm.onsubmit = async (e) => {
 
     if (response.ok) {
       const body = {
-        itemid: result.id,
+        itemId: result.id,
         itemType: 'task',
-        tagPayload: [{ tagid: category, levelid: level }],
+        tagPayload: [{ tagId: category, levelId: level }],
       };
       await fetch(`${API_BASE_URL}/items`, {
         method: 'POST',
@@ -408,47 +409,50 @@ async function fetchLevel() {
   const data = await response.json();
   const { levels } = data;
 
-  levels.sort((a, b) => (Number(a.name) > Number(b.name) ? 1 : -1));
+  levels.sort((a, b) => (a.value > b.value ? 1 : -1));
 
   const leveloption = document.getElementById('level');
 
   for (const level of levels) {
     const option = document.createElement('option');
-    option.text = level.name;
+    option.text = level.value;
     option.setAttribute('value', level.id);
     leveloption.appendChild(option);
   }
 }
 
-fetchTags();
-fetchLevel();
-
-async function fetchMembers(searchInput) {
+async function fetchMembers() {
   try {
     const response = await fetch(`${API_BASE_URL}/members`);
     const data = await response.json();
-    clearSuggestionList();
-    wasAssigneeSet = false;
-    if (searchInput.trim() !== '') {
-      const matches = data.members.filter((task) => {
-        if (task.username) {
-          clearUserNotFound();
-          return task.username
-            .toLowerCase()
-            .includes(searchInput.toLowerCase());
-        }
-      });
-      if (searchInput != '' && !matches.length) {
-        const unknownUser = document.createElement('small');
-        unknownUser.classList.add('unknownUsers-list');
-        unknownUser.innerText = 'User not found';
-        const assigneeInput = document.getElementById('assigneeInput');
-        assigneeInput.appendChild(unknownUser);
-      }
-      createSuggestionsList(matches);
-    }
+    membersData = data.members;
   } catch {
     return;
+  }
+}
+
+fetchTags();
+fetchLevel();
+fetchMembers();
+
+function filterMembers(searchInput) {
+  clearSuggestionList();
+  wasAssigneeSet = false;
+  if (searchInput.trim() !== '') {
+    const matches = membersData.filter((task) => {
+      if (task.username) {
+        clearUserNotFound();
+        return task.username.toLowerCase().includes(searchInput.toLowerCase());
+      }
+    });
+    if (searchInput != '' && !matches.length) {
+      const unknownUser = document.createElement('small');
+      unknownUser.classList.add('unknownUsers-list');
+      unknownUser.innerText = 'User not found';
+      const assigneeInput = document.getElementById('assigneeInput');
+      assigneeInput.appendChild(unknownUser);
+    }
+    createSuggestionsList(matches);
   }
 }
 
@@ -508,7 +512,7 @@ function createSuggestedUserLists() {
 
 assigneeEl.addEventListener(
   'input',
-  debounce((event) => fetchMembers(event.target.value), 500),
+  debounce((event) => filterMembers(event.target.value), 500),
 );
 
 assigneeEl.addEventListener('click', createSuggestedUserLists);

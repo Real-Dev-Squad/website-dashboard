@@ -95,14 +95,14 @@ async function getSelfDetails() {
 }
 
 async function getData(data) {
-  const messages = data?.body.messages;
+  const newData = data?.body.new;
   const userName = data?.meta.username;
   const taskId = data?.meta.taskId;
   const { taskData } = await getTaskData(taskId);
 
   return {
     ...taskData,
-    messages,
+    newData,
     userName,
   };
 }
@@ -154,8 +154,8 @@ async function getTagLevelOptions() {
     const { tags } = await tagsResponse.json();
     let { levels } = await levelsResponse.json();
     levels = levels.sort((a, b) => {
-      if (parseInt(a.name) < parseInt(b.name)) return -1;
-      if (parseInt(a.name) > parseInt(b.name)) return 1;
+      if (a.value < b.value) return -1;
+      if (a.value > b.value) return 1;
       return 0;
     });
     return { levels, tags };

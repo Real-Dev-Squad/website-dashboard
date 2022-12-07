@@ -64,7 +64,7 @@ async function createLevel() {
     const levelValue = document.querySelector('.level-selector').value;
     const body = {
       name: inputValue,
-      level: levelValue,
+      value: levelValue,
     };
     console.log(body);
     setLoadingState();
