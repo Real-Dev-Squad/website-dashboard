@@ -235,9 +235,9 @@ taskForm.onsubmit = async (e) => {
 
     if (response.ok) {
       const body = {
-        itemid: result.id,
+        itemId: result.id,
         itemType: 'task',
-        tagPayload: [{ tagid: category, levelid: level }],
+        tagPayload: [{ tagId: category, levelId: level }],
       };
       await fetch(`${API_BASE_URL}/items`, {
         method: 'POST',
@@ -409,13 +409,13 @@ async function fetchLevel() {
   const data = await response.json();
   const { levels } = data;
 
-  levels.sort((a, b) => (Number(a.name) > Number(b.name) ? 1 : -1));
+  levels.sort((a, b) => (a.value > b.value ? 1 : -1));
 
   const leveloption = document.getElementById('level');
 
   for (const level of levels) {
     const option = document.createElement('option');
-    option.text = level.name;
+    option.text = level.value;
     option.setAttribute('value', level.id);
     leveloption.appendChild(option);
   }
