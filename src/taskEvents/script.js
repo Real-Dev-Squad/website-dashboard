@@ -228,7 +228,7 @@ function openAddSkillModal(userId, skillsDiv, skills) {
       (tag) => tag.name === skillCategorySelect.value,
     );
     const levelToAdd = levels?.find(
-      (lvl) => lvl.name === skillLevelSelect.value,
+      (level) => level.value == skillLevelSelect.value,
     );
     const isSkillExists = skills.find((skill) => skill.tagId === tagToAdd.id);
     if (isSkillExists) {
