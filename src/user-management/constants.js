@@ -6,3 +6,7 @@ const TILE_VIEW_BTN = 'tile-view-btn';
 const TABLE_VIEW_BTN = 'table-view-btn';
 const USER_SEARCH_ELEMENT = 'user-search';
 const DEFAULT_AVATAR = './images/avatar.png';
+const PAGINATION_ELEMENT = 'pagination';
+const PREV_BUTTON = 'prevButton';
+const NEXT_BUTTON = 'nextButton';
+const USER_FETCH_COUNT = 100;
