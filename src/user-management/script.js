@@ -87,6 +87,7 @@ async function getUsersData(page) {
         (user) => user.first_name && !user.roles?.archived,
       );
       usersDataList = usersDataList.map((user) => ({
+        username: user.username,
         first_name: user.first_name,
         last_name: user.last_name ? user.last_name : '',
         picture: user.picture && user.picture.url ? user.picture.url : '',
@@ -133,6 +134,9 @@ function generateUserList(users, showPagination) {
       listElement.classList.remove('tile-width');
       imgElement.classList.add('remove-element');
     }
+    listElement.onclick = () => {
+      window.location.href = `user-details/index.html?username=${userData.username}`;
+    };
     ulElement.appendChild(listElement);
   });
   loaderElement.classList.add('remove-element');
