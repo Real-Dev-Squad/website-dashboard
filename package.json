@@ -26,8 +26,8 @@
     "prettier": "2.3.1"
   },
   "dependencies": {
-    "puppeteer": "^12.0.1",
-    "puppeteer-core": "^12.0.1",
+    "puppeteer": "^19.4.0",
+    "puppeteer-core": "^19.4.0",
     "express": "^4.18.2"
   }
 }
