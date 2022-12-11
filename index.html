@@ -4,8 +4,11 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./src/style.css" />
+    <link rel="stylesheet" href="style.css" />
     <title>Create Tasks</title>
+    <script src="constants.js" defer></script>
+    <script src="utils.js" defer></script>
+    <script type="module" src="script.js" defer></script>
   </head>
   <body>
     <nav id="tasksNav">
@@ -16,21 +19,25 @@
       <button
         class="create-task-btn"
         type="button"
-        onclick="location.href='src/task/index.html'"
+        onclick="location.href='task/index.html'"
       >
         Create Tasks
       </button>
       <button
         class="profile-task-btn"
         type="button"
-        onclick="location.href='src/profile/index.html'"
+        onclick="location.href='profile/index.html'"
       >
         Profile
       </button>
       <a
-        href="src/online-members/online-members.html"
-        class="online-members-link"
+        id="user-management-link"
+        class="element-display-remove"
+        href="user-management/index.html"
       >
+        User Management
+      </a>
+      <a href="online-members/online-members.html" class="online-members-link">
         Online Members
       </a>
     </section>
