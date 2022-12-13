@@ -1,5 +1,6 @@
 let userData = {};
 let userAllTasks = [];
+let userSkills = [];
 let currentPageIndex = 1;
 let taskPerPage = 3;
 let totalPages = Math.ceil(userAllTasks.length / taskPerPage);
@@ -198,6 +199,7 @@ async function getUserTasks() {
       const tasks = getTasksToFetch(userAllTasks, currentPageIndex);
       generateTasksTabDetails();
       generateUserTaskList(tasks);
+      getUserSkills();
     }
   } catch (err) {
     const div = createElement({
@@ -290,6 +292,44 @@ function fetchNextTasks() {
     const tasks = getTasksToFetch(userAllTasks, currentPageIndex);
     generateUserTaskList(tasks);
   }
+}
+
+async function getUserSkills() {
+  try {
+    const res = await makeApiCall(
+      `${API_BASE_URL}/users/${userData?.id}/skills`,
+    );
+    if (res.status === 200) {
+      const data = await res.json();
+      userSkills = data.skills;
+      generateSkillsTabDetails(userSkills);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function generateSkillsTabDetails(skills) {
+  const div = createElement({
+    type: 'div',
+    classList: ['hidden-content', 'hide'],
+  });
+
+  if (skills.length) {
+    skills.forEach((skill) => {
+      const skillContainer = createElement({ type: 'div' });
+      const skillName = createElement({ type: 'h3' });
+      skillName.appendChild(
+        createTextNode(`${skill.tagName} - Level ${skill.levelValue}`),
+      );
+      skillContainer.append(skillName);
+      div.append(skillContainer);
+    });
+  } else {
+    div.appendChild(createTextNode('No skills to show!'));
+  }
+
+  document.querySelector('.accordion-skills').append(div);
 }
 
 getUserData();
