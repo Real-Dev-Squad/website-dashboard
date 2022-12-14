@@ -160,6 +160,7 @@ async function getParticularUserData(searchInput) {
       if (usersData.first_name && !usersData.roles?.archived) {
         data.push({
           first_name: usersData.first_name,
+          username: usersData.username,
           last_name: usersData.last_name ? usersData.last_name : '',
           picture:
             usersData.picture && usersData.picture.url
