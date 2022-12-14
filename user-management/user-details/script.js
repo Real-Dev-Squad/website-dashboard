@@ -392,7 +392,7 @@ function getDateFromTimestamp(timestamp) {
 function getDiffrenceBetweenTimestamps(timestampOne, timestampTwo) {
   const diff = timestampOne - timestampTwo;
   const days = diff / 60 / 60 / 24;
-  return Math.floor(days).toFixed(0);
+  return Math.ceil(days).toFixed(0);
 }
 
 function generateUserAvailableDetails() {
