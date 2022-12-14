@@ -395,6 +395,14 @@ function getDiffrenceBetweenTimestamps(timestampOne, timestampTwo) {
   return Math.ceil(days).toFixed(0);
 }
 
+function calculateRemainingActiveMonthlyHours(totalHours) {
+  const currentDate = new Date().getDate();
+  const daysRemaining = 30 - currentDate;
+  const hoursCommittedDaily = totalHours / 30;
+  const remainingHours = daysRemaining * hoursCommittedDaily;
+  return remainingHours.toFixed(1);
+}
+
 function generateUserAvailableDetails() {
   const div = createElement({
     type: 'div',
@@ -433,7 +441,13 @@ function generateUserAvailableDetails() {
   });
   titleThree.appendChild(createTextNode('Approx no of hours remaining'));
   const hoursRemaining = createElement({ type: 'p' });
-  hoursRemaining.appendChild(createTextNode('52 Hours'));
+  hoursRemaining.appendChild(
+    createTextNode(
+      `${calculateRemainingActiveMonthlyHours(
+        userStatusData.monthlyHours.commited,
+      )} Hours`,
+    ),
+  );
   divThree.append(titleThree, hoursRemaining);
 
   div.append(divOne, divTwo, divThree);
