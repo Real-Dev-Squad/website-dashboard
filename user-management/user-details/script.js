@@ -319,12 +319,17 @@ function generateSkillsTabDetails(skills) {
 
   if (skills.length) {
     skills.forEach((skill) => {
-      const skillContainer = createElement({ type: 'div' });
+      const skillContainer = createElement({
+        type: 'div',
+        classList: ['skill-container', 'hidden-details'],
+      });
       const skillName = createElement({ type: 'h3' });
-      skillName.appendChild(
-        createTextNode(`${skill.tagName} - Level ${skill.levelValue}`),
-      );
-      skillContainer.append(skillName);
+      const skillLevel = createElement({
+        type: 'span',
+      });
+      skillLevel.appendChild(createTextNode(`Level ${skill.levelValue}`));
+      skillName.appendChild(createTextNode(`${skill.tagName}`));
+      skillContainer.append(skillName, skillLevel);
       div.append(skillContainer);
     });
   } else {

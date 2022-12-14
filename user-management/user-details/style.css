@@ -223,6 +223,12 @@ li {
   margin: 5rem 0;
 }
 
+.skill-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 @media (max-width: 600px) {
   .social {
     gap: 0.5rem;
