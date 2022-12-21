@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const { EventEmitter } = require('events');
 
 // Function for testing responsiveness of ".buttonSection"
 function test_btn(width, height, expected_display, test_no) {
@@ -13,10 +12,10 @@ function test_btn(width, height, expected_display, test_no) {
     });
 
     // for official website
-    // await page.goto('https://dashboard.realdevsquad.com/');
+    await page.goto('https://dashboard.realdevsquad.com/');
 
     // for local environment
-    await page.goto('http:localhost:5500');
+    // await page.goto('http:localhost:5500');
 
     const display = await page.$eval(
       '.buttonSection',
