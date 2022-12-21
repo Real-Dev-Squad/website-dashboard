@@ -4,7 +4,6 @@ const puppeteer = require('puppeteer');
 function test_btn(width, height, expected_display, test_no) {
   puppeteer.launch({ headless: true }).then(async (browser) => {
     const page = await browser.newPage();
-    const emitter = new EventEmitter();
 
     await page.setViewport({
       width,
