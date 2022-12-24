@@ -6,19 +6,18 @@ If you find a bug anywhere, you can fix it.
 
 ```
 📦website-dashboard
- ┣ 📂src                Here codes specific to Website-Dashboard resides
- ┃ ┣ 📂helpers          Any script that acts as helper will go here
- ┃ ┃ ┗ 📜loadENV.js
- ┃ ┣ 📂task             /task/create where new task can created
- ┃ ┃ ┣ 📜index.html
- ┃ ┃ ┣ 📜script.js
- ┃ ┃ ┗ 📜style.css
- ┃ ┣ 📂wallet           /wallets where wallet information from crypto site can be fetched
- ┃ ┃ ┣ 📜index.html
- ┃ ┃ ┣ 📜script.js
- ┃ ┃ ┗ 📜style.css
- ┃ ┣ 📜index.html       / Homepage for website-dashboard
- ┃ ┗ 📜style.css        Styles for Home page
+ ┣ 📂helpers          Any script that acts as helper will go here
+ ┃ ┗ 📜loadENV.js
+ ┣ 📂task             /task/create where new task can created
+ ┃ ┣ 📜index.html
+ ┃ ┣ 📜script.js
+ ┃ ┗ 📜style.css
+ ┣ 📂wallet           /wallets where wallet information from crypto site can be fetched
+ ┃ ┣ 📜index.html
+ ┃ ┣ 📜script.js
+ ┃ ┗ 📜style.css
+ ┣ 📜index.html       / Homepage for website-dashboard
+ ┗ 📜style.css        Styles for Home page
  ┣ 📜.gitignore
  ┣ 📜.prettierrc.json
  ┣ 📜CONTRIBUTING.md    Contains information for contributing to the repository
