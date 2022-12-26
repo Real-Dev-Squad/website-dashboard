@@ -347,18 +347,20 @@ async function getUserAvailabilityStatus() {
     if (res.status === 200) {
       const data = await res.json();
       userStatusData = data.data;
-      generateAvalabilityTabDetails();
+      generateAvalabilityTabDetails(userStatusData.currentStatus.state);
     }
   } catch (err) {
     console.error(err);
   }
 }
 
-function generateAvalabilityTabDetails() {
-  if (userStatusData.currentStatus.state === 'OOO') {
-    generateUserNotAvailableDetails();
+function generateAvalabilityTabDetails(state) {
+  if (state === 'OOO') {
+    generateUserOOODetails();
+  } else if (state === 'IDLE') {
+    generateUserIdleDetails();
   } else {
-    generateUserAvailableDetails();
+    generateUserActiveDetails();
   }
 }
 
@@ -403,7 +405,7 @@ function calculateRemainingActiveMonthlyHours(totalHours) {
   return remainingHours.toFixed(1);
 }
 
-function generateUserAvailableDetails() {
+function generateUserActiveDetails() {
   const div = createElement({
     type: 'div',
     classList: ['hidden-content', 'hide'],
@@ -411,16 +413,32 @@ function generateUserAvailableDetails() {
 
   const divOne = createElement({ type: 'div', classList: ['hidden-details'] });
   const titleOne = createElement({ type: 'h3' });
-  titleOne.appendChild(createTextNode('Out Of Office'));
-  const outOfOffice = createElement({
+  titleOne.appendChild(createTextNode('Current Status'));
+  const currentStatus = createElement({
     type: 'p',
   });
-  outOfOffice.appendChild(createTextNode('No'));
-  divOne.append(titleOne, outOfOffice);
+  currentStatus.appendChild(
+    createTextNode(`${userStatusData.currentStatus.state}`),
+  );
+  divOne.append(titleOne, currentStatus);
 
   const divTwo = createElement({ type: 'div', classList: ['hidden-details'] });
   const titleTwo = createElement({ type: 'h3' });
-  titleTwo.appendChild(
+  titleTwo.appendChild(createTextNode('From'));
+  const activeFrom = createElement({ type: 'p' });
+  activeFrom.appendChild(
+    createTextNode(
+      `${getDateFromTimestamp(userStatusData.currentStatus.from._seconds)}`,
+    ),
+  );
+  divTwo.append(titleTwo, activeFrom);
+
+  const divThree = createElement({
+    type: 'div',
+    classList: ['hidden-details'],
+  });
+  const titleThree = createElement({ type: 'h3' });
+  titleThree.appendChild(
     createTextNode(
       `No Of Hours alloted for ${getMonth(new Date().getMonth())} 2022`,
     ),
@@ -429,17 +447,17 @@ function generateUserAvailableDetails() {
   hoursAlloted.appendChild(
     createTextNode(`${userStatusData.monthlyHours.commited}`),
   );
-  divTwo.append(titleTwo, hoursAlloted);
+  divThree.append(titleThree, hoursAlloted);
 
-  const divThree = createElement({
+  const divFour = createElement({
     type: 'div',
     classList: ['hidden-details'],
   });
-  const titleThree = createElement({
+  const titleFour = createElement({
     type: 'h3',
     classList: ['hidden-details'],
   });
-  titleThree.appendChild(createTextNode('Approx no of hours remaining'));
+  titleFour.appendChild(createTextNode('Approx no of hours remaining'));
   const hoursRemaining = createElement({ type: 'p' });
   hoursRemaining.appendChild(
     createTextNode(
@@ -448,14 +466,14 @@ function generateUserAvailableDetails() {
       )} Hours`,
     ),
   );
-  divThree.append(titleThree, hoursRemaining);
+  divFour.append(titleFour, hoursRemaining);
 
-  div.append(divOne, divTwo, divThree);
+  div.append(divOne, divTwo, divThree, divFour);
 
   document.querySelector('.accordion-availability').append(div);
 }
 
-function generateUserNotAvailableDetails() {
+function generateUserOOODetails() {
   const div = createElement({
     type: 'div',
     classList: ['hidden-content', 'hide'],
@@ -463,16 +481,18 @@ function generateUserNotAvailableDetails() {
 
   const divOne = createElement({ type: 'div', classList: ['hidden-details'] });
   const titleOne = createElement({ type: 'h3' });
-  titleOne.appendChild(createTextNode('Out Of Office'));
-  const outOfOffice = createElement({
+  titleOne.appendChild(createTextNode('Current Status'));
+  const currentStatus = createElement({
     type: 'p',
   });
-  outOfOffice.appendChild(createTextNode('Yes'));
-  divOne.append(titleOne, outOfOffice);
+  currentStatus.appendChild(
+    createTextNode(`${userStatusData.currentStatus.state}`),
+  );
+  divOne.append(titleOne, currentStatus);
 
   const divTwo = createElement({ type: 'div', classList: ['hidden-details'] });
   const titleTwo = createElement({ type: 'h3' });
-  titleTwo.appendChild(createTextNode('Since'));
+  titleTwo.appendChild(createTextNode('From'));
   const oooSince = createElement({ type: 'p' });
   oooSince.appendChild(
     createTextNode(
@@ -488,7 +508,7 @@ function generateUserNotAvailableDetails() {
   const titleThree = createElement({
     type: 'h3',
   });
-  titleThree.appendChild(createTextNode('Tentative return date'));
+  titleThree.appendChild(createTextNode('Until'));
   const returnDate = createElement({ type: 'p' });
   returnDate.appendChild(
     createTextNode(
@@ -505,17 +525,81 @@ function generateUserNotAvailableDetails() {
     type: 'h3',
     classList: ['hidden-details'],
   });
-  titleFour.appendChild(createTextNode('No of days'));
-  const numberOfDays = createElement({ type: 'p' });
-  numberOfDays.appendChild(
+  titleFour.appendChild(createTextNode('Reason'));
+  const oooReason = createElement({ type: 'p' });
+  oooReason.appendChild(
+    createTextNode(`${userStatusData.currentStatus.message}`),
+  );
+  divFour.append(titleFour, oooReason);
+
+  div.append(divOne, divTwo, divThree, divFour);
+
+  document.querySelector('.accordion-availability').append(div);
+}
+
+function generateUserIdleDetails() {
+  const div = createElement({
+    type: 'div',
+    classList: ['hidden-content', 'hide'],
+  });
+
+  const divOne = createElement({
+    type: 'div',
+    classList: ['hidden-details'],
+  });
+  const titleOne = createElement({ type: 'h3' });
+  titleOne.appendChild(createTextNode('Current Status'));
+  const currentStatus = createElement({
+    type: 'p',
+  });
+  currentStatus.appendChild(
+    createTextNode(`${userStatusData.currentStatus.state}`),
+  );
+  divOne.append(titleOne, currentStatus);
+
+  const divTwo = createElement({
+    type: 'div',
+    classList: ['hidden-details'],
+  });
+  const titleTwo = createElement({ type: 'h3' });
+  titleTwo.appendChild(createTextNode('From'));
+  const idleFrom = createElement({
+    type: 'p',
+  });
+  idleFrom.appendChild(
     createTextNode(
-      `${getDiffrenceBetweenTimestamps(
-        userStatusData.currentStatus.until._seconds,
-        userStatusData.currentStatus.from._seconds,
-      )}`,
+      `${getDateFromTimestamp(userStatusData.currentStatus.from._seconds)}`,
     ),
   );
-  divFour.append(titleFour, numberOfDays);
+  divTwo.append(titleTwo, idleFrom);
+
+  const divThree = createElement({
+    type: 'div',
+    classList: ['hidden-details'],
+  });
+  const titleThree = createElement({ type: 'h3' });
+  titleThree.appendChild(createTextNode('Skills you are looking to learn'));
+  const skills = createElement({
+    type: 'p',
+  });
+  skills.appendChild(createTextNode(`${userSkills.toString()}`));
+  divThree.append(titleThree, skills);
+
+  const divFour = createElement({
+    type: 'div',
+    classList: ['hidden-details'],
+  });
+  const titleFour = createElement({ type: 'h3' });
+  titleFour.appendChild(
+    createTextNode(
+      `No Of Hours alloted for ${getMonth(new Date().getMonth())} 2022`,
+    ),
+  );
+  const hoursAlloted = createElement({ type: 'p' });
+  hoursAlloted.appendChild(
+    createTextNode(`${userStatusData.monthlyHours.commited}`),
+  );
+  divFour.append(titleFour, hoursAlloted);
 
   const divFive = createElement({
     type: 'div',
@@ -525,12 +609,16 @@ function generateUserNotAvailableDetails() {
     type: 'h3',
     classList: ['hidden-details'],
   });
-  titleFive.appendChild(createTextNode('Reason'));
-  const oooReason = createElement({ type: 'p' });
-  oooReason.appendChild(
-    createTextNode(`${userStatusData.currentStatus.message}`),
+  titleFive.appendChild(createTextNode('Approx no of hours remaining'));
+  const hoursRemaining = createElement({ type: 'p' });
+  hoursRemaining.appendChild(
+    createTextNode(
+      `${calculateRemainingActiveMonthlyHours(
+        userStatusData.monthlyHours.commited,
+      )} Hours`,
+    ),
   );
-  divFive.append(titleFive, oooReason);
+  divFive.append(titleFive, hoursRemaining);
 
   div.append(divOne, divTwo, divThree, divFour, divFive);
 
