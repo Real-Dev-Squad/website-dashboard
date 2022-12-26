@@ -4,6 +4,7 @@
 
 html {
   overflow-y: scroll;
+  height: 100%;
 }
 
 :root {
@@ -20,6 +21,9 @@ html {
 
 body {
   font-family: 'Roboto', sans-serif;
+  grid-template-rows: max-content 1fr auto;
+  height: 100%;
+  display: grid;
 }
 
 a {
@@ -227,6 +231,16 @@ li {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+footer {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+footer p a {
+  color: blue;
+  text-decoration: underline;
 }
 
 @media (max-width: 600px) {
