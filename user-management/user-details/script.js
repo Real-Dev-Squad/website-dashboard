@@ -625,5 +625,14 @@ function generateUserIdleDetails() {
   document.querySelector('.accordion-availability').append(div);
 }
 
-getUserData();
-getUserTasks();
+async function init() {
+  const isSuperUser = await checkUserIsSuperUser();
+  if (isSuperUser) {
+    getUserData();
+    getUserTasks();
+  } else {
+    window.history.back();
+  }
+}
+
+init();

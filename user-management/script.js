@@ -186,4 +186,13 @@ async function showUserDataList(page) {
   generateUserList(userData, true);
 }
 
-showUserDataList(page);
+async function init() {
+  const isSuperUser = await checkUserIsSuperUser();
+  if (isSuperUser) {
+    showUserDataList(page);
+  } else {
+    window.history.back();
+  }
+}
+
+init();
