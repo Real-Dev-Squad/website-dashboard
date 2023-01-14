@@ -1,4 +1,5 @@
 const userManagementLink = document.getElementById(USER_MANAGEMENT_LINK);
+const extensionRequestsLink = document.getElementById(EXTENSION_REQUESTS_LINK);
 
 export async function showSuperUserOptions(...privateBtns) {
   try {
@@ -13,4 +14,10 @@ export async function showSuperUserOptions(...privateBtns) {
   }
 }
 
-showSuperUserOptions(userManagementLink);
+/*
+ * To show the super user options only to the super user, give all those
+ * buttons or node the class "element-display-remove" so by default they are hidden.
+ * Then get the node from the DOM into a variable and pass that variable in the
+ * function below.
+ */
+showSuperUserOptions(userManagementLink, extensionRequestsLink);
