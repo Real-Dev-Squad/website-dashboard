@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'https://api.realdevsquad.com';
 const defaultAvatar = '../images/profile.svg';
 const socialMedia = ['twitter_id', 'github_id', 'linkedin_id'];
 const iconMapper = {
