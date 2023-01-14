@@ -186,12 +186,41 @@ async function showUserDataList(page) {
   generateUserList(userData, true);
 }
 
+function showProtectedRouteErrorMessage() {
+  const div = document.createElement('div');
+  div.classList.add('error-dialog');
+  const content = document.createElement('div');
+  content.classList.add('error-content');
+  const overlay = document.createElement('div');
+  overlay.classList.add('error-overlay');
+  const h3 = document.createElement('h3');
+  h3.appendChild(
+    document.createTextNode('You are not authorised to access this route!'),
+  );
+  const btn = document.createElement('button');
+  btn.appendChild(document.createTextNode('Go Back'));
+  btn.addEventListener('click', () => {
+    window.history.back();
+  });
+  content.append(h3, btn);
+  div.append(overlay, content);
+  document.querySelector('body').appendChild(div);
+}
+
+function showContent() {
+  const section1 = document.querySelector('.header');
+  const section2 = document.querySelector('#main-section');
+  section1.classList.remove('hidden');
+  section2.classList.remove('hidden');
+}
+
 async function init() {
   const isSuperUser = await checkUserIsSuperUser();
   if (isSuperUser) {
+    showContent();
     showUserDataList(page);
   } else {
-    window.history.back();
+    showProtectedRouteErrorMessage();
   }
 }
 

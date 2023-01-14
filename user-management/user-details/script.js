@@ -625,13 +625,41 @@ function generateUserIdleDetails() {
   document.querySelector('.accordion-availability').append(div);
 }
 
+function showProtectedRouteErrorMessage() {
+  const div = createElement({ type: 'div', classList: ['error-dialog'] });
+  const content = createElement({ type: 'div', classList: ['error-content'] });
+  const overlay = createElement({ type: 'div', classList: ['error-overlay'] });
+  const h3 = createElement({ type: 'h3' });
+  h3.appendChild(
+    createTextNode('You are not authorised to access this route!'),
+  );
+  const btn = createElement({ type: 'button' });
+  btn.appendChild(createTextNode('Go Back'));
+  btn.addEventListener('click', () => {
+    window.history.back();
+  });
+  content.append(h3, btn);
+  div.append(overlay, content);
+  document.querySelector('body').appendChild(div);
+}
+
+function showContent() {
+  const section1 = document.querySelector('.header');
+  const section2 = document.querySelector('#main-section');
+  const section3 = document.querySelector('footer');
+  section1.classList.remove('hide');
+  section2.classList.remove('hide');
+  section3.classList.remove('hide');
+}
+
 async function init() {
   const isSuperUser = await checkUserIsSuperUser();
   if (isSuperUser) {
+    showContent();
     getUserData();
     getUserTasks();
   } else {
-    window.history.back();
+    showProtectedRouteErrorMessage();
   }
 }
 
