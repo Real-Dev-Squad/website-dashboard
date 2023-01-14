@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/goal/style.css" />
+    <title>Tasks</title>
+  </head>
+
+  <body>
+    <div class="container loaderContainer">
+      <form action="" class="goal-form">
+        <div class="inputBox">
+          <label for="title">Goal Title:<span class="required">*</span></label>
+          <input
+            required
+            class="input"
+            type="text"
+            name="title"
+            placeholder="eg: Testing setup for dashboard"
+            id="title"
+            autofocus
+          />
+        </div>
+        <div class="inputBox">
+          <label for="task-name" class="editable"
+            >Task Name:<span class="required">*</span></label
+          >
+          <input
+            required
+            class="notEditing"
+            type="text"
+            name="task-name"
+            placeholder="eg: Testing setup for dashboard"
+            id="task-name"
+            autofocus
+          />
+        </div>
+        <div class="inputBox">
+          <label for="links" class="editable">Links:</label>
+          <input
+            type="text"
+            name="links"
+            id="links"
+            placeholder="Comma separated links"
+            class="notEditing"
+            autofocus
+          />
+        </div>
+        <div class="inputBox">
+          <label for="user-role" class="editable"
+            >User Role:<span class="required">*</span></label
+          >
+          <select required class="input notEditing user-role" name="user-role">
+            <option disabled selected>Select a category</option>
+            <option value="member">Member</option>
+            <option value="admin">Admin</option>
+            <option value="developer">Developer</option>
+            <option value="tester">Tester</option>
+            <option value="newcomer">Newcomer</option>
+            <option value="designer">Designer</option>
+          </select>
+        </div>
+        <div class="inputBox">
+          <label for="username" class="editable"
+            >Username:<span class="required">*</span></label
+          >
+          <input
+            required
+            class="input notEditing"
+            type="text"
+            name="username"
+            placeholder="eg: Shravan"
+            id="username"
+            autofocus
+          />
+        </div>
+        <div class="inputBox">
+          <label for="priority" class="editable"
+            >Priority:<span class="required">*</span></label
+          >
+          <select required class="input notEditing priority" name="priority">
+            <option disabled selected>Select the priority</option>
+            <option value="HIGH">High</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="LOW">Low</option>
+          </select>
+        </div>
+        <div class="inputBox">
+          <label for="type" class="editable"
+            >Type:<span class="required">*</span></label
+          >
+          <select required class="input notEditing type" name="type">
+            <option disabled selected>Select a type</option>
+            <option value="feature">Feature</option>
+            <option value="BUG">Bug</option>
+            <option value="CHORE">Chore</option>
+            <option value="DOCUMENTATION">Documentation</option>
+          </select>
+        </div>
+        <div class="inputBox">
+          <label for="due-date" class="editable"
+            >Due Date:<span class="required">*</span></label
+          >
+          <input
+            required
+            class="input notEditing"
+            type="date"
+            name="due-date"
+            id="due-date"
+          />
+        </div>
+        <div class="inputBox">
+          <label for="assignee" class="editable"
+            >Assignee:<span class="required">*</span></label
+          >
+          <input
+            required
+            class="input notEditing"
+            type="text"
+            name="assignee"
+            id="assignee"
+          />
+        </div>
+        <div class="inputBox">
+          <input type="submit" class="submit" value="Submit" id="submit" />
+        </div>
+      </form>
+
+      <footer>
+        <p class="info-repo">
+          The contents of this website are deployed from this
+          <a
+            href="https://github.com/Real-Dev-Squad/website-dashboard"
+            target="_blank"
+            rel="noopener noreferrer"
+            >open sourced repo</a
+          >
+        </p>
+      </footer>
+      <script src="script.js"></script>
+    </div>
+  </body>
+</html>

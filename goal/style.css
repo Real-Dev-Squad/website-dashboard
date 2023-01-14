@@ -1,0 +1,138 @@
+*,
+::after,
+::before {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  user-select: none;
+}
+
+.container {
+  width: 100%;
+  color: #666;
+  text-align: center;
+  padding: 1em 0;
+}
+
+.goal-form {
+  width: 60vw;
+  max-width: 40rem;
+  min-width: 300px;
+  margin: 0 auto;
+  padding: 1em 1.5em;
+  border: 1px solid #f4f4f4;
+  border-radius: 20px;
+  box-shadow: 0 0 15px -7px rgba(0, 0, 0, 0.65);
+}
+
+.inputBox {
+  width: 100%;
+  margin-bottom: 1em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.inputBox label {
+  font-size: 1rem;
+  font-weight: 700;
+  width: 100%;
+  text-align: left;
+  position: relative;
+}
+
+.inputBox input {
+  padding: 1em;
+  border: 1px solid #666;
+  border-radius: 5px;
+  width: 100%;
+}
+
+::placeholder {
+  font-family: sans-serif;
+}
+
+.submitBtn {
+  font-size: 1rem;
+  padding: 1em 0.5em;
+  outline: 0;
+  box-shadow: rgba(0, 0, 0, 0.07) 0 1px 1px, rgba(0, 0, 0, 0.07) 0 2px 2px,
+    rgba(0, 0, 0, 0.07) 0 4px 4px, rgba(0, 0, 0, 0.07) 0 8px 8px,
+    rgba(0, 0, 0, 0.07) 0 16px 16px;
+}
+
+.submit {
+  background-color: #7171fd;
+  color: #fff;
+  cursor: pointer;
+}
+
+.required {
+  color: red;
+  font-size: medium;
+}
+
+.type,
+.user-role,
+.priority {
+  width: 100%;
+  padding: 1em;
+  border-radius: 5px;
+}
+
+#isNoteworthy {
+  width: auto;
+}
+
+.info-repo {
+  font-weight: 100;
+  padding: auto;
+  text-align: center;
+}
+
+footer {
+  margin-top: auto;
+}
+
+.notEditing {
+  display: none;
+}
+
+.inputBox label .edit-button {
+  width: fit-content;
+  height: fit-content;
+  font-size: 0.625em;
+  opacity: 60%;
+  right: 5px;
+  cursor: pointer;
+  display: block;
+  transition: opacity ease 0.25s;
+  padding: 5px 10px 5px 0px;
+}
+
+.inputBox .preview {
+  font-size: 0.875em;
+  font-weight: 400;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  width: 80%;
+  position: relative;
+  /* overflow-wrap: break-word; */
+  overflow: hidden;
+}
+
+.inputBox label .edit-button:hover {
+  opacity: 100%;
+}
+
+.inputBox label .edit-button.edit-button__active {
+  opacity: 100%;
+}
