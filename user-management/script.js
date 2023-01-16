@@ -1,3 +1,57 @@
+// import {API_BASE_URL, RDS_API_USERS, USER_LIST_ELEMENT, LOADER_ELEMENT, TILE_VIEW_BTN, TABLE_VIEW_BTN, USER_SEARCH_ELEMENT, DEFAULT_AVATAR, PAGINATION_ELEMENT, PREV_BUTTON, NEXT_BUTTON, USER_FETCH_COUNT} from './constants'
+// const { RDS_API_USERS, USER_LIST_ELEMENT, LOADER_ELEMENT, TILE_VIEW_BTN, TABLE_VIEW_BTN, USER_SEARCH_ELEMENT, DEFAULT_AVATAR, PAGINATION_ELEMENT, PREV_BUTTON, NEXT_BUTTON, USER_FETCH_COUNT } = require('./constants')
+
+// Temporarily adding the constants to make tests pass
+// const API_BASE_URL = 'https://api.realdevsquad.com';
+// const RDS_API_USERS = `${API_BASE_URL}/users/`;
+// const USER_LIST_ELEMENT = 'user-list';
+// const LOADER_ELEMENT = 'loader';
+// const TILE_VIEW_BTN = 'tile-view-btn';
+// const TABLE_VIEW_BTN = 'table-view-btn';
+// const USER_SEARCH_ELEMENT = 'user-search';
+// const DEFAULT_AVATAR = './images/avatar.png';
+// const PAGINATION_ELEMENT = 'pagination';
+// const PREV_BUTTON = 'prevButton';
+// const NEXT_BUTTON = 'nextButton';
+// const USER_FETCH_COUNT = 100;
+
+// async function makeApiCall(
+//   url,
+//   method = 'get',
+//   body = null,
+//   credentials = 'include',
+//   headers = { 'content-type': 'application/json' },
+//   options = null,
+// ) {
+//   try {
+//     const response = await fetch(url, {
+//       method,
+//       body,
+//       headers,
+//       credentials,
+//       ...options,
+//     });
+//     return response;
+//   } catch (err) {
+//     console.error('Something went wrong. Please contact admin', err);
+//     return err;
+//   }
+// }
+
+// function debounce(func, delay) {
+//   let timerId;
+//   return (...args) => {
+//     if (timerId) {
+//       clearTimeout(timerId);
+//     }
+
+//     timerId = setTimeout(() => {
+//       func(...args);
+//     }, delay);
+//   };
+// }
+
+//
 const userListElement = document.getElementById(USER_LIST_ELEMENT);
 const loaderElement = document.getElementById(LOADER_ELEMENT);
 const tileViewBtn = document.getElementById(TILE_VIEW_BTN);
@@ -11,28 +65,48 @@ let tileViewActive = false;
 let tableViewActive = true;
 let page = 0;
 
-prevBtn.addEventListener('click', () => {
-  showUserDataList(--page);
-});
+const init = (
+  prevBtn,
+  nextBtn,
+  tileViewBtn,
+  tableViewBtn,
+  userSearchElement,
+  userListElement,
+  paginationElement,
+  loaderElement,
+) => {
+  prevBtn.addEventListener('click', () => {
+    showUserDataList(--page, userListElement, paginationElement, loaderElement);
+  });
 
-nextBtn.addEventListener('click', () => {
-  showUserDataList(++page);
-});
+  nextBtn.addEventListener('click', () => {
+    showUserDataList(++page, userListElement, paginationElement, loaderElement);
+  });
 
-tileViewBtn.addEventListener('click', showTileView);
-tableViewBtn.addEventListener('click', showTableView);
+  tileViewBtn.addEventListener('click', () => {
+    showTileView(userListElement, tableViewBtn, tileViewBtn);
+  });
+  tableViewBtn.addEventListener('click', () => {
+    showTableView(userListElement, tableViewBtn, tileViewBtn);
+  });
 
-userSearchElement.addEventListener(
-  'input',
-  debounce((event) => {
-    if (event.target.value) {
-      return getParticularUserData(event.target.value);
-    }
-    showUserDataList(page);
-  }, 500),
-);
+  userSearchElement.addEventListener(
+    'input',
+    debounce((event) => {
+      if (event.target.value) {
+        return getParticularUserData(
+          event.target.value,
+          userListElement,
+          paginationElement,
+          loaderElement,
+        );
+      }
+      showUserDataList(page, userListElement, paginationElement);
+    }, 500),
+  );
+};
 
-function showTileView() {
+function showTileView(userListElement, tableViewBtn, tileViewBtn) {
   tableViewActive = false;
   tileViewActive = true;
   tableViewBtn.classList.remove('btn-active');
@@ -45,7 +119,7 @@ function showTileView() {
   });
 }
 
-function showTableView() {
+function showTableView(userListElement, tableViewBtn, tileViewBtn) {
   tableViewActive = true;
   tileViewActive = false;
   tileViewBtn.classList.remove('btn-active');
@@ -58,7 +132,12 @@ function showTableView() {
   });
 }
 
-function showErrorMessage(msg) {
+function showErrorMessage(
+  msg,
+  userListElement,
+  paginationElement,
+  loaderElement,
+) {
   userListElement.innerHTML = '';
   const paraELe = document.createElement('p');
   const textNode = document.createTextNode(msg);
@@ -67,9 +146,15 @@ function showErrorMessage(msg) {
   userListElement.appendChild(paraELe);
   paginationElement.classList.add('remove-element');
   paginationElement.classList.remove('pagination');
+  loaderElement.classList.add('remove-element');
 }
 
-async function getUsersData(page) {
+async function getUsersData(
+  page,
+  userListElement,
+  paginationElement,
+  loaderElement,
+) {
   try {
     const usersRequest = await makeApiCall(
       `${RDS_API_USERS}?size=${USER_FETCH_COUNT}&page=${page}`,
@@ -78,33 +163,24 @@ async function getUsersData(page) {
     if (usersRequest.status === 200) {
       usersDataList = await usersRequest.json();
       usersDataList = usersDataList.users;
-      if (usersDataList.length < 100) {
-        nextBtn.classList.add('btn-disabled');
-      } else {
-        nextBtn.classList.remove('btn-disabled');
-      }
-      usersDataList = usersDataList.filter(
-        (user) => user.first_name && !user.roles?.archived,
+    } else {
+      throw new Error(
+        `User list request failed with status: ${usersRequest.status}`,
       );
-      usersDataList = usersDataList.map((user) => ({
-        username: user.username,
-        first_name: user.first_name,
-        last_name: user.last_name ? user.last_name : '',
-        picture: user.picture && user.picture.url ? user.picture.url : '',
-      }));
     }
     return usersDataList;
   } catch (err) {
-    const paraELe = document.createElement('p');
-    const textNode = document.createTextNode('Something Went Wrong');
-    paraELe.appendChild(textNode);
-    paraELe.classList.add('error-text');
-    loaderElement.classList.add('remove-element');
-    userListElement.appendChild(paraELe);
+    throw err;
   }
 }
 
-function generateUserList(users, showPagination) {
+function generateUserList(
+  users,
+  showPagination,
+  userListElement,
+  paginationElement,
+  loaderElement,
+) {
   userListElement.innerHTML = '';
   if (page <= 0) {
     prevBtn.classList.add('btn-disabled');
@@ -112,7 +188,12 @@ function generateUserList(users, showPagination) {
     prevBtn.classList.remove('btn-disabled');
   }
   if (!users || !users.length) {
-    showErrorMessage('No data found');
+    showErrorMessage(
+      'No data found',
+      userListElement,
+      paginationElement,
+      loaderElement,
+    );
     return;
   }
   const ulElement = document.createElement('ul');
@@ -150,7 +231,12 @@ function generateUserList(users, showPagination) {
   userListElement.appendChild(ulElement);
 }
 
-async function getParticularUserData(searchInput) {
+async function getParticularUserData(
+  searchInput,
+  userListElement,
+  paginationElement,
+  loaderElement,
+) {
   try {
     let usersRequest = await makeApiCall(`${RDS_API_USERS}${searchInput}`);
     let usersData = await usersRequest.json();
@@ -167,22 +253,85 @@ async function getParticularUserData(searchInput) {
               : '',
         });
       }
-      return generateUserList(data, false);
+      return generateUserList(
+        data,
+        false,
+        userListElement,
+        paginationElement,
+        loaderElement,
+      );
     }
-    showErrorMessage(usersData.message);
-    return;
+    showErrorMessage(
+      usersData.message,
+      userListElement,
+      paginationElement,
+      loaderElement,
+    );
   } catch (err) {
-    const paraELe = document.createElement('p');
-    const textNode = document.createTextNode('Something Went Wrong');
-    paraELe.appendChild(textNode);
-    paraELe.classList.add('error-text');
-    loaderElement.classList.add('remove-element');
+    showErrorMessage(
+      'Something Went Wrong',
+      userListElement,
+      paginationElement,
+      loaderElement,
+    );
   }
 }
 
-async function showUserDataList(page) {
-  const userData = await getUsersData(page);
-  generateUserList(userData, true);
+async function showUserDataList(
+  page,
+  userListElement,
+  paginationElement,
+  loaderElement,
+) {
+  try {
+    const userData = await getUsersData(
+      page,
+      userListElement,
+      paginationElement,
+      loaderElement,
+    );
+    if (userData.length) {
+      if (userData.length < 100) {
+        nextBtn.classList.add('btn-disabled');
+      } else {
+        nextBtn.classList.remove('btn-disabled');
+      }
+      let usersDataList = userData.filter(
+        (user) => user.first_name && !user.roles?.archived,
+      );
+      usersDataList = usersDataList.map((user) => ({
+        username: user.username,
+        first_name: user.first_name,
+        last_name: user.last_name ? user.last_name : '',
+        picture: user.picture && user.picture.url ? user.picture.url : '',
+      }));
+      generateUserList(
+        usersDataList,
+        true,
+        userListElement,
+        paginationElement,
+        loaderElement,
+      );
+    }
+  } catch (err) {
+    console.error(err);
+    showErrorMessage(
+      err.message,
+      userListElement,
+      paginationElement,
+      loaderElement,
+    );
+  }
 }
 
-showUserDataList(page);
+init(
+  prevBtn,
+  nextBtn,
+  tileViewBtn,
+  tableViewBtn,
+  userSearchElement,
+  userListElement,
+  paginationElement,
+  loaderElement,
+);
+showUserDataList(page, userListElement, paginationElement, loaderElement);
