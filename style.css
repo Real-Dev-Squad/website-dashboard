@@ -20,19 +20,19 @@ body {
 
 #tasksNav {
   background-color: #1d1283;
-  padding: 10px;
-  height: 40px;
+  padding: 15px;
+  height: auto;
+  text-align: center;
 }
 
 #createTask {
   color: white;
-  padding-left: 50%;
   text-decoration: none;
   font-size: large;
 }
 
 .buttonSection {
-  height: 80vh;
+  height: -webkit-fill-available;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -112,6 +112,7 @@ button {
   border-radius: 5px;
   padding: 10px 50px;
   transition: all 0.5s ease;
+  text-decoration: none;
 }
 
 .online-members-link:hover {
@@ -132,4 +133,13 @@ footer {
 
 .element-display-remove {
   display: none;
+}
+
+@media (min-width: 0px) and (max-width: 820px) {
+  .buttonSection {
+    display: grid;
+    place-items: center;
+    place-content: center;
+    gap: 4rem;
+  }
 }
