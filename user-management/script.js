@@ -149,12 +149,7 @@ function showErrorMessage(
   loaderElement.classList.add('remove-element');
 }
 
-async function getUsersData(
-  page,
-  userListElement,
-  paginationElement,
-  loaderElement,
-) {
+async function getUsersData(page) {
   try {
     const usersRequest = await makeApiCall(
       `${RDS_API_USERS}?size=${USER_FETCH_COUNT}&page=${page}`,
