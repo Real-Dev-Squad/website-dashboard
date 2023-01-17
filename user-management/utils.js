@@ -16,7 +16,7 @@ async function makeApiCall(
     });
     return response;
   } catch (err) {
-    console.error(MESSAGE_SOMETHING_WENT_WRONG, err);
+    console.error(err);
     return err;
   }
 }
@@ -33,3 +33,5 @@ function debounce(func, delay) {
     }, delay);
   };
 }
+
+module.exports = { makeApiCall, debounce };
