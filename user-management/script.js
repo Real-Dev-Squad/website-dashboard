@@ -2,54 +2,54 @@
 // const { RDS_API_USERS, USER_LIST_ELEMENT, LOADER_ELEMENT, TILE_VIEW_BTN, TABLE_VIEW_BTN, USER_SEARCH_ELEMENT, DEFAULT_AVATAR, PAGINATION_ELEMENT, PREV_BUTTON, NEXT_BUTTON, USER_FETCH_COUNT } = require('./constants')
 
 // Temporarily adding the constants to make tests pass
-// const API_BASE_URL = 'https://api.realdevsquad.com';
-// const RDS_API_USERS = `${API_BASE_URL}/users/`;
-// const USER_LIST_ELEMENT = 'user-list';
-// const LOADER_ELEMENT = 'loader';
-// const TILE_VIEW_BTN = 'tile-view-btn';
-// const TABLE_VIEW_BTN = 'table-view-btn';
-// const USER_SEARCH_ELEMENT = 'user-search';
-// const DEFAULT_AVATAR = './images/avatar.png';
-// const PAGINATION_ELEMENT = 'pagination';
-// const PREV_BUTTON = 'prevButton';
-// const NEXT_BUTTON = 'nextButton';
-// const USER_FETCH_COUNT = 100;
+const API_BASE_URL = 'https://api.realdevsquad.com';
+const RDS_API_USERS = `${API_BASE_URL}/users/`;
+const USER_LIST_ELEMENT = 'user-list';
+const LOADER_ELEMENT = 'loader';
+const TILE_VIEW_BTN = 'tile-view-btn';
+const TABLE_VIEW_BTN = 'table-view-btn';
+const USER_SEARCH_ELEMENT = 'user-search';
+const DEFAULT_AVATAR = './images/avatar.png';
+const PAGINATION_ELEMENT = 'pagination';
+const PREV_BUTTON = 'prevButton';
+const NEXT_BUTTON = 'nextButton';
+const USER_FETCH_COUNT = 100;
 
-// async function makeApiCall(
-//   url,
-//   method = 'get',
-//   body = null,
-//   credentials = 'include',
-//   headers = { 'content-type': 'application/json' },
-//   options = null,
-// ) {
-//   try {
-//     const response = await fetch(url, {
-//       method,
-//       body,
-//       headers,
-//       credentials,
-//       ...options,
-//     });
-//     return response;
-//   } catch (err) {
-//     console.error('Something went wrong. Please contact admin', err);
-//     return err;
-//   }
-// }
+async function makeApiCall(
+  url,
+  method = 'get',
+  body = null,
+  credentials = 'include',
+  headers = { 'content-type': 'application/json' },
+  options = null,
+) {
+  try {
+    const response = await fetch(url, {
+      method,
+      body,
+      headers,
+      credentials,
+      ...options,
+    });
+    return response;
+  } catch (err) {
+    console.error('Something went wrong. Please contact admin', err);
+    return err;
+  }
+}
 
-// function debounce(func, delay) {
-//   let timerId;
-//   return (...args) => {
-//     if (timerId) {
-//       clearTimeout(timerId);
-//     }
+function debounce(func, delay) {
+  let timerId;
+  return (...args) => {
+    if (timerId) {
+      clearTimeout(timerId);
+    }
 
-//     timerId = setTimeout(() => {
-//       func(...args);
-//     }, delay);
-//   };
-// }
+    timerId = setTimeout(() => {
+      func(...args);
+    }, delay);
+  };
+}
 
 //
 const userListElement = document.getElementById(USER_LIST_ELEMENT);
@@ -76,11 +76,25 @@ const init = (
   loaderElement,
 ) => {
   prevBtn.addEventListener('click', () => {
-    showUserDataList(--page, userListElement, paginationElement, loaderElement);
+    showUserDataList(
+      --page,
+      userListElement,
+      paginationElement,
+      loaderElement,
+      prevBtn,
+      nextBtn,
+    );
   });
 
   nextBtn.addEventListener('click', () => {
-    showUserDataList(++page, userListElement, paginationElement, loaderElement);
+    showUserDataList(
+      ++page,
+      userListElement,
+      paginationElement,
+      loaderElement,
+      prevBtn,
+      nextBtn,
+    );
   });
 
   tileViewBtn.addEventListener('click', () => {
@@ -99,9 +113,16 @@ const init = (
           userListElement,
           paginationElement,
           loaderElement,
+          prevBtn,
         );
       }
-      showUserDataList(page, userListElement, paginationElement);
+      showUserDataList(
+        page,
+        userListElement,
+        paginationElement,
+        prevBtn,
+        nextBtn,
+      );
     }, 500),
   );
 };
@@ -175,6 +196,7 @@ function generateUserList(
   userListElement,
   paginationElement,
   loaderElement,
+  prevBtn,
 ) {
   userListElement.innerHTML = '';
   if (page <= 0) {
@@ -231,6 +253,7 @@ async function getParticularUserData(
   userListElement,
   paginationElement,
   loaderElement,
+  prevBtn,
 ) {
   try {
     let usersRequest = await makeApiCall(`${RDS_API_USERS}${searchInput}`);
@@ -254,6 +277,7 @@ async function getParticularUserData(
         userListElement,
         paginationElement,
         loaderElement,
+        prevBtn,
       );
     }
     showErrorMessage(
@@ -277,6 +301,8 @@ async function showUserDataList(
   userListElement,
   paginationElement,
   loaderElement,
+  prevBtn,
+  nextBtn,
 ) {
   try {
     const userData = await getUsersData(
@@ -306,6 +332,7 @@ async function showUserDataList(
         userListElement,
         paginationElement,
         loaderElement,
+        prevBtn,
       );
     }
   } catch (err) {
@@ -319,14 +346,25 @@ async function showUserDataList(
   }
 }
 
-init(
-  prevBtn,
-  nextBtn,
-  tileViewBtn,
-  tableViewBtn,
-  userSearchElement,
-  userListElement,
-  paginationElement,
-  loaderElement,
-);
-showUserDataList(page, userListElement, paginationElement, loaderElement);
+// init(
+//   prevBtn,
+//   nextBtn,
+//   tileViewBtn,
+//   tableViewBtn,
+//   userSearchElement,
+//   userListElement,
+//   paginationElement,
+//   loaderElement,
+// );
+// showUserDataList(page, userListElement, paginationElement, loaderElement, prevBtn, nextBtn);
+
+module.exports = {
+  init,
+  showTileView,
+  showTableView,
+  showErrorMessage,
+  getUsersData,
+  generateUserList,
+  getParticularUserData,
+  getParticularUserDetail,
+};
