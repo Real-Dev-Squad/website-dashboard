@@ -1,4 +1,3 @@
-import { fireEvent, getByText } from '@testing-library/dom';
 import '@testing-library/jest-dom/extend-expect';
 import { JSDOM } from 'jsdom';
 import fs from 'fs';
@@ -13,16 +12,7 @@ const html = fs.readFileSync(
 let dom;
 let container;
 
-// import '../../user-management/constants.js'
-// import '../../user-management/utils.js'
-// import { init } from '../../user-management/script.js';
-// import { makeApiCall } from '../../user-management/utils.js';
-
-// require('../../user-management/constants.js')
-const { makeApiCall, debounce } = require('../../user-management/utils.js');
-// require('../../user-management/script.js')
-
-describe.skip('test the index.html page of user management', () => {
+describe('test the index.html page of user management', () => {
   beforeEach(() => {
     dom = new JSDOM(html, { runScripts: 'dangerously' });
     container = dom.window.document;
@@ -68,110 +58,8 @@ describe.skip('test the index.html page of user management', () => {
   });
 });
 
-// describe.skip('init', () => {
-//   dom = new JSDOM(html, { runScripts: 'dangerously' });
-//   const document = dom.window.document;
-//   const prevBtn = document.createElement('button');
-//   const nextBtn = document.createElement('button');
-//   const tileViewBtn = document.createElement('button');
-//   const tableViewBtn = document.createElement('button');
-//   const userSearchElement = document.createElement('input');
-//   const userListElement = document.createElement('div');
-//   const paginationElement = document.createElement('div');
-//   const loaderElement = document.createElement('div');
-//   prevBtn.id = 'prevButton';
-//   nextBtn.id = 'nextButton';
-//   tileViewBtn.id = 'tile-view-btn';
-//   tableViewBtn.id = 'table-view-btn';
-//   userSearchElement.id = 'user-search';
-//   userListElement.id = 'user-list';
-//   paginationElement.id = 'pagination';
-//   loaderElement.id = 'loader';
-
-//   // beforeEach(() => {
-
-//   //   // require('../../user-management/constants.js')
-//   //   // require('../../user-management/utils.js')
-//   //   // require('../../user-management/script.js')
-
-//   //   // require('../../user-management/constants.js')
-//   //   // require('../../user-management/utils.js')
-//   //   // require('../../user-management/script.js')
-
-//   // });
-
-//   it('should call showUserDataList when prev button is clicked', () => {
-//     const showUserDataListMock = jest.fn();
-
-//     init(
-//       prevBtn,
-//       nextBtn,
-//       tileViewBtn,
-//       tableViewBtn,
-//       userSearchElement,
-//       userListElement,
-//       paginationElement,
-//       loaderElement,
-//       showUserDataListMock,
-//     );
-//     // prevBtn.dispatchEvent(new Event('click'));
-//     fireEvent.click(prevBtn);
-//     expect(showUserDataListMock).toHaveBeenCalled();
-//   });
-
-//   it('should call showUserDataList when next button is clicked', () => {
-//     const showUserDataListMock = jest.fn();
-//     init(
-//       prevBtn,
-//       nextBtn,
-//       tileViewBtn,
-//       tableViewBtn,
-//       userSearchElement,
-//       userListElement,
-//       paginationElement,
-//       loaderElement,
-//       showUserDataListMock,
-//     );
-//     nextBtn.dispatchEvent(new Event('click'));
-//     expect(showUserDataListMock).toHaveBeenCalled();
-//   });
-
-//   it('should call showTileView when tileView button is clicked', () => {
-//     const showTileViewMock = jest.fn();
-//     init(
-//       prevBtn,
-//       nextBtn,
-//       tileViewBtn,
-//       tableViewBtn,
-//       userSearchElement,
-//       userListElement,
-//       paginationElement,
-//       loaderElement,
-//       showTileViewMock,
-//     );
-//     tileViewBtn.dispatchEvent(new Event('click'));
-//     expect(showTileViewMock).toHaveBeenCalled();
-//   });
-
-//   it('should call showTableView when tableView button is clicked', () => {
-//     const showTableViewMock = jest.fn();
-//     init(
-//       prevBtn,
-//       nextBtn,
-//       tileViewBtn,
-//       tableViewBtn,
-//       userSearchElement,
-//       userListElement,
-//       paginationElement,
-//       loaderElement,
-//       showTableViewMock,
-//     );
-//     tableViewBtn.dispatchEvent(new Event('click'));
-//     expect(showTableViewMock).toHaveBeenCalled();
-//   });
-// });
-
 describe('test the utils file', () => {
+  const { makeApiCall, debounce } = require('../../user-management/utils.js');
   it('t should make an API call and return the response', async () => {
     const url = 'https://api.realdevsquad.com/users?size=5';
     const response = {
