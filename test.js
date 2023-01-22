@@ -6,7 +6,7 @@ let config = {
 };
 puppeteer.launch(config.launchOptions).then(async (browser) => {
   const page = await browser.newPage();
-  await page.goto('https://dashboard.realdevsquad.com/src/task/index.html');
+  await page.goto('https://dashboard.realdevsquad.com/task/index.html');
   //Test Case:1 - Only Authenticated user are able to create tasks
   await page.type('#title', 'Testing', { delay: 200 });
   await page.waitForSelector('#group');
