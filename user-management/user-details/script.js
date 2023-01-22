@@ -1,5 +1,7 @@
 let userData = {};
 let userAllTasks = [];
+let userSkills = [];
+let userStatusData = {};
 let currentPageIndex = 1;
 let taskPerPage = 3;
 let totalPages = Math.ceil(userAllTasks.length / taskPerPage);
@@ -198,6 +200,8 @@ async function getUserTasks() {
       const tasks = getTasksToFetch(userAllTasks, currentPageIndex);
       generateTasksTabDetails();
       generateUserTaskList(tasks);
+      getUserSkills();
+      getUserAvailabilityStatus();
     }
   } catch (err) {
     const div = createElement({
@@ -292,5 +296,371 @@ function fetchNextTasks() {
   }
 }
 
-getUserData();
-getUserTasks();
+async function getUserSkills() {
+  try {
+    const res = await makeApiCall(
+      `${API_BASE_URL}/users/${userData?.id}/skills`,
+    );
+    if (res.status === 200) {
+      const data = await res.json();
+      userSkills = data.skills;
+      generateSkillsTabDetails(userSkills);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function generateSkillsTabDetails(skills) {
+  const div = createElement({
+    type: 'div',
+    classList: ['hidden-content', 'hide'],
+  });
+
+  if (skills.length) {
+    skills.forEach((skill) => {
+      const skillContainer = createElement({
+        type: 'div',
+        classList: ['skill-container', 'hidden-details'],
+      });
+      const skillName = createElement({ type: 'h3' });
+      const skillLevel = createElement({
+        type: 'span',
+      });
+      skillLevel.appendChild(createTextNode(`Level ${skill.levelValue}`));
+      skillName.appendChild(createTextNode(`${skill.tagName}`));
+      skillContainer.append(skillName, skillLevel);
+      div.append(skillContainer);
+    });
+  } else {
+    div.appendChild(createTextNode('No skills to show!'));
+  }
+
+  document.querySelector('.accordion-skills').append(div);
+}
+
+async function getUserAvailabilityStatus() {
+  try {
+    const res = await makeApiCall(
+      `${API_BASE_URL}/users/status/${userData?.id}`,
+    );
+    if (res.status === 200) {
+      const data = await res.json();
+      userStatusData = data.data;
+      generateAvalabilityTabDetails(userStatusData.currentStatus.state);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function generateAvalabilityTabDetails(state) {
+  if (state === 'OOO') {
+    generateUserOOODetails();
+  } else if (state === 'IDLE') {
+    generateUserIdleDetails();
+  } else {
+    generateUserActiveDetails();
+  }
+}
+
+function getMonth(index) {
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+  return months[index];
+}
+
+function getDateFromTimestamp(timestamp) {
+  const newDate = new Date(timestamp * 1000);
+  const date = newDate.getDate();
+  const month = newDate.getMonth();
+  const year = newDate.getFullYear();
+
+  return `${date}th ${getMonth(month)} ${year}`;
+}
+
+function getDiffrenceBetweenTimestamps(timestampOne, timestampTwo) {
+  const diff = timestampOne - timestampTwo;
+  const days = diff / 60 / 60 / 24;
+  return Math.ceil(days).toFixed(0);
+}
+
+function calculateRemainingActiveMonthlyHours(totalHours) {
+  const currentDate = new Date().getDate();
+  const daysRemaining = 30 - currentDate;
+  const hoursCommittedDaily = totalHours / 30;
+  const remainingHours = daysRemaining * hoursCommittedDaily;
+  return remainingHours.toFixed(1);
+}
+
+function generateUserActiveDetails() {
+  const div = createElement({
+    type: 'div',
+    classList: ['hidden-content', 'hide'],
+  });
+
+  const divOne = createElement({ type: 'div', classList: ['hidden-details'] });
+  const titleOne = createElement({ type: 'h3' });
+  titleOne.appendChild(createTextNode('Current Status'));
+  const currentStatus = createElement({
+    type: 'p',
+  });
+  currentStatus.appendChild(
+    createTextNode(`${userStatusData.currentStatus.state}`),
+  );
+  divOne.append(titleOne, currentStatus);
+
+  const divTwo = createElement({ type: 'div', classList: ['hidden-details'] });
+  const titleTwo = createElement({ type: 'h3' });
+  titleTwo.appendChild(createTextNode('From'));
+  const activeFrom = createElement({ type: 'p' });
+  activeFrom.appendChild(
+    createTextNode(
+      `${getDateFromTimestamp(userStatusData.currentStatus.from._seconds)}`,
+    ),
+  );
+  divTwo.append(titleTwo, activeFrom);
+
+  const divThree = createElement({
+    type: 'div',
+    classList: ['hidden-details'],
+  });
+  const titleThree = createElement({ type: 'h3' });
+  titleThree.appendChild(
+    createTextNode(
+      `No Of Hours alloted for ${getMonth(new Date().getMonth())} 2022`,
+    ),
+  );
+  const hoursAlloted = createElement({ type: 'p' });
+  hoursAlloted.appendChild(
+    createTextNode(`${userStatusData.monthlyHours.commited}`),
+  );
+  divThree.append(titleThree, hoursAlloted);
+
+  const divFour = createElement({
+    type: 'div',
+    classList: ['hidden-details'],
+  });
+  const titleFour = createElement({
+    type: 'h3',
+    classList: ['hidden-details'],
+  });
+  titleFour.appendChild(createTextNode('Approx no of hours remaining'));
+  const hoursRemaining = createElement({ type: 'p' });
+  hoursRemaining.appendChild(
+    createTextNode(
+      `${calculateRemainingActiveMonthlyHours(
+        userStatusData.monthlyHours.commited,
+      )} Hours`,
+    ),
+  );
+  divFour.append(titleFour, hoursRemaining);
+
+  div.append(divOne, divTwo, divThree, divFour);
+
+  document.querySelector('.accordion-availability').append(div);
+}
+
+function generateUserOOODetails() {
+  const div = createElement({
+    type: 'div',
+    classList: ['hidden-content', 'hide'],
+  });
+
+  const divOne = createElement({ type: 'div', classList: ['hidden-details'] });
+  const titleOne = createElement({ type: 'h3' });
+  titleOne.appendChild(createTextNode('Current Status'));
+  const currentStatus = createElement({
+    type: 'p',
+  });
+  currentStatus.appendChild(
+    createTextNode(`${userStatusData.currentStatus.state}`),
+  );
+  divOne.append(titleOne, currentStatus);
+
+  const divTwo = createElement({ type: 'div', classList: ['hidden-details'] });
+  const titleTwo = createElement({ type: 'h3' });
+  titleTwo.appendChild(createTextNode('From'));
+  const oooSince = createElement({ type: 'p' });
+  oooSince.appendChild(
+    createTextNode(
+      `${getDateFromTimestamp(userStatusData.currentStatus.from._seconds)}`,
+    ),
+  );
+  divTwo.append(titleTwo, oooSince);
+
+  const divThree = createElement({
+    type: 'div',
+    classList: ['hidden-details'],
+  });
+  const titleThree = createElement({
+    type: 'h3',
+  });
+  titleThree.appendChild(createTextNode('Until'));
+  const returnDate = createElement({ type: 'p' });
+  returnDate.appendChild(
+    createTextNode(
+      `${getDateFromTimestamp(userStatusData.currentStatus.until._seconds)}`,
+    ),
+  );
+  divThree.append(titleThree, returnDate);
+
+  const divFour = createElement({
+    type: 'div',
+    classList: ['hidden-details'],
+  });
+  const titleFour = createElement({
+    type: 'h3',
+    classList: ['hidden-details'],
+  });
+  titleFour.appendChild(createTextNode('Reason'));
+  const oooReason = createElement({ type: 'p' });
+  oooReason.appendChild(
+    createTextNode(`${userStatusData.currentStatus.message}`),
+  );
+  divFour.append(titleFour, oooReason);
+
+  div.append(divOne, divTwo, divThree, divFour);
+
+  document.querySelector('.accordion-availability').append(div);
+}
+
+function generateUserIdleDetails() {
+  const div = createElement({
+    type: 'div',
+    classList: ['hidden-content', 'hide'],
+  });
+
+  const divOne = createElement({
+    type: 'div',
+    classList: ['hidden-details'],
+  });
+  const titleOne = createElement({ type: 'h3' });
+  titleOne.appendChild(createTextNode('Current Status'));
+  const currentStatus = createElement({
+    type: 'p',
+  });
+  currentStatus.appendChild(
+    createTextNode(`${userStatusData.currentStatus.state}`),
+  );
+  divOne.append(titleOne, currentStatus);
+
+  const divTwo = createElement({
+    type: 'div',
+    classList: ['hidden-details'],
+  });
+  const titleTwo = createElement({ type: 'h3' });
+  titleTwo.appendChild(createTextNode('From'));
+  const idleFrom = createElement({
+    type: 'p',
+  });
+  idleFrom.appendChild(
+    createTextNode(
+      `${getDateFromTimestamp(userStatusData.currentStatus.from._seconds)}`,
+    ),
+  );
+  divTwo.append(titleTwo, idleFrom);
+
+  const divThree = createElement({
+    type: 'div',
+    classList: ['hidden-details'],
+  });
+  const titleThree = createElement({ type: 'h3' });
+  titleThree.appendChild(createTextNode('Skills you are looking to learn'));
+  const skills = createElement({
+    type: 'p',
+  });
+  skills.appendChild(createTextNode(`${userSkills.toString()}`));
+  divThree.append(titleThree, skills);
+
+  const divFour = createElement({
+    type: 'div',
+    classList: ['hidden-details'],
+  });
+  const titleFour = createElement({ type: 'h3' });
+  titleFour.appendChild(
+    createTextNode(
+      `No Of Hours alloted for ${getMonth(new Date().getMonth())} 2022`,
+    ),
+  );
+  const hoursAlloted = createElement({ type: 'p' });
+  hoursAlloted.appendChild(
+    createTextNode(`${userStatusData.monthlyHours.commited}`),
+  );
+  divFour.append(titleFour, hoursAlloted);
+
+  const divFive = createElement({
+    type: 'div',
+    classList: ['hidden-details'],
+  });
+  const titleFive = createElement({
+    type: 'h3',
+    classList: ['hidden-details'],
+  });
+  titleFive.appendChild(createTextNode('Approx no of hours remaining'));
+  const hoursRemaining = createElement({ type: 'p' });
+  hoursRemaining.appendChild(
+    createTextNode(
+      `${calculateRemainingActiveMonthlyHours(
+        userStatusData.monthlyHours.commited,
+      )} Hours`,
+    ),
+  );
+  divFive.append(titleFive, hoursRemaining);
+
+  div.append(divOne, divTwo, divThree, divFour, divFive);
+
+  document.querySelector('.accordion-availability').append(div);
+}
+
+function showProtectedRouteErrorMessage() {
+  const div = createElement({ type: 'div', classList: ['error-dialog'] });
+  const content = createElement({ type: 'div', classList: ['error-content'] });
+  const overlay = createElement({ type: 'div', classList: ['error-overlay'] });
+  const h3 = createElement({ type: 'h3' });
+  h3.appendChild(
+    createTextNode('You are not authorised to access this route!'),
+  );
+  const btn = createElement({ type: 'button' });
+  btn.appendChild(createTextNode('Go Back'));
+  btn.addEventListener('click', () => {
+    window.history.back();
+  });
+  content.append(h3, btn);
+  div.append(overlay, content);
+  document.querySelector('body').appendChild(div);
+}
+
+function showContent() {
+  const section1 = document.querySelector('.header');
+  const section2 = document.querySelector('#main-section');
+  const section3 = document.querySelector('footer');
+  section1.classList.remove('hide');
+  section2.classList.remove('hide');
+  section3.classList.remove('hide');
+}
+
+async function init() {
+  const isSuperUser = await checkUserIsSuperUser();
+  if (isSuperUser) {
+    showContent();
+    getUserData();
+    getUserTasks();
+  } else {
+    showProtectedRouteErrorMessage();
+  }
+}
+
+init();
