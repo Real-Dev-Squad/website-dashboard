@@ -2,6 +2,7 @@
 // const { RDS_API_USERS, USER_LIST_ELEMENT, LOADER_ELEMENT, TILE_VIEW_BTN, TABLE_VIEW_BTN, USER_SEARCH_ELEMENT, DEFAULT_AVATAR, PAGINATION_ELEMENT, PREV_BUTTON, NEXT_BUTTON, USER_FETCH_COUNT } = require('./constants')
 
 // Temporarily adding the constants to make tests pass
+/*
 const API_BASE_URL = 'https://api.realdevsquad.com';
 const RDS_API_USERS = `${API_BASE_URL}/users/`;
 const USER_LIST_ELEMENT = 'user-list';
@@ -50,7 +51,7 @@ function debounce(func, delay) {
     }, delay);
   };
 }
-
+*/
 //
 const userListElement = document.getElementById(USER_LIST_ELEMENT);
 const loaderElement = document.getElementById(LOADER_ELEMENT);
@@ -120,6 +121,7 @@ const init = (
         page,
         userListElement,
         paginationElement,
+        loaderElement,
         prevBtn,
         nextBtn,
       );
@@ -248,6 +250,25 @@ function generateUserList(
   userListElement.appendChild(ulElement);
 }
 
+async function fetchUsersData(searchInput) {
+  const usersRequest = await makeApiCall(`${RDS_API_USERS}${searchInput}`);
+  const usersData = await usersRequest.json();
+  return usersData;
+}
+
+function formatUsersData(usersData) {
+  let data = [];
+  if (usersData.first_name && !usersData.roles?.archived) {
+    data.push({
+      first_name: usersData.first_name,
+      last_name: usersData.last_name ? usersData.last_name : '',
+      picture:
+        usersData.picture && usersData.picture.url ? usersData.picture.url : '',
+    });
+  }
+  return data;
+}
+
 async function getParticularUserData(
   searchInput,
   userListElement,
@@ -256,22 +277,9 @@ async function getParticularUserData(
   prevBtn,
 ) {
   try {
-    let usersRequest = await makeApiCall(`${RDS_API_USERS}${searchInput}`);
-    let usersData = await usersRequest.json();
-    if (usersRequest.status === 200) {
-      usersData = usersData.user;
-      let data = [];
-      if (usersData.first_name && !usersData.roles?.archived) {
-        data.push({
-          first_name: usersData.first_name,
-          username: usersData.username,
-          last_name: usersData.last_name ? usersData.last_name : '',
-          picture:
-            usersData.picture && usersData.picture.url
-              ? usersData.picture.url
-              : '',
-        });
-      }
+    const usersData = await fetchUsersData(searchInput);
+    if (usersData.user) {
+      const data = formatUsersData(usersData.user);
       return generateUserList(
         data,
         false,
@@ -289,13 +297,61 @@ async function getParticularUserData(
     );
   } catch (err) {
     showErrorMessage(
-      'Something Went Wrong',
+      'Something Went Wrong 1122',
       userListElement,
       paginationElement,
       loaderElement,
     );
   }
 }
+
+// async function getParticularUserData(
+//   searchInput,
+//   userListElement,
+//   paginationElement,
+//   loaderElement,
+//   prevBtn,
+// ) {
+//   try {
+//     let usersRequest = await makeApiCall(`${RDS_API_USERS}${searchInput}`);
+//     let usersData = await usersRequest.json();
+//     if (usersRequest.status === 200) {
+//       usersData = usersData.user;
+//       let data = [];
+//       if (usersData.first_name && !usersData.roles?.archived) {
+//         data.push({
+//           first_name: usersData.first_name,
+//           last_name: usersData.last_name ? usersData.last_name : '',
+//           picture:
+//             usersData.picture && usersData.picture.url
+//               ? usersData.picture.url
+//               : '',
+//         });
+//       }
+//       return generateUserList(
+//         data,
+//         false,
+//         userListElement,
+//         paginationElement,
+//         loaderElement,
+//         prevBtn,
+//       );
+//     }
+//     showErrorMessage(
+//       usersData.message,
+//       userListElement,
+//       paginationElement,
+//       loaderElement,
+//     );
+//   } catch (err) {
+//     showErrorMessage(
+//       'Something Went Wrong',
+//       userListElement,
+//       paginationElement,
+//       loaderElement,
+//     );
+//   }
+// }
 
 async function showUserDataList(
   page,
@@ -347,25 +403,31 @@ async function showUserDataList(
   }
 }
 
-// init(
-//   prevBtn,
-//   nextBtn,
-//   tileViewBtn,
-//   tableViewBtn,
-//   userSearchElement,
-//   userListElement,
-//   paginationElement,
-//   loaderElement,
-// );
-// showUserDataList(page, userListElement, paginationElement, loaderElement, prevBtn, nextBtn);
+init(
+  prevBtn,
+  nextBtn,
+  tileViewBtn,
+  tableViewBtn,
+  userSearchElement,
+  userListElement,
+  paginationElement,
+  loaderElement,
+);
+showUserDataList(
+  page,
+  userListElement,
+  paginationElement,
+  loaderElement,
+  prevBtn,
+  nextBtn,
+);
 
-module.exports = {
-  init,
-  showTileView,
-  showTableView,
-  showErrorMessage,
-  getUsersData,
-  generateUserList,
-  getParticularUserData,
-  getParticularUserDetail,
-};
+// module.exports = {
+//   init,
+//   showTileView,
+//   showTableView,
+//   showErrorMessage,
+//   getUsersData,
+//   generateUserList,
+//   getParticularUserData,
+// };
