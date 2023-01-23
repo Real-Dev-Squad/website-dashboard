@@ -5,10 +5,12 @@ const {
   showTableView,
   getUsersData,
   generateUserList,
-  getParticularUserDetail,
   getParticularUserData,
+  fetchUsersData,
+  formatUsersData,
 } = require('../../user-management/script');
 import fetchMock from 'jest-fetch-mock';
+// const rewire = require('rewire');
 
 describe('test the script js file for user listing screen', () => {
   const API_BASE_URL = 'https://api.realdevsquad.com';
@@ -214,17 +216,251 @@ describe('test the script js file for user listing screen', () => {
     expect(userListElement.innerHTML).toContain('No data found');
     expect(paginationElement.classList.contains('remove-element')).toBe(true);
   });
-
-  test('getParticularUserDetail returns user details', async () => {
+  test('fetchUsersData should return user data', async () => {
     const mockData = {
-      id: 1,
+      id: 'DtRsdsK7CysOV7zl8N23s',
       name: 'Mahima Bansal',
-      email: 'mahimabansalrds@yahoo.com',
+      email: 'mahimabansal@bansalclasses.com',
     };
-    fetchMock.enableMocks();
-    fetchMock.mockResponseOnce(JSON.stringify(mockData));
-    const result = await getParticularUserDetail('mahimabansalrds');
-    expect(result).toEqual(mockData.users);
-    fetchMock.resetMocks();
+    const mockFetch = jest.fn().mockResolvedValue({ json: () => mockData });
+    global.fetch = mockFetch;
+    const searchInput = 'mahima';
+    const result = await fetchUsersData(searchInput);
+    expect(result).toEqual(mockData);
+    expect(mockFetch).toHaveBeenCalledWith(`${RDS_API_USERS}${searchInput}`, {
+      method: 'get',
+      body: null,
+      headers: { 'content-type': 'application/json' },
+      credentials: 'include',
+    });
+  });
+
+  test('formatUsersData should return formatted user info', () => {
+    const usersData = {
+      first_name: 'Mahima',
+      last_name: 'Bansal',
+      picture: { url: 'https://picsum.photos/200' },
+      roles: { archived: false },
+    };
+
+    const expectedData = [
+      {
+        first_name: 'Mahima',
+        last_name: 'Bansal',
+        picture: 'https://picsum.photos/200',
+      },
+    ];
+
+    const result = formatUsersData(usersData);
+    expect(result).toEqual(expectedData);
+  });
+
+  test('formatUsersData should not return info if first_name is not present', () => {
+    const usersData = {
+      last_name: 'Bansal',
+      picture: { url: 'https://picsum.photos/200' },
+      roles: { archived: false },
+    };
+
+    const expectedData = [];
+
+    const result = formatUsersData(usersData);
+    expect(result).toEqual(expectedData);
+  });
+
+  test('formatUsersData should not return info if roles.archived is true', () => {
+    const usersData = {
+      first_name: 'Mahima',
+      last_name: 'Bansal',
+      picture: { url: 'https://picsum.photos/200' },
+      roles: { archived: true },
+    };
+
+    const expectedData = [];
+
+    const result = formatUsersData(usersData);
+    expect(result).toEqual(expectedData);
   });
 });
+
+// test('getParticularUserData returns user data', async () => {
+// 	const searchInput = 'testuser';
+// 	const userListElement = document.createElement('div');
+// 	const paginationElement = document.createElement('div');
+// 	const loaderElement = document.createElement('div');
+// 	const prevBtn = document.createElement('button');
+// 	const expectedUserData = {
+// 		first_name: 'Test',
+// 		last_name: 'User',
+// 		picture: 'test.jpg',
+// 	};
+// 	const makeApiCall = jest.fn().mockResolvedValue({
+// 		status: 200,
+// 		json: jest.fn().mockResolvedValue({ user: expectedUserData }),
+// 	});
+// 	const generateUserList = jest.fn();
+// 	const showErrorMessage = jest.fn();
+// 	await getParticularUserData(
+// 		searchInput,
+// 		userListElement,
+// 		paginationElement,
+// 		loaderElement,
+// 		prevBtn,
+// 		generateUserList
+// 	);
+// 	expect(generateUserList).toHaveBeenCalledWith(
+// 		[expectedUserData],
+// 		false,
+// 		userListElement,
+// 		paginationElement,
+// 		loaderElement,
+// 		prevBtn,
+// 	);
+// 	expect(showErrorMessage).not.toHaveBeenCalled();
+// });
+
+// test('getParticularUserData should return user data and generate a list', async () => {
+// 	const searchInput = 'john';
+// 	const userListElement = document.createElement('div');
+// 	const paginationElement = document.createElement('div');
+// 	const loaderElement = document.createElement('div');
+// 	const prevBtn = document.createElement('button');
+// 	const usersData = {
+// 		user: {
+// 			first_name: 'John',
+// 			last_name: 'Doe',
+// 			picture: {
+// 				url: 'https://example.com/john_doe.jpg'
+// 			},
+// 		}
+// 	};
+// 	const mockMakeApiCall = jest.fn(() => Promise.resolve({
+// 		status: 200,
+// 		json: () => Promise.resolve(usersData)
+// 	}));
+// 	const mockGenerateUserList = jest.fn();
+
+// 	// Override the makeApiCall and generateUserList functions with the mocks
+// 	const getParticularUserData = rewire('../../user-management/script');
+// 	getParticularUserData.__set__('makeApiCall', mockMakeApiCall);
+// 	getParticularUserData.__set__('generateUserList', mockGenerateUserList);
+
+// 	await getParticularUserData(searchInput, userListElement, paginationElement, loaderElement, prevBtn);
+
+// 	// Assert that makeApiCall was called with the correct arguments
+// 	expect(mockMakeApiCall).toHaveBeenCalledWith(`${RDS_API_USERS}${searchInput}`);
+
+// 	// Assert that generateUserList was called with the correct arguments
+// 	expect(mockGenerateUserList).toHaveBeenCalledWith([{
+// 		first_name: 'John',
+// 		last_name: 'Doe',
+// 		picture: 'https://example.com/john_doe.jpg'
+// 	}], false, userListElement, paginationElement, loaderElement, prevBtn);
+
+// 	// Reset the rewired functions
+// 	// getParticularUserData.__ResetDependency__('makeApiCall');
+// 	// getParticularUserData.__ResetDependency__('generateUserList');
+// 	getParticularUserData.__reset__();
+// });
+
+// describe('getParticularUserData', () => {
+// 	beforeEach(() => {
+// 		jest.mock('path/to/fetchUsersData', () => jest.fn(() => Promise.resolve(usersData)));
+// 		jest.mock('path/to/formatUsersData', () => jest.fn(() => formattedData));
+// 		jest.mock('path/to/generateUserList', () => jest.fn(() => userListElement));
+// 		jest.mock('path/to/showErrorMessage', () => jest.fn());
+// 	});
+// 	it('should return the formatted user data', async () => {
+// 		const searchInput = 'some_value';
+// 		const usersData = {
+// 			status: 200,
+// 			user: [{
+// 				first_name: 'John',
+// 				last_name: 'Doe',
+// 				picture: 'https://example.com/image.jpg',
+// 				roles: { archived: false }
+// 			}]
+// 		}
+// 		const userListElement = {};
+// 		const paginationElement = {};
+// 		const loaderElement = {};
+// 		const prevBtn = {};
+// 		const result = await getParticularUserData(searchInput, userListElement, paginationElement, loaderElement, prevBtn);
+// 		expect(result).toEqual(userListElement);
+// 		expect(fetchUsersData).toHaveBeenCalledWith(searchInput);
+// 		expect(formatUsersData).toHaveBeenCalledWith(usersData.user);
+// 		expect(generateUserList).toHaveBeenCalledWith(formattedData, userListElement, paginationElement, loaderElement, prevBtn);
+// 	});
+// })
+
+// describe('getParticularUserData', () => {
+//   test('should return formatted user data', async () => {
+//     const mockFetchUsersData = jest.fn().mockResolvedValue({
+//       status: 200,
+//       user: {
+//         first_name: 'John',
+//         last_name: 'Doe',
+//         picture: { url: 'https://example.com/picture.jpg' },
+//         roles: { archived: false },
+//       },
+//     });
+//     const mockGenerateUserList = jest.fn();
+
+//     const searchInput = 'johndoe';
+//     const userListElement = document.createElement('div');
+//     const paginationElement = document.createElement('div');
+//     const loaderElement = document.createElement('div');
+//     const prevBtn = document.createElement('button');
+
+//     await getParticularUserData(
+//       searchInput,
+//       userListElement,
+//       paginationElement,
+//       loaderElement,
+//       prevBtn,
+//       mockFetchUsersData,
+//       mockGenerateUserList,
+//     );
+
+//     expect(mockFetchUsersData).toHaveBeenCalledWith(searchInput);
+//     expect(mockGenerateUserList).toHaveBeenCalledWith(
+//       [
+//         {
+//           first_name: 'John',
+//           last_name: 'Doe',
+//           picture: 'https://example.com/picture.jpg',
+//         },
+//       ],
+//       userListElement,
+//       paginationElement,
+//       loaderElement,
+//       prevBtn,
+//     );
+//   });
+
+//   test.skip('should show an error message when fetchUsersData throws an error', async () => {
+//     const mockFetchUsersData = jest
+//       .fn()
+//       .mockRejectedValue(new Error('Something went wrong'));
+//     const mockShowErrorMessage = jest.fn();
+
+//     const searchInput = 'johndoe';
+//     const userListElement = document.createElement('div');
+//     const paginationElement = document.createElement('div');
+//     const loaderElement = document.createElement('div');
+//     const prevBtn = document.createElement('button');
+
+//     await getParticularUserData(
+//       searchInput,
+//       userListElement,
+//       paginationElement,
+//       loaderElement,
+//       prevBtn,
+//       mockFetchUsersData,
+//       mockShowErrorMessage,
+//     );
+
+//     expect(mockFetchUsersData).toHaveBeenCalledWith(searchInput);
+//     expect(mockShowErrorMessage).toHaveBeenCalledWith('Something Went Wrong');
+//   });
+// });
