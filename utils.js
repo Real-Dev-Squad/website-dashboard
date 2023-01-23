@@ -7,7 +7,9 @@ async function getSelfUser() {
     },
   });
   const self_user = await res.json();
-  return self_user;
+  if (res.status === 200) {
+    return self_user;
+  }
 }
 
 async function checkUserIsSuperUser() {
