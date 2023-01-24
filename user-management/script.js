@@ -4,7 +4,7 @@ const { makeApiCall, debounce } = require('./utils')
  */
 
 // Temporarily adding the constants and utils functionalities to make tests pass
-
+/* 
 const API_BASE_URL = 'https://api.realdevsquad.com';
 const RDS_API_USERS = `${API_BASE_URL}/users/`;
 const USER_LIST_ELEMENT = 'user-list';
@@ -53,7 +53,7 @@ function debounce(func, delay) {
     }, delay);
   };
 }
-
+ */
 //
 const userListElement = document.getElementById(USER_LIST_ELEMENT);
 const loaderElement = document.getElementById(LOADER_ELEMENT);
@@ -282,7 +282,7 @@ async function getParticularUserData(
     const usersData = await fetchUsersData(searchInput);
     if (usersData.user) {
       const data = formatUsersData(usersData.user);
-      return generateUserList(
+      generateUserList(
         data,
         false,
         userListElement,
@@ -290,13 +290,14 @@ async function getParticularUserData(
         loaderElement,
         prevBtn,
       );
+    } else {
+      showErrorMessage(
+        usersData.message,
+        userListElement,
+        paginationElement,
+        loaderElement,
+      );
     }
-    showErrorMessage(
-      usersData.message,
-      userListElement,
-      paginationElement,
-      loaderElement,
-    );
   } catch (err) {
     showErrorMessage(
       'Something Went Wrong',
@@ -357,7 +358,7 @@ async function showUserDataList(
   }
 }
 
-/* init(
+init(
   prevBtn,
   nextBtn,
   tileViewBtn,
@@ -374,9 +375,9 @@ showUserDataList(
   loaderElement,
   prevBtn,
   nextBtn,
-); */
+);
 
-module.exports = {
+/* export {
   init,
   showTileView,
   showTableView,
@@ -386,4 +387,17 @@ module.exports = {
   getParticularUserData,
   fetchUsersData,
   formatUsersData,
-};
+  showUserDataList,
+}; */
+
+// module.exports = {
+//   init,
+//   showTileView,
+//   showTableView,
+//   showErrorMessage,
+//   getUsersData,
+//   generateUserList,
+//   getParticularUserData,
+//   fetchUsersData,
+//   formatUsersData,
+// };
