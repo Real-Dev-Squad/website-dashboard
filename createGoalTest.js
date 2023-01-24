@@ -6,7 +6,7 @@ let config = {
 };
 puppeteer.launch(config.launchOptions).then(async (browser) => {
   const page = await browser.newPage();
-  await page.goto('https://dashboard.realdevsquad.com/goal/index.html');
+  await page.goto('http://192.168.22.108:5500/goal/index.html');
 
   const editButtons = await page.$$('.edit-button');
 
