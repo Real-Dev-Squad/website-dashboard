@@ -652,15 +652,6 @@ function showContent() {
   section3.classList.remove('hide');
 }
 
-async function init() {
-  const isSuperUser = await checkUserIsSuperUser();
-  if (isSuperUser) {
-    showContent();
-    getUserData();
-    getUserTasks();
-  } else {
-    showProtectedRouteErrorMessage();
-  }
-}
-
-init();
+showContent();
+getUserData();
+getUserTasks();
