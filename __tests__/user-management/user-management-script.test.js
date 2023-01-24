@@ -1,4 +1,4 @@
-const allFns = require('../../user-management/script');
+const allFns = require('../../user/script');
 const {
   init,
   showTileView,

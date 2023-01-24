@@ -237,7 +237,7 @@ function generateUserList(
       imgElement.classList.add('remove-element');
     }
     listElement.onclick = () => {
-      window.location.href = `user-details/index.html?username=${userData.username}`;
+      window.location.href = `details/index.html?username=${userData.username}`;
     };
     ulElement.appendChild(listElement);
   });
