@@ -253,22 +253,28 @@ function generateUserList(
 }
 
 async function fetchUsersData(searchInput) {
-  const usersRequest = await makeApiCall(`${RDS_API_USERS}${searchInput}`);
+  const usersRequest = await makeApiCall(
+    `${RDS_API_USERS}?search=${searchInput}`,
+  );
   const usersData = await usersRequest.json();
   return usersData;
 }
 
 function formatUsersData(usersData) {
   let data = [];
-  if (usersData.first_name && !usersData.roles?.archived) {
-    data.push({
-      first_name: usersData.first_name,
-      last_name: usersData.last_name ? usersData.last_name : '',
-      username: usersData.username,
-      picture:
-        usersData.picture && usersData.picture.url ? usersData.picture.url : '',
-    });
-  }
+  usersData.forEach((usersData) => {
+    if (usersData.first_name && !usersData.roles?.archived) {
+      data.push({
+        first_name: usersData.first_name,
+        last_name: usersData.last_name ? usersData.last_name : '',
+        username: usersData.username,
+        picture:
+          usersData.picture && usersData.picture.url
+            ? usersData.picture.url
+            : '',
+      });
+    }
+  });
   return data;
 }
 
@@ -281,8 +287,8 @@ async function getParticularUserData(
 ) {
   try {
     const usersData = await fetchUsersData(searchInput);
-    if (usersData.user) {
-      const data = formatUsersData(usersData.user);
+    if (usersData.users) {
+      const data = formatUsersData(usersData.users);
       generateUserList(
         data,
         false,
