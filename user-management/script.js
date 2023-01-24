@@ -264,6 +264,7 @@ function formatUsersData(usersData) {
     data.push({
       first_name: usersData.first_name,
       last_name: usersData.last_name ? usersData.last_name : '',
+      username: usersData.username,
       picture:
         usersData.picture && usersData.picture.url ? usersData.picture.url : '',
     });
