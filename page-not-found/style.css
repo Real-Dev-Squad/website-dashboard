@@ -26,10 +26,10 @@ body {
   text-align: center;
 }
 
-#createTask {
+#not-found-text-p {
   color: white;
-  text-decoration: none;
-  font-size: large;
+  font-size: 20px;
+  margin: 0;
 }
 
 .main-container {
@@ -49,7 +49,7 @@ body {
   width: 60%;
 }
 
-.not-found__text {
+.not-found-text-h1 {
   font-weight: 700;
 }
 
@@ -68,7 +68,7 @@ footer {
 }
 
 @media only screen and (max-width: 644px) {
-  .not-found__text {
+  .not-found-text-h1 {
     font-size: 20px;
   }
 }
