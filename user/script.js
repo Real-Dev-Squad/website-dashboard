@@ -1,10 +1,11 @@
 /* 
 const { RDS_API_USERS, USER_LIST_ELEMENT, LOADER_ELEMENT, TILE_VIEW_BTN, TABLE_VIEW_BTN, USER_SEARCH_ELEMENT, DEFAULT_AVATAR, PAGINATION_ELEMENT, PREV_BUTTON, NEXT_BUTTON, USER_FETCH_COUNT } = require('./constants')
 const { makeApiCall, debounce } = require('./utils')
- */
+*/
 
+// import { RDS_API_USERS, USER_LIST_ELEMENT, LOADER_ELEMENT, TILE_VIEW_BTN, TABLE_VIEW_BTN, USER_SEARCH_ELEMENT, DEFAULT_AVATAR, PAGINATION_ELEMENT, PREV_BUTTON, NEXT_BUTTON, USER_FETCH_COUNT } from './constants'
 // Temporarily adding the constants and utils functionalities to make tests pass
-/* 
+
 const API_BASE_URL = 'https://api.realdevsquad.com';
 const RDS_API_USERS = `${API_BASE_URL}/users/`;
 const USER_LIST_ELEMENT = 'user-list';
@@ -53,7 +54,7 @@ function debounce(func, delay) {
     }, delay);
   };
 }
- */
+
 //
 const userListElement = document.getElementById(USER_LIST_ELEMENT);
 const loaderElement = document.getElementById(LOADER_ELEMENT);
@@ -383,8 +384,28 @@ showUserDataList(
   prevBtn,
   nextBtn,
 );
+window.onload = function () {
+  init(
+    prevBtn,
+    nextBtn,
+    tileViewBtn,
+    tableViewBtn,
+    userSearchElement,
+    userListElement,
+    paginationElement,
+    loaderElement,
+  );
+  showUserDataList(
+    page,
+    userListElement,
+    paginationElement,
+    loaderElement,
+    prevBtn,
+    nextBtn,
+  );
+};
 
-/* export {
+export {
   init,
   showTileView,
   showTableView,
@@ -395,16 +416,4 @@ showUserDataList(
   fetchUsersData,
   formatUsersData,
   showUserDataList,
-}; */
-
-// module.exports = {
-//   init,
-//   showTileView,
-//   showTableView,
-//   showErrorMessage,
-//   getUsersData,
-//   generateUserList,
-//   getParticularUserData,
-//   fetchUsersData,
-//   formatUsersData,
-// };
+};

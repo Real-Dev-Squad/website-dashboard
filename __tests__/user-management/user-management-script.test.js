@@ -1,15 +1,13 @@
-const allFns = require('../../user/script');
-const {
+import {
   init,
   showTileView,
   showErrorMessage,
   showTableView,
   getUsersData,
   generateUserList,
-  getParticularUserData,
-  // fetchUsersData,
   formatUsersData,
-} = allFns;
+} from '../../user/script';
+
 import fetchMock from 'jest-fetch-mock';
 
 describe('test the script js file for user listing screen', () => {
@@ -217,7 +215,7 @@ describe('test the script js file for user listing screen', () => {
     expect(paginationElement.classList.contains('remove-element')).toBe(true);
   });
   test('fetchUsersData should return user data', async () => {
-    const { fetchUsersData } = allFns;
+    const { fetchUsersData } = require('../../user/script');
     const mockData = {
       id: 'DtRsdsK7CysOV7zl8N23s',
       name: 'Mahima Bansal',
@@ -228,21 +226,26 @@ describe('test the script js file for user listing screen', () => {
     const searchInput = 'mahima';
     const result = await fetchUsersData(searchInput);
     expect(result).toEqual(mockData);
-    expect(mockFetch).toHaveBeenCalledWith(`${RDS_API_USERS}${searchInput}`, {
-      method: 'get',
-      body: null,
-      headers: { 'content-type': 'application/json' },
-      credentials: 'include',
-    });
+    expect(mockFetch).toHaveBeenCalledWith(
+      `${RDS_API_USERS}?search=${searchInput}`,
+      {
+        method: 'get',
+        body: null,
+        headers: { 'content-type': 'application/json' },
+        credentials: 'include',
+      },
+    );
   });
 
   test('formatUsersData should return formatted user info', () => {
-    const usersData = {
-      first_name: 'Mahima',
-      last_name: 'Bansal',
-      picture: { url: 'https://picsum.photos/200' },
-      roles: { archived: false },
-    };
+    const usersData = [
+      {
+        first_name: 'Mahima',
+        last_name: 'Bansal',
+        picture: { url: 'https://picsum.photos/200' },
+        roles: { archived: false },
+      },
+    ];
 
     const expectedData = [
       {
@@ -257,11 +260,13 @@ describe('test the script js file for user listing screen', () => {
   });
 
   test('formatUsersData should not return info if first_name is not present', () => {
-    const usersData = {
-      last_name: 'Bansal',
-      picture: { url: 'https://picsum.photos/200' },
-      roles: { archived: false },
-    };
+    const usersData = [
+      {
+        last_name: 'Bansal',
+        picture: { url: 'https://picsum.photos/200' },
+        roles: { archived: false },
+      },
+    ];
 
     const expectedData = [];
 
@@ -270,12 +275,14 @@ describe('test the script js file for user listing screen', () => {
   });
 
   test('formatUsersData should not return info if roles.archived is true', () => {
-    const usersData = {
-      first_name: 'Mahima',
-      last_name: 'Bansal',
-      picture: { url: 'https://picsum.photos/200' },
-      roles: { archived: true },
-    };
+    const usersData = [
+      {
+        first_name: 'Mahima',
+        last_name: 'Bansal',
+        picture: { url: 'https://picsum.photos/200' },
+        roles: { archived: true },
+      },
+    ];
 
     const expectedData = [];
 

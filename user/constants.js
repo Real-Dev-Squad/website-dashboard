@@ -24,7 +24,7 @@ const USER_FETCH_COUNT = 100;
 // export const NEXT_BUTTON = 'nextButton';
 // export const USER_FETCH_COUNT = 100;
 
-/* export {
+export {
   API_BASE_URL,
   RDS_API_USERS,
   USER_LIST_ELEMENT,
@@ -37,4 +37,4 @@ const USER_FETCH_COUNT = 100;
   PREV_BUTTON,
   NEXT_BUTTON,
   USER_FETCH_COUNT,
-}; */
+};

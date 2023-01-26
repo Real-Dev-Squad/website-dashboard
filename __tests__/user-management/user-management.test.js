@@ -5,7 +5,7 @@ import path from 'path';
 import fetch from 'jest-fetch-mock';
 
 const html = fs.readFileSync(
-  path.resolve(__dirname, '../../user-management/index.html'),
+  path.resolve(__dirname, '../../user/index.html'),
   'utf8',
 );
 
@@ -31,9 +31,6 @@ describe('test the index.html page of user management', () => {
     const inputElement = container.querySelector('#user-search');
     expect(inputElement).toBeTruthy();
     expect(inputElement).toHaveAttribute('placeholder', 'Search Users');
-    const userNote = container.querySelector('#user-note');
-    expect(userNote).toBeTruthy();
-    expect(userNote.innerHTML).toBe('user can be searched by username only');
   });
 
   it('tile view and table view button element exist and have an image child with correct alt attribute', () => {
@@ -59,7 +56,7 @@ describe('test the index.html page of user management', () => {
 });
 
 describe('test the utils file', () => {
-  const { makeApiCall, debounce } = require('../../user-management/utils.js');
+  const { makeApiCall, debounce } = require('../../user/utils.js');
   it('t should make an API call and return the response', async () => {
     const url = 'https://api.realdevsquad.com/users?size=5';
     const response = {
