@@ -415,7 +415,7 @@ async function fetchLevel() {
 
   for (const level of levels) {
     const option = document.createElement('option');
-    option.text = level.value;
+    option.text = level.name;
     option.setAttribute('value', level.id);
     leveloption.appendChild(option);
   }
