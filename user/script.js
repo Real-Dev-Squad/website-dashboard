@@ -1,63 +1,3 @@
-/* 
-const { RDS_API_USERS, USER_LIST_ELEMENT, LOADER_ELEMENT, TILE_VIEW_BTN, TABLE_VIEW_BTN, USER_SEARCH_ELEMENT, DEFAULT_AVATAR, PAGINATION_ELEMENT, PREV_BUTTON, NEXT_BUTTON, USER_FETCH_COUNT } = require('./constants')
-const { makeApiCall, debounce } = require('./utils')
-*/
-// if (document.scripts.length > 1) {
-
-// }
-// import { RDS_API_USERS, USER_LIST_ELEMENT, LOADER_ELEMENT, TILE_VIEW_BTN, TABLE_VIEW_BTN, USER_SEARCH_ELEMENT, DEFAULT_AVATAR, PAGINATION_ELEMENT, PREV_BUTTON, NEXT_BUTTON, USER_FETCH_COUNT } from './constants'
-// Temporarily adding the constants and utils functionalities to make tests pass
-
-/* const API_BASE_URL = 'https://api.realdevsquad.com';
-const RDS_API_USERS = `${API_BASE_URL}/users/`;
-const USER_LIST_ELEMENT = 'user-list';
-const LOADER_ELEMENT = 'loader';
-const TILE_VIEW_BTN = 'tile-view-btn';
-const TABLE_VIEW_BTN = 'table-view-btn';
-const USER_SEARCH_ELEMENT = 'user-search';
-const DEFAULT_AVATAR = './images/avatar.png';
-const PAGINATION_ELEMENT = 'pagination';
-const PREV_BUTTON = 'prevButton';
-const NEXT_BUTTON = 'nextButton';
-const USER_FETCH_COUNT = 100; */
-
-/* async function makeApiCall(
-  url,
-  method = 'get',
-  body = null,
-  credentials = 'include',
-  headers = { 'content-type': 'application/json' },
-  options = null,
-) {
-  try {
-    const response = await fetch(url, {
-      method,
-      body,
-      headers,
-      credentials,
-      ...options,
-    });
-    return response;
-  } catch (err) {
-    console.error('Something went wrong. Please contact admin', err);
-    return err;
-  }
-}
-
-function debounce(func, delay) {
-  let timerId;
-  return (...args) => {
-    if (timerId) {
-      clearTimeout(timerId);
-    }
-
-    timerId = setTimeout(() => {
-      func(...args);
-    }, delay);
-  };
-} */
-
-//
 const userListElement = document.getElementById(USER_LIST_ELEMENT);
 const loaderElement = document.getElementById(LOADER_ELEMENT);
 const tileViewBtn = document.getElementById(TILE_VIEW_BTN);
@@ -367,15 +307,7 @@ async function showUserDataList(
     );
   }
 }
-// let scripts = document.getElementsByTagName('script');
-// let lastScript = scripts[scripts.length - 1];
-// console.log("🚀 ~ file: script.js:369 ~ lastScript", lastScript.readyState);
-// console.log('require.main', require.main)
 
-// console.log("🚀 window.location.href ", window.location.href );
-// console.log("🚀 ~ file: script.js:369 ~ document.scripts[document.scripts.length - 1].src ", document.scripts[document.scripts.length - 1].src );
-// console.log("🚀 ~ file: script.js:369 ~ document.scripts ", document.scripts );
-// console.log("🚀 ~ file: script.js:376 ~ document.currentScript", document.currentScript);
 window.onload = function () {
   init(
     prevBtn,
