@@ -7,8 +7,7 @@
     "check": "prettier --check .",
     "fix": "prettier --write .",
     "test": "node test.js",
-    "start": "node server.js",
-    "run-tests": "jest --coverage=false"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -23,22 +22,11 @@
   "pre-commit": "check",
   "homepage": "https://github.com/Real-Dev-Squad/website-dashboard#readme",
   "devDependencies": {
-    "@babel/core": "^7.20.12",
-    "@babel/preset-env": "^7.20.2",
-    "@testing-library/dom": "^8.19.1",
-    "@testing-library/jest-dom": "^5.16.5",
-    "babel-jest": "^29.3.1",
-    "jest": "^29.3.1",
-    "jest-environment-jsdom": "^29.3.1",
-    "jest-fetch-mock": "^3.0.3",
-    "jsdom": "^21.0.0",
     "pre-commit": "^1.2.2",
     "prettier": "2.3.1"
   },
   "dependencies": {
-    "encoding": "^0.1.13",
     "puppeteer": "^12.0.1",
-    "puppeteer-core": "^12.0.1",
-    "text-encoding": "^0.7.0"
+    "puppeteer-core": "^12.0.1"
   }
 }
