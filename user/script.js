@@ -180,6 +180,7 @@ function generateUserList(
       imgElement.classList.add('remove-element');
     }
     listElement.onclick = () => {
+      document.getElementById('user-search').value = '';
       window.location.href = `details/index.html?username=${userData.username}`;
     };
     ulElement.appendChild(listElement);
