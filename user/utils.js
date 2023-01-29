@@ -17,7 +17,7 @@ async function makeApiCall(
     return response;
   } catch (err) {
     console.error(err);
-    return err;
+    throw err;
   }
 }
 

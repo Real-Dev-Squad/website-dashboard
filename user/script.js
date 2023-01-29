@@ -197,11 +197,16 @@ function generateUserList(
 }
 
 async function fetchUsersData(searchInput) {
-  const usersRequest = await makeApiCall(
-    `${RDS_API_USERS}?search=${searchInput}`,
-  );
-  const usersData = await usersRequest.json();
-  return usersData;
+  try {
+    const usersRequest = await makeApiCall(
+      `${RDS_API_USERS}?search=${searchInput}`,
+    );
+    const usersData = await usersRequest.json();
+    return usersData;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
 }
 
 function formatUsersData(usersData) {
@@ -268,12 +273,7 @@ async function showUserDataList(
   nextBtn,
 ) {
   try {
-    const userData = await getUsersData(
-      page,
-      userListElement,
-      paginationElement,
-      loaderElement,
-    );
+    const userData = await getUsersData(page);
     if (userData.length) {
       if (userData.length < 100) {
         nextBtn.classList.add('btn-disabled');

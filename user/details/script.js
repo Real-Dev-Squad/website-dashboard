@@ -57,7 +57,7 @@ async function getUserData() {
 
 function generateUserImage(alt) {
   const img = createElement({ type: 'img' });
-  img.src = userData.picture?.url ? userData.picture.url : defaultAvatar;
+  img.src = userData.picture?.url ?? defaultAvatar;
   img.setAttribute('alt', alt);
   img.style.height = '100px';
   img.style.width = '100px';
@@ -149,18 +149,18 @@ function generateAcademicTabDetails() {
     type: 'p',
     classList: ['user-details-company'],
   });
-  company.appendChild(createTextNode(userData.company ?? 'Not Found'));
+  company.appendChild(createTextNode(userData.company ?? MESSAGE_NOT_FOUND));
 
   divOne.append(titleOne, company);
 
   const divTwo = createElement({ type: 'div', classList: ['hidden-details'] });
   const titleTwo = createElement({ type: 'h3' });
-  titleTwo.appendChild(createTextNode('Years of Experience'));
+  titleTwo.appendChild(createTextNode(MESSAGE_YEARS_OF_EXPERIENCE));
   const yoe = createElement({
     type: 'p',
     classList: ['user-details-yoe'],
   });
-  yoe.appendChild(createTextNode(userData.yoe ?? 'Not Found'));
+  yoe.appendChild(createTextNode(userData.yoe ?? MESSAGE_NOT_FOUND));
 
   divTwo.append(titleTwo, yoe);
   div.append(divOne, divTwo);
@@ -397,15 +397,6 @@ function generateReadableDateFromTimeStamp(timeStamp) {
   return new Date(timeStamp).toDateString();
 }
 
-function getDateFromTimestamp(timestamp) {
-  const newDate = new Date(timestamp * 1000);
-  const date = newDate.getDate();
-  const month = newDate.getMonth();
-  const year = newDate.getFullYear();
-
-  return `${date}th ${getMonth(month)} ${year}`;
-}
-
 function getDiffrenceBetweenTimestamps(timestampOne, timestampTwo) {
   const diff = timestampOne - timestampTwo;
   const days = diff / 60 / 60 / 24;
@@ -456,7 +447,9 @@ function generateUserActiveDetails() {
     const titleThree = createElement({ type: 'h3' });
     titleThree.appendChild(
       createTextNode(
-        `No of Hours alloted for ${getMonth(new Date().getMonth())} 2022`,
+        `No of Hours alloted for ${getMonth(
+          new Date().getMonth(),
+        )} ${new Date().getFullYear()}`,
       ),
     );
     const hoursAlloted = createElement({ type: 'p' });
@@ -473,7 +466,7 @@ function generateUserActiveDetails() {
       type: 'h3',
       classList: ['hidden-details'],
     });
-    titleFour.appendChild(createTextNode('Approx no of hours remaining'));
+    titleFour.appendChild(createTextNode('Approx No of hours remaining'));
     const hoursRemaining = createElement({ type: 'p' });
     hoursRemaining.appendChild(
       createTextNode(
@@ -612,7 +605,9 @@ function generateUserIdleDetails() {
     const titleFour = createElement({ type: 'h3' });
     titleFour.appendChild(
       createTextNode(
-        `No of Hours alloted for ${getMonth(new Date().getMonth())} 2022`,
+        `No of Hours alloted for ${getMonth(
+          new Date().getMonth(),
+        )} ${new Date().getFullYear()}`,
       ),
     );
     const hoursAlloted = createElement({ type: 'p' });
@@ -629,7 +624,7 @@ function generateUserIdleDetails() {
       type: 'h3',
       classList: ['hidden-details'],
     });
-    titleFive.appendChild(createTextNode('Approx no of hours remaining'));
+    titleFive.appendChild(createTextNode('Approx No of hours remaining'));
     const hoursRemaining = createElement({ type: 'p' });
     hoursRemaining.appendChild(
       createTextNode(
@@ -655,24 +650,6 @@ function generateNoUserStatusFound() {
   div.innerHTML = '';
   div.appendChild(errorEl);
   document.querySelector('.accordion-availability').append(div);
-}
-
-function showProtectedRouteErrorMessage() {
-  const div = createElement({ type: 'div', classList: ['error-dialog'] });
-  const content = createElement({ type: 'div', classList: ['error-content'] });
-  const overlay = createElement({ type: 'div', classList: ['error-overlay'] });
-  const h3 = createElement({ type: 'h3' });
-  h3.appendChild(
-    createTextNode('You are not authorised to access this route!'),
-  );
-  const btn = createElement({ type: 'button' });
-  btn.appendChild(createTextNode('Go Back'));
-  btn.addEventListener('click', () => {
-    window.history.back();
-  });
-  content.append(h3, btn);
-  div.append(overlay, content);
-  document.querySelector('body').appendChild(div);
 }
 
 function showContent() {
