@@ -2,9 +2,12 @@ let userData = {};
 let userAllTasks = [];
 let userSkills = [];
 let userStatusData = {};
+let userAllPRs = [];
 let currentPageIndex = 1;
 let taskPerPage = 3;
 let totalPages = Math.ceil(userAllTasks.length / taskPerPage);
+let PRsPerPage = 3;
+let totalPRsPages = Math.ceil(userAllPRs.length / PRsPerPage);
 const username = new URLSearchParams(window.location.search).get('username');
 
 function createElement({ type, classList = [] }) {
@@ -625,6 +628,183 @@ function generateUserIdleDetails() {
   document.querySelector('.accordion-availability').append(div);
 }
 
+async function getUserPRs() {
+  try {
+    const res = await makeApiCall(
+      `${API_BASE_URL}/pullrequests/user/${username}`,
+    );
+    if (res.status === 200) {
+      const data = await res.json();
+      userAllPRs = data.pullRequests;
+      totalPRsPages = Math.ceil(userAllPRs.length / PRsPerPage);
+      const prs = getTasksToFetch(userAllTasks, currentPageIndex);
+      generatePRsTabDetails();
+      generateUserPRsList(prs);
+    }
+  } catch (err) {}
+}
+
+function formatDate(dateStr) {
+  const date = new Date(dateStr);
+  const options = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'Asia/Kolkata',
+  };
+  const formattedDate = date.toLocaleDateString('en-US', options);
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  const hours12 = hours % 12 || 12;
+  return `${formattedDate} IST`;
+}
+
+function loadMorePRs() {
+  console.log('load more prs');
+  if (currentPageIndex < totalPRsPages) {
+    currentPageIndex++;
+    const prs = getTasksToFetch(userAllPRs, currentPageIndex);
+    generateUserPRsList(prs);
+  }
+}
+
+function getPRstoFetch(userPR, currentPageIndex) {
+  const startIndex = currentPageIndex * PRsPerPage - PRsPerPage;
+  const endIndex = currentPageIndex + PRsPerPage;
+  return userPR.filter((_, index) => startIndex && index < endIndex);
+}
+
+function generatePRsTabDetails() {
+  const div = createElement({
+    type: 'div',
+    classList: ['hidden-content', 'hide'],
+  });
+  const prsSec = createElement({
+    type: 'div',
+    classList: ['user-pr'],
+  });
+  const pagination = createElement({ type: 'div', classList: ['pagination'] });
+  const prevBtn = createElement({
+    type: 'button',
+    classList: ['pagination-load-more'],
+  });
+  prevBtn.appendChild(createTextNode('Load More'));
+  prevBtn.addEventListener('click', loadMorePRs);
+  pagination.append(prevBtn);
+  div.append(prsSec, pagination);
+  document.querySelector('.accordion-prs').appendChild(div);
+}
+
+function createSinglePRCard(PR) {
+  const userPR = createElement({ type: 'div', classList: ['user-pr'] });
+  const h2 = createElement({ type: 'h2' });
+  h2.appendChild(createTextNode(PR.title.toString()));
+  userPR.appendChild(h2);
+  const container = createElement({ type: 'table' });
+  const rowOne = createElement({ type: 'tr' });
+  const tableDataOne = createElement({ type: 'td' });
+  const repoName = createElement({
+    type: 'h4',
+    classList: ['pr-details-head'],
+  });
+  repoName.appendChild(createTextNode('Repository Name'));
+  tableDataOne.appendChild(repoName);
+  const tableDataTwo = createElement({ type: 'td', classList: ['semi'] });
+  tableDataTwo.appendChild(createTextNode(':'));
+  const tableDataThree = createElement({ type: 'td' });
+  tableDataThree.appendChild(createTextNode(PR.repository));
+  rowOne.append(tableDataOne, tableDataTwo, tableDataThree);
+  container.append(rowOne);
+  const rowTwo = createElement({ type: 'tr' });
+  const tableDataFour = createElement({ type: 'td' });
+  const repoPRStatus = createElement({
+    type: 'h4',
+    classList: ['pr-details-head'],
+  });
+  repoPRStatus.appendChild(createTextNode('Status'));
+  tableDataFour.appendChild(repoPRStatus);
+  const tableDataFive = createElement({ type: 'td', classList: ['semi'] });
+  tableDataFive.appendChild(createTextNode(':'));
+  const tableDataSix = createElement({ type: 'td' });
+  tableDataSix.appendChild(createTextNode(PR.state));
+  rowTwo.append(tableDataFour, tableDataFive, tableDataSix);
+  container.append(rowTwo);
+  const rowThree = createElement({ type: 'tr' });
+  const tableDataSeven = createElement({ type: 'td' });
+  const PRCreatedAt = createElement({
+    type: 'h4',
+    classList: ['pr-details-head'],
+  });
+  PRCreatedAt.appendChild(createTextNode('Created At'));
+  tableDataSeven.appendChild(PRCreatedAt);
+  const tableDataEight = createElement({ type: 'td', classList: ['semi'] });
+  tableDataEight.appendChild(createTextNode(':'));
+  const tableDataNine = createElement({ type: 'td' });
+  tableDataNine.appendChild(createTextNode(formatDate(PR.createdAt)));
+  rowThree.append(tableDataSeven, tableDataEight, tableDataNine);
+  container.append(rowThree);
+  const rowFour = createElement({ type: 'tr' });
+  const tableDataTen = createElement({ type: 'td' });
+  const PRUpdatedAt = createElement({
+    type: 'h4',
+    classList: ['pr-details-head'],
+  });
+  PRUpdatedAt.appendChild(createTextNode('Updated At'));
+  tableDataTen.appendChild(PRUpdatedAt);
+  const tableDataEleven = createElement({ type: 'td', classList: ['semi'] });
+  tableDataEleven.appendChild(createTextNode(':'));
+  const tableDataTwelve = createElement({ type: 'td' });
+  tableDataTwelve.appendChild(createTextNode(formatDate(PR.updatedAt)));
+  rowFour.append(tableDataTen, tableDataEleven, tableDataTwelve);
+  container.append(rowFour);
+  const viewPRBtnDiv = createElement({ type: 'div', classList: ['pr-btn'] });
+  const viewPRBtn = createElement({
+    type: 'button',
+    classList: ['pr-btn-view'],
+  });
+  viewPRBtn.appendChild(createTextNode('View'));
+  viewPRBtn.addEventListener('click', (e) => {
+    window.open(PR.url, '_blank');
+  });
+  viewPRBtnDiv.appendChild(viewPRBtn);
+  userPR.append(container, viewPRBtnDiv);
+  container.append(rowOne, rowTwo, rowThree, rowFour);
+  return userPR;
+}
+
+function generateUserPRsList(userPRs) {
+  if (!userPRs.length) {
+    const errorE1 = createElement({
+      type: 'p',
+      classList: ['error'],
+    });
+    const container = document.querySelector(
+      '.accordion-prs > .hidden-content',
+    );
+    container.innerHTML = '';
+    errorE1.appendChild(createTextNode('No PRs to show'));
+    container.appendChild(errorE1);
+  } else {
+    userPRs.forEach((pr) => {
+      const PRsCard = createSinglePRCard(pr);
+      document.querySelector('.user-pr').appendChild(PRsCard);
+    });
+    if (currentPageIndex === 1) {
+      document.querySelector('.pagination-load-more').disabled = true;
+    } else {
+      document.querySelector('.pagination-load-more').disabled = false;
+    }
+    if (currentPageIndex === totalPRsPages) {
+      document.querySelector('.pagination-load-more').disabled = true;
+    } else {
+      document.querySelector('.pagination-load-more').disabled = false;
+    }
+  }
+}
+
 function showProtectedRouteErrorMessage() {
   const div = createElement({ type: 'div', classList: ['error-dialog'] });
   const content = createElement({ type: 'div', classList: ['error-content'] });
@@ -658,6 +838,7 @@ async function init() {
     showContent();
     getUserData();
     getUserTasks();
+    getUserPRs();
   } else {
     showProtectedRouteErrorMessage();
   }

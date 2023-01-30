@@ -17,6 +17,7 @@ html {
   --loader-blue-color: #3498db;
   --gray-700: #c4c4c4;
   --red-color: red;
+  --blue-hover-color: #0d0a4d;
 }
 
 body {
@@ -277,4 +278,73 @@ footer p a {
     width: 20px;
     height: 20px;
   }
+}
+
+.user-pr {
+  display: flex;
+  flex-direction: column;
+  margin: 1rem 1rem 0 1rem;
+}
+
+.user-pr > h2 {
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.pr-details {
+  display: flex;
+  flex-direction: row;
+  margin-top: 1rem;
+}
+
+.semi {
+  margin: 0;
+  padding: 0;
+  width: auto;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.pr-details-head {
+  width: auto;
+}
+
+.pr-details-data {
+  width: auto;
+}
+
+.pr-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+.pr-btn > button {
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  border: none;
+  background-color: var(--blue-color);
+  color: var(--white-color);
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.pr-btn > button:hover {
+  background-color: var(--blue-hover-color);
 }
