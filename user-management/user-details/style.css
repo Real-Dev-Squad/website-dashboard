@@ -303,19 +303,19 @@ footer p a {
   width: auto;
 }
 
-table {
+.pr-details-table {
   border-collapse: collapse;
   width: 100%;
   margin-top: 1rem;
 }
 
-th,
-td {
+.pr-details-row,
+.pr-details-head {
   text-align: left;
   padding: 8px;
 }
 
-tr:nth-child(even) {
+.pr-details-row:nth-child(even) {
   background-color: #f2f2f2;
 }
 
