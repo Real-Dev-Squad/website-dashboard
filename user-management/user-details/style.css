@@ -18,6 +18,8 @@ html {
   --gray-700: #c4c4c4;
   --red-color: red;
   --blue-hover-color: #0d0a4d;
+  --razzmatazz-color: #e30464;
+  --razzmatazz-hover-color: #a1034a;
 }
 
 body {
@@ -207,7 +209,6 @@ li {
   display: flex;
   gap: 1rem;
   justify-content: center;
-  margin-top: 2rem;
 }
 
 .loader {
@@ -345,6 +346,29 @@ footer p a {
   cursor: pointer;
 }
 
-.pr-btn > button:hover {
+.pr-btn > button:hover,
+.pagination-next-page:hover {
   background-color: var(--blue-hover-color);
+}
+
+.pagination-next-page,
+.pagination-prev-page,
+.pagination-load-more {
+  padding: 0.4rem 0.8rem;
+  border-radius: 5px;
+  border: none;
+  background-color: var(--razzmatazz-color);
+  color: var(--white-color);
+  font-size: 0.7rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.pagination-load-more:hover,
+.pagination-prev-page:hover {
+  background-color: var(--razzmatazz-hover-color);
+}
+
+.pagination-next-page {
+  background-color: var(--blue-color);
 }
