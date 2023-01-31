@@ -16,8 +16,8 @@ async function makeApiCall(
     });
     return response;
   } catch (err) {
-    console.error(MESSAGE_SOMETHING_WENT_WRONG, err);
-    return err;
+    console.error(err);
+    throw err;
   }
 }
 
