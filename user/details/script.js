@@ -693,11 +693,7 @@ function formatDate(dateStr) {
     timeZone: 'Asia/Kolkata',
   };
   const formattedDate = date.toLocaleDateString('en-US', options);
-  // return formattedDate;
-  // only returrn date not time
   return formattedDate.split(',')[0];
-  // return date in like MM/DD/YYYY
-  // return formattedDate.split(',')[0].split('/').join('-');
 }
 
 function generatePRsTabDetails() {
@@ -890,7 +886,6 @@ function createSinglePRCard(PR) {
     window.open(PR.url, '_blank');
   });
 
-  // Tooltip
   const tooltip = createElement({ type: 'span', classList: ['tooltiptext'] });
   tooltip.appendChild(
     createTextNode(
@@ -903,12 +898,10 @@ function createSinglePRCard(PR) {
   viewPRBtnDiv.appendChild(tooltip);
   viewPRBtn.addEventListener('mouseover', (e) => {
     tooltip.style.visibility = 'visible';
-    // viewPRBtnDivAfter.style.visibility('visible');
   });
 
   viewPRBtn.addEventListener('mouseout', (e) => {
     tooltip.style.visibility = 'hidden';
-    // viewPRBtnDivAfter.setProperty('visibility', 'hidden');
   });
 
   viewPRBtnDiv.appendChild(viewPRBtn);
