@@ -666,7 +666,6 @@ function ifUserNotSuperUser() {
   accordionIcon.forEach((icon) => {
     icon.src = '/user/images/lock-icon.svg';
     icon.classList.add('accordion-icon');
-    icon.style.width = '60%';
   });
 
   accordionTabs.forEach((tab) => {

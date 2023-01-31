@@ -284,14 +284,18 @@ footer p a {
   cursor: none;
 }
 
+.accordion-icon {
+  width: 50%;
+}
+
 .tool-parent {
   position: relative;
 }
 
 .tooltip {
   position: absolute;
-  bottom: 120%;
-  left: -120%;
+  bottom: calc(100% + 10px);
+  right: calc(50% - 100px);
   width: 200px;
   background-color: var(--gray-700);
   border-radius: 5px;
@@ -303,7 +307,6 @@ footer p a {
   position: absolute;
   top: 100%;
   left: 50%;
-  border-width: 7px;
-  border-style: solid;
-  border-color: black transparent transparent transparent;
+  border: 7px solid;
+  border-color: var(--black-color) transparent transparent;
 }
