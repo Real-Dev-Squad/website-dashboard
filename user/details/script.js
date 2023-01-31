@@ -57,8 +57,11 @@ async function getUserData() {
 
 function generateUserImage(alt) {
   const img = createElement({ type: 'img' });
-  img.src = userData.img ? userData.img : defaultAvatar;
+  img.src = userData.picture?.url ?? defaultAvatar;
   img.setAttribute('alt', alt);
+  img.style.height = '100px';
+  img.style.width = '100px';
+  img.style.borderRadius = '50%';
   return img;
 }
 
@@ -146,18 +149,18 @@ function generateAcademicTabDetails() {
     type: 'p',
     classList: ['user-details-company'],
   });
-  company.appendChild(createTextNode(userData.company));
+  company.appendChild(createTextNode(userData.company ?? MESSAGE_NOT_FOUND));
 
   divOne.append(titleOne, company);
 
   const divTwo = createElement({ type: 'div', classList: ['hidden-details'] });
   const titleTwo = createElement({ type: 'h3' });
-  titleTwo.appendChild(createTextNode('Current Year'));
+  titleTwo.appendChild(createTextNode(MESSAGE_YEARS_OF_EXPERIENCE));
   const yoe = createElement({
     type: 'p',
     classList: ['user-details-yoe'],
   });
-  yoe.appendChild(createTextNode(userData.yoe));
+  yoe.appendChild(createTextNode(userData.yoe ?? MESSAGE_NOT_FOUND));
 
   divTwo.append(titleTwo, yoe);
   div.append(divOne, divTwo);
@@ -333,7 +336,10 @@ function generateSkillsTabDetails(skills) {
       div.append(skillContainer);
     });
   } else {
-    div.appendChild(createTextNode('No skills to show!'));
+    const errorEl = createElement({ type: 'p', classList: ['error'] });
+    errorEl.appendChild(createTextNode('No Data Found'));
+    div.innerHTML = '';
+    div.appendChild(errorEl);
   }
 
   document.querySelector('.accordion-skills').append(div);
@@ -348,8 +354,11 @@ async function getUserAvailabilityStatus() {
       const data = await res.json();
       userStatusData = data.data;
       generateAvalabilityTabDetails(userStatusData.currentStatus.state);
+    } else {
+      generateNoUserStatusFound();
     }
   } catch (err) {
+    generateNoUserStatusFound();
     console.error(err);
   }
 }
@@ -359,8 +368,10 @@ function generateAvalabilityTabDetails(state) {
     generateUserOOODetails();
   } else if (state === 'IDLE') {
     generateUserIdleDetails();
-  } else {
+  } else if (state === 'ACTIVE') {
     generateUserActiveDetails();
+  } else {
+    generateNoUserStatusFound();
   }
 }
 
@@ -382,13 +393,8 @@ function getMonth(index) {
   return months[index];
 }
 
-function getDateFromTimestamp(timestamp) {
-  const newDate = new Date(timestamp * 1000);
-  const date = newDate.getDate();
-  const month = newDate.getMonth();
-  const year = newDate.getFullYear();
-
-  return `${date}th ${getMonth(month)} ${year}`;
+function generateReadableDateFromTimeStamp(timeStamp) {
+  return new Date(timeStamp).toDateString();
 }
 
 function getDiffrenceBetweenTimestamps(timestampOne, timestampTwo) {
@@ -418,7 +424,7 @@ function generateUserActiveDetails() {
     type: 'p',
   });
   currentStatus.appendChild(
-    createTextNode(`${userStatusData.currentStatus.state}`),
+    createTextNode(`${userStatusData.currentStatus?.state}`),
   );
   divOne.append(titleOne, currentStatus);
 
@@ -428,47 +434,50 @@ function generateUserActiveDetails() {
   const activeFrom = createElement({ type: 'p' });
   activeFrom.appendChild(
     createTextNode(
-      `${getDateFromTimestamp(userStatusData.currentStatus.from._seconds)}`,
+      `${generateReadableDateFromTimeStamp(userStatusData.currentStatus.from)}`,
     ),
   );
   divTwo.append(titleTwo, activeFrom);
+  div.append(divOne, divTwo);
+  if (userStatusData.monthlyHours?.committed) {
+    const divThree = createElement({
+      type: 'div',
+      classList: ['hidden-details'],
+    });
+    const titleThree = createElement({ type: 'h3' });
+    titleThree.appendChild(
+      createTextNode(
+        `No of Hours alloted for ${getMonth(
+          new Date().getMonth(),
+        )} ${new Date().getFullYear()}`,
+      ),
+    );
+    const hoursAlloted = createElement({ type: 'p' });
+    hoursAlloted.appendChild(
+      createTextNode(`${userStatusData.monthlyHours.committed} Hours`),
+    );
+    divThree.append(titleThree, hoursAlloted);
 
-  const divThree = createElement({
-    type: 'div',
-    classList: ['hidden-details'],
-  });
-  const titleThree = createElement({ type: 'h3' });
-  titleThree.appendChild(
-    createTextNode(
-      `No Of Hours alloted for ${getMonth(new Date().getMonth())} 2022`,
-    ),
-  );
-  const hoursAlloted = createElement({ type: 'p' });
-  hoursAlloted.appendChild(
-    createTextNode(`${userStatusData.monthlyHours.commited}`),
-  );
-  divThree.append(titleThree, hoursAlloted);
-
-  const divFour = createElement({
-    type: 'div',
-    classList: ['hidden-details'],
-  });
-  const titleFour = createElement({
-    type: 'h3',
-    classList: ['hidden-details'],
-  });
-  titleFour.appendChild(createTextNode('Approx no of hours remaining'));
-  const hoursRemaining = createElement({ type: 'p' });
-  hoursRemaining.appendChild(
-    createTextNode(
-      `${calculateRemainingActiveMonthlyHours(
-        userStatusData.monthlyHours.commited,
-      )} Hours`,
-    ),
-  );
-  divFour.append(titleFour, hoursRemaining);
-
-  div.append(divOne, divTwo, divThree, divFour);
+    const divFour = createElement({
+      type: 'div',
+      classList: ['hidden-details'],
+    });
+    const titleFour = createElement({
+      type: 'h3',
+      classList: ['hidden-details'],
+    });
+    titleFour.appendChild(createTextNode('Approx No of hours remaining'));
+    const hoursRemaining = createElement({ type: 'p' });
+    hoursRemaining.appendChild(
+      createTextNode(
+        `${calculateRemainingActiveMonthlyHours(
+          userStatusData.monthlyHours.committed,
+        )} Hours`,
+      ),
+    );
+    divFour.append(titleFour, hoursRemaining);
+    div.append(divThree, divFour);
+  }
 
   document.querySelector('.accordion-availability').append(div);
 }
@@ -496,7 +505,7 @@ function generateUserOOODetails() {
   const oooSince = createElement({ type: 'p' });
   oooSince.appendChild(
     createTextNode(
-      `${getDateFromTimestamp(userStatusData.currentStatus.from._seconds)}`,
+      `${generateReadableDateFromTimeStamp(userStatusData.currentStatus.from)}`,
     ),
   );
   divTwo.append(titleTwo, oooSince);
@@ -512,7 +521,9 @@ function generateUserOOODetails() {
   const returnDate = createElement({ type: 'p' });
   returnDate.appendChild(
     createTextNode(
-      `${getDateFromTimestamp(userStatusData.currentStatus.until._seconds)}`,
+      `${generateReadableDateFromTimeStamp(
+        userStatusData.currentStatus.until,
+      )}`,
     ),
   );
   divThree.append(titleThree, returnDate);
@@ -568,7 +579,7 @@ function generateUserIdleDetails() {
   });
   idleFrom.appendChild(
     createTextNode(
-      `${getDateFromTimestamp(userStatusData.currentStatus.from._seconds)}`,
+      `${generateReadableDateFromTimeStamp(userStatusData.currentStatus.from)}`,
     ),
   );
   divTwo.append(titleTwo, idleFrom);
@@ -578,69 +589,67 @@ function generateUserIdleDetails() {
     classList: ['hidden-details'],
   });
   const titleThree = createElement({ type: 'h3' });
-  titleThree.appendChild(createTextNode('Skills you are looking to learn'));
+  titleThree.appendChild(createTextNode('Seeking to acquire skills in'));
   const skills = createElement({
     type: 'p',
   });
-  skills.appendChild(createTextNode(`${userSkills.toString()}`));
+  skills.appendChild(createTextNode(userStatusData.currentStatus.message));
   divThree.append(titleThree, skills);
 
-  const divFour = createElement({
-    type: 'div',
-    classList: ['hidden-details'],
-  });
-  const titleFour = createElement({ type: 'h3' });
-  titleFour.appendChild(
-    createTextNode(
-      `No Of Hours alloted for ${getMonth(new Date().getMonth())} 2022`,
-    ),
-  );
-  const hoursAlloted = createElement({ type: 'p' });
-  hoursAlloted.appendChild(
-    createTextNode(`${userStatusData.monthlyHours.commited}`),
-  );
-  divFour.append(titleFour, hoursAlloted);
+  div.append(divOne, divTwo, divThree);
+  if (userStatusData.monthlyHours?.committed) {
+    const divFour = createElement({
+      type: 'div',
+      classList: ['hidden-details'],
+    });
+    const titleFour = createElement({ type: 'h3' });
+    titleFour.appendChild(
+      createTextNode(
+        `No of Hours alloted for ${getMonth(
+          new Date().getMonth(),
+        )} ${new Date().getFullYear()}`,
+      ),
+    );
+    const hoursAlloted = createElement({ type: 'p' });
+    hoursAlloted.appendChild(
+      createTextNode(`${userStatusData.monthlyHours.committed} Hours`),
+    );
+    divFour.append(titleFour, hoursAlloted);
 
-  const divFive = createElement({
-    type: 'div',
-    classList: ['hidden-details'],
-  });
-  const titleFive = createElement({
-    type: 'h3',
-    classList: ['hidden-details'],
-  });
-  titleFive.appendChild(createTextNode('Approx no of hours remaining'));
-  const hoursRemaining = createElement({ type: 'p' });
-  hoursRemaining.appendChild(
-    createTextNode(
-      `${calculateRemainingActiveMonthlyHours(
-        userStatusData.monthlyHours.commited,
-      )} Hours`,
-    ),
-  );
-  divFive.append(titleFive, hoursRemaining);
-
-  div.append(divOne, divTwo, divThree, divFour, divFive);
+    const divFive = createElement({
+      type: 'div',
+      classList: ['hidden-details'],
+    });
+    const titleFive = createElement({
+      type: 'h3',
+      classList: ['hidden-details'],
+    });
+    titleFive.appendChild(createTextNode('Approx No of hours remaining'));
+    const hoursRemaining = createElement({ type: 'p' });
+    hoursRemaining.appendChild(
+      createTextNode(
+        `${calculateRemainingActiveMonthlyHours(
+          userStatusData.monthlyHours.committed,
+        )} Hours`,
+      ),
+    );
+    divFive.append(titleFive, hoursRemaining);
+    div.append(divFour, divFive);
+  }
 
   document.querySelector('.accordion-availability').append(div);
 }
 
-function showProtectedRouteErrorMessage() {
-  const div = createElement({ type: 'div', classList: ['error-dialog'] });
-  const content = createElement({ type: 'div', classList: ['error-content'] });
-  const overlay = createElement({ type: 'div', classList: ['error-overlay'] });
-  const h3 = createElement({ type: 'h3' });
-  h3.appendChild(
-    createTextNode('You are not authorised to access this route!'),
-  );
-  const btn = createElement({ type: 'button' });
-  btn.appendChild(createTextNode('Go Back'));
-  btn.addEventListener('click', () => {
-    window.history.back();
+function generateNoUserStatusFound() {
+  const div = createElement({
+    type: 'div',
+    classList: ['hidden-content', 'hide'],
   });
-  content.append(h3, btn);
-  div.append(overlay, content);
-  document.querySelector('body').appendChild(div);
+  const errorEl = createElement({ type: 'p', classList: ['error'] });
+  errorEl.appendChild(createTextNode('No Data Found'));
+  div.innerHTML = '';
+  div.appendChild(errorEl);
+  document.querySelector('.accordion-availability').append(div);
 }
 
 function showContent() {
@@ -652,15 +661,6 @@ function showContent() {
   section3.classList.remove('hide');
 }
 
-async function init() {
-  const isSuperUser = await checkUserIsSuperUser();
-  if (isSuperUser) {
-    showContent();
-    getUserData();
-    getUserTasks();
-  } else {
-    showProtectedRouteErrorMessage();
-  }
-}
-
-init();
+showContent();
+getUserData();
+getUserTasks();
