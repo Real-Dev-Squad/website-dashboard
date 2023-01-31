@@ -362,7 +362,7 @@ async function getUserAvailabilityStatus() {
     }
   } catch (err) {
     generateNoUserStatusFound();
-    console.log(err);
+    console.error(err);
   }
 }
 
