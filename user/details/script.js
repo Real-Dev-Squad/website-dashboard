@@ -4,7 +4,7 @@ let userSkills = [];
 let userAllPRs = [];
 let userStatusData = {};
 let currentPageIndex = 1;
-let currentPRPageIndex = 1;
+let currentPRPageIndex = 0;
 let taskPerPage = 3;
 let PRsPerPage = 3;
 let totalPRsPages = 0;
@@ -665,6 +665,23 @@ function showContent() {
   section3.classList.remove('hide');
 }
 
+function generateRemainingDays(dateStr) {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const offset = 330 * 60 * 1000;
+  const nowInIST = new Date(now.getTime() + offset);
+  const diff = nowInIST - date;
+  if (diff >= 24 * 60 * 60 * 1000) {
+    return Math.floor(diff / (24 * 60 * 60 * 1000)) + ' days ago';
+  } else if (diff >= 60 * 60 * 1000) {
+    return Math.floor(diff / (60 * 60 * 1000)) + ' hours ago';
+  } else if (diff >= 60 * 1000) {
+    return Math.floor(diff / (60 * 1000)) + ' minutes ago';
+  } else {
+    return Math.floor(diff / 1000) + ' seconds ago';
+  }
+}
+
 function formatDate(dateStr) {
   const date = new Date(dateStr);
   const options = {
@@ -829,7 +846,9 @@ function createSinglePRCard(PR) {
     type: 'td',
     classList: ['pr-details-data'],
   });
-  tableDataNine.appendChild(createTextNode(formatDate(PR.createdAt)));
+  tableDataNine.appendChild(
+    createTextNode(generateRemainingDays(PR.createdAt)),
+  );
   rowThree.append(tableDataSeven, tableDataEight, tableDataNine);
   container.append(rowThree);
   const rowFour = createElement({
@@ -852,7 +871,9 @@ function createSinglePRCard(PR) {
     type: 'td',
     classList: ['pr-details-data'],
   });
-  tableDataTwelve.appendChild(createTextNode(formatDate(PR.updatedAt)));
+  tableDataTwelve.appendChild(
+    createTextNode(generateRemainingDays(PR.updatedAt)),
+  );
   rowFour.append(tableDataTen, tableDataEleven, tableDataTwelve);
   container.append(rowFour);
   const viewPRBtnDiv = createElement({ type: 'div', classList: ['pr-btn'] });
