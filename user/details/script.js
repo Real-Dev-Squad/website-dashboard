@@ -49,7 +49,7 @@ async function getUserData() {
       removeElementClass(document.querySelector('.accordion'), 'hide');
     }
   } catch (err) {
-    console.error(err);
+    console.log(err);
     hideLoader('.user-details-header');
     const errorEl = createElement({ type: 'p', classList: ['error'] });
     errorEl.appendChild(createTextNode('Something Went Wrong!'));
@@ -361,8 +361,8 @@ async function getUserAvailabilityStatus() {
       generateNoUserStatusFound();
     }
   } catch (err) {
-    console.log(err);
     generateNoUserStatusFound();
+    console.log(err);
   }
 }
 
