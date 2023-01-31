@@ -287,7 +287,7 @@ footer p a {
   margin: 1rem 1rem 0 1rem;
 }
 
-.user-pr > h2 {
+.pr-title {
   font-size: 1.5rem;
   text-align: center;
 }
@@ -298,7 +298,7 @@ footer p a {
   margin-top: 1rem;
 }
 
-.semi {
+.colon {
   margin: 0;
   padding: 0;
   width: auto;
@@ -317,7 +317,7 @@ footer p a {
 }
 
 .pr-details-row:nth-child(even) {
-  background-color: #f2f2f2;
+  background-color: var(--loader-gray-color);
 }
 
 .pr-details-head {
@@ -328,14 +328,15 @@ footer p a {
   width: auto;
 }
 
-.pr-btn {
+.btn-wrapper {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 1rem;
 }
 
-.pr-btn > button {
+.pr-view-btn {
   padding: 0.5rem 1rem;
   border-radius: 5px;
   border: none;
@@ -346,7 +347,7 @@ footer p a {
   cursor: pointer;
 }
 
-.pr-btn > button:hover,
+.pr-view-btn:hover,
 .pagination-next-page:hover {
   background-color: var(--blue-hover-color);
 }
@@ -373,14 +374,10 @@ footer p a {
   background-color: var(--blue-color);
 }
 
-.pr-btn {
-  position: relative;
-}
-
 .tooltiptext {
-  border: 1px solid black;
+  border: 1px solid var(--black-color);
   background-color: var(--blue-color);
-  color: rgb(255, 255, 255);
+  color: var(--white-color);
   visibility: hidden;
   width: 50%;
   text-align: center;
@@ -398,6 +395,6 @@ footer p a {
   top: 100%;
   left: 50%;
   border-width: 7px;
-  border-style: solid;
-  border-color: black transparent transparent transparent;
+  border: 7px solid;
+  border-color: var(--black-color) transparent transparent transparent;
 }

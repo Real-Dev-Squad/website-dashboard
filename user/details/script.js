@@ -4,7 +4,6 @@ let userSkills = [];
 let userAllPRs = [];
 let userStatusData = {};
 let currentPageIndex = 1;
-let currentPRPageIndex = 0;
 let taskPerPage = 3;
 let PRsPerPage = 3;
 let totalPRsPages = 0;
@@ -50,7 +49,6 @@ async function getUserData() {
       removeElementClass(document.querySelector('.accordion'), 'hide');
     }
   } catch (err) {
-    console.log(err);
     hideLoader('.user-details-header');
     const errorEl = createElement({ type: 'p', classList: ['error'] });
     errorEl.appendChild(createTextNode('Something Went Wrong!'));
@@ -313,9 +311,7 @@ async function getUserSkills() {
       userSkills = data.skills;
       generateSkillsTabDetails(userSkills);
     }
-  } catch (err) {
-    console.error(err);
-  }
+  } catch (err) {}
 }
 
 function generateSkillsTabDetails(skills) {
@@ -363,7 +359,6 @@ async function getUserAvailabilityStatus() {
     }
   } catch (err) {
     generateNoUserStatusFound();
-    console.error(err);
   }
 }
 
@@ -726,19 +721,16 @@ async function getUserPRs() {
       const data = await res.json();
       userAllPRs = data.pullRequests;
       totalPRsPages = Math.ceil(userAllPRs.length / PRsPerPage);
-      const prs = getPRstoFetch(userAllPRs, currentPRPageIndex);
+      const prs = getPRstoFetch(userAllPRs, currentPageIndex);
       generatePRsTabDetails();
       generateUserPRsList(prs);
     }
-  } catch (err) {
-    console.log(err);
-  }
+  } catch (err) {}
 }
 
-function getPRstoFetch(userPR, currentPRPageIndex) {
-  const startIndex = currentPRPageIndex * PRsPerPage - PRsPerPage;
-  const endIndex = currentPRPageIndex + PRsPerPage;
-  return userPR.filter((_, index) => index > startIndex && index < endIndex);
+function getPRstoFetch(userPR, currentIndex) {
+  const startIndex = (currentIndex - 1) * PRsPerPage;
+  return userPR.slice(startIndex, startIndex + PRsPerPage);
 }
 
 function generateUserPRsList(userPRs) {
@@ -758,134 +750,35 @@ function generateUserPRsList(userPRs) {
       const PRsCard = createSinglePRCard(pr);
       document.querySelector('.user-pr').appendChild(PRsCard);
     });
-    if (currentPRPageIndex === 1) {
-      document.querySelector('.pagination-load-more').disabled = true;
-    } else {
-      document.querySelector('.pagination-load-more').disabled = false;
-    }
-    if (currentPRPageIndex === totalPRsPages) {
-      document.querySelector('.pagination-load-more').disabled = true;
-    } else {
-      document.querySelector('.pagination-load-more').disabled = false;
-    }
+    document.querySelector('.pagination-load-more').disabled =
+      currentPageIndex === totalPRsPages;
   }
 }
 
 function createSinglePRCard(PR) {
   const userPR = createElement({ type: 'div', classList: ['user-pr'] });
-  const h2 = createElement({ type: 'h2' });
+  const h2 = createElement({ type: 'h2', classList: ['pr-title'] });
   h2.appendChild(createTextNode(PR.title.toString()));
   userPR.appendChild(h2);
-  const container = createElement({
-    type: 'table',
-    classList: ['pr-details-table'],
+  const table = createPRDetailsTable(PR);
+  const btnAndTooltip = createPRDetailsButton(PR);
+  userPR.append(table, btnAndTooltip);
+  return userPR;
+}
+
+function createPRDetailsButton(PR) {
+  const viewPRBtnDiv = createElement({
+    type: 'div',
+    classList: ['btn-wrapper'],
   });
-  const rowOne = createElement({
-    type: 'tr',
-    classList: ['pr-details-row'],
-  });
-  const tableDataOne = createElement({
-    type: 'td',
-    classList: ['pr-details-data'],
-  });
-  const repoName = createElement({
-    type: 'h4',
-    classList: ['pr-details-head'],
-  });
-  repoName.appendChild(createTextNode('Repository Name'));
-  tableDataOne.appendChild(repoName);
-  const tableDataTwo = createElement({ type: 'td', classList: ['semi'] });
-  tableDataTwo.appendChild(createTextNode(':'));
-  const tableDataThree = createElement({
-    type: 'td',
-    classList: ['pr-details-data'],
-  });
-  tableDataThree.appendChild(createTextNode(PR.repository));
-  rowOne.append(tableDataOne, tableDataTwo, tableDataThree);
-  container.append(rowOne);
-  const rowTwo = createElement({
-    type: 'tr',
-    classList: ['pr-details-row'],
-  });
-  const tableDataFour = createElement({
-    type: 'td',
-    classList: ['pr-details-data'],
-  });
-  const repoPRStatus = createElement({
-    type: 'h4',
-    classList: ['pr-details-head'],
-  });
-  repoPRStatus.appendChild(createTextNode('Status'));
-  tableDataFour.appendChild(repoPRStatus);
-  const tableDataFive = createElement({ type: 'td', classList: ['semi'] });
-  tableDataFive.appendChild(createTextNode(':'));
-  const tableDataSix = createElement({
-    type: 'td',
-    classList: ['pr-details-data'],
-  });
-  tableDataSix.appendChild(createTextNode(PR.state));
-  rowTwo.append(tableDataFour, tableDataFive, tableDataSix);
-  container.append(rowTwo);
-  const rowThree = createElement({
-    type: 'tr',
-    classList: ['pr-details-row'],
-  });
-  const tableDataSeven = createElement({
-    type: 'td',
-    classList: ['pr-details-data'],
-  });
-  const PRCreatedAt = createElement({
-    type: 'h4',
-    classList: ['pr-details-head'],
-  });
-  PRCreatedAt.appendChild(createTextNode('Created At'));
-  tableDataSeven.appendChild(PRCreatedAt);
-  const tableDataEight = createElement({ type: 'td', classList: ['semi'] });
-  tableDataEight.appendChild(createTextNode(':'));
-  const tableDataNine = createElement({
-    type: 'td',
-    classList: ['pr-details-data'],
-  });
-  tableDataNine.appendChild(
-    createTextNode(generateRemainingDays(PR.createdAt)),
-  );
-  rowThree.append(tableDataSeven, tableDataEight, tableDataNine);
-  container.append(rowThree);
-  const rowFour = createElement({
-    type: 'tr',
-    classList: ['pr-details-row'],
-  });
-  const tableDataTen = createElement({
-    type: 'td',
-    classList: ['pr-details-data'],
-  });
-  const PRUpdatedAt = createElement({
-    type: 'h4',
-    classList: ['pr-details-head'],
-  });
-  PRUpdatedAt.appendChild(createTextNode('Updated At'));
-  tableDataTen.appendChild(PRUpdatedAt);
-  const tableDataEleven = createElement({ type: 'td', classList: ['semi'] });
-  tableDataEleven.appendChild(createTextNode(':'));
-  const tableDataTwelve = createElement({
-    type: 'td',
-    classList: ['pr-details-data'],
-  });
-  tableDataTwelve.appendChild(
-    createTextNode(generateRemainingDays(PR.updatedAt)),
-  );
-  rowFour.append(tableDataTen, tableDataEleven, tableDataTwelve);
-  container.append(rowFour);
-  const viewPRBtnDiv = createElement({ type: 'div', classList: ['pr-btn'] });
   const viewPRBtn = createElement({
     type: 'button',
-    classList: ['pr-btn-view'],
+    classList: ['pr-view-btn'],
   });
   viewPRBtn.appendChild(createTextNode('View'));
   viewPRBtn.addEventListener('click', (e) => {
     window.open(PR.url, '_blank');
   });
-
   const tooltip = createElement({ type: 'span', classList: ['tooltiptext'] });
   tooltip.appendChild(
     createTextNode(
@@ -894,28 +787,67 @@ function createSinglePRCard(PR) {
       )}`,
     ),
   );
-
   viewPRBtnDiv.appendChild(tooltip);
   viewPRBtn.addEventListener('mouseover', (e) => {
     tooltip.style.visibility = 'visible';
   });
-
   viewPRBtn.addEventListener('mouseout', (e) => {
     tooltip.style.visibility = 'hidden';
   });
-
   viewPRBtnDiv.appendChild(viewPRBtn);
-  userPR.append(container, viewPRBtnDiv);
-  container.append(rowOne, rowTwo, rowThree, rowFour);
-  return userPR;
+  return viewPRBtnDiv;
+}
+
+function createPRDetailsTable(PR) {
+  const container = createElement({
+    type: 'table',
+    classList: ['pr-details-table'],
+  });
+  const repoRow = createPRDetailsRow('Repository Name', PR.repository);
+  container.appendChild(repoRow);
+  const statusRow = createPRDetailsRow('Status', PR.state);
+  container.appendChild(statusRow);
+  const createdAtRow = createPRDetailsRow(
+    'Created At',
+    generateRemainingDays(PR.createdAt),
+  );
+  container.appendChild(createdAtRow);
+  const updatedAtRow = createPRDetailsRow(
+    'Updated At',
+    generateRemainingDays(PR.updatedAt),
+  );
+  container.appendChild(updatedAtRow);
+  return container;
+}
+
+function createPRDetailsRow(head, data) {
+  const row = createElement({ type: 'tr', classList: ['pr-details-row'] });
+  const headElement = createElement({
+    type: 'td',
+    classList: ['pr-details-data'],
+  });
+  const headText = createElement({
+    type: 'h4',
+    classList: ['pr-details-head'],
+  });
+  headText.appendChild(createTextNode(head));
+  headElement.appendChild(headText);
+  const semiElement = createElement({ type: 'td', classList: ['colon'] });
+  semiElement.appendChild(createTextNode(':'));
+  const dataElement = createElement({
+    type: 'td',
+    classList: ['pr-details-data'],
+  });
+  dataElement.appendChild(createTextNode(data));
+  row.append(headElement, semiElement, dataElement);
+  return row;
 }
 
 function loadMorePRs() {
-  if (currentPageIndex < totalPRsPages) {
-    currentPageIndex++;
-    const prs = getTasksToFetch(userAllPRs, currentPageIndex);
-    generateUserPRsList(prs);
-  }
+  if (currentPageIndex > totalPRsPages) return;
+  currentPageIndex++;
+  const prs = getPRstoFetch(userAllPRs, currentPageIndex);
+  generateUserPRsList(prs);
 }
 
 showContent();
