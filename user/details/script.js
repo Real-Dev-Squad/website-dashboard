@@ -692,6 +692,7 @@ function ifUserNotSuperUser() {
 async function accessingUserData() {
   const isSuperUser = await checkUserIsSuperUser();
   if (isSuperUser) {
+    getUserTasks();
     toggleAccordionTabsVisibility();
   } else {
     ifUserNotSuperUser();
@@ -700,5 +701,4 @@ async function accessingUserData() {
 
 showContent();
 getUserData();
-getUserTasks();
 accessingUserData();
