@@ -12,6 +12,7 @@ const modalShowInfo = document.querySelector('.extension-requests-info');
 const modalStatusForm = document.querySelector(
   '.extension-requests-status-form',
 );
+const modalUpdateForm = document.querySelector('.extension-requests-form');
 
 const state = {
   currentExtensionRequest: null,
@@ -33,15 +34,14 @@ const render = async () => {
     removeLoader();
   }
 };
-
-const showTaskDetails = async (taskId) => {
+const showTaskDetails = async (taskId, approved) => {
   if (!taskId) return;
   try {
     modalShowInfo.innerHTML = '<h3>Task Details</h3>';
     addLoader(modalShowInfo);
     const taskDetails = await getTaskDetails(taskId);
     const taskData = taskDetails.taskData;
-    modalShowInfo.append(createTaskInfoModal(taskData));
+    modalShowInfo.append(createTaskInfoModal(taskData, approved));
   } catch (error) {
     errorHeading.textContent = 'Something went wrong';
     errorHeading.classList.add('error-visible');
@@ -50,17 +50,7 @@ const showTaskDetails = async (taskId) => {
     removeLoader();
   }
 };
-
-function updateStatusForm() {
-  document.querySelector('.extensionId').value =
-    state.currentExtensionRequest.id;
-  document.querySelector('.extensionTitle').value =
-    state.currentExtensionRequest.title;
-  document.querySelector('.extensionAssignee').value =
-    state.currentExtensionRequest.assignee;
-}
-
-function createTaskInfoModal(data) {
+function createTaskInfoModal(data, approved) {
   if (!data) return;
 
   const dataHeadings = [
@@ -84,17 +74,16 @@ function createTaskInfoModal(data) {
   });
   updateStatus.addEventListener('click', () => {
     showModal('status-form');
-    updateStatusForm();
+    fillStatusForm();
   });
   closeModal.addEventListener('click', () => hideModal());
 
   const main = createTable(dataHeadings, data);
 
-  main.appendChild(updateStatus);
+  if (!approved) main.appendChild(updateStatus);
   main.appendChild(closeModal);
   return main;
 }
-
 function createExtensionRequestCard(data) {
   if (!data) return;
 
@@ -109,24 +98,76 @@ function createExtensionRequestCard(data) {
     { title: 'Task', key: 'taskId' },
   ];
 
+  const updateRequestBtn = createElement({
+    type: 'button',
+    attributes: { class: 'update_request' },
+    innerText: 'Update Request',
+  });
   const moreInfoBtn = createElement({
     type: 'button',
     attributes: { class: 'more' },
     innerText: 'More',
   });
+  updateRequestBtn.addEventListener('click', () => {
+    showModal('update-form');
+    state.currentExtensionRequest = data;
+    fillUpdateForm();
+  });
   moreInfoBtn.addEventListener('click', () => {
     showModal('info');
-    showTaskDetails(data.taskId);
+    showTaskDetails(data.taskId, data.status === 'APPROVED');
     state.currentExtensionRequest = data;
   });
 
   const main = createTable(dataHeadings, data, 'extension-request');
 
   main.appendChild(moreInfoBtn);
+  main.appendChild(updateRequestBtn);
   return main;
 }
-
 render();
+
+//API functions
+async function onStatusFormSubmit(e) {
+  e.preventDefault();
+  try {
+    addLoader(container);
+    let formData = formDataToObject(new FormData(e.target));
+    await updateExtensionRequestStatus({
+      id: state.currentExtensionRequest.id,
+      body: formData,
+    });
+    reload();
+  } catch (error) {
+    errorHeading.textContent = 'Something went wrong';
+    errorHeading.classList.add('error-visible');
+    reload();
+  } finally {
+    removeLoader();
+  }
+}
+async function onUpdateFormSubmit(e) {
+  e.preventDefault();
+  try {
+    addLoader(container);
+    let formData = formDataToObject(new FormData(e.target));
+    formData['newEndsOn'] = new Date(formData['newEndsOn']).getTime() / 1000;
+    await updateExtensionRequest({
+      id: state.currentExtensionRequest.id,
+      body: formData,
+    });
+    reload();
+  } catch (error) {
+    errorHeading.textContent = 'Something went wrong';
+    errorHeading.classList.add('error-visible');
+    reload();
+  } finally {
+    removeLoader();
+  }
+}
+
+modalUpdateForm.addEventListener('submit', onUpdateFormSubmit);
+modalStatusForm.addEventListener('submit', onStatusFormSubmit);
 
 modalParent.addEventListener('click', hideModal);
 closeModal.forEach((node) => node.addEventListener('click', () => hideModal()));
@@ -147,4 +188,34 @@ function hideModal(e) {
 }
 function reload() {
   setTimeout(() => window.history.go(0), 2000);
+}
+function fillStatusForm() {
+  modalStatusForm.querySelector('.extensionId').value =
+    state.currentExtensionRequest.id;
+  modalStatusForm.querySelector('.extensionTitle').value =
+    state.currentExtensionRequest.title;
+  modalStatusForm.querySelector('.extensionAssignee').value =
+    state.currentExtensionRequest.assignee;
+}
+function fillUpdateForm() {
+  modalUpdateForm.querySelector('.extensionNewEndsOn').value = new Date(
+    state.currentExtensionRequest.newEndsOn * 1000,
+  )
+    .toISOString()
+    .replace('Z', '');
+  modalUpdateForm.querySelector('.extensionOldEndsOn').value = new Date(
+    state.currentExtensionRequest.oldEndsOn * 1000,
+  )
+    .toISOString()
+    .replace('Z', '');
+  modalUpdateForm.querySelector('.extensionStatus').value =
+    state.currentExtensionRequest.status;
+  modalUpdateForm.querySelector('.extensionId').value =
+    state.currentExtensionRequest.id;
+  modalUpdateForm.querySelector('.extensionTitle').value =
+    state.currentExtensionRequest.title;
+  modalUpdateForm.querySelector('.extensionAssignee').value =
+    state.currentExtensionRequest.assignee;
+  modalUpdateForm.querySelector('.extensionReason').value =
+    state.currentExtensionRequest.reason;
 }

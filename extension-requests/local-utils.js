@@ -16,12 +16,12 @@ async function getExtensionRequests(query = {}) {
   return await res.json();
 }
 
-async function createExtensionRequestStatus({ extensionRequest }) {
-  const url = `${API_BASE_URL}/extensionRequests`;
+async function updateExtensionRequest({ id, body }) {
+  const url = `${API_BASE_URL}/extensionRequests/${id}`;
   const res = await fetch(url, {
     credentials: 'include',
-    method: 'POST',
-    body: JSON.stringify(extensionRequest),
+    method: 'PATCH',
+    body: JSON.stringify(body),
     headers: {
       'Content-type': 'application/json',
     },
@@ -29,12 +29,12 @@ async function createExtensionRequestStatus({ extensionRequest }) {
   return await res.json();
 }
 
-async function updateExtensionRequestStatus({ id, status }) {
+async function updateExtensionRequestStatus({ id, body }) {
   const url = `${API_BASE_URL}/extensionRequests/${id}/status`;
   const res = await fetch(url, {
     credentials: 'include',
     method: 'PATCH',
-    body: JSON.stringify({ status }),
+    body: JSON.stringify(body),
     headers: {
       'Content-type': 'application/json',
     },
@@ -89,4 +89,13 @@ function createTable(headings, data, className = '') {
 
   main.appendChild(content);
   return main;
+}
+
+function formDataToObject(formData) {
+  if (!formData) return;
+  const result = {};
+  for (let x of formData.keys()) {
+    result[x] = formData.get(x);
+  }
+  return result;
 }

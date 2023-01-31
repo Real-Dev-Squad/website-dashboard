@@ -10,7 +10,61 @@
   <body>
     <div class="extension-requests-modal-parent">
       <div class="extension-requests-info"></div>
-
+      <form class="extension-requests-form">
+        <h3>Update Extension Request</h3>
+        <label for="title">Title</label>
+        <input
+          required
+          type="text"
+          id="title"
+          name="title"
+          class="extensionTitle"
+        />
+        <label for="reason">Reason</label>
+        <input
+          required
+          type="text"
+          id="reason"
+          name="reason"
+          class="extensionReason"
+        />
+        <label for="newEndsOn">New Ends On</label>
+        <input
+          required
+          type="datetime-local"
+          id="newEndsOn"
+          name="newEndsOn"
+          class="extensionNewEndsOn"
+        />
+        <label for="oldEndsOn">Old Ends On</label>
+        <input
+          required
+          type="datetime-local"
+          id="oldEndsOn"
+          class="extensionOldEndsOn"
+          readonly
+        />
+        <label for="status">Status</label>
+        <input
+          required
+          type="text"
+          id="status"
+          class="extensionStatus"
+          readonly
+        />
+        <label for="Task Id">Task Id</label>
+        <input required type="text" id="Task Id" class="extensionId" readonly />
+        <label for="assignee">Assignee</label>
+        <input
+          required
+          type="text"
+          id="assignee"
+          class="extensionAssignee"
+          readonly
+        />
+        <button type="submit">Submit</button>
+        <button id="close-modal" type="button">Cancel</button>
+      </form>
       <form class="extension-requests-status-form">
         <h3>Update Extension Request Status</h3>
         <label for="status">Status</label>
