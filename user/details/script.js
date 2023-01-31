@@ -117,7 +117,6 @@ function generateUserData(userData) {
   wrapper.append(img, username);
   main.append(wrapper, socials);
   document.querySelector('.user-details-header').appendChild(main);
-  generateAcademicTabDetails();
 }
 
 function toggleAccordionTabsVisibility() {
@@ -693,6 +692,7 @@ async function accessingUserData() {
   const isSuperUser = await checkUserIsSuperUser();
   if (isSuperUser) {
     getUserTasks();
+    generateAcademicTabDetails();
     toggleAccordionTabsVisibility();
   } else {
     ifUserNotSuperUser();
