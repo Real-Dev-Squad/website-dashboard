@@ -281,7 +281,7 @@ footer p a {
 
 .accordion-disabled {
   opacity: 0.5;
-  cursor: not-allowed;
+  cursor: none;
 }
 
 .tool-parent {
@@ -290,7 +290,20 @@ footer p a {
 
 .tooltip {
   position: absolute;
-  bottom: 100%;
-  left: 0;
+  bottom: 120%;
+  left: -120%;
   width: 200px;
+  background-color: var(--gray-700);
+  border-radius: 5px;
+  padding: 0.5rem;
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  border-width: 7px;
+  border-style: solid;
+  border-color: black transparent transparent transparent;
 }

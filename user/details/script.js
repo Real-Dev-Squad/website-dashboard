@@ -678,7 +678,7 @@ function ifUserNotSuperUser() {
     tool.addEventListener('mouseover', () => {
       const tooltip = createElement({ type: 'span', classList: ['tooltip'] });
       tooltip.appendChild(
-        createTextNode('You are not authorised to access this route!'),
+        createTextNode('You do not have required permissions to view this.'),
       );
       tool.appendChild(tooltip);
     });
@@ -689,8 +689,16 @@ function ifUserNotSuperUser() {
   });
 }
 
+async function accessingUserData() {
+  const isSuperUser = await checkUserIsSuperUser();
+  if (isSuperUser) {
+    toggleAccordionTabsVisibility();
+  } else {
+    ifUserNotSuperUser();
+  }
+}
+
 showContent();
 getUserData();
 getUserTasks();
-ifUserNotSuperUser();
-// toggleAccordionTabsVisibility();
+accessingUserData();
