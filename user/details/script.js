@@ -659,7 +659,7 @@ function showContent() {
   section3.classList.remove('hide');
 }
 
-function ifUserNotSuperUser() {
+function lockAccordianShowTooltip() {
   const accordionTabs = document.querySelectorAll('.accordion');
   const accordionIcon = document.querySelectorAll('.accordion-icon');
   const toolParent = document.querySelectorAll('.tool-parent');
@@ -694,7 +694,7 @@ async function accessingUserData() {
     generateAcademicTabDetails();
     toggleAccordionTabsVisibility();
   } else {
-    ifUserNotSuperUser();
+    lockAccordianShowTooltip();
   }
 }
 
