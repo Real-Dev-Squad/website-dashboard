@@ -693,7 +693,11 @@ function formatDate(dateStr) {
     timeZone: 'Asia/Kolkata',
   };
   const formattedDate = date.toLocaleDateString('en-US', options);
-  return `${formattedDate} IST`;
+  // return formattedDate;
+  // only returrn date not time
+  return formattedDate.split(',')[0];
+  // return date in like MM/DD/YYYY
+  // return formattedDate.split(',')[0].split('/').join('-');
 }
 
 function generatePRsTabDetails() {
@@ -885,6 +889,28 @@ function createSinglePRCard(PR) {
   viewPRBtn.addEventListener('click', (e) => {
     window.open(PR.url, '_blank');
   });
+
+  // Tooltip
+  const tooltip = createElement({ type: 'span', classList: ['tooltiptext'] });
+  tooltip.appendChild(
+    createTextNode(
+      `Created at ${formatDate(PR.createdAt)} and last updated at ${formatDate(
+        PR.updatedAt,
+      )}`,
+    ),
+  );
+
+  viewPRBtnDiv.appendChild(tooltip);
+  viewPRBtn.addEventListener('mouseover', (e) => {
+    tooltip.style.visibility = 'visible';
+    // viewPRBtnDivAfter.style.visibility('visible');
+  });
+
+  viewPRBtn.addEventListener('mouseout', (e) => {
+    tooltip.style.visibility = 'hidden';
+    // viewPRBtnDivAfter.setProperty('visibility', 'hidden');
+  });
+
   viewPRBtnDiv.appendChild(viewPRBtn);
   userPR.append(container, viewPRBtnDiv);
   container.append(rowOne, rowTwo, rowThree, rowFour);
