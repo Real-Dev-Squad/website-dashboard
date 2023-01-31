@@ -313,7 +313,7 @@ async function getUserSkills() {
       generateSkillsTabDetails(userSkills);
     }
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 }
 
