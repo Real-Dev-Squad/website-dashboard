@@ -59,7 +59,7 @@ li {
 #main-section {
   margin: 40px auto;
   text-align: center;
-  width: min(90%, 400px);
+  width: min(90%, 720px);
 }
 
 /* ------------- */
@@ -105,7 +105,7 @@ li {
   display: flex;
   gap: 1rem;
   margin-top: 2rem;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 
 .social {
