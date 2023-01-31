@@ -4,6 +4,7 @@
 
 html {
   overflow-y: scroll;
+  height: 100%;
 }
 
 :root {
@@ -20,6 +21,9 @@ html {
 
 body {
   font-family: 'Roboto', sans-serif;
+  grid-template-rows: max-content 1fr auto;
+  height: 100%;
+  display: grid;
 }
 
 a {
@@ -52,7 +56,7 @@ li {
 #main-section {
   margin: 40px auto;
   text-align: center;
-  width: min(90%, 400px);
+  width: min(90%, 720px);
 }
 
 /* ------------- */
@@ -98,7 +102,7 @@ li {
   display: flex;
   gap: 1rem;
   margin-top: 2rem;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 
 .social {
@@ -221,6 +225,47 @@ li {
 .tasks-list .loader {
   text-align: center;
   margin: 5rem 0;
+}
+
+.skill-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+footer {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+footer p a {
+  color: blue;
+  text-decoration: underline;
+}
+
+.error-dialog {
+  display: flex;
+  position: absolute;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.error-overlay {
+  position: absolute;
+  inset: 0;
+}
+
+.error-content {
+  padding: 1rem;
+  background: white;
+  z-index: 1;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 10%);
+}
+
+.error-content > button {
+  margin-top: 1rem;
+  padding: 0.25rem 2rem;
 }
 
 @media (max-width: 600px) {
