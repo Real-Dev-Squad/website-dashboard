@@ -117,7 +117,6 @@ function generateUserData(userData) {
   wrapper.append(img, username);
   main.append(wrapper, socials);
   document.querySelector('.user-details-header').appendChild(main);
-  toggleAccordionTabsVisibility();
   generateAcademicTabDetails();
 }
 
@@ -661,6 +660,37 @@ function showContent() {
   section3.classList.remove('hide');
 }
 
+function ifUserNotSuperUser() {
+  const accordionTabs = document.querySelectorAll('.accordion');
+  const accordionIcon = document.querySelectorAll('.accordion-icon');
+  const toolParent = document.querySelectorAll('.tool-parent');
+  accordionIcon.forEach((icon) => {
+    icon.src = '/user/images/lock-icon.svg';
+    icon.classList.add('accordion-icon');
+    icon.style.width = '60%';
+  });
+
+  accordionTabs.forEach((tab) => {
+    tab.classList.add('accordion-disabled');
+  });
+
+  toolParent.forEach((tool) => {
+    tool.addEventListener('mouseover', () => {
+      const tooltip = createElement({ type: 'span', classList: ['tooltip'] });
+      tooltip.appendChild(
+        createTextNode('You are not authorised to access this route!'),
+      );
+      tool.appendChild(tooltip);
+    });
+    tool.addEventListener('mouseout', () => {
+      const tooltip = document.querySelector('.tooltip');
+      tooltip.remove();
+    });
+  });
+}
+
 showContent();
 getUserData();
 getUserTasks();
+ifUserNotSuperUser();
+// toggleAccordionTabsVisibility();

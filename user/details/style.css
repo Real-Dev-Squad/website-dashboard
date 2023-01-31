@@ -278,3 +278,19 @@ footer p a {
     height: 20px;
   }
 }
+
+.accordion-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tool-parent {
+  position: relative;
+}
+
+.tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  width: 200px;
+}
