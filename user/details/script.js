@@ -49,6 +49,7 @@ async function getUserData() {
       removeElementClass(document.querySelector('.accordion'), 'hide');
     }
   } catch (err) {
+    console.error(err);
     hideLoader('.user-details-header');
     const errorEl = createElement({ type: 'p', classList: ['error'] });
     errorEl.appendChild(createTextNode('Something Went Wrong!'));
@@ -311,7 +312,9 @@ async function getUserSkills() {
       userSkills = data.skills;
       generateSkillsTabDetails(userSkills);
     }
-  } catch (err) {}
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 function generateSkillsTabDetails(skills) {
@@ -358,6 +361,7 @@ async function getUserAvailabilityStatus() {
       generateNoUserStatusFound();
     }
   } catch (err) {
+    console.log(err);
     generateNoUserStatusFound();
   }
 }
