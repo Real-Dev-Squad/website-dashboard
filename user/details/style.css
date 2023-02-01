@@ -388,7 +388,7 @@ footer p a {
   z-index: 1;
   letter-spacing: 1px;
   font-size: 0.7rem;
-  width: 140px;
+  width: 200px;
   right: 50%;
   bottom: 100%;
 }
@@ -397,8 +397,8 @@ footer p a {
   content: ' ';
   position: absolute;
   top: 100%;
-  left: 40%;
+  left: 50%;
   border-width: 7px;
   border: 7px solid;
-  border-color: var(--blue-hover-color) transparent transparent transparent;
+  border-top-color: var(--blue-color);
 }

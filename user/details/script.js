@@ -692,7 +692,7 @@ function formatDate(dateStr) {
     timeZone: 'Asia/Kolkata',
   };
   const formattedDate = date.toLocaleDateString('en-US', options);
-  return formattedDate.split(',')[0];
+  return formattedDate;
 }
 
 function generatePrsTabDetails() {
@@ -714,7 +714,7 @@ function generatePrsTabDetails() {
   prevBtn.addEventListener('click', () => {
     if (currentPageIndex > 1) {
       currentPageIndex--;
-      getUserPrs();
+      generateUserPrsList(getPrsToFetch(userAllPrs, currentPageIndex));
     }
   });
 
@@ -726,7 +726,7 @@ function generatePrsTabDetails() {
   nextBtn.addEventListener('click', () => {
     if (currentPageIndex < totalPrsPages) {
       currentPageIndex++;
-      getUserPrs();
+      generateUserPrsList(getPrsToFetch(userAllPrs, currentPageIndex));
     }
   });
   pagination.append(prevBtn, nextBtn);
@@ -777,8 +777,10 @@ function generateUserPrsList(userPrs) {
       const prsCard = createSinglePrCard(pr);
       document.querySelector('.user-pr').appendChild(prsCard);
     });
-    document.querySelector('.pagination-load-more').disabled =
+    document.querySelector('.pagination-next-page').disabled =
       currentPageIndex === totalPrsPages;
+    document.querySelector('.pagination-prev-page').disabled =
+      currentPageIndex === 1;
   }
 }
 
