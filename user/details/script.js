@@ -712,10 +712,9 @@ function generatePrsTabDetails() {
   });
   prevBtn.appendChild(createTextNode('Prev'));
   prevBtn.addEventListener('click', () => {
-    if (currentPageIndex > 1) {
-      currentPageIndex--;
-      generateUserPrsList(getPrsToFetch(userAllPrs, currentPageIndex));
-    }
+    if (currentPageIndex <= 1) return;
+    currentPageIndex--;
+    generateUserPrsList(getPrsToFetch(userAllPrs, currentPageIndex));
   });
 
   const nextBtn = createElement({
@@ -724,10 +723,9 @@ function generatePrsTabDetails() {
   });
   nextBtn.appendChild(createTextNode('Next'));
   nextBtn.addEventListener('click', () => {
-    if (currentPageIndex < totalPrsPages) {
-      currentPageIndex++;
-      generateUserPrsList(getPrsToFetch(userAllPrs, currentPageIndex));
-    }
+    if (currentPageIndex >= totalPrsPages) return;
+    currentPageIndex++;
+    generateUserPrsList(getPrsToFetch(userAllPrs, currentPageIndex));
   });
   pagination.append(prevBtn, nextBtn);
 
