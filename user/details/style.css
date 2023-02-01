@@ -279,6 +279,10 @@ footer p a {
     width: 20px;
     height: 20px;
   }
+
+  .tooltiptext::after {
+    left: 50%;
+  }
 }
 
 .user-pr {
@@ -310,26 +314,22 @@ footer p a {
   margin-top: 1rem;
 }
 
-.pr-details-row,
-.pr-details-head {
-  text-align: left;
-  padding: 8px;
-}
-
 .pr-details-row:nth-child(even) {
   background-color: var(--loader-gray-color);
 }
 
 .pr-details-head {
-  width: auto;
+  padding: 8px 10px;
 }
 
-.pr-details-data {
-  width: auto;
+.pr-details-data,
+.pr-details-data-updated,
+.pr-details-data-created {
+  position: relative;
+  padding: 0 10px;
 }
 
 .btn-wrapper {
-  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -379,22 +379,24 @@ footer p a {
   background-color: var(--blue-color);
   color: var(--white-color);
   visibility: hidden;
-  width: 50%;
   text-align: center;
   border-radius: 6px;
   padding: 0.5rem;
   position: absolute;
   z-index: 1;
-  bottom: 90%;
   letter-spacing: 1px;
+  font-size: 0.7rem;
+  width: 140px;
+  right: 50%;
+  bottom: 100%;
 }
 
 .tooltiptext::after {
   content: ' ';
   position: absolute;
   top: 100%;
-  left: 50%;
+  left: 40%;
   border-width: 7px;
   border: 7px solid;
-  border-color: var(--black-color) transparent transparent transparent;
+  border-color: var(--blue-hover-color) transparent transparent transparent;
 }

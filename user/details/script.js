@@ -1,12 +1,12 @@
 let userData = {};
 let userAllTasks = [];
 let userSkills = [];
-let userAllPRs = [];
+let userAllPrs = [];
 let userStatusData = {};
 let currentPageIndex = 1;
 let taskPerPage = 3;
-let PRsPerPage = 3;
-let totalPRsPages = 0;
+let prsPerPage = 3;
+let totalPrsPages = 0;
 let totalPages = Math.ceil(userAllTasks.length / taskPerPage);
 const username = new URLSearchParams(window.location.search).get('username');
 
@@ -695,7 +695,7 @@ function formatDate(dateStr) {
   return formattedDate.split(',')[0];
 }
 
-function generatePRsTabDetails() {
+function generatePrsTabDetails() {
   const div = createElement({
     type: 'div',
     classList: ['hidden-content', 'hide'],
@@ -704,73 +704,96 @@ function generatePRsTabDetails() {
     type: 'div',
     classList: ['user-pr'],
   });
+
   const pagination = createElement({ type: 'div', classList: ['pagination'] });
   const prevBtn = createElement({
     type: 'button',
-    classList: ['pagination-load-more'],
+    classList: ['pagination-prev-page', 'btn'],
   });
-  prevBtn.appendChild(createTextNode('Load More'));
-  prevBtn.addEventListener('click', loadMorePRs);
-  pagination.append(prevBtn);
+  prevBtn.appendChild(createTextNode('Prev'));
+  prevBtn.addEventListener('click', () => {
+    if (currentPageIndex > 1) {
+      currentPageIndex--;
+      getUserPrs();
+    }
+  });
+
+  const nextBtn = createElement({
+    type: 'button',
+    classList: ['pagination-next-page'],
+  });
+  nextBtn.appendChild(createTextNode('Next'));
+  nextBtn.addEventListener('click', () => {
+    if (currentPageIndex < totalPrsPages) {
+      currentPageIndex++;
+      getUserPrs();
+    }
+  });
+  pagination.append(prevBtn, nextBtn);
+
   div.append(prsSec, pagination);
   document.querySelector('.accordion-prs').appendChild(div);
 }
 
-async function getUserPRs() {
+async function getUserPrs() {
   try {
     const res = await makeApiCall(
       `${API_BASE_URL}/pullrequests/user/${username}`,
     );
     if (res.status === 200) {
       const data = await res.json();
-      userAllPRs = data.pullRequests;
-      totalPRsPages = Math.ceil(userAllPRs.length / PRsPerPage);
-      const prs = getPRstoFetch(userAllPRs, currentPageIndex);
-      generatePRsTabDetails();
-      generateUserPRsList(prs);
+      userAllPrs = data.pullRequests;
+      totalPrsPages = Math.ceil(userAllPrs.length / prsPerPage);
+      const prs = getPrsToFetch(userAllPrs, currentPageIndex);
+      generatePrsTabDetails();
+      generateUserPrsList(prs);
     }
   } catch (err) {}
 }
 
-function getPRstoFetch(userPR, currentIndex) {
-  const startIndex = (currentIndex - 1) * PRsPerPage;
-  return userPR.slice(startIndex, startIndex + PRsPerPage);
+function getPrsToFetch(userPr, currentIndex) {
+  const startIndex = (currentIndex - 1) * prsPerPage;
+  return userPr.slice(startIndex, startIndex + prsPerPage);
 }
 
-function generateUserPRsList(userPRs) {
-  if (!userPRs.length) {
-    const errorE1 = createElement({
-      type: 'p',
-      classList: ['error'],
-    });
-    const container = document.querySelector(
-      '.accordion-prs > .hidden-content',
-    );
-    container.innerHTML = '';
-    errorE1.appendChild(createTextNode('No PRs to show'));
-    container.appendChild(errorE1);
+function noDataFound() {
+  const div = createElement({
+    type: 'div',
+    classList: ['hidden-content', 'hide'],
+  });
+  const errorEl = createElement({ type: 'p', classList: ['error'] });
+  errorEl.appendChild(createTextNode('No Data Found'));
+  div.innerHTML = '';
+  div.appendChild(errorEl);
+  document.querySelector('.accordion-prs').append(div);
+}
+
+function generateUserPrsList(userPrs) {
+  document.querySelector('.user-pr').innerHTML = '';
+  if (!userPrs.length) {
+    noDataFound();
   } else {
-    userPRs.forEach((pr) => {
-      const PRsCard = createSinglePRCard(pr);
-      document.querySelector('.user-pr').appendChild(PRsCard);
+    userPrs.forEach((pr) => {
+      const prsCard = createSinglePrCard(pr);
+      document.querySelector('.user-pr').appendChild(prsCard);
     });
     document.querySelector('.pagination-load-more').disabled =
-      currentPageIndex === totalPRsPages;
+      currentPageIndex === totalPrsPages;
   }
 }
 
-function createSinglePRCard(PR) {
-  const userPR = createElement({ type: 'div', classList: ['user-pr'] });
+function createSinglePrCard(prs) {
+  const userPr = createElement({ type: 'div', classList: ['user-pr'] });
   const h2 = createElement({ type: 'h2', classList: ['pr-title'] });
-  h2.appendChild(createTextNode(PR.title.toString()));
-  userPR.appendChild(h2);
-  const table = createPRDetailsTable(PR);
-  const btnAndTooltip = createPRDetailsButton(PR);
-  userPR.append(table, btnAndTooltip);
-  return userPR;
+  h2.appendChild(createTextNode(prs.title.toString()));
+  userPr.appendChild(h2);
+  const table = createPrDetailsTable(prs);
+  const viewButton = createPrViewButton(prs);
+  userPr.append(table, viewButton);
+  return userPr;
 }
 
-function createPRDetailsButton(PR) {
+function createPrViewButton(prs) {
   const viewPRBtnDiv = createElement({
     type: 'div',
     classList: ['btn-wrapper'],
@@ -781,50 +804,37 @@ function createPRDetailsButton(PR) {
   });
   viewPRBtn.appendChild(createTextNode('View'));
   viewPRBtn.addEventListener('click', (e) => {
-    window.open(PR.url, '_blank');
-  });
-  const tooltip = createElement({ type: 'span', classList: ['tooltiptext'] });
-  tooltip.appendChild(
-    createTextNode(
-      `Created at ${formatDate(PR.createdAt)} and last updated at ${formatDate(
-        PR.updatedAt,
-      )}`,
-    ),
-  );
-  viewPRBtnDiv.appendChild(tooltip);
-  viewPRBtn.addEventListener('mouseover', (e) => {
-    tooltip.style.visibility = 'visible';
-  });
-  viewPRBtn.addEventListener('mouseout', (e) => {
-    tooltip.style.visibility = 'hidden';
+    window.open(prs.url, '_blank');
   });
   viewPRBtnDiv.appendChild(viewPRBtn);
   return viewPRBtnDiv;
 }
 
-function createPRDetailsTable(PR) {
+function createPrDetailsTable(prs) {
   const container = createElement({
     type: 'table',
     classList: ['pr-details-table'],
   });
-  const repoRow = createPRDetailsRow('Repository Name', PR.repository);
+  const repoRow = createPrDetailsRow('Repository Name', prs.repository);
   container.appendChild(repoRow);
-  const statusRow = createPRDetailsRow('Status', PR.state);
+  const statusRow = createPrDetailsRow('Status', prs.state);
   container.appendChild(statusRow);
-  const createdAtRow = createPRDetailsRow(
+  const createdAtRow = createPrCreatedAt(
     'Created At',
-    generateRemainingDays(PR.createdAt),
+    generateRemainingDays(prs.createdAt),
+    prs,
   );
   container.appendChild(createdAtRow);
-  const updatedAtRow = createPRDetailsRow(
+  const updatedAtRow = createPrUpdatedAt(
     'Updated At',
-    generateRemainingDays(PR.updatedAt),
+    generateRemainingDays(prs.updatedAt),
+    prs,
   );
   container.appendChild(updatedAtRow);
   return container;
 }
 
-function createPRDetailsRow(head, data) {
+function createPrDetailsRow(head, data) {
   const row = createElement({ type: 'tr', classList: ['pr-details-row'] });
   const headElement = createElement({
     type: 'td',
@@ -847,14 +857,69 @@ function createPRDetailsRow(head, data) {
   return row;
 }
 
-function loadMorePRs() {
-  if (currentPageIndex > totalPRsPages) return;
-  currentPageIndex++;
-  const prs = getPRstoFetch(userAllPRs, currentPageIndex);
-  generateUserPRsList(prs);
+function createHeadForPrDate(head) {
+  const headElement = createElement({
+    type: 'td',
+    classList: ['pr-details-data'],
+  });
+  const headText = createElement({
+    type: 'h4',
+    classList: ['pr-details-head'],
+  });
+  headText.appendChild(createTextNode(head));
+  headElement.appendChild(headText);
+  const semiElement = createElement({ type: 'td', classList: ['colon'] });
+  semiElement.appendChild(createTextNode(':'));
+  return { headElement, semiElement };
+}
+
+function createPrCreatedAt(head, data, prs) {
+  const row = createElement({ type: 'tr', classList: ['pr-details-row'] });
+  const { headElement, semiElement } = createHeadForPrDate(head);
+  const dataElement = createElement({
+    type: 'td',
+    classList: ['pr-details-data-created'],
+  });
+  dataElement.appendChild(createTextNode(data));
+  const tooltip = createElement({ type: 'span', classList: ['tooltiptext'] });
+  tooltip.appendChild(
+    createTextNode(`Created on ${formatDate(prs.createdAt)}`),
+  );
+  dataElement.appendChild(tooltip);
+  dataElement.addEventListener('mouseover', (e) => {
+    tooltip.style.visibility = 'visible';
+  });
+  dataElement.addEventListener('mouseout', (e) => {
+    tooltip.style.visibility = 'hidden';
+  });
+  row.append(headElement, semiElement, dataElement);
+  return row;
+}
+
+function createPrUpdatedAt(head, data, prs) {
+  const row = createElement({ type: 'tr', classList: ['pr-details-row'] });
+  const { headElement, semiElement } = createHeadForPrDate(head);
+  const dataElement = createElement({
+    type: 'td',
+    classList: ['pr-details-data-updated'],
+  });
+  dataElement.appendChild(createTextNode(data));
+  const tooltip = createElement({ type: 'span', classList: ['tooltiptext'] });
+  tooltip.appendChild(
+    createTextNode(`Updated at ${formatDate(prs.updatedAt)}`),
+  );
+  dataElement.appendChild(tooltip);
+  dataElement.addEventListener('mouseover', (e) => {
+    tooltip.style.visibility = 'visible';
+  });
+  dataElement.addEventListener('mouseout', (e) => {
+    tooltip.style.visibility = 'hidden';
+  });
+  row.append(headElement, semiElement, dataElement);
+  return row;
 }
 
 showContent();
 getUserData();
 getUserTasks();
-getUserPRs();
+getUserPrs();
