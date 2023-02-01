@@ -319,12 +319,14 @@ footer p a {
 }
 
 .pr-details-head {
+  width: 50%;
   padding: 8px 10px;
 }
 
 .pr-details-data,
 .pr-details-data-updated,
 .pr-details-data-created {
+  width: 50%;
   position: relative;
   padding: 0 10px;
 }
