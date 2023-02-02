@@ -659,11 +659,11 @@ function showContent() {
   section3.classList.remove('hide');
 }
 
-function lockAccordianShowTooltip() {
+function lockAccordiansForNonSuperUser() {
   const accordionTabs = document.querySelectorAll('.accordion');
-  const accordionIcon = document.querySelectorAll('.accordion-icon');
-  const toolParent = document.querySelectorAll('.tool-parent');
-  accordionIcon.forEach((icon) => {
+  const accordionIcons = document.querySelectorAll('.accordion-icon');
+  const toolParent = document.querySelectorAll('.icon-div');
+  accordionIcons.forEach((icon) => {
     icon.src = '/user/images/lock-icon.svg';
     icon.classList.add('accordion-icon');
   });
@@ -694,7 +694,7 @@ async function accessingUserData() {
     generateAcademicTabDetails();
     toggleAccordionTabsVisibility();
   } else {
-    lockAccordianShowTooltip();
+    lockAccordiansForNonSuperUser();
   }
 }
 
