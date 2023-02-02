@@ -665,11 +665,11 @@ function showContent() {
 }
 
 function generateRemainingDays(dateStr) {
-  const date = new Date(dateStr);
+  const inputDate = new Date(dateStr);
   const now = new Date();
   const offset = 330 * 60 * 1000;
-  const nowInIST = new Date(now.getTime() + offset);
-  const diff = nowInIST - date;
+  const currentDate = new Date(now.getTime() + offset);
+  const diff = currentDate - inputDate;
   if (diff >= 24 * 60 * 60 * 1000) {
     return Math.floor(diff / (24 * 60 * 60 * 1000)) + ' days ago';
   } else if (diff >= 60 * 60 * 1000) {
@@ -689,13 +689,12 @@ function formatDate(dateStr) {
     day: '2-digit',
     hour: '2-digit',
     minute: '2-digit',
-    timeZone: 'Asia/Kolkata',
   };
-  const formattedDate = date.toLocaleDateString('en-US', options);
-  return formattedDate;
+  return date.toLocaleDateString('en-US', options);
 }
 
 function generatePrsTabDetails() {
+  const accordionPrs = document.querySelector('.accordion-prs');
   const div = createElement({
     type: 'div',
     classList: ['hidden-content', 'hide'],
@@ -714,7 +713,7 @@ function generatePrsTabDetails() {
   prevBtn.addEventListener('click', () => {
     if (currentPageIndex <= 1) return;
     currentPageIndex--;
-    generateUserPrsList(getPrsToFetch(userAllPrs, currentPageIndex));
+    generateUserPrsList(loadFetchedPrs(userAllPrs, currentPageIndex));
   });
 
   const nextBtn = createElement({
@@ -725,12 +724,11 @@ function generatePrsTabDetails() {
   nextBtn.addEventListener('click', () => {
     if (currentPageIndex >= totalPrsPages) return;
     currentPageIndex++;
-    generateUserPrsList(getPrsToFetch(userAllPrs, currentPageIndex));
+    generateUserPrsList(loadFetchedPrs(userAllPrs, currentPageIndex));
   });
   pagination.append(prevBtn, nextBtn);
-
   div.append(prsSec, pagination);
-  document.querySelector('.accordion-prs').appendChild(div);
+  accordionPrs.appendChild(div);
 }
 
 async function getUserPrs() {
@@ -742,19 +740,19 @@ async function getUserPrs() {
       const data = await res.json();
       userAllPrs = data.pullRequests;
       totalPrsPages = Math.ceil(userAllPrs.length / prsPerPage);
-      const prs = getPrsToFetch(userAllPrs, currentPageIndex);
+      const prs = loadFetchedPrs(userAllPrs, currentPageIndex);
       generatePrsTabDetails();
       generateUserPrsList(prs);
     }
   } catch (err) {}
 }
 
-function getPrsToFetch(userPr, currentIndex) {
+function loadFetchedPrs(userPr, currentIndex) {
   const startIndex = (currentIndex - 1) * prsPerPage;
   return userPr.slice(startIndex, startIndex + prsPerPage);
 }
 
-function noDataFound() {
+function noDataComponent() {
   const div = createElement({
     type: 'div',
     classList: ['hidden-content', 'hide'],
@@ -769,7 +767,7 @@ function noDataFound() {
 function generateUserPrsList(userPrs) {
   document.querySelector('.user-pr').innerHTML = '';
   if (!userPrs.length) {
-    noDataFound();
+    noDataComponent();
   } else {
     userPrs.forEach((pr) => {
       const prsCard = createSinglePrCard(pr);
