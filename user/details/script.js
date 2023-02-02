@@ -661,18 +661,37 @@ function showContent() {
 
 function lockAccordiansForNonSuperUser() {
   const accordionTabs = document.querySelectorAll('.accordion');
-  const accordionIcons = document.querySelectorAll('.accordion-icon');
-  const toolParent = document.querySelectorAll('.icon-div');
-  accordionIcons.forEach((icon) => {
-    icon.src = '/user/images/lock-icon.svg';
-    icon.classList.add('accordion-icon');
+  const arrowIconDiv = document.querySelectorAll('.icon-div');
+  const accordionHeadings = document.querySelectorAll('.accordian-heading');
+  arrowIconDiv.forEach((icon) => {
+    icon.remove();
+  });
+  accordionHeadings.forEach((addIconDiv) => {
+    const lockIconDiv = createElement({
+      type: 'div',
+      classList: ['lock-icon-div'],
+    });
+    addIconDiv.append(lockIconDiv);
+  });
+  const lockIconContainer = document.querySelectorAll('.lock-icon-div');
+  lockIconContainer.forEach((addIcon) => {
+    const lockIcon = createElement({
+      type: 'img',
+      classList: ['lock-icon-img'],
+    });
+    addIcon.append(lockIcon);
+  });
+  const lockIconImg = document.querySelectorAll('.lock-icon-img');
+  lockIconImg.forEach((addAttributes) => {
+    addAttributes.setAttribute('src', '/user/images/lock-icon.svg');
+    addAttributes.setAttribute('alt', 'Lock Icon');
   });
 
   accordionTabs.forEach((tab) => {
     tab.classList.add('accordion-disabled');
   });
-
-  toolParent.forEach((tool) => {
+  lockIconContainer.forEach((tool) => {
+    console.log('Tooltip');
     tool.addEventListener('mouseover', () => {
       const tooltip = createElement({ type: 'span', classList: ['tooltip'] });
       tooltip.appendChild(

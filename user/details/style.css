@@ -131,11 +131,13 @@ li {
   border-bottom: 1px solid var(--loader-gray-color);
 }
 
-.visible-content > h2 {
+.accordian-heading {
   flex-grow: 1;
   font-size: 2rem;
   max-width: 80%;
-  margin: 0 auto;
+  margin: 0.4rem auto;
+  display: flex;
+  justify-content: center;
 }
 
 .visible-content > img {
@@ -284,14 +286,6 @@ footer p a {
   cursor: none;
 }
 
-.accordion-icon {
-  width: 50%;
-}
-
-.icon-div {
-  position: relative;
-}
-
 .tooltip {
   position: absolute;
   bottom: calc(100% + 10px);
@@ -300,6 +294,7 @@ footer p a {
   background-color: var(--gray-700);
   border-radius: 5px;
   padding: 0.5rem;
+  font-size: 0.8rem;
 }
 
 .tooltip::after {
@@ -309,4 +304,15 @@ footer p a {
   left: 50%;
   border: 7px solid;
   border-color: var(--black-color) transparent transparent;
+}
+
+.lock-icon-img {
+  width: 50%;
+  margin-left: 0;
+}
+
+.lock-icon-div {
+  position: relative;
+  display: flex;
+  justify-content: center;
 }
