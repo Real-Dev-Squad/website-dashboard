@@ -17,6 +17,9 @@ html {
   --loader-blue-color: #3498db;
   --gray-700: #c4c4c4;
   --red-color: red;
+  --blue-hover-color: #0d0a4d;
+  --razzmatazz-color: #e30464;
+  --razzmatazz-hover-color: #a1034a;
 }
 
 body {
@@ -206,7 +209,6 @@ li {
   display: flex;
   gap: 1rem;
   justify-content: center;
-  margin-top: 2rem;
 }
 
 .loader {
@@ -277,6 +279,126 @@ footer p a {
     width: 20px;
     height: 20px;
   }
+
+  .tooltiptext::after {
+    left: 30%;
+  }
+}
+
+.user-pr {
+  display: flex;
+  flex-direction: column;
+  margin: 1rem 1rem 0 1rem;
+}
+
+.pr-title {
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.pr-details {
+  display: flex;
+  flex-direction: row;
+  margin-top: 1rem;
+}
+
+.colon {
+  margin: 0;
+  padding: 0;
+  width: auto;
+}
+
+.pr-details-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.pr-details-row:nth-child(even) {
+  background-color: var(--loader-gray-color);
+}
+
+.pr-details-head {
+  width: 50%;
+  padding: 0.5rem 0.62rem;
+}
+
+.pr-details-data,
+.pr-details-data-updated,
+.pr-details-data-created {
+  width: 50%;
+  position: relative;
+  padding: 0 0.62rem;
+}
+
+.btn-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+.pr-view-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.32rem;
+  border: none;
+  background-color: var(--blue-color);
+  color: var(--white-color);
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.pr-view-btn:hover,
+.pagination-next-page:hover {
+  background-color: var(--blue-hover-color);
+}
+
+.pagination-next-page,
+.pagination-prev-page {
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.31rem;
+  border: none;
+  background-color: var(--razzmatazz-color);
+  color: var(--white-color);
+  font-size: 0.7rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.pagination-load-more:hover,
+.pagination-prev-page:hover {
+  background-color: var(--razzmatazz-hover-color);
+}
+
+.pagination-next-page {
+  background-color: var(--blue-color);
+}
+
+.tooltiptext {
+  border: 1px solid var(--black-color);
+  background-color: var(--blue-color);
+  color: var(--white-color);
+  visibility: hidden;
+  text-align: center;
+  border-radius: 0.43rem;
+  padding: 0.5rem;
+  position: absolute;
+  z-index: 1;
+  letter-spacing: 1px;
+  font-size: 0.7rem;
+  width: 12.5rem;
+  right: 50%;
+  bottom: 100%;
+}
+
+.tooltiptext::after {
+  content: ' ';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  border: 0.43rem solid;
+  border-color: var(--blue-color) transparent transparent transparent;
 }
 
 .not-found {
