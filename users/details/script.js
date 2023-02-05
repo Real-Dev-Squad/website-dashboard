@@ -939,7 +939,7 @@ function lockAccordiansForNonSuperUser() {
   });
   const lockIconImg = document.querySelectorAll('.lock-icon-img');
   lockIconImg.forEach((addAttributes) => {
-    addAttributes.setAttribute('src', '/user/images/lock-icon.svg');
+    addAttributes.setAttribute('src', '/users/images/lock-icon.svg');
     addAttributes.setAttribute('alt', 'Lock Icon');
   });
 
@@ -947,7 +947,6 @@ function lockAccordiansForNonSuperUser() {
     tab.classList.add('accordion-disabled');
   });
   lockIconContainer.forEach((tool) => {
-    console.log('Tooltip');
     tool.addEventListener('mouseover', () => {
       const tooltip = createElement({ type: 'span', classList: ['tooltip'] });
       tooltip.appendChild(
