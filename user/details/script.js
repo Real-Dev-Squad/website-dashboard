@@ -120,8 +120,6 @@ function generateUserData(userData) {
   wrapper.append(img, username);
   main.append(wrapper, socials);
   document.querySelector('.user-details-header').appendChild(main);
-  toggleAccordionTabsVisibility();
-  generateAcademicTabDetails();
 }
 
 function toggleAccordionTabsVisibility() {
@@ -917,7 +915,65 @@ function createPrUpdatedAt(head, data, prs) {
   return row;
 }
 
+function lockAccordiansForNonSuperUser() {
+  const accordionTabs = document.querySelectorAll('.accordion');
+  const arrowIconDiv = document.querySelectorAll('.icon-div');
+  const accordionHeadings = document.querySelectorAll('.accordian-heading');
+  arrowIconDiv.forEach((icon) => {
+    icon.remove();
+  });
+  accordionHeadings.forEach((addIconDiv) => {
+    const lockIconDiv = createElement({
+      type: 'div',
+      classList: ['lock-icon-div'],
+    });
+    addIconDiv.append(lockIconDiv);
+  });
+  const lockIconContainer = document.querySelectorAll('.lock-icon-div');
+  lockIconContainer.forEach((addIcon) => {
+    const lockIcon = createElement({
+      type: 'img',
+      classList: ['lock-icon-img'],
+    });
+    addIcon.append(lockIcon);
+  });
+  const lockIconImg = document.querySelectorAll('.lock-icon-img');
+  lockIconImg.forEach((addAttributes) => {
+    addAttributes.setAttribute('src', '/user/images/lock-icon.svg');
+    addAttributes.setAttribute('alt', 'Lock Icon');
+  });
+
+  accordionTabs.forEach((tab) => {
+    tab.classList.add('accordion-disabled');
+  });
+  lockIconContainer.forEach((tool) => {
+    console.log('Tooltip');
+    tool.addEventListener('mouseover', () => {
+      const tooltip = createElement({ type: 'span', classList: ['tooltip'] });
+      tooltip.appendChild(
+        createTextNode('You do not have required permissions to view this.'),
+      );
+      tool.appendChild(tooltip);
+    });
+    tool.addEventListener('mouseout', () => {
+      const tooltip = document.querySelector('.tooltip');
+      tooltip.remove();
+    });
+  });
+}
+
+async function accessingUserData() {
+  const isSuperUser = await checkUserIsSuperUser();
+  if (isSuperUser) {
+    getUserTasks();
+    getUserPrs();
+    generateAcademicTabDetails();
+    toggleAccordionTabsVisibility();
+  } else {
+    lockAccordiansForNonSuperUser();
+  }
+}
+
 showContent();
 getUserData();
-getUserTasks();
-getUserPrs();
+accessingUserData();
