@@ -6,7 +6,7 @@
   "scripts": {
     "check": "prettier --check .",
     "fix": "prettier --write .",
-    "test": "node test.js",
+    "test": "jest --coverage=false",
     "start": "node server.js"
   },
   "repository": {

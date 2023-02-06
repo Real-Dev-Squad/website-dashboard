@@ -65,7 +65,7 @@ ul {
   list-style: none;
 }
 
-li {
+.user-card {
   border: 1.5px solid var(--black-color);
   margin: 15px;
   border-radius: 10px;
@@ -76,7 +76,7 @@ li {
   padding: 20px 10px;
 }
 
-li p {
+.user-card p {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;

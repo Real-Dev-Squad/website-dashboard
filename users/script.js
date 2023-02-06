@@ -163,6 +163,7 @@ function generateUserList(
   const ulElement = document.createElement('ul');
   users.forEach((userData) => {
     const listElement = document.createElement('li');
+    listElement.classList.add('user-card');
     const imgElement = document.createElement('img');
     imgElement.src = userData.picture ? userData.picture : DEFAULT_AVATAR;
     imgElement.classList.add('user-img-dimension');
