@@ -10,7 +10,7 @@ describe('Tests the User Management User Listing Screen', () => {
   let paginationElement;
   let prevBtn;
   let nextBtn;
-  jest.setTimeout(10000);
+  jest.setTimeout(60000);
 
   beforeAll(async () => {
     browser = await puppeteer.launch({
@@ -25,7 +25,7 @@ describe('Tests the User Management User Listing Screen', () => {
       'content-Type': 'application/json',
       Cookie: cookieValue,
     });
-    await page.goto('https://dev.realdevsquad.com/user');
+    await page.goto('https://dev.realdevsquad.com/users');
     await page.waitForNetworkIdle();
 
     userListElement = await page.$('#user-list');
@@ -82,7 +82,7 @@ describe('Tests the User Management User Listing Screen', () => {
     expect(userCard.length).toBe(1);
   });
 
-  it.only('checks the next and previous button functionality', async () => {
+  it('checks the next and previous button functionality', async () => {
     // Check if the "next" button is disabled
     const isNextButtonDisabled = await page.evaluate(
       (button) => button.disabled,
