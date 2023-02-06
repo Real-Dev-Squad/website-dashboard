@@ -49,7 +49,7 @@ async function getUserData() {
       removeElementClass(document.querySelector('.accordion'), 'hide');
     } else if (res.status === 404) {
       hideLoader('.user-details-header');
-      dataNotFound('User Not Found');
+      generateNoDataFoundSection('User Not Found');
     }
   } catch (err) {
     console.log(err);
@@ -61,7 +61,7 @@ async function getUserData() {
   }
 }
 
-function dataNotFound(message) {
+function generateNoDataFoundSection(message) {
   document.title = 'User Not Found';
   const notFoundDiv = createElement({ type: 'div', classList: ['not-found'] });
   const notFoundImg = createElement({
