@@ -66,7 +66,7 @@ function dataNotFound(message) {
   const notFoundDiv = createElement({ type: 'div', classList: ['not-found'] });
   const notFoundImg = createElement({
     type: 'img',
-    classList: ['not-found__img'],
+    classList: ['not-found-img'],
   });
   notFoundImg.src = '/images/page-not-found.png';
   notFoundImg.setAttribute('alt', 'page not found');
