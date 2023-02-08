@@ -47,6 +47,9 @@ async function getUserData() {
       hideLoader('.user-details-header');
       generateUserData(data.user);
       removeElementClass(document.querySelector('.accordion'), 'hide');
+    } else if (res.status === 404) {
+      hideLoader('.user-details-header');
+      generateNoDataFoundSection('User Not Found');
     }
   } catch (err) {
     console.log(err);
