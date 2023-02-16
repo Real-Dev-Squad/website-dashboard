@@ -10,3 +10,6 @@ const PAGINATION_ELEMENT = 'pagination';
 const PREV_BUTTON = 'prevButton';
 const NEXT_BUTTON = 'nextButton';
 const USER_FETCH_COUNT = 100;
+const SKILL_LIST_FILTER = 'filter-by-skills';
+const AVAILABILITY_FILTER = 'filter-by-avaviability';
+const SEARCH_BUTTON = 'search-button';

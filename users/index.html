@@ -12,14 +12,31 @@
     <script src="utils.js" defer></script>
     <script type="module" src="script.js" defer></script>
   </head>
+
   <body>
     <header class="header">
       <h1>User Management</h1>
     </header>
     <section id="main-section">
-      <div id="search">
-        <input id="user-search" type="text" placeholder="Search Users" />
+      <div class="search-filter">
+        <div id="search">
+          <input id="user-search" type="text" placeholder="Search Users" />
+        </div>
+        <div id="filter">
+          <select
+            id="filter-by-skills"
+            name="filter-by-skills"
+            class="filters remove-element"
+          ></select>
+          <select
+            id="filter-by-avaviability"
+            name="filter-by-avaviability"
+            class="filters"
+          ></select>
+          <button id="search-button" class="search-btn">Search</button>
+        </div>
       </div>
+
       <div id="view-type-btn">
         <button id="tile-view-btn">
           <img
