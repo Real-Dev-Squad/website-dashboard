@@ -323,39 +323,36 @@ function addSkillsFilterOptions() {
 }
 
 async function getUsersStatusData(state) {
-  try {
-    const usersRequest = await makeApiCall(
-      `${RDS_API_USERS}status?state=${state}`,
+  const usersRequest = await makeApiCall(
+    `${RDS_API_USERS}status?state=${state}`,
+  );
+  if (usersRequest.status !== 200) {
+    throw new Error(
+      `User list request failed with status: ${usersRequest.status}`,
     );
-    if (usersRequest.status !== 200) {
-      throw new Error(
-        `User list request failed with status: ${usersRequest.status}`,
-      );
-    }
-    const currentstate = await usersRequest.json();
-    return currentstate.allUserStatus;
-  } catch (err) {
-    throw err;
   }
+  const currentstate = await usersRequest.json();
+  return currentstate.allUserStatus;
 }
 
 async function fetchUserStatusData() {
-  usersStatusOOO = await getUsersStatusData('OOO');
-  usersStatusIDLE = await getUsersStatusData('IDLE');
-  usersStatusACTIVE = await getUsersStatusData('ACTIVE');
+  try {
+    [usersStatusOOO, usersStatusIDLE, usersStatusACTIVE] = await Promise.all([
+      getUsersStatusData('OOO'),
+      getUsersStatusData('IDLE'),
+      getUsersStatusData('ACTIVE'),
+    ]);
+  } catch (err) {}
 }
 
 async function showUserList(users) {
   const userListElement = document.getElementById('user-list');
-  userListElement.innerHTML = '';
   const ulElement = document.createElement('ul');
 
   users.forEach((userData) => {
     const listElement = document.createElement('li');
     const imgElement = document.createElement('img');
-    imgElement.src = userData.picture?.url
-      ? userData.picture?.url
-      : DEFAULT_AVATAR;
+    imgElement.src = userData.picture?.url ?? DEFAULT_AVATAR;
     imgElement.classList.add('user-img-dimension');
     const pElement = document.createElement('p');
     const node = document.createTextNode(`${userData.full_name}`);
@@ -374,7 +371,8 @@ async function showUserList(users) {
     };
     ulElement.appendChild(listElement);
   });
-  loaderElement.classList.add('remove-element');
+
+  userListElement.innerHTML = '';
   userListElement.appendChild(ulElement);
 }
 
