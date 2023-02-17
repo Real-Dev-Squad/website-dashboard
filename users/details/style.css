@@ -438,3 +438,7 @@ footer p a {
   display: flex;
   justify-content: center;
 }
+.not-found-img {
+  max-width: 350px;
+  width: 55%;
+}
