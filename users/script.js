@@ -13,6 +13,9 @@ const searchButton = document.getElementById(SEARCH_BUTTON);
 let tileViewActive = false;
 let tableViewActive = true;
 let page = 0;
+let usersStatusIDLE = [];
+let usersStatusACTIVE = [];
+let usersStatusOOO = [];
 
 const init = (
   prevBtn,
@@ -267,7 +270,6 @@ async function getParticularUserData(
   }
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ My Code ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 function addAvailibilityFilterOptions() {
   const options = [
     { value: 'all', text: 'ALL' },
@@ -320,45 +322,30 @@ function addSkillsFilterOptions() {
   skillFilter.options[0].selected = true;
 }
 
-const usersStatus = { idle: [], active: [], ooo: [] };
-async function getUsersStatusData() {
+async function getUsersStatusData(state) {
   try {
-    const usersRequest = await makeApiCall(`${RDS_API_USERS}status/`);
+    const usersRequest = await makeApiCall(
+      `${RDS_API_USERS}status?state=${state}`,
+    );
     if (usersRequest.status !== 200) {
       throw new Error(
         `User list request failed with status: ${usersRequest.status}`,
       );
     }
-    const usersStatusDataList = await usersRequest.json();
-    for (const userStatus of usersStatusDataList.allUserStatus) {
-      const currentState = userStatus.currentStatus.state;
-      if (currentState === 'IDLE') {
-        usersStatus.idle.push(userStatus);
-      } else if (currentState === 'ACTIVE') {
-        usersStatus.active.push(userStatus);
-      } else if (currentState === 'OOO') {
-        usersStatus.ooo.push(userStatus);
-      }
-    }
-    return usersStatus;
+    const currentstate = await usersRequest.json();
+    return currentstate.allUserStatus;
   } catch (err) {
     throw err;
   }
 }
 
-searchButton.addEventListener('click', () => {
-  const availabilityFilterValue = availabilityFilter.value;
-  if (availabilityFilterValue === 'idle') {
-    showUserList(usersStatus.idle);
-  } else if (availabilityFilterValue === 'active') {
-    showUserList(usersStatus.active);
-  } else if (availabilityFilterValue === 'ooo') {
-    showUserList(usersStatus.ooo);
-  }
-});
+async function fetchUserStatusData() {
+  usersStatusOOO = await getUsersStatusData('OOO');
+  usersStatusIDLE = await getUsersStatusData('IDLE');
+  usersStatusACTIVE = await getUsersStatusData('ACTIVE');
+}
 
-function showUserList(users) {
-  loaderElement.classList.remove('remove-element');
+async function showUserList(users) {
   const userListElement = document.getElementById('user-list');
   userListElement.innerHTML = '';
   const ulElement = document.createElement('ul');
@@ -390,7 +377,18 @@ function showUserList(users) {
   loaderElement.classList.add('remove-element');
   userListElement.appendChild(ulElement);
 }
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ My Code ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+async function filterUserByAvailability() {
+  const availabilityFilterValue = availabilityFilter.value;
+  if (availabilityFilterValue === 'idle') {
+    await showUserList(usersStatusIDLE);
+  } else if (availabilityFilterValue === 'active') {
+    await showUserList(usersStatusACTIVE);
+  } else if (availabilityFilterValue === 'ooo') {
+    await showUserList(usersStatusOOO);
+  }
+}
+
 async function showUserDataList(
   page,
   userListElement,
@@ -457,7 +455,7 @@ window.onload = function () {
   );
   addAvailibilityFilterOptions();
   addSkillsFilterOptions();
-  getUsersStatusData();
+  fetchUserStatusData();
 };
 
 export {
@@ -472,3 +470,7 @@ export {
   formatUsersData,
   showUserDataList,
 };
+
+searchButton.addEventListener('click', () => {
+  filterUserByAvailability();
+});
