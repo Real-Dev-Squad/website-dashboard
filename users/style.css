@@ -50,20 +50,6 @@
   margin: 0 10px;
 }
 
-.filter-button {
-  padding: 10px 10px;
-  border-radius: 10px;
-  border: 2.5px solid var(--black-color);
-  font-size: medium;
-  background-color: var(--light-gray-color);
-  margin: 10px;
-  cursor: pointer;
-}
-
-.filter-button:hover {
-  background-color: var(--button-hover-color);
-}
-
 #view-type-btn {
   margin: 40px auto;
 }
@@ -186,6 +172,12 @@ li p {
   padding: 0.25rem 2rem;
 }
 
+.filter-button-container {
+  position: absolute;
+  top: 14.5%;
+  right: 5%;
+}
+
 .filter-modal {
   width: 20%;
   min-width: 12.5em;
@@ -197,7 +189,7 @@ li p {
   padding: 10px;
   z-index: 1;
   position: absolute;
-  top: 10%;
+  top: 20%;
   right: 0;
   background-color: var(--white-color);
 }
@@ -215,6 +207,7 @@ li p {
   align-items: center;
   width: 100%;
 }
+
 .clear-btn {
   background-color: var(--white-color);
   border: 1px solid var(--light-gray-color);
@@ -256,6 +249,24 @@ li p {
   background-color: var(--blue-hover-color);
 }
 
+.filter-button {
+  background-color: var(--blue-color);
+  color: var(--white-color);
+  border: none;
+  border-radius: 0.31rem;
+  cursor: pointer;
+  padding: 1rem 2rem;
+}
+
+.filter-button:hover {
+  background-color: var(--blue-hover-color);
+}
+
+.filter-button::after {
+  font-family: sans-serif;
+  content: '▼';
+  padding-left: 0.5rem;
+}
 .remove-element {
   display: none;
 }
@@ -271,6 +282,18 @@ li p {
 
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@media screen and (max-width: 520px) {
+  .filter-button-container {
+    position: relative;
+    right: 0;
+    margin: 0.5rem;
+  }
+
+  .filter-modal {
+    width: 95%;
   }
 }
 
@@ -290,10 +313,6 @@ li p {
   .pagination-btn {
     font-size: 15px;
     padding: 7px 12px;
-  }
-
-  .filter-modal {
-    width: 93%;
   }
 }
 
