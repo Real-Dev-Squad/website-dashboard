@@ -6,9 +6,11 @@ const userSearchElement = document.getElementById(USER_SEARCH_ELEMENT);
 const paginationElement = document.getElementById(PAGINATION_ELEMENT);
 const prevBtn = document.getElementById(PREV_BUTTON);
 const nextBtn = document.getElementById(NEXT_BUTTON);
-const skillFilter = document.getElementById(SKILL_LIST_FILTER);
+const filterModal = document.getElementsByClassName(FILTER_MODAL)[0];
+const filterButton = document.getElementById(FILTER_BUTTON);
+const skillFilter = document.getElementById(SKILL_FILTER);
 const availabilityFilter = document.getElementById(AVAILABILITY_FILTER);
-const searchButton = document.getElementById(SEARCH_BUTTON);
+const applyFilterButton = document.getElementById(APPLY_FILTER_BUTTON);
 const clearButton = document.getElementById(CLEAR_BUTTON);
 
 let tileViewActive = false;
@@ -471,6 +473,21 @@ window.onload = function () {
   addSkillsFilterOptions();
 };
 
+filterButton.addEventListener('click', () => {
+  filterModal.classList.toggle('hidden');
+});
+
+applyFilterButton.addEventListener('click', () => {
+  displayLoader();
+  filterUserByAvailability();
+  filterModal.classList.toggle('hidden');
+});
+
+clearButton.addEventListener('click', () => {
+  clearFilters();
+  filterModal.classList.toggle('hidden');
+});
+
 export {
   init,
   showTileView,
@@ -483,12 +500,3 @@ export {
   formatUsersData,
   showUserDataList,
 };
-
-searchButton.addEventListener('click', () => {
-  displayLoader();
-  filterUserByAvailability();
-});
-
-clearButton.addEventListener('click', () => {
-  clearFilters();
-});

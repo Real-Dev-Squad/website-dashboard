@@ -22,19 +22,33 @@
         <div id="search">
           <input id="user-search" type="text" placeholder="Search Users" />
         </div>
-        <div id="filter">
-          <select
-            id="filter-by-skills"
-            name="filter-by-skills"
-            class="filters remove-element"
-          ></select>
-          <select
-            id="filter-by-avaviability"
-            name="filter-by-avaviability"
-            class="filters"
-          ></select>
-          <button id="search-button" class="filter-button">Search</button>
-          <button id="clear-button" class="filter-button">Clear</button>
+        <button id="filter-button" class="filter-button">Filter</button>
+        <div class="filter-modal hidden">
+          <div class="filter-head">
+            <h3>Filters</h3>
+            <button id="clear-button" class="clear-btn">Clear</button>
+          </div>
+          <div class="filters-container remove-element">
+            <label for="filter-by-status" class="filter-label">Skills</label>
+            <select
+              id="filter-by-skills"
+              name="filter-by-skills"
+              class="filters"
+            ></select>
+          </div>
+          <div class="filters-container">
+            <label for="filter-by-avaviability" class="filter-label"
+              >Availability</label
+            >
+            <select
+              id="filter-by-avaviability"
+              name="filter-by-avaviability"
+              class="filters"
+            ></select>
+          </div>
+          <button id="apply-filter-button" class="apply-filter-button">
+            Apply Filter
+          </button>
         </div>
       </div>
 

@@ -4,6 +4,7 @@
 
 :root {
   --blue-color: #1d1283;
+  --blue-hover-color: #11085c;
   --white-color: white;
   --black-color: black;
   --light-gray-color: lightgray;
@@ -49,24 +50,13 @@
   margin: 0 10px;
 }
 
-.filters {
-  width: 200px;
-  padding: 10px 10px;
-  border-radius: 10px;
-  border: 2.5px solid var(--black-color);
-  font-size: medium;
-  background-color: var(--light-gray-color);
-  margin: 10px 0;
-  cursor: pointer;
-}
-
 .filter-button {
   padding: 10px 10px;
   border-radius: 10px;
   border: 2.5px solid var(--black-color);
   font-size: medium;
   background-color: var(--light-gray-color);
-  margin: 0 10px;
+  margin: 10px;
   cursor: pointer;
 }
 
@@ -118,10 +108,6 @@ li p {
 
 .tile-width {
   width: 200px;
-}
-
-.remove-element {
-  display: none;
 }
 
 .error-text {
@@ -200,6 +186,80 @@ li p {
   padding: 0.25rem 2rem;
 }
 
+.filter-modal {
+  width: 20%;
+  min-width: 12.5em;
+  border: 1px solid var(--light-gray-color);
+  border-radius: 0.31rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  z-index: 1;
+  position: absolute;
+  top: 10%;
+  right: 0;
+  background-color: var(--white-color);
+}
+
+.filter-head {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+
+.filters-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.clear-btn {
+  background-color: var(--white-color);
+  border: 1px solid var(--light-gray-color);
+  border-radius: 0.31rem;
+  padding: 0.31rem 0.62rem;
+  cursor: pointer;
+}
+
+.clear-btn:hover {
+  background-color: var(--red-color);
+  color: var(--white-color);
+}
+
+.filters {
+  width: 100%;
+  padding: 0.62rem;
+  border: 1px solid var(--light-gray-color);
+  border-radius: 0.31rem;
+  margin: 0.31rem 0.62rem;
+  cursor: pointer;
+}
+
+.filters:hover {
+  background-color: var(--light-gray-color);
+  border: 1px solid var(--black-color);
+}
+
+.apply-filter-button {
+  border: 1px solid var(--light-gray-color);
+  border-radius: 0.31rem;
+  padding: 0.62rem;
+  cursor: pointer;
+  width: 100%;
+  background-color: var(--blue-color);
+  color: var(--white-color);
+}
+
+.apply-filter-button:hover {
+  background-color: var(--blue-hover-color);
+}
+
+.remove-element {
+  display: none;
+}
+
 .hidden {
   display: none;
 }
@@ -230,6 +290,10 @@ li p {
   .pagination-btn {
     font-size: 15px;
     padding: 7px 12px;
+  }
+
+  .filter-modal {
+    width: 93%;
   }
 }
 
