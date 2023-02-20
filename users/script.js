@@ -9,6 +9,7 @@ const nextBtn = document.getElementById(NEXT_BUTTON);
 const skillFilter = document.getElementById(SKILL_LIST_FILTER);
 const availabilityFilter = document.getElementById(AVAILABILITY_FILTER);
 const searchButton = document.getElementById(SEARCH_BUTTON);
+const clearButton = document.getElementById(CLEAR_BUTTON);
 
 let tileViewActive = false;
 let tableViewActive = true;
@@ -272,7 +273,7 @@ async function getParticularUserData(
 
 function addAvailibilityFilterOptions() {
   const options = [
-    { value: 'all', text: 'ALL' },
+    { value: 'none', text: 'NONE' },
     { value: 'active', text: 'ACTIVE' },
     { value: 'ooo', text: 'OOO' },
     { value: 'idle', text: 'IDLE' },
@@ -359,6 +360,8 @@ async function showUserList(users) {
       window.location.href = `details/index.html?username=${userData.username}`;
     };
     ulElement.appendChild(listElement);
+    paginationElement.classList.add('remove-element');
+    paginationElement.classList.remove('pagination');
   });
 
   userListElement.innerHTML = '';
@@ -385,6 +388,19 @@ function displayLoader() {
   loader.id = 'loader';
   loader.className = 'loader';
   userListElement.appendChild(loader);
+}
+
+function clearFilters() {
+  availabilityFilter.value = 'none';
+  displayLoader();
+  showUserDataList(
+    page,
+    userListElement,
+    paginationElement,
+    loaderElement,
+    prevBtn,
+    nextBtn,
+  );
 }
 
 async function showUserDataList(
@@ -471,4 +487,8 @@ export {
 searchButton.addEventListener('click', () => {
   displayLoader();
   filterUserByAvailability();
+});
+
+clearButton.addEventListener('click', () => {
+  clearFilters();
 });

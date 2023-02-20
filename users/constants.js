@@ -13,3 +13,4 @@ const USER_FETCH_COUNT = 100;
 const SKILL_LIST_FILTER = 'filter-by-skills';
 const AVAILABILITY_FILTER = 'filter-by-avaviability';
 const SEARCH_BUTTON = 'search-button';
+const CLEAR_BUTTON = 'clear-button';

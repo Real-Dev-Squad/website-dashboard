@@ -60,7 +60,7 @@
   cursor: pointer;
 }
 
-.search-btn {
+.filter-button {
   padding: 10px 10px;
   border-radius: 10px;
   border: 2.5px solid var(--black-color);
@@ -70,7 +70,7 @@
   cursor: pointer;
 }
 
-.search-btn:hover {
+.filter-button:hover {
   background-color: var(--button-hover-color);
 }
 
