@@ -335,18 +335,7 @@ async function getUsersStatusData(state) {
   return currentstate.allUserStatus;
 }
 
-async function fetchUserStatusData() {
-  try {
-    [usersStatusOOO, usersStatusIDLE, usersStatusACTIVE] = await Promise.all([
-      getUsersStatusData('OOO'),
-      getUsersStatusData('IDLE'),
-      getUsersStatusData('ACTIVE'),
-    ]);
-  } catch (err) {}
-}
-
 async function showUserList(users) {
-  const userListElement = document.getElementById('user-list');
   const ulElement = document.createElement('ul');
 
   users.forEach((userData) => {
@@ -379,12 +368,23 @@ async function showUserList(users) {
 async function filterUserByAvailability() {
   const availabilityFilterValue = availabilityFilter.value;
   if (availabilityFilterValue === 'idle') {
+    usersStatusIDLE = await getUsersStatusData('IDLE');
     await showUserList(usersStatusIDLE);
   } else if (availabilityFilterValue === 'active') {
+    usersStatusACTIVE = await getUsersStatusData('ACTIVE');
     await showUserList(usersStatusACTIVE);
   } else if (availabilityFilterValue === 'ooo') {
+    usersStatusOOO = await getUsersStatusData('OOO');
     await showUserList(usersStatusOOO);
   }
+}
+
+function displayLoader() {
+  userListElement.innerHTML = '';
+  const loader = document.createElement('div');
+  loader.id = 'loader';
+  loader.className = 'loader';
+  userListElement.appendChild(loader);
 }
 
 async function showUserDataList(
@@ -453,7 +453,6 @@ window.onload = function () {
   );
   addAvailibilityFilterOptions();
   addSkillsFilterOptions();
-  fetchUserStatusData();
 };
 
 export {
@@ -470,5 +469,6 @@ export {
 };
 
 searchButton.addEventListener('click', () => {
+  displayLoader();
   filterUserByAvailability();
 });
