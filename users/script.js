@@ -473,7 +473,8 @@ window.onload = function () {
   addSkillsFilterOptions();
 };
 
-filterButton.addEventListener('click', () => {
+filterButton.addEventListener('click', (event) => {
+  event.stopPropagation();
   filterModal.classList.toggle('hidden');
 });
 
@@ -487,6 +488,14 @@ clearButton.addEventListener('click', () => {
   clearFilters();
   filterModal.classList.toggle('hidden');
 });
+
+filterModal.addEventListener('click', (event) => {
+  event.stopPropagation();
+});
+
+window.onclick = function () {
+  filterModal.classList.add('hidden');
+};
 
 export {
   init,
