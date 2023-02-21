@@ -127,7 +127,7 @@ function createExtensionRequestCard(data) {
 }
 render();
 
-//API functions
+//PATCH requests functions
 async function onStatusFormSubmit(e) {
   e.preventDefault();
   try {

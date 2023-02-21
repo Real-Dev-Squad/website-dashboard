@@ -25,6 +25,7 @@ function createElement({ type, attributes = {}, innerText }) {
 }
 
 function addLoader(container) {
+  if (!container) return;
   const loader = createElement({
     type: 'div',
     attributes: { class: 'loader' },

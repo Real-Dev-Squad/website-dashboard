@@ -1,10 +1,10 @@
 async function getExtensionRequests(query = {}) {
-  const url = new URL(`${API_BASE_URL}/extensionRequests`);
+  const url = new URL(`${API_BASE_URL}/extension-requests`);
 
-  const { assignee, status, taskId } = query;
-  if (assignee) url.searchParams.set('assignee', assignee);
-  if (status) url.searchParams.set('status', status);
-  if (taskId) url.searchParams.set('taskId', taskId);
+  queryParams = ['assignee', 'status', 'taskId'];
+  queryParams.forEach(
+    (key) => query[key] && url.searchParams.set(key, query[key]),
+  );
 
   const res = await fetch(url, {
     credentials: 'include',
@@ -17,7 +17,7 @@ async function getExtensionRequests(query = {}) {
 }
 
 async function updateExtensionRequest({ id, body }) {
-  const url = `${API_BASE_URL}/extensionRequests/${id}`;
+  const url = `${API_BASE_URL}/extension-requests/${id}`;
   const res = await fetch(url, {
     credentials: 'include',
     method: 'PATCH',
@@ -30,7 +30,7 @@ async function updateExtensionRequest({ id, body }) {
 }
 
 async function updateExtensionRequestStatus({ id, body }) {
-  const url = `${API_BASE_URL}/extensionRequests/${id}/status`;
+  const url = `${API_BASE_URL}/extension-requests/${id}/status`;
   const res = await fetch(url, {
     credentials: 'include',
     method: 'PATCH',
@@ -60,42 +60,42 @@ function getTimeFromTimestamp(timestamp) {
 }
 
 function createTable(headings, data, className = '') {
-  const main = createElement({
+  const table = createElement({
     type: 'table',
     attributes: {
       class: className,
     },
   });
-  const content = createElement({ type: 'tbody' });
+  const tableBody = createElement({ type: 'tbody' });
   headings.forEach(({ title, key, time, bold }) => {
     let row = createElement({ type: 'tr' });
-    let heading = createElement({ type: 'th', innerText: title });
+    let rowHeading = createElement({ type: 'th', innerText: title });
 
     let contentText = '';
     if (time) contentText = getTimeFromTimestamp(data[key]);
     else contentText = key ? data[key] : data[title.toLowerCase()];
 
-    let text = createElement({
+    let tableData = createElement({
       type: 'td',
       innerText: contentText,
       attributes: {
         class: bold ? 'bold' : '',
       },
     });
-    row.appendChild(heading);
-    row.appendChild(text);
-    content.appendChild(row);
+    row.appendChild(rowHeading);
+    row.appendChild(tableData);
+    tableBody.appendChild(row);
   });
 
-  main.appendChild(content);
-  return main;
+  table.appendChild(tableBody);
+  return table;
 }
 
 function formDataToObject(formData) {
   if (!formData) return;
   const result = {};
-  for (let x of formData.keys()) {
-    result[x] = formData.get(x);
+  for (const [key, value] of formData.entries()) {
+    result[key] = value;
   }
   return result;
 }

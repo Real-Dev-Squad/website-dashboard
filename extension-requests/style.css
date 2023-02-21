@@ -9,6 +9,7 @@
   --razzmatazz: #df0057;
   --gray: #808080;
   --button-proceed: #008000;
+  --modal-color: #00000048;
 }
 
 *,
@@ -61,7 +62,7 @@ body {
   align-items: center;
   min-width: 100vw;
   min-height: 100vh;
-  background-color: #00000048;
+  background-color: var(--modal-color);
 }
 
 .extension-requests-modal-parent > * {
@@ -73,7 +74,7 @@ body {
   height: 100%;
   margin: 10px 0px;
   background-color: var(--white);
-  padding: 20px;
+  padding: 1.25rem;
   border-radius: 5px;
   min-width: 250px;
 }
@@ -98,7 +99,7 @@ body {
   background-color: var(--button-proceed);
   border: none;
   color: var(--white);
-  padding: 8px 16px;
+  padding: 0.5rem 1rem;
   font-size: medium;
   font-weight: bold;
   border-radius: 5px;
@@ -128,7 +129,7 @@ body {
   background-color: var(--button-proceed);
   border: none;
   color: var(--white);
-  padding: 8px 16px;
+  padding: 0.5rem 1rem;
   font-size: medium;
   font-weight: bold;
   border-radius: 5px;
@@ -159,7 +160,7 @@ body {
   background-color: var(--button-proceed);
   border: none;
   color: var(--white);
-  padding: 8px 16px;
+  padding: 0.5rem 1rem;
   font-size: medium;
   font-weight: bold;
   border-radius: 5px;
@@ -177,7 +178,7 @@ body {
 .extension-request {
   text-align: left;
   border: 2px solid var(--black-transparent);
-  padding: 20px;
+  padding: 1.25rem;
   margin: 10px;
   color: var(--black);
   border-radius: 5px;
@@ -194,7 +195,7 @@ body {
   color: var(--white);
   width: 40%;
   min-width: max-content;
-  padding: 8px 16px;
+  padding: 0.5rem 1rem;
   font-size: medium;
   font-weight: bold;
   border-radius: 5px;
