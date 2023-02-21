@@ -98,6 +98,7 @@ li p {
 .user-img-dimension {
   width: 70px;
   height: 70px;
+  border-radius: 50%;
 }
 
 #loader {
@@ -137,6 +138,35 @@ li p {
 
 #user-note {
   color: var(--text-note-color);
+}
+
+.error-dialog {
+  display: flex;
+  position: absolute;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.error-overlay {
+  position: absolute;
+  inset: 0;
+}
+
+.error-content {
+  padding: 2rem 1rem;
+  background-color: white;
+  z-index: 1;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 10%);
+}
+
+.error-content > button {
+  margin-top: 1rem;
+  padding: 0.25rem 2rem;
+}
+
+.hidden {
+  display: none;
 }
 
 @keyframes spin {

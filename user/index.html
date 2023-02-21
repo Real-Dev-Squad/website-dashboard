@@ -4,11 +4,13 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>User Management</title>
+    <link rel="icon" href="/images/index.ico" type="image/x-icon" />
+    <title>User Management | Real Dev Squad</title>
     <link rel="stylesheet" href="style.css" />
+    <script src="../utils.js"></script>
     <script src="constants.js" defer></script>
     <script src="utils.js" defer></script>
-    <script src="script.js" defer></script>
+    <script type="module" src="script.js" defer></script>
   </head>
   <body>
     <header class="header">
@@ -17,11 +19,11 @@
     <section id="main-section">
       <div id="search">
         <input id="user-search" type="text" placeholder="Search Users" />
-        <p id="user-note">user can be searched by username only</p>
       </div>
       <div id="view-type-btn">
         <button id="tile-view-btn">
           <img
+            alt="tile-view"
             id="icon-first"
             src="./images/hamburger.png"
             width="25"
@@ -30,6 +32,7 @@
         </button>
         <button id="table-view-btn" class="btn-active">
           <img
+            alt="table-view"
             id="icon-second"
             src="./images/four-squares-button.png"
             width="25"
