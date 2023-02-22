@@ -253,17 +253,19 @@ li p {
   position: absolute;
   top: 14.5%;
   right: 5%;
+  display: flex;
+  align-items: center;
 }
 
 .filter-button:hover {
   background-color: var(--blue-hover-color);
 }
 
-.filter-button::after {
-  font-family: sans-serif;
-  content: '▼';
-  padding-left: 0.5rem;
+.filter-button img {
+  width: 1.2rem;
+  margin-left: 0.5rem;
 }
+
 .remove-element {
   display: none;
 }

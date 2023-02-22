@@ -340,16 +340,17 @@ function showUserList(users) {
 
 async function filterUserByAvailability() {
   const availabilityFilterValue = availabilityFilter.value;
+  let users;
   if (availabilityFilterValue === 'idle') {
-    idleUsers = await getUsersStatusData(IDLE);
-    await showUserList(idleUsers);
-  } else if (availabilityFilterValue === 'active') {
-    activeUsers = await getUsersStatusData(ACTIVE);
-    await showUserList(activeUsers);
-  } else if (availabilityFilterValue === 'ooo') {
-    oooUsers = await getUsersStatusData(OOO);
-    await showUserList(oooUsers);
+    users = await getUsersStatusData(IDLE);
   }
+  if (availabilityFilterValue === 'active') {
+    users = await getUsersStatusData(ACTIVE);
+  }
+  if (availabilityFilterValue === 'ooo') {
+    users = await getUsersStatusData(OOO);
+  }
+  await showUserList(users);
 }
 
 function displayLoader() {
