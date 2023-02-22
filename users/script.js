@@ -8,7 +8,6 @@ const prevBtn = document.getElementById(PREV_BUTTON);
 const nextBtn = document.getElementById(NEXT_BUTTON);
 const filterModal = document.getElementsByClassName(FILTER_MODAL)[0];
 const filterButton = document.getElementById(FILTER_BUTTON);
-const skillFilter = document.getElementById(SKILL_FILTER);
 const availabilityFilter = document.getElementById(AVAILABILITY_FILTER);
 const applyFilterButton = document.getElementById(APPLY_FILTER_BUTTON);
 const clearButton = document.getElementById(CLEAR_BUTTON);
@@ -16,9 +15,9 @@ const clearButton = document.getElementById(CLEAR_BUTTON);
 let tileViewActive = false;
 let tableViewActive = true;
 let page = 0;
-let usersStatusIDLE = [];
-let usersStatusACTIVE = [];
-let usersStatusOOO = [];
+let idleUsers = [];
+let activeUsers = [];
+let oooUsers = [];
 
 const init = (
   prevBtn,
@@ -275,10 +274,10 @@ async function getParticularUserData(
 
 function addAvailibilityFilterOptions() {
   const options = [
-    { value: 'none', text: 'NONE' },
-    { value: 'active', text: 'ACTIVE' },
-    { value: 'ooo', text: 'OOO' },
-    { value: 'idle', text: 'IDLE' },
+    { value: 'none', text: NONE },
+    { value: 'active', text: ACTIVE },
+    { value: 'ooo', text: OOO },
+    { value: 'idle', text: IDLE },
   ];
 
   const fragment = document.createDocumentFragment();
@@ -295,47 +294,16 @@ function addAvailibilityFilterOptions() {
   availabilityFilter.options[0].selected = true;
 }
 
-function addSkillsFilterOptions() {
-  const options = [
-    { value: 'all', text: 'ALL' },
-    { value: 'html', text: 'HTML' },
-    { value: 'css', text: 'CSS' },
-    { value: 'javascript', text: 'JAVASCRIPT' },
-    { value: 'typescript', text: 'TYPESCRIPT' },
-    { value: 'react', text: 'REACT JS' },
-    { value: 'vue', text: 'VUE JS' },
-    { value: 'node', text: 'NODE JS' },
-    { value: 'ember', text: 'EMBER JS' },
-    { value: 'java', text: 'JAVA' },
-    { value: 'python', text: 'PYTHON' },
-    { value: 'django', text: 'DJANGO' },
-  ];
-
-  const fragment = document.createDocumentFragment();
-
-  options.forEach((option) => {
-    const optionElement = document.createElement('option');
-    optionElement.value = option.value;
-    optionElement.text = option.text;
-    fragment.appendChild(optionElement);
-  });
-
-  skillFilter.appendChild(fragment);
-  skillFilter.options[0].disabled = true;
-  skillFilter.options[0].selected = true;
-}
-
 async function getUsersStatusData(state) {
-  const usersRequest = await makeApiCall(
-    `${RDS_API_USERS}status?state=${state}`,
-  );
-  if (usersRequest.status !== 200) {
-    throw new Error(
-      `User list request failed with status: ${usersRequest.status}`,
+  try {
+    const usersRequest = await makeApiCall(
+      `${RDS_API_USERS}status?state=${state}`,
     );
+    const currentstate = await usersRequest.json();
+    return currentstate.allUserStatus;
+  } catch (err) {
+    throw new Error(`User list request failed with error: ${err}`);
   }
-  const currentstate = await usersRequest.json();
-  return currentstate.allUserStatus;
 }
 
 async function showUserList(users) {
@@ -373,14 +341,14 @@ async function showUserList(users) {
 async function filterUserByAvailability() {
   const availabilityFilterValue = availabilityFilter.value;
   if (availabilityFilterValue === 'idle') {
-    usersStatusIDLE = await getUsersStatusData('IDLE');
-    await showUserList(usersStatusIDLE);
+    idleUsers = await getUsersStatusData(IDLE);
+    await showUserList(idleUsers);
   } else if (availabilityFilterValue === 'active') {
-    usersStatusACTIVE = await getUsersStatusData('ACTIVE');
-    await showUserList(usersStatusACTIVE);
+    activeUsers = await getUsersStatusData(ACTIVE);
+    await showUserList(activeUsers);
   } else if (availabilityFilterValue === 'ooo') {
-    usersStatusOOO = await getUsersStatusData('OOO');
-    await showUserList(usersStatusOOO);
+    oooUsers = await getUsersStatusData(OOO);
+    await showUserList(oooUsers);
   }
 }
 
@@ -470,7 +438,6 @@ window.onload = function () {
     nextBtn,
   );
   addAvailibilityFilterOptions();
-  addSkillsFilterOptions();
 };
 
 filterButton.addEventListener('click', (event) => {
