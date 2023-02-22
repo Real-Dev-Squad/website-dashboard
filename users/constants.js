@@ -19,3 +19,4 @@ const FILTER_BUTTON = 'filter-button';
 const AVAILABILITY_FILTER = 'filter-by-avaviability';
 const APPLY_FILTER_BUTTON = 'apply-filter-button';
 const CLEAR_BUTTON = 'clear-button';
+const STATUS_LIST = ['ooo', 'active', 'idle'];

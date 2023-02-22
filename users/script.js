@@ -340,17 +340,10 @@ function showUserList(users) {
 
 async function filterUserByAvailability() {
   const availabilityFilterValue = availabilityFilter.value;
-  let users;
-  if (availabilityFilterValue === 'idle') {
-    users = await getUsersStatusData(IDLE);
-  }
-  if (availabilityFilterValue === 'active') {
-    users = await getUsersStatusData(ACTIVE);
-  }
-  if (availabilityFilterValue === 'ooo') {
-    users = await getUsersStatusData(OOO);
-  }
-  await showUserList(users);
+  const value = STATUS_LIST.find((status) => status == availabilityFilterValue);
+  if (!value) throw Error(message);
+  const users = await getUsersStatusData(value.toUpperCase());
+  showUserList(users);
 }
 
 function displayLoader() {
