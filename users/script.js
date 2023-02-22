@@ -306,7 +306,7 @@ async function getUsersStatusData(state) {
   }
 }
 
-async function showUserList(users) {
+function showUserList(users) {
   const ulElement = document.createElement('ul');
 
   users.forEach((userData) => {
