@@ -6,26 +6,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="/images/index.ico" type="image/x-icon" />
     <title>User Management | Real Dev Squad</title>
-    <link rel="stylesheet" href="style.css" />
-    <script src="../utils.js"></script>
-    <script src="constants.js" defer></script>
-    <script src="utils.js" defer></script>
-    <script type="module" src="script.js" defer></script>
+    <link rel="stylesheet" href="/users/style.css" />
+    <script src="/utils.js"></script>
+    <script src="/users/constants.js" defer></script>
+    <script src="/users/utils.js" defer></script>
+    <script type="module" src="/users/script.js" defer></script>
   </head>
+
   <body>
     <header class="header">
       <h1>User Management</h1>
     </header>
     <section id="main-section">
-      <div id="search">
-        <input id="user-search" type="text" placeholder="Search Users" />
+      <div class="search-filter">
+        <div id="search">
+          <input id="user-search" type="text" placeholder="Search Users" />
+        </div>
+        <button id="filter-button" class="filter-button">
+          Filters
+          <img
+            class="funnel-icon"
+            src="../users/images/funnel.svg"
+            alt="funnel icon"
+          />
+        </button>
+        <div class="filter-modal hidden">
+          <div class="filter-head">
+            <h3>Filters</h3>
+            <button id="clear-button" class="clear-btn">Clear</button>
+          </div>
+          <div class="filters-container">
+            <label for="filter-by-avaviability" class="filter-label"
+              >Availability</label
+            >
+            <select
+              id="filter-by-avaviability"
+              name="filter-by-avaviability"
+              class="filters"
+            ></select>
+          </div>
+          <button id="apply-filter-button" class="apply-filter-button">
+            Apply Filter
+          </button>
+        </div>
       </div>
+
       <div id="view-type-btn">
         <button id="tile-view-btn">
           <img
             alt="tile-view"
             id="icon-first"
-            src="./images/hamburger.png"
+            src="/users/images/hamburger.png"
             width="25"
             height="25"
           />
@@ -34,7 +65,7 @@
           <img
             alt="table-view"
             id="icon-second"
-            src="./images/four-squares-button.png"
+            src="/users/images/four-squares-button.png"
             width="25"
             height="25"
           />
