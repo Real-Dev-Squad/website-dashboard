@@ -10,4 +10,10 @@ export async function showUserManagementButton() {
   }
 }
 
+const createGoalButton = document.getElementById('create-goal');
+const params = new URLSearchParams(window.location.search);
+if (params.get('dev') === 'true') {
+  createGoalButton.classList.remove('element-display-remove');
+}
+
 showUserManagementButton();
