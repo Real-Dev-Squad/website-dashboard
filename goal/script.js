@@ -12,3 +12,11 @@
     edit.append(element);
   });
 })();
+
+const createGoalPage = document.getElementById('goal-page-container');
+const errorContainer = document.getElementById('error-container');
+const params = new URLSearchParams(window.location.search);
+if (params.get('dev') === 'true') {
+  createGoalPage.classList.remove('hidden');
+  errorContainer.classList.add('hidden');
+}
