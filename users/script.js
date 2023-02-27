@@ -6,10 +6,18 @@ const userSearchElement = document.getElementById(USER_SEARCH_ELEMENT);
 const paginationElement = document.getElementById(PAGINATION_ELEMENT);
 const prevBtn = document.getElementById(PREV_BUTTON);
 const nextBtn = document.getElementById(NEXT_BUTTON);
+const filterModal = document.getElementsByClassName(FILTER_MODAL)[0];
+const filterButton = document.getElementById(FILTER_BUTTON);
+const availabilityFilter = document.getElementById(AVAILABILITY_FILTER);
+const applyFilterButton = document.getElementById(APPLY_FILTER_BUTTON);
+const clearButton = document.getElementById(CLEAR_BUTTON);
 
 let tileViewActive = false;
 let tableViewActive = true;
 let page = 0;
+let idleUsers = [];
+let activeUsers = [];
+let oooUsers = [];
 
 const init = (
   prevBtn,
@@ -264,6 +272,101 @@ async function getParticularUserData(
   }
 }
 
+function addAvailibilityFilterOptions() {
+  const options = [
+    { value: 'none', text: NONE },
+    { value: 'active', text: ACTIVE },
+    { value: 'ooo', text: OOO },
+    { value: 'idle', text: IDLE },
+  ];
+
+  const fragment = document.createDocumentFragment();
+
+  options.forEach((option) => {
+    const optionElement = document.createElement('option');
+    optionElement.value = option.value;
+    optionElement.text = option.text;
+    fragment.appendChild(optionElement);
+  });
+
+  availabilityFilter.appendChild(fragment);
+  availabilityFilter.options[0].disabled = true;
+  availabilityFilter.options[0].selected = true;
+}
+
+async function getUsersStatusData(state) {
+  try {
+    const usersRequest = await makeApiCall(
+      `${RDS_API_USERS}status?state=${state}`,
+    );
+    const currentstate = await usersRequest.json();
+    return currentstate.allUserStatus;
+  } catch (err) {
+    throw new Error(`User list request failed with error: ${err}`);
+  }
+}
+
+function showUserList(users) {
+  const ulElement = document.createElement('ul');
+
+  users.forEach((userData) => {
+    const listElement = document.createElement('li');
+    const imgElement = document.createElement('img');
+    imgElement.src = userData.picture?.url ?? DEFAULT_AVATAR;
+    imgElement.classList.add('user-img-dimension');
+    const pElement = document.createElement('p');
+    const node = document.createTextNode(`${userData.full_name}`);
+    pElement.appendChild(node);
+    listElement.appendChild(imgElement);
+    listElement.appendChild(pElement);
+
+    if (tileViewActive) {
+      let imgElement = listElement.firstChild;
+      listElement.classList.remove('tile-width');
+      imgElement.classList.add('remove-element');
+    }
+    listElement.onclick = () => {
+      document.getElementById('user-search').value = '';
+      window.location.href = `details/index.html?username=${userData.username}`;
+    };
+    ulElement.appendChild(listElement);
+    paginationElement.classList.add('remove-element');
+    paginationElement.classList.remove('pagination');
+  });
+
+  userListElement.innerHTML = '';
+  userListElement.appendChild(ulElement);
+}
+
+async function filterUserByAvailability() {
+  const availabilityFilterValue = availabilityFilter.value;
+  const value = STATUS_LIST.find((status) => status == availabilityFilterValue);
+  if (!value) throw Error(message);
+  const users = await getUsersStatusData(value.toUpperCase());
+  showUserList(users);
+}
+
+function displayLoader() {
+  userListElement.innerHTML = '';
+  const loader = document.createElement('div');
+  loader.id = 'loader';
+  loader.className = 'loader';
+  userListElement.appendChild(loader);
+}
+
+function clearFilters() {
+  availabilityFilter.value = 'none';
+  displayLoader();
+  showUserDataList(
+    page,
+    userListElement,
+    paginationElement,
+    loaderElement,
+    prevBtn,
+    nextBtn,
+  );
+}
+
 async function showUserDataList(
   page,
   userListElement,
@@ -328,6 +431,31 @@ window.onload = function () {
     prevBtn,
     nextBtn,
   );
+  addAvailibilityFilterOptions();
+};
+
+filterButton.addEventListener('click', (event) => {
+  event.stopPropagation();
+  filterModal.classList.toggle('hidden');
+});
+
+applyFilterButton.addEventListener('click', () => {
+  displayLoader();
+  filterUserByAvailability();
+  filterModal.classList.toggle('hidden');
+});
+
+clearButton.addEventListener('click', () => {
+  clearFilters();
+  filterModal.classList.toggle('hidden');
+});
+
+filterModal.addEventListener('click', (event) => {
+  event.stopPropagation();
+});
+
+window.onclick = function () {
+  filterModal.classList.add('hidden');
 };
 
 export {

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/images/index.ico" type="image/x-icon" />
+    <title>User Management | Real Dev Squad</title>
+    <link rel="stylesheet" href="/users/style.css" />
+    <script src="/utils.js"></script>
+    <script src="/users/constants.js" defer></script>
+    <script src="/users/utils.js" defer></script>
+    <script type="module" src="/users/script.js" defer></script>
+  </head>
+
+  <body>
+    <header class="header">
+      <h1>User Management</h1>
+    </header>
+    <section id="main-section">
+      <div class="search-filter">
+        <div id="search">
+          <input id="user-search" type="text" placeholder="Search Users" />
+        </div>
+        <button id="filter-button" class="filter-button">
+          Filters
+          <img
+            class="funnel-icon"
+            src="../users/images/funnel.svg"
+            alt="funnel icon"
+          />
+        </button>
+        <div class="filter-modal hidden">
+          <div class="filter-head">
+            <h3>Filters</h3>
+            <button id="clear-button" class="clear-btn">Clear</button>
+          </div>
+          <div class="filters-container">
+            <label for="filter-by-avaviability" class="filter-label"
+              >Availability</label
+            >
+            <select
+              id="filter-by-avaviability"
+              name="filter-by-avaviability"
+              class="filters"
+            ></select>
+          </div>
+          <button id="apply-filter-button" class="apply-filter-button">
+            Apply Filter
+          </button>
+        </div>
+      </div>
+
+      <div id="view-type-btn">
+        <button id="tile-view-btn">
+          <img
+            alt="tile-view"
+            id="icon-first"
+            src="/users/images/hamburger.png"
+            width="25"
+            height="25"
+          />
+        </button>
+        <button id="table-view-btn" class="btn-active">
+          <img
+            alt="table-view"
+            id="icon-second"
+            src="/users/images/four-squares-button.png"
+            width="25"
+            height="25"
+          />
+        </button>
+      </div>
+      <div id="user-list">
+        <div id="loader"></div>
+      </div>
+      <div id="pagination" class="remove-element">
+        <button class="pagination-btn" id="prevButton">&laquo; Previous</button>
+        <button class="pagination-btn" id="nextButton">Next &raquo;</button>
+      </div>
+    </section>
+  </body>
+</html>
