@@ -147,3 +147,13 @@ footer {
 .inputBox label .edit-button.edit-button__active {
   opacity: 100%;
 }
+
+.error-container {
+  display: flex;
+  justify-content: center;
+  margin: auto;
+}
+
+.hidden {
+  display: none;
+}

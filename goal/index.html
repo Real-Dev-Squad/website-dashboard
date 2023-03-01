@@ -8,7 +8,7 @@
   </head>
 
   <body>
-    <div class="container loaderContainer">
+    <div class="container loaderContainer hidden" id="goal-page-container">
       <form action="" class="goal-form">
         <div class="inputBox">
           <label for="title">Goal Title:<span class="required">*</span></label>
@@ -126,19 +126,29 @@
           <input type="submit" class="submit" value="Submit" id="submit" />
         </div>
       </form>
-
-      <footer>
-        <p class="info-repo">
-          The contents of this website are deployed from this
-          <a
-            href="https://github.com/Real-Dev-Squad/website-dashboard"
-            target="_blank"
-            rel="noopener noreferrer"
-            >open sourced repo</a
-          >
-        </p>
-      </footer>
-      <script src="script.js"></script>
     </div>
+    <div class="container error-container" id="error-container">
+      <div class="error">
+        <h1>404</h1>
+        <h2>Page not found</h2>
+        <p>
+          The page you are looking for might have been removed, had its name
+          changed or is temporarily unavailable.
+        </p>
+        <a href="/">Go to homepage</a>
+      </div>
+    </div>
+    <footer>
+      <p class="info-repo">
+        The contents of this website are deployed from this
+        <a
+          href="https://github.com/Real-Dev-Squad/website-dashboard"
+          target="_blank"
+          rel="noopener noreferrer"
+          >open sourced repo</a
+        >
+      </p>
+    </footer>
+    <script src="script.js"></script>
   </body>
 </html>
