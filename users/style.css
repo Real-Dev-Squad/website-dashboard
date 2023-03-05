@@ -17,6 +17,10 @@
   --pagination-btn-active-color: #192bc2;
 }
 
+button {
+  cursor: pointer;
+}
+
 .header {
   background-color: var(--blue-color);
   text-align: center;
@@ -63,6 +67,10 @@
 
 .btn-active {
   background-color: var(--button-active-color);
+}
+
+#user-list > ul li {
+  cursor: pointer;
 }
 
 ul {

@@ -25,6 +25,11 @@ body {
   user-select: none;
 }
 
+button,
+input[type='submit'] {
+  cursor: pointer;
+}
+
 .container {
   width: 100%;
   color: var(--color-gray);
