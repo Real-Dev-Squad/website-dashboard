@@ -14,6 +14,10 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
+button {
+  cursor: pointer;
+}
+
 #cover-spin {
   position: fixed;
   width: 100%;
@@ -47,6 +51,7 @@ body {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
