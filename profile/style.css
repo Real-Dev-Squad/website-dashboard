@@ -1,3 +1,5 @@
+@import url('../global.css');
+
 :root {
   --color-green: #38a127;
   --color-red: #fd5757;
@@ -12,10 +14,6 @@
 
 body {
   font-family: 'Roboto', sans-serif;
-}
-
-button {
-  cursor: pointer;
 }
 
 #cover-spin {

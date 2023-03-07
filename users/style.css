@@ -1,3 +1,5 @@
+@import url('../global.css');
+
 * {
   margin: 0;
 }
@@ -15,10 +17,6 @@
   --red-color: red;
   --text-note-color: #c2babaf2;
   --pagination-btn-active-color: #192bc2;
-}
-
-button {
-  cursor: pointer;
 }
 
 .header {

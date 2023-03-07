@@ -1,3 +1,5 @@
+@import url('../global.css');
+
 *,
 ::after,
 ::before {
@@ -12,14 +14,6 @@ body {
   flex-direction: column;
   height: 100vh;
   user-select: none;
-}
-
-button {
-  cursor: pointer;
-}
-
-input[type='submit'] {
-  cursor: pointer;
 }
 
 .container {

@@ -1,6 +1,4 @@
-button {
-  cursor: pointer;
-}
+@import url('../global.css');
 
 .wallets {
   width: 80%;
