@@ -7,7 +7,6 @@ let config = {
   },
 };
 
-
 let urls = [
   'https://dashboard.realdevsquad.com/index.html',
   'https://dev.realdevsquad.com/users/index.html',
@@ -19,10 +18,9 @@ let urls = [
   'https://dev.realdevsquad.com/featureflag/index.html',
   'https://dev.realdevsquad.com/wallet/index.html',
   'https://dev.realdevsquad.com/online-members/online-members.html',
-]
+];
 
-
-const test_footer = (url,index) => {
+const test_footer = (url, index) => {
   puppeteer.launch(config.launchOptions).then(async (browser) => {
     const page = await browser.newPage();
     await page.goto(url);
@@ -51,14 +49,12 @@ const test_footer = (url,index) => {
     await Promise.all([
       page.click('.info-repo a', { delay: 2000 }),
       page.waitForNavigation(),
-      setTimeout(()=>{
-             console.log(`links works for ${url}`);
-             browser.close()
-       },10000),
-    ]).catch((e) => console.log("disconnected"));    
+      setTimeout(() => {
+        console.log(`links works for ${url}`);
+        browser.close();
+      }, 10000),
+    ]).catch((e) => console.log('disconnected'));
   });
 };
 
-test_footer(urls[0], 0)
-
-
+test_footer(urls[0], 0);
