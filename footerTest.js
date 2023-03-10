@@ -1,21 +1,37 @@
 const puppeteer = require('puppeteer');
+
 let config = {
   launchOptions: {
     headless: false,
+    ignoreHTTPSErrors: true,
   },
 };
 
-const test_footer = (url) => {
+
+let urls = [
+  'https://dashboard.realdevsquad.com/index.html',
+  'https://dev.realdevsquad.com/users/index.html',
+  'https://dev.realdevsquad.com/users/details/index.html',
+  'https://dev.realdevsquad.com/profile/index.html',
+  'https://dev.realdevsquad.com/goal/index.html',
+  'https://dev.realdevsquad.com/task/index.html',
+  'https://dev.realdevsquad.com/taskevents/index.html',
+  'https://dev.realdevsquad.com/featureflag/index.html',
+  'https://dev.realdevsquad.com/wallet/index.html',
+  'https://dev.realdevsquad.com/online-members/online-members.html',
+]
+
+
+const test_footer = (url,index) => {
   puppeteer.launch(config.launchOptions).then(async (browser) => {
-    const context = await browser.createIncognitoBrowserContext();
-    const page = await context.newPage();
-    // await page.goto('https://dashboard.realdevsquad.com/index.html');
+    const page = await browser.newPage();
     await page.goto(url);
     await page.content();
+    page.setDefaultNavigationTimeout(0);
     const footer = await page.$('footer');
     // if footer exists
     if (footer) {
-      // the text is same
+      // is the text same in footer?
       const footer_para = await page.evaluate(() => {
         const element = document.querySelector('.info-repo');
         console.log(element);
@@ -27,7 +43,7 @@ const test_footer = (url) => {
         );
         // will return undefined if the element is not found
       });
-      console.log(`footer text :${footer_para}`);
+      console.log(`footer text :${footer_para} index : ${index}:${url}`);
     } else {
       console.log('no footer');
     }
@@ -35,10 +51,14 @@ const test_footer = (url) => {
     await Promise.all([
       page.click('.info-repo a', { delay: 2000 }),
       page.waitForNavigation(),
-    ]).catch((e) => console.log(e));
-
-    await context.close();
+      setTimeout(()=>{
+             console.log(`links works for ${url}`);
+             browser.close()
+       },10000),
+    ]).catch((e) => console.log("disconnected"));    
   });
 };
 
-test_footer('https://dashboard.realdevsquad.com/index.html');
+test_footer(urls[0], 0)
+
+
