@@ -14,10 +14,6 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
-button {
-  cursor: pointer;
-}
-
 #cover-spin {
   position: fixed;
   width: 100%;

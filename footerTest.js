@@ -9,15 +9,15 @@ let config = {
 
 let urls = [
   'https://dashboard.realdevsquad.com/index.html',
-  'https://dev.realdevsquad.com/profile/index.html',
-  'https://dev.realdevsquad.com/goal/index.html',
-  'https://dev.realdevsquad.com/task/index.html',
-  'https://dev.realdevsquad.com/users/index.html',
-  'https://dev.realdevsquad.com/users/details/index.html',
-  'https://dev.realdevsquad.com/taskevents/index.html',
-  'https://dev.realdevsquad.com/featureflag/index.html',
-  'https://dev.realdevsquad.com/wallet/index.html',
-  'https://dev.realdevsquad.com/online-members/online-members.html',
+  'https://dashboard.realdevsquad.com/profile/index.html',
+  'https://dashboard.realdevsquad.com/goal/index.html',
+  'https://dashboard.realdevsquad.com/task/index.html',
+  'https://dashboard.realdevsquad.com/users/index.html',
+  'https://dashboard.realdevsquad.com/users/details/index.html',
+  'https://dashboard.realdevsquad.com/taskevents/index.html',
+  'https://dashboard.realdevsquad.com/featureflag/index.html',
+  'https://dashboard.realdevsquad.com/wallet/index.html',
+  'https://dashboard.realdevsquad.com/online-members/online-members.html',
 ];
 
 const test_footer = async (url, index) => {
@@ -27,7 +27,6 @@ const test_footer = async (url, index) => {
     await page.content();
     page.setDefaultNavigationTimeout(0);
     const footer = await page.$('footer');
-    // if footer exists
     if (footer) {
       // is the text same in footer?
       const footer_text = await page.evaluate(() => {
@@ -55,7 +54,8 @@ const test_footer = async (url, index) => {
         ]).catch((e) => console.log('disconnected '));
       }
     } else {
-      console.log(`no footer at ${url}`);
+      console.log(`❌no footer at ${url}`);
+      browser.disconnect();
     }
   });
 };

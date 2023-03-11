@@ -14,10 +14,6 @@ body {
   margin: 0;
 }
 
-button {
-  cursor: pointer;
-}
-
 #task-events-container {
   height: 100vh;
   display: flex;

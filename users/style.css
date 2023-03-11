@@ -17,10 +17,6 @@
   --pagination-btn-active-color: #192bc2;
 }
 
-button {
-  cursor: pointer;
-}
-
 .header {
   background-color: var(--blue-color);
   text-align: center;
@@ -280,6 +276,16 @@ li p {
 
 .hidden {
   display: none;
+}
+
+.info-repo {
+  font-weight: 100;
+  padding: auto;
+  text-align: center;
+}
+
+footer {
+  margin-top: auto;
 }
 
 @keyframes spin {
