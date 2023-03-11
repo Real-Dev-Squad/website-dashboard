@@ -138,16 +138,6 @@ footer {
   background-color: var(--add-btn-color);
 }
 
-.info-repo {
-  font-weight: 100;
-  padding: auto;
-  text-align: center;
-}
-
-footer {
-  margin-top: auto;
-}
-
 @media screen and (max-width: 480px) {
   .field--row {
     flex-direction: column;

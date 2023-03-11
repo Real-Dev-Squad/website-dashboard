@@ -65,10 +65,6 @@
   background-color: var(--button-active-color);
 }
 
-#user-list > ul li {
-  cursor: pointer;
-}
-
 ul {
   list-style-type: none;
   padding-inline-start: 0px;
