@@ -14,6 +14,7 @@ export async function showSuperUserOptions(...privateBtns) {
   }
 }
 
+
 /*
  * To show the super user options only to the super user, give all those
  * buttons or node the class "element-display-remove" so by default they are hidden.
@@ -21,3 +22,12 @@ export async function showSuperUserOptions(...privateBtns) {
  * function below.
  */
 showSuperUserOptions(userManagementLink, extensionRequestsLink);
+
+const createGoalButton = document.getElementById('create-goal');
+const params = new URLSearchParams(window.location.search);
+if (params.get('dev') === 'true') {
+  createGoalButton.classList.remove('element-display-remove');
+}
+
+showUserManagementButton();
+
