@@ -43,6 +43,6 @@ function addLoader(container) {
   container.appendChild(loader);
 }
 
-function removeLoader() {
-  document.querySelector('.loader').remove();
+function removeLoader(classname) {
+  document.querySelector(`.${classname}`).remove();
 }

@@ -24,14 +24,16 @@ const render = async () => {
     const extensionRequests = await getExtensionRequests();
     const allExtensionRequests = extensionRequests.allExtensionRequests;
     allExtensionRequests.forEach((data) => {
-      extensionRequestsContainer.appendChild(createExtensionRequestCard(data));
+      extensionRequestsContainer.appendChild(
+        createExtensionRequestCard(data, extensionRequestCardHeadings),
+      );
     });
   } catch (error) {
     errorHeading.textContent = 'Something went wrong';
     errorHeading.classList.add('error-visible');
     reload();
   } finally {
-    removeLoader();
+    removeLoader('loader');
   }
 };
 const showTaskDetails = async (taskId, approved) => {
@@ -41,26 +43,19 @@ const showTaskDetails = async (taskId, approved) => {
     addLoader(modalShowInfo);
     const taskDetails = await getTaskDetails(taskId);
     const taskData = taskDetails.taskData;
-    modalShowInfo.append(createTaskInfoModal(taskData, approved));
+    modalShowInfo.append(
+      createTaskInfoModal(taskData, approved, taskInfoModelHeadings),
+    );
   } catch (error) {
     errorHeading.textContent = 'Something went wrong';
     errorHeading.classList.add('error-visible');
     reload();
   } finally {
-    removeLoader();
+    removeLoader('loader');
   }
 };
-function createTaskInfoModal(data, approved) {
+function createTaskInfoModal(data, approved, dataHeadings) {
   if (!data) return;
-
-  const dataHeadings = [
-    { title: 'Title' },
-    { title: 'Ends On', key: 'endsOn', time: true },
-    { title: 'Purpose' },
-    { title: 'Assignee' },
-    { title: 'Created By', key: 'createdBy' },
-    { title: 'Is Noteworthy', key: 'isNoteworthy' },
-  ];
 
   const updateStatus = createElement({
     type: 'button',
@@ -84,19 +79,8 @@ function createTaskInfoModal(data, approved) {
   main.appendChild(closeModal);
   return main;
 }
-function createExtensionRequestCard(data) {
+function createExtensionRequestCard(data, dataHeadings) {
   if (!data) return;
-
-  const dataHeadings = [
-    { title: 'Title' },
-    { title: 'Reason' },
-    { title: 'Old Ends On', key: 'oldEndsOn', time: true },
-    { title: 'New Ends On', key: 'newEndsOn', time: true },
-    { title: 'Status', bold: true },
-    { title: 'Assignee' },
-    { title: 'Created At', key: 'timestamp', time: true },
-    { title: 'Task', key: 'taskId' },
-  ];
 
   const updateRequestBtn = createElement({
     type: 'button',
@@ -143,7 +127,7 @@ async function onStatusFormSubmit(e) {
     errorHeading.classList.add('error-visible');
     reload();
   } finally {
-    removeLoader();
+    removeLoader('loader');
   }
 }
 async function onUpdateFormSubmit(e) {
@@ -162,7 +146,7 @@ async function onUpdateFormSubmit(e) {
     errorHeading.classList.add('error-visible');
     reload();
   } finally {
-    removeLoader();
+    removeLoader('loader');
   }
 }
 
@@ -198,24 +182,23 @@ function fillStatusForm() {
     state.currentExtensionRequest.assignee;
 }
 function fillUpdateForm() {
+  const { newEndsOn, oldEndsOn, status, id, title, assignee, reason } =
+    state.currentExtensionRequest;
+
   modalUpdateForm.querySelector('.extensionNewEndsOn').value = new Date(
-    state.currentExtensionRequest.newEndsOn * 1000,
+    newEndsOn * 1000,
   )
     .toISOString()
     .replace('Z', '');
   modalUpdateForm.querySelector('.extensionOldEndsOn').value = new Date(
-    state.currentExtensionRequest.oldEndsOn * 1000,
+    oldEndsOn * 1000,
   )
     .toISOString()
     .replace('Z', '');
-  modalUpdateForm.querySelector('.extensionStatus').value =
-    state.currentExtensionRequest.status;
-  modalUpdateForm.querySelector('.extensionId').value =
-    state.currentExtensionRequest.id;
-  modalUpdateForm.querySelector('.extensionTitle').value =
-    state.currentExtensionRequest.title;
-  modalUpdateForm.querySelector('.extensionAssignee').value =
-    state.currentExtensionRequest.assignee;
-  modalUpdateForm.querySelector('.extensionReason').value =
-    state.currentExtensionRequest.reason;
+
+  modalUpdateForm.querySelector('.extensionStatus').value = status;
+  modalUpdateForm.querySelector('.extensionId').value = id;
+  modalUpdateForm.querySelector('.extensionTitle').value = title;
+  modalUpdateForm.querySelector('.extensionAssignee').value = assignee;
+  modalUpdateForm.querySelector('.extensionReason').value = reason;
 }
