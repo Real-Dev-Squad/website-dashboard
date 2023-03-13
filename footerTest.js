@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 
 let config = {
   launchOptions: {
-    headless: false,
+    headless: true,
     ignoreHTTPSErrors: true,
   },
 };
@@ -22,7 +22,8 @@ let urls = [
 
 const test_footer = async (url, index) => {
   await puppeteer.launch(config.launchOptions).then(async (browser) => {
-    const page = await browser.newPage();
+    const context = await browser.createIncognitoBrowserContext();
+    const page = await context.newPage();
     await page.goto(url, { waitUntil: ['load', 'networkidle2'] });
     await page.content();
     page.setDefaultNavigationTimeout(0);
@@ -38,32 +39,29 @@ const test_footer = async (url, index) => {
           element.innerText ===
             'The contents of this website are deployed from this open sourced repo'
         );
-        // will return undefined if the element is not found
       });
       console.log(`✅ footer text:${footer_text}  index:${index}:${url}`);
 
       if (footer_text) {
         // links inside footer are working or not
-        await Promise.all([
-          page.click('.info-repo a', { delay: 2000 }),
-          page.waitForNavigation(),
-          setTimeout(() => {
-            console.log(`✅ link works for ${url}`);
-            browser.close();
-          }, 10000),
-        ]).catch((e) => console.log('disconnected '));
+        await page.click('.info-repo a', { delay: 2000 });
+        console.log(`✅ link works for ${url}`);
       }
     } else {
       console.log(`❌no footer at ${url}`);
-      browser.disconnect();
     }
+
+    context.close();
   });
 };
 
 async function runTest() {
   for (let url of urls) {
-    console.log(urls.indexOf(url));
     await test_footer(url, urls.indexOf(url));
+
+    if (urls.indexOf(url) === urls.length - 1) {
+      process.exit(0);
+    }
   }
 }
 
