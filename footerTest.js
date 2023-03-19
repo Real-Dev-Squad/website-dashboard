@@ -32,8 +32,6 @@ const test_footer = async (url, index) => {
       // is the text same in footer?
       const footer_text = await page.evaluate(() => {
         const element = document.querySelector('.info-repo');
-        console.log(element);
-
         return (
           element &&
           element.innerText ===
