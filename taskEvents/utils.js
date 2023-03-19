@@ -1,5 +1,3 @@
-const BASE_URL = 'https://api.realdevsquad.com';
-
 function createElement({ type, attributes = {}, innerText }) {
   const element = document.createElement(type);
   Object.keys(attributes).forEach((item) => {
@@ -43,8 +41,8 @@ function addErrorMessage(container) {
 
 async function getTaskLogs(username) {
   const url = username
-    ? `${BASE_URL}/logs/task?meta.username=${username}`
-    : `${BASE_URL}/logs/task`;
+    ? `${API_BASE_URL}/logs/task?meta.username=${username}`
+    : `${API_BASE_URL}/logs/task`;
   const res = await fetch(url, {
     method: 'GET',
     credentials: 'include',
@@ -58,7 +56,7 @@ async function getTaskLogs(username) {
 }
 
 async function getTaskData(id) {
-  const res = await fetch(`${BASE_URL}/tasks/${id}/details`, {
+  const res = await fetch(`${API_BASE_URL}/tasks/${id}/details`, {
     method: 'GET',
     credentials: 'include',
     headers: {
@@ -70,7 +68,7 @@ async function getTaskData(id) {
 }
 
 async function getUserData(username) {
-  const res = await fetch(`${BASE_URL}/users/${username}`, {
+  const res = await fetch(`${API_BASE_URL}/users/${username}`, {
     method: 'GET',
     credentials: 'include',
     headers: {
@@ -82,7 +80,7 @@ async function getUserData(username) {
 }
 
 async function getSelfDetails() {
-  const res = await fetch(`${BASE_URL}/users/self`, {
+  const res = await fetch(`${API_BASE_URL}/users/self`, {
     method: 'GET',
     credentials: 'include',
     headers: {
@@ -109,7 +107,7 @@ async function getData(data) {
 
 async function getUserSkills(userId) {
   try {
-    const response = await fetch(`${BASE_URL}/users/${userId}/skills`, {
+    const response = await fetch(`${API_BASE_URL}/users/${userId}/skills`, {
       method: 'GET',
       credentials: 'include',
       headers: {
@@ -131,14 +129,14 @@ async function getUserSkills(userId) {
 
 async function getTagLevelOptions() {
   try {
-    const levelsResponse = await fetch(`${BASE_URL}/levels`, {
+    const levelsResponse = await fetch(`${API_BASE_URL}/levels`, {
       method: 'GET',
       credentials: 'include',
       headers: {
         'Content-type': 'application/json',
       },
     });
-    const tagsResponse = await fetch(`${BASE_URL}/tags`, {
+    const tagsResponse = await fetch(`${API_BASE_URL}/tags`, {
       method: 'GET',
       credentials: 'include',
       headers: {
@@ -177,7 +175,7 @@ async function addSkillToUser(tagToAdd, levelToAdd, userId) {
     ],
   };
   try {
-    const response = await fetch(`${BASE_URL}/items`, {
+    const response = await fetch(`${API_BASE_URL}/items`, {
       method: 'POST',
       credentials: 'include',
       body: JSON.stringify(body),
@@ -203,7 +201,7 @@ async function removeSkillFromUser(tagId, userId) {
     tagId,
   };
   try {
-    const response = await fetch(`${BASE_URL}/items`, {
+    const response = await fetch(`${API_BASE_URL}/items`, {
       method: 'DELETE',
       credentials: 'include',
       headers: {
