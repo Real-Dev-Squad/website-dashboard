@@ -42,6 +42,7 @@ body {
 
 button {
   width: 250px;
+  cursor: pointer;
 }
 
 /* profile section */

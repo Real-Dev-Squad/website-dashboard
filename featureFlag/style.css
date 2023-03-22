@@ -123,6 +123,16 @@ body {
   background-color: var(--add-btn-color);
 }
 
+.info-repo {
+  font-weight: 100;
+  padding: 8px;
+  text-align: center;
+}
+
+footer {
+  margin-top: auto;
+}
+
 .submit-button__disabled {
   color: white;
   background-color: var(--add-btn-color);
