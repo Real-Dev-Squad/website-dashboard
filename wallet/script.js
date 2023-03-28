@@ -1,4 +1,3 @@
-
 const walletsRef = document.querySelector('.wallets');
 
 const ipUsernames = document.querySelector('#all-users');
