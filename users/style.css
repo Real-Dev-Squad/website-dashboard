@@ -278,6 +278,16 @@ li p {
   display: none;
 }
 
+.info-repo {
+  font-weight: 100;
+  padding: auto;
+  text-align: center;
+}
+
+footer {
+  margin-top: auto;
+}
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);
