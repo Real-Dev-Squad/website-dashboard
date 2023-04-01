@@ -143,6 +143,7 @@ taskForm.onsubmit = async (e) => {
     status,
     category,
     level,
+    dependsOn,
     assignee,
     participants,
     priority,
@@ -165,6 +166,7 @@ taskForm.onsubmit = async (e) => {
     title,
     purpose,
     featureUrl,
+    dependsOn: Array.isArray(dependsOn) ? dependsOn : [dependsOn],
     type,
     links: Array.isArray(links) ? links : [links],
     endsOn,
@@ -220,7 +222,7 @@ taskForm.onsubmit = async (e) => {
   } else {
     delete dataToBeSent.links;
   }
-
+  console.log(dataToBeSent);
   try {
     const response = await fetch(`${API_BASE_URL}/tasks`, {
       method: 'POST',
@@ -403,6 +405,20 @@ async function fetchTags() {
     category.appendChild(option);
   }
 }
+async function fetchDependency() {
+  const response = await fetch(`${API_BASE_URL}/tasks`);
+  const data = await response.json();
+  const { tasks } = data;
+
+  const category = document.getElementById('dependsOn');
+
+  for (const task of tasks) {
+    const option = document.createElement('option');
+    option.textContent = task.title;
+    option.setAttribute('value', task.id);
+    category.appendChild(option);
+  }
+}
 
 async function fetchLevel() {
   const response = await fetch(`${API_BASE_URL}/levels`);
@@ -434,6 +450,7 @@ async function fetchMembers() {
 fetchTags();
 fetchLevel();
 fetchMembers();
+fetchDependency();
 
 function filterMembers(searchInput) {
   clearSuggestionList();

@@ -107,7 +107,8 @@ body {
 #category,
 #level,
 #status,
-#priority {
+#priority,
+#dependsOn {
   width: 100%;
   padding: 1em;
   border-radius: 5px;
