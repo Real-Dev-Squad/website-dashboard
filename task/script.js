@@ -222,7 +222,6 @@ taskForm.onsubmit = async (e) => {
   } else {
     delete dataToBeSent.links;
   }
-  console.log(dataToBeSent);
   try {
     const response = await fetch(`${API_BASE_URL}/tasks`, {
       method: 'POST',
