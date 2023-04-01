@@ -3,10 +3,9 @@ const mainContainer = document.getElementById('main-container');
 const main = document.getElementById('main');
 const loading = document.getElementById('loading');
 const selectElement = document.getElementById('select-tags');
-const BASE_URL = 'https://api.realdevsquad.com';
 (async function setAuth() {
   try {
-    const res = await fetch(`${BASE_URL}/users/self`, {
+    const res = await fetch(`${API_BASE_URL}/users/self`, {
       method: 'GET',
       credentials: 'include',
       headers: {
@@ -70,7 +69,7 @@ async function createLevel() {
     setLoadingState();
     button.textContent = 'Creating Level...';
 
-    const response = await fetch(`${BASE_URL}/levels`, {
+    const response = await fetch(`${API_BASE_URL}/levels`, {
       method: 'POST',
       credentials: 'include',
       body: JSON.stringify(body),
@@ -103,7 +102,7 @@ async function createSkill() {
     setLoadingState();
     button.textContent = 'creating skill...';
 
-    const response = await fetch(`${BASE_URL}/tags`, {
+    const response = await fetch(`${API_BASE_URL}/tags`, {
       method: 'POST',
       credentials: 'include',
       body: JSON.stringify(body),
