@@ -1,5 +1,3 @@
-const API_BASE_URL = 'https://api.realdevsquad.com';
-
 const walletsRef = document.querySelector('.wallets');
 
 const ipUsernames = document.querySelector('#all-users');
