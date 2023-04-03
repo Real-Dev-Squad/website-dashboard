@@ -1,0 +1,459 @@
+:root {
+  --dark-blue: #1b1378;
+  --light-aqua: #d4f9f2;
+  --scandal: #e5fcf5;
+  --white: #ffffff;
+  --black-transparent: #000000a8;
+  --black: #000000;
+  --light-gray: #d9d9d9;
+  --razzmatazz: #df0057;
+  --gray: #808080;
+}
+
+body {
+  margin: 0;
+}
+
+#task-events-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.hidden {
+  display: none;
+}
+
+.event_card {
+  font-family: 'roboto mono';
+  background-color: var(--light-aqua);
+  padding: 0.5rem;
+  width: 90%;
+  margin: 0 auto;
+  margin-top: 1rem;
+  border-radius: 10px;
+  user-select: none;
+}
+
+.main-title {
+  font-family: 'roboto mono';
+  text-align: center;
+  text-transform: capitalize;
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+}
+
+.name {
+  margin: 0;
+  font-weight: 800;
+  color: var(--dark-blue);
+  text-transform: capitalize;
+  margin-bottom: 1px;
+  border: none;
+  background-color: var(--light-aqua);
+  padding: 0;
+  cursor: pointer;
+}
+
+.log {
+  margin: 0;
+  color: var(--dark-blue);
+  font-size: 15px;
+}
+
+.dropDown {
+  margin-left: auto;
+  rotate: -90deg;
+}
+
+.details-p {
+  border-radius: 0 0 10px 10px;
+  padding: 2px 6px;
+}
+
+details[open] .dropDown {
+  rotate: 0deg;
+}
+
+.details-div-container {
+  padding: 0.5rem;
+}
+
+.details-div {
+  background-color: var(--white);
+  padding: 0.4rem;
+  border-radius: 10px;
+}
+
+.task-title-label,
+.task-purpose-label,
+.task-category-label,
+.task-level-label {
+  color: var(--dark-blue);
+  font-weight: 700;
+}
+
+.task-title-detail,
+.task-purpose-detail,
+.task-category-detail,
+.task-level-detail {
+  color: var(--dark-blue);
+}
+
+.loader,
+.unauthorized-div {
+  margin: auto auto;
+}
+
+.loader p,
+.unauthorized-div p {
+  font-weight: 800;
+  font-size: 3em;
+}
+
+.error-div {
+  margin: 0 auto;
+}
+
+.no-logs-found {
+  text-align: center;
+  font-weight: 500;
+  font-size: 2rem;
+}
+
+.error-message {
+  font-size: 1em;
+  color: red;
+}
+
+.overlay {
+  background: var(--black-transparent);
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+}
+
+#modal {
+  max-width: 280px;
+  min-height: 60%;
+  position: relative;
+  margin: 0 auto;
+  background: var(--light-gray);
+  color: var(--black);
+  top: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 15px;
+  opacity: 1;
+  font-family: 'roboto mono';
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+  display: none;
+  z-index: 9999;
+}
+
+.modal-overlay.active {
+  display: grid;
+  place-content: center;
+  pointer-events: none;
+}
+
+.top-div {
+  background-color: var(--dark-blue);
+  width: 100%;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  display: flex;
+}
+
+.user-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  padding: 0.4rem;
+  transform: translateY(30%);
+  margin-left: 0.4rem;
+}
+
+#close-btn,
+#close-generic-modal {
+  border: none;
+  background-color: var(--dark-blue);
+  align-self: flex-start;
+  margin-left: auto;
+  padding: 0.4rem;
+}
+
+#close-btn > img {
+  width: 15px;
+  height: 15px;
+}
+
+#close-generic-modal {
+  background-color: var(--light-gray);
+  padding: 0;
+  margin-top: 0;
+}
+
+#close-generic-modal > img {
+  width: 25px;
+  height: 25px;
+  padding: 0;
+}
+
+.username {
+  font-size: 18px;
+  color: var(--white);
+  text-transform: capitalize;
+  margin-bottom: 0.5rem;
+  align-self: flex-end;
+  margin-left: 1px;
+  font-family: 'roboto mono';
+  font-weight: 300;
+}
+
+.user-details-div {
+  display: flex;
+  justify-content: space-around;
+}
+
+/* Input Styles */
+
+.skill-title {
+  margin-bottom: 0;
+  align-self: flex-start;
+  font-size: 1.4rem;
+  font-weight: 400;
+  margin-left: 10px;
+}
+
+/* Roles div styling */
+
+.roles-div {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0.2rem;
+  overflow-y: auto;
+}
+
+.roles-div-item {
+  background-color: var(--scandal);
+  padding: 0.4rem 0.6rem;
+  border-radius: 50px;
+  margin: 0.4rem;
+  font-size: 0.8rem;
+  position: relative;
+  user-select: none;
+  font-weight: 600;
+}
+
+.remove-btn {
+  display: none;
+}
+
+.roles-div-item:hover > .remove-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  border-radius: 50%;
+  height: 15px;
+  width: 15px;
+  top: -3px;
+  right: -5px;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  font-size: 0.6rem;
+  background-color: var(--razzmatazz);
+  color: var(--white);
+  font-weight: 600;
+}
+
+.add-btn {
+  font-size: 1.5rem;
+  padding: 0;
+  border: none;
+  background-color: var(--light-gray);
+  cursor: pointer;
+}
+
+/* Activity Button */
+
+.activity-btn-div {
+  margin-top: auto;
+  margin-bottom: 0.5rem;
+  margin-left: 0.5rem;
+  align-self: flex-start;
+  padding: 0.5rem;
+}
+
+.activity-btn {
+  border-radius: 50px;
+  border: none;
+  background-color: var(--razzmatazz);
+  color: var(--white);
+  padding: 0.2rem 1rem;
+  font-family: 'roboto mono';
+}
+
+/* role add div */
+
+.role-add-div {
+  position: absolute;
+  background-color: var(--black);
+  z-index: 100;
+  height: 100%;
+}
+
+/* Give roles modal */
+
+#generic-modal {
+  visibility: collapse;
+  position: fixed;
+  width: 40%;
+  height: 60%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0.5rem;
+  background: var(--light-gray);
+  color: var(--black);
+  display: flex;
+  flex-direction: column;
+  font-family: 'roboto mono';
+  border: 1px solid var(--gray);
+  overflow-y: auto;
+  border: 3px solid var(--gray);
+}
+
+#generic-modal .loader-text {
+  text-align: center;
+  font-size: 2rem;
+}
+
+#container-div {
+  display: flex;
+  flex-direction: column;
+}
+
+.skill-title-container {
+  display: flex;
+  gap: 1rem;
+  margin-top: 30px;
+}
+
+.skill-level-div,
+.skill-category-div {
+  margin: 0 auto;
+  width: 80%;
+}
+
+.skill-level-select,
+.skill-category-select {
+  padding: 0.5rem;
+  font-size: 1.2rem;
+  width: 100%;
+}
+
+.skill-submit-btn {
+  justify-self: flex-end;
+  align-self: center;
+  background-color: var(--dark-blue);
+  color: var(--white);
+  width: 80%;
+  margin-top: 2rem;
+  padding: 0.5rem;
+  display: grid;
+  place-content: center;
+  height: 35px;
+}
+
+.skill-submit-btn.disabled {
+  pointer-events: none;
+  opacity: 0.25;
+}
+
+@media (max-width: 600px) {
+  #generic-modal {
+    width: 80%;
+  }
+
+  #task-events-container .dropDown {
+    opacity: 0;
+  }
+}
+
+/**
+ * ==============================================
+ * Dot Flashing Loader
+ * ==============================================
+ */
+
+.dot-flashing-loader {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #ffffff;
+  color: #ffffff;
+  animation: dotFlashing 0.5s infinite linear alternate;
+  animation-delay: 0.25s;
+}
+
+.dot-flashing-loader::before,
+.dot-flashing-loader::after {
+  content: '';
+  display: inline-block;
+  position: absolute;
+  top: 0;
+}
+
+.dot-flashing-loader::before {
+  left: -15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #ffffff;
+  color: #ffffff;
+  animation: dotFlashing 0.5s infinite alternate;
+  animation-delay: 0s;
+}
+
+.dot-flashing-loader::after {
+  left: 15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #ffffff;
+  color: #ffffff;
+  animation: dotFlashing 0.5s infinite alternate;
+  animation-delay: 0.5s;
+}
+
+@keyframes dotFlashing {
+  0% {
+    background-color: #ffffff;
+  }
+
+  50%,
+  100% {
+    background-color: rgba(0, 0, 0, 0.25);
+  }
+}

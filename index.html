@@ -4,29 +4,40 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./src/style.css" />
-    <title>Create Tasks</title>
+    <link rel="icon" href="/images/index.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/global.css" />
+    <link rel="stylesheet" href="/style.css" />
+    <title>Dashboard | Real Dev Squad</title>
+    <script src="/constants.js" defer></script>
+    <script src="/utils.js" defer></script>
+    <script type="module" src="/script.js" defer></script>
   </head>
+
   <body>
     <nav id="tasksNav">
       <a id="createTask" class="nav-link"> Tasks </a>
     </nav>
 
     <section class="buttonSection">
-      <button
-        class="create-task-btn"
-        type="button"
-        onclick="location.href='src/task/index.html'"
+      <a
+        class="action-button element-display-remove"
+        href="/goal/index.html"
+        id="create-goal"
       >
-        Create Tasks
-      </button>
-      <button
-        class="profile-task-btn"
-        type="button"
-        onclick="location.href='src/profile/index.html'"
+        Create Goals
+      </a>
+      <a class="action-button" href="/task/index.html"> Create Tasks </a>
+      <a class="action-button" href="/profile/index.html"> Profile </a>
+      <a
+        id="user-management-link"
+        class="element-display-remove action-button"
+        href="/users/index.html"
       >
-        Profile
-      </button>
+        User Management
+      </a>
+      <a href="/online-members/online-members.html" class="action-button">
+        Online Members
+      </a>
     </section>
 
     <footer>

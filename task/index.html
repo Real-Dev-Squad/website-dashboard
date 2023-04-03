@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/images/index.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/global.css" />
+    <link rel="stylesheet" href="/task/style.css" />
+    <title>Create Tasks | Real Dev Squad</title>
+  </head>
+
+  <body class="visibity-hidden" id="visibity-hidden">
+    <div class="container loaderContainer">
+      <form action="" id="taskForm">
+        <div class="inputBox">
+          <label for="title">Title:<span class="required">*</span></label>
+          <input
+            required
+            class="input"
+            type="text"
+            name="title"
+            placeholder="eg: Testing setup for dashboard"
+            id="title"
+            autofocus
+          />
+        </div>
+        <div class="inputBox">
+          <div class="checkBox">
+            <label for="isNoteworthy">Is noteworthy:</label>
+            <span
+              ><input type="checkbox" id="isNoteworthy" name="isNoteworthy"
+            /></span>
+          </div>
+        </div>
+        <div class="inputBox">
+          <label for="purpose" class="editable">Purpose:</label>
+          <textarea
+            type="text"
+            class="textInput notEditing"
+            id="purpose"
+            name="purpose"
+            placeholder="eg: To test behaviour of code"
+          ></textarea>
+          <span id="purposeDisplay" class="display"></span>
+        </div>
+        <div class="inputBox">
+          <label for="featureUrl" class="editable">Feature URL:</label>
+          <input
+            type="url"
+            id="featureUrl"
+            name="featureUrl"
+            placeholder="Feature URL"
+            class="notEditing"
+          />
+          <span id="featureUrlDisplay" class="display"></span>
+        </div>
+        <div class="inputBox">
+          <div class="radioButtons">
+            <div class="feature" onclick="hideUnusedField('assignee');">
+              <label for="feature">Feature</label>
+              <input
+                required
+                class="input"
+                type="radio"
+                id="feature"
+                name="type"
+                value="feature"
+                checked
+              />
+            </div>
+            <div class="group" onclick="hideUnusedField('participants');">
+              <label for="group">Group</label>
+              <input
+                required
+                class="input"
+                type="radio"
+                id="group"
+                name="type"
+                value="group"
+              />
+            </div>
+            <span class="required">*</span>
+          </div>
+        </div>
+        <div class="inputBox">
+          <label for="links" class="editable">Links:</label>
+          <input
+            type="text"
+            name="links"
+            id="links"
+            placeholder="Comma separated links"
+            class="notEditing"
+          />
+          <span id="linksDisplay" class="display"></span>
+        </div>
+        <div class="inputBox">
+          <label for="status" class="editable">
+            Status:<span class="required">*</span>
+          </label>
+          <select
+            required
+            class="input notEditing"
+            id="status"
+            name="status"
+            onchange="handleStatusChange(event)"
+          >
+            <option selected value="AVAILABLE">Available</option>
+            <option value="ASSIGNED">Assigned</option>
+          </select>
+        </div>
+        <div class="inputBox">
+          <label for="taskLevel">Task Level</label>
+          <br />
+          <div class="inputBox">
+            <label for="level" class="editable">
+              Category:<span class="required">*</span>
+            </label>
+            <select
+              required
+              class="input notEditing"
+              id="category"
+              name="category"
+            >
+              <option disabled selected>Select a category</option>
+            </select>
+          </div>
+          <div class="inputBox">
+            <label for="level" class="editable">
+              Level:<span class="required">*</span>
+            </label>
+            <select required class="input notEditing" id="level" name="level">
+              <option disabled selected>Select Level</option>
+            </select>
+          </div>
+        </div>
+        <div class="inputBox class" id="assigneeInput">
+          <label for="assignee hidden"
+            >Assignee:<span class="required">*</span></label
+          >
+          <input
+            type="text"
+            placeholder="eg: Marcus"
+            id="assignee"
+            name="assignee"
+            class="input"
+            autocomplete="off"
+          />
+<<<<<<< HEAD:src/task/index.html
+          <div id="assigneeAvatar" class="element-display-remove"></div>
+          <div
+            id="assigneeAvatarLoader"
+            class="loader element-display-remove"
+          ></div>
+          <div id="list-items"></div>
+=======
+          <div id="list-items">
+            <div id="suggested-users" class="hidden">
+              <h4 class="suggested-users-title">Suggested users</h4>
+              <div id="suggested-users-container"></div>
+            </div>
+          </div>
+>>>>>>> 09ae769b83762c25223d68ec62cc80bcf37323ed:task/index.html
+        </div>
+        <div class="inputBox" id="participantsInput">
+          <label for="participants" class="editable">Participants:</label>
+          <input
+            type="text"
+            placeholder="Comma separated participants username"
+            id="participants"
+            name="participants"
+            class="notEditing"
+          />
+        </div>
+        <div id="endsOnWrapper">
+          <div class="inputBox">
+            <label for="endsOn"
+              >Ends on:<span class="required">*</span>
+              <span id="remainingDays"><strong>14</strong> days remaining</span>
+            </label>
+            <input
+              class="input"
+              type="date"
+              name="endsOn"
+              id="endsOn"
+              onchange="handleDateChange(event);"
+            />
+          </div>
+        </div>
+        <div class="inputBox">
+          <label for="priority" class="editable">
+            Priority:<span class="required">*</span>
+          </label>
+          <select
+            required
+            class="input notEditing"
+            id="priority"
+            name="priority"
+          >
+            <option selected value="HIGH">High</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="LOW">Low</option>
+          </select>
+        </div>
+        <div class="inputBox">
+          <label for="percentCompleted" class="editable"
+            >Percent Completed:</label
+          >
+          <input
+            value="0"
+            min="0"
+            type="number"
+            id="percentCompleted"
+            name="percentCompleted"
+            placeholder="Percent completed"
+            class="notEditing"
+          />
+        </div>
+        <div class="inputBox">
+          <label for="completionAward">Completion Award</label>
+          <br />
+          <div class="inputBox">
+            <label for="completionAwardDinero" class="editable">Dinero:</label>
+            <input
+              value="1000"
+              min="0"
+              type="number"
+              id="completionAwardDinero"
+              name="completionAwardDinero"
+              placeholder="Number of Dinero coins"
+              class="notEditing"
+            />
+          </div>
+          <div class="inputBox">
+            <label for="completionAwardNeelam" class="editable">Neelam:</label>
+            <input
+              type="number"
+              min="0"
+              value="0"
+              id="completionAwardNeelam"
+              name="completionAwardNeelam"
+              placeholder="Number of Neelam coins"
+              class="notEditing"
+            />
+          </div>
+        </div>
+        <div class="inputBox">
+          <label for="lossRate">Loss Rate</label>
+          <br />
+          <div class="inputBox">
+            <label for="lossRateDinero" class="editable">Dinero</label>
+            <input
+              type="number"
+              value="100"
+              min="0"
+              id="lossRateDinero"
+              name="lossRateDinero"
+              placeholder="Number of Dinero coins"
+              class="notEditing"
+            />
+          </div>
+          <div class="inputBox">
+            <label for="lossRateNeelam" class="editable">Neelam</label>
+            <input
+              type="number"
+              value="0"
+              min="0"
+              id="lossRateNeelam"
+              name="lossRateNeelam"
+              placeholder="Number of Neelam coins"
+              class="notEditing"
+            />
+          </div>
+        </div>
+
+        <div class="inputBox">
+          <input
+            type="submit"
+            class="submit disabled"
+            value="Submit"
+            id="submit"
+          />
+        </div>
+      </form>
+
+      <footer>
+        <p class="info-repo">
+          The contents of this website are deployed from this
+          <a
+            href="https://github.com/Real-Dev-Squad/website-dashboard"
+            target="_blank"
+            rel="noopener noreferrer"
+            >open sourced repo</a
+          >
+        </p>
+      </footer>
+      <div class="hidden" id="submit-loader">
+        <div class="loader"></div>
+      </div>
+<<<<<<< HEAD:src/task/index.html
+      <script src="../helpers/loadENV.js"></script>
+      <script src="constants.js"></script>
+      <script src="script.js"></script>
+=======
+      <script src="/helpers/loadENV.js"></script>
+      <script src="/task/script.js"></script>
+>>>>>>> 09ae769b83762c25223d68ec62cc80bcf37323ed:task/index.html
+    </div>
+  </body>
+</html>

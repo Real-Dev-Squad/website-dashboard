@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/images/index.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/global.css" />
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/featureFlag/style.css" />
+    <title>Feature Flag | Dashboard Real Dev Squad</title>
+    <script src="/constants.js"></script>
+    <script src="/featureFlag/helper.js" defer></script>
+    <script src="/featureFlag/script.js" defer></script>
+  </head>
+
+  <body>
+    <div class="wrapper">
+      <div class="header">
+        <select
+          class="dropdown"
+          name="flag"
+          id="flag-dropdown"
+          onchange="handleFlagChange(this)"
+        >
+          <option selected hidden id="flag-dropdown-default">Edit Flag</option>
+        </select>
+
+        <div
+          class="add-button"
+          onclick="handleAddFlag()"
+          id="create-flag"
+          style="display: none"
+        >
+          Create New Flag
+        </div>
+      </div>
+
+      <form class="form" id="flag-form">
+        <div class="field field--row">
+          <div class="text-input">
+            <label class="text-input__heading">Title</label>
+            <input
+              class="text-input__field"
+              type="text"
+              name="title"
+              required
+              id="flag-title"
+            />
+            <input type="hidden" name="flagId" id="form-flagId" />
+          </div>
+
+          <div class="checkbox">
+            <label class="checkbox__label" for="form-enabled">Enabled</label>
+            <input
+              class="checkbox__tick-box checkbox__tick-box--reversed"
+              type="checkbox"
+              name="enabled"
+              id="form-enabled"
+              checked
+            />
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field__heading">Permission by Role</div>
+
+          <div class="checkbox">
+            <input
+              class="checkbox__tick-box"
+              type="checkbox"
+              name="role"
+              id="checkbox-super_user"
+              value="super_user"
+            />
+            <label class="checkbox__label" for="checkbox-super_user"
+              >Super Users</label
+            >
+          </div>
+
+          <div class="checkbox">
+            <input
+              class="checkbox__tick-box"
+              type="checkbox"
+              name="role"
+              id="checkbox-member"
+              value="member"
+            />
+            <label class="checkbox__label" for="checkbox-member">Members</label>
+          </div>
+
+          <div class="checkbox">
+            <input
+              class="checkbox__tick-box"
+              type="checkbox"
+              name="role"
+              id="checkbox-no_role"
+              value="no_role"
+            />
+            <label class="checkbox__label" for="checkbox-no_role"
+              >No Role</label
+            >
+          </div>
+        </div>
+        <div class="field field--end">
+          <button type="submit" class="submit-button" id="form-submit">
+            Submit
+          </button>
+        </div>
+      </form>
+    </div>
+    <footer>
+      <p class="info-repo">
+        The contents of this website are deployed from this
+        <a
+          href="https://github.com/Real-Dev-Squad/website-dashboard"
+          target="_blank"
+          rel="noopener noreferrer"
+          >open sourced repo</a
+        >
+      </p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,91 @@
+*,
+::after,
+::before {
+  box-sizing: border-box;
+}
+
+:root {
+  --black-color: black;
+  --white-color: white;
+  --blue-color: #1d1283;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+#tasksNav {
+  background-color: #1d1283;
+  padding: 10px;
+  height: 40px;
+}
+
+#createTask {
+  color: white;
+  padding-left: 50%;
+  text-decoration: none;
+  font-size: large;
+}
+
+.buttonSection {
+  height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+button {
+  width: 250px;
+  cursor: pointer;
+}
+
+/* profile section */
+.profileSection {
+  height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Online-members */
+
+.info-repo {
+  font-weight: 100;
+  padding: auto;
+  text-align: center;
+}
+
+footer {
+  margin-top: auto;
+}
+
+.element-display-remove {
+  display: none;
+}
+
+.action-button {
+  color: var(--black-color);
+  font-weight: 500;
+  font-size: larger;
+  background-color: var(--white-color);
+  border: 2px solid var(--black-color);
+  border-radius: 0.31rem;
+  padding: 0.62rem 3.12rem;
+  cursor: pointer;
+  transition: all 0.5s ease;
+  outline: none;
+  text-decoration: none;
+  color: var(--black-color);
+}
+
+.action-button:hover {
+  color: var(--white-color);
+  background-color: var(--blue-color);
+  border: none;
+}
