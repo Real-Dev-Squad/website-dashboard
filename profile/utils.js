@@ -331,7 +331,9 @@ async function getSelfUser() {
 }
 
 async function getUser(userId) {
-  const userResponse = await fetch(`${API_BASE_URL}/users/?id=abc`, {
+
+
+  const userResponse = await fetch(`${API_BASE_URL}/users/?id=${userId}`, {
     method: 'GET',
     credentials: 'include',
     headers: {
