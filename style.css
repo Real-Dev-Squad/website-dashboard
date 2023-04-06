@@ -3,6 +3,7 @@
 ::before {
   box-sizing: border-box;
 }
+
 :root {
   --black-color: black;
   --white-color: white;
@@ -42,6 +43,7 @@ body {
 
 button {
   width: 250px;
+  cursor: pointer;
 }
 
 .create-task-btn {

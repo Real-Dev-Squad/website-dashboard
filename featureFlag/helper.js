@@ -1,6 +1,5 @@
 'use strict';
 
-const API_BASE_URL = 'https://api.realdevsquad.com';
 const roles = ['super_user', 'member', 'no_role'];
 const mockData = [
   {

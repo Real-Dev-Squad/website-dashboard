@@ -1,4 +1,3 @@
-const API_BASE_URL = 'https://api.realdevsquad.com';
 const RDS_API_USERS = `${API_BASE_URL}/users/`;
 const USER_LIST_ELEMENT = 'user-list';
 const LOADER_ELEMENT = 'loader';

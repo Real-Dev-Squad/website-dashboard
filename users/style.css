@@ -65,6 +65,10 @@
   background-color: var(--button-active-color);
 }
 
+#user-list > ul li {
+  cursor: pointer;
+}
+
 ul {
   list-style-type: none;
   padding-inline-start: 0px;
@@ -272,6 +276,16 @@ li p {
 
 .hidden {
   display: none;
+}
+
+.info-repo {
+  font-weight: 100;
+  padding: auto;
+  text-align: center;
+}
+
+footer {
+  margin-top: auto;
 }
 
 @keyframes spin {
