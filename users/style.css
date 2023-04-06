@@ -206,6 +206,17 @@ li p {
   width: 100%;
 }
 
+.modal-form {
+  text-align: initial;
+  padding: 0.6rem;
+  width: 80%;
+}
+
+.checkbox-label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
 .clear-btn {
   background-color: var(--white-color);
   border: 1px solid var(--light-gray-color);

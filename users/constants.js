@@ -1,4 +1,5 @@
-const RDS_API_USERS = `${API_BASE_URL}/users/`;
+const RDS_API_USERS = `${API_BASE_URL}/users`;
+const RDS_API_SKILLS = `${API_BASE_URL}/tags`;
 const USER_LIST_ELEMENT = 'user-list';
 const LOADER_ELEMENT = 'loader';
 const TILE_VIEW_BTN = 'tile-view-btn';

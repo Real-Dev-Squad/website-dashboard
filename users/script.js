@@ -272,40 +272,6 @@ async function getParticularUserData(
   }
 }
 
-function addAvailibilityFilterOptions() {
-  const options = [
-    { value: 'none', text: NONE },
-    { value: 'active', text: ACTIVE },
-    { value: 'ooo', text: OOO },
-    { value: 'idle', text: IDLE },
-  ];
-
-  const fragment = document.createDocumentFragment();
-
-  options.forEach((option) => {
-    const optionElement = document.createElement('option');
-    optionElement.value = option.value;
-    optionElement.text = option.text;
-    fragment.appendChild(optionElement);
-  });
-
-  availabilityFilter.appendChild(fragment);
-  availabilityFilter.options[0].disabled = true;
-  availabilityFilter.options[0].selected = true;
-}
-
-async function getUsersStatusData(state) {
-  try {
-    const usersRequest = await makeApiCall(
-      `${RDS_API_USERS}status?state=${state}`,
-    );
-    const currentstate = await usersRequest.json();
-    return currentstate.allUserStatus;
-  } catch (err) {
-    throw new Error(`User list request failed with error: ${err}`);
-  }
-}
-
 function showUserList(users) {
   const ulElement = document.createElement('ul');
 
@@ -336,14 +302,6 @@ function showUserList(users) {
 
   userListElement.innerHTML = '';
   userListElement.appendChild(ulElement);
-}
-
-async function filterUserByAvailability() {
-  const availabilityFilterValue = availabilityFilter.value;
-  const value = STATUS_LIST.find((status) => status == availabilityFilterValue);
-  if (!value) throw Error(message);
-  const users = await getUsersStatusData(value.toUpperCase());
-  showUserList(users);
 }
 
 function displayLoader() {
@@ -412,6 +370,71 @@ async function showUserDataList(
   }
 }
 
+function addCheckbox(labelText, value, groupName) {
+  const group = document.getElementById(groupName);
+  const label = document.createElement('label');
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.name = groupName;
+  checkbox.value = value;
+  label.innerHTML = checkbox.outerHTML + '&nbsp;' + labelText;
+  label.classList.add('checkbox-label');
+  label.appendChild(document.createElement('br'));
+  group.appendChild(label);
+}
+
+function populateSkills(skills) {
+  for (let i = 0; i < skills.length; i++) {
+    const { name, id } = skills[i];
+    addCheckbox(name, id, 'skills-filter');
+  }
+}
+function populateAvailability() {
+  const availabilityArr = [
+    { name: 'Active', id: 'ACTIVE' },
+    { name: 'Ooo (Out of Office)', id: 'OOO' },
+    { name: 'Idle', id: 'IDLE' },
+  ];
+  for (let i = 0; i < availabilityArr.length; i++) {
+    const { name, id } = availabilityArr[i];
+    addCheckbox(name, id, 'availability-filter');
+  }
+}
+
+const populateFilters = () => {
+  populateAvailability();
+  generateSkills();
+};
+async function getUsersSkills() {
+  try {
+    const usersRequest = await makeApiCall(RDS_API_SKILLS);
+    let usersSkillList = [];
+    if (usersRequest.status === 200) {
+      usersSkillList = await usersRequest.json();
+      usersSkillList = usersSkillList.tags;
+    } else {
+      throw new Error(
+        `User list request failed with status: ${usersRequest.status}`,
+      );
+    }
+    return usersSkillList;
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function generateSkills() {
+  const allSkills = await getUsersSkills();
+  const allSkillTags = allSkills
+    .map(({ type, name, id }) => {
+      if (type === 'SKILL') {
+        return { name, id };
+      }
+    })
+    .filter((tag) => tag != undefined);
+  populateSkills(allSkillTags);
+}
+
 window.onload = function () {
   init(
     prevBtn,
@@ -431,7 +454,7 @@ window.onload = function () {
     prevBtn,
     nextBtn,
   );
-  addAvailibilityFilterOptions();
+  populateFilters();
 };
 
 filterButton.addEventListener('click', (event) => {
@@ -439,15 +462,70 @@ filterButton.addEventListener('click', (event) => {
   filterModal.classList.toggle('hidden');
 });
 
-applyFilterButton.addEventListener('click', () => {
-  displayLoader();
-  filterUserByAvailability();
+function getCheckedValues(groupName) {
+  const checkboxes = document.querySelectorAll(
+    `input[name="${groupName}"]:checked`,
+  );
+  return Array.from(checkboxes).map((cb) => cb.value);
+}
+
+function getFilteredUsersURL(checkedValuesSkills, checkedValuesAvailability) {
+  const params = new URLSearchParams();
+
+  checkedValuesSkills.forEach((skill) => {
+    params.append('tagId', skill);
+  });
+
+  checkedValuesAvailability.forEach((availability) => {
+    params.append('state', availability);
+  });
+
+  // return `search?${params.toString()}`;
+  return `?${params.toString()}`;
+}
+
+applyFilterButton.addEventListener('click', async () => {
   filterModal.classList.toggle('hidden');
+  displayLoader();
+  const checkedValuesSkills = getCheckedValues('skills-filter');
+  const checkedValuesAvailability = getCheckedValues('availability-filter');
+  const queryParams = getFilteredUsersURL(
+    checkedValuesSkills,
+    checkedValuesAvailability,
+  );
+  try {
+    const usersRequest = await makeApiCall(
+      `${RDS_API_USERS}/status/${queryParams}`,
+    );
+    // const {users} = await usersRequest.json();
+    const { allUserStatus } = await usersRequest.json();
+    showUserList(allUserStatus);
+  } catch (err) {
+    throw new Error(`User list request failed with error: ${err}`);
+  }
+  // const url = getFilteredUsersURLNew(checkedValuesSkills,checkedValuesAvailability)
 });
 
-clearButton.addEventListener('click', () => {
-  clearFilters();
+function clearCheckboxes(name) {
+  const checkboxes = document.querySelectorAll(`input[name="${name}"]`);
+  checkboxes.forEach((cb) => {
+    cb.checked = false;
+  });
+}
+
+clearButton.addEventListener('click', function () {
+  clearCheckboxes('skills-filter');
+  clearCheckboxes('availability-filter');
   filterModal.classList.toggle('hidden');
+  displayLoader();
+  showUserDataList(
+    page,
+    userListElement,
+    paginationElement,
+    loaderElement,
+    prevBtn,
+    nextBtn,
+  );
 });
 
 filterModal.addEventListener('click', (event) => {
