@@ -15,9 +15,6 @@ const clearButton = document.getElementById(CLEAR_BUTTON);
 let tileViewActive = false;
 let tableViewActive = true;
 let page = 0;
-let idleUsers = [];
-let activeUsers = [];
-let oooUsers = [];
 
 const init = (
   prevBtn,
