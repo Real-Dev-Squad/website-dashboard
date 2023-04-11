@@ -14,7 +14,6 @@ export async function showSuperUserOptions(...privateBtns) {
   }
 }
 
-
 /*
  * To show the super user options only to the super user, give all those
  * buttons or node the class "element-display-remove" so by default they are hidden.
@@ -30,4 +29,3 @@ if (params.get('dev') === 'true') {
 }
 
 showUserManagementButton();
-
