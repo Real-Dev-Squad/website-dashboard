@@ -1,0 +1,40 @@
+main {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    'tab tab '
+    'aside details';
+  height: 100vh;
+}
+aside {
+  grid-area: aside;
+  overflow: scroll;
+}
+.tabs_section {
+  border-bottom: thin solid;
+  padding: 1rem;
+  grid-area: tab;
+}
+.tab {
+  padding: 0.2rem;
+  margin-inline-end: 0.5rem;
+  cursor: pointer;
+}
+.user_card {
+  padding: 1rem;
+  border: thin solid;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: fit-content;
+}
+.user_image {
+  border-radius: 50%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  width: 3rem;
+}
+.user_details {
+  border: thin solid blue;
+  grid-area: details;
+}
