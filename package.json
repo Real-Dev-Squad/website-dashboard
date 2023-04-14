@@ -29,7 +29,6 @@
     "puppeteer": "^19.9.0",
     "puppeteer-core": "^19.9.0"
   },
-  "dependencies": {},
   "volta": {
     "node": "18.16.0",
     "yarn": "1.22.19"
