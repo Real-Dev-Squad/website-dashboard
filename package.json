@@ -6,7 +6,7 @@
   "scripts": {
     "check": "prettier --check .",
     "fix": "prettier --write .",
-    "test": "jest --coverage=false",
+    "test": "jest",
     "start": "node server.js"
   },
   "repository": {
@@ -23,10 +23,14 @@
   "homepage": "https://github.com/Real-Dev-Squad/website-dashboard#readme",
   "devDependencies": {
     "jest": "^29.5.0",
+    "jsdom": "^21.1.1",
     "pre-commit": "^1.2.2",
     "prettier": "2.3.1",
-    "puppeteer": "^19.8.3",
-    "puppeteer-core": "^19.8.3"
+    "puppeteer": "^19.9.0",
+    "puppeteer-core": "^19.9.0"
   },
-  "dependencies": {}
+  "volta": {
+    "node": "18.16.0",
+    "yarn": "1.22.19"
+  }
 }
