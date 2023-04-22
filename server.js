@@ -5,8 +5,8 @@ const port = process.env.PORT || 8000;
 
 http
   .createServer(function (req, res) {
-    // console.log(`Request received for '${req.url}'`);
-    let filePath = path.join(__dirname, req.url);
+    const urlPath = path.normalize(req.url);
+    let filePath = path.join(__dirname, urlPath);
     if (!path.extname(filePath)) {
       filePath = path.join(filePath, 'index.html');
     }
