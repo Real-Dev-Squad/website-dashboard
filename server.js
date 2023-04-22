@@ -2,19 +2,29 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const port = process.env.PORT || 8000;
+const pathIsAbsolute = require('path-is-absolute');
 
 http
   .createServer(function (req, res) {
     const urlPath = path.normalize(req.url);
     let filePath = path.join(__dirname, urlPath);
+
+    if (!pathIsAbsolute(filePath)) {
+      res.statusCode = 400;
+      res.end('Invalid file path');
+      return;
+    }
+
     if (!path.extname(filePath)) {
       filePath = path.join(filePath, 'index.html');
     }
-    console.log({
-      ext: path.extname(filePath),
-      url: req.url,
-      filePath,
-    });
+
+    // Check that the file exists before reading it
+    if (!fs.existsSync(filePath)) {
+      res.statusCode = 404;
+      res.end('File not found');
+      return;
+    }
 
     fs.readFile(filePath, function (err, data) {
       let contentType = 'text/html';
