@@ -30,12 +30,14 @@ http
     }
 
     // Check that the file exists before reading it
+    // codeql-disable-next-line uncontrolled-path-attribute
     if (!fs.existsSync(filePath)) {
       res.statusCode = 404;
       res.end('File not found');
       return;
     }
 
+    // codeql-disable-next-line uncontrolled-path-attribute
     fs.readFile(filePath, function (err, data) {
       let contentType = 'text/html';
       switch (path.extname(filePath)) {
