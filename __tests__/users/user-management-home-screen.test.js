@@ -1,4 +1,8 @@
 const puppeteer = require('puppeteer');
+const {
+  allUsersData,
+  filteredUsersData,
+} = require('../../mock-data/user-mock-data');
 
 describe('Tests the User Management User Listing Screen', () => {
   let browser;
@@ -10,24 +14,49 @@ describe('Tests the User Management User Listing Screen', () => {
   let paginationElement;
   let prevBtn;
   let nextBtn;
-  jest.setTimeout(60000);
+  jest.setTimeout(120000);
 
   beforeAll(async () => {
     browser = await puppeteer.launch({
       headless: true,
-      // headless: false,
       ignoreHTTPSErrors: true,
-      // slowMo: 50,
-      args: ['--incognito'],
+      slowMo: 50,
+      args: ['--incognito', '--disable-web-security'],
+      devtools: false,
     });
     page = await browser.newPage();
-    const cookieValue =
-      'rds-session=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJEdFI5c0s3Q3lzT1ZIUDE3emw4TiIsImlhdCI6MTY3MzkxNzE0OCwiZXhwIjoxNjc2NTA5MTQ4fQ.fO-Tz-6HR5QMgfWLYN6Tp54Fpc2FgpF_YWywhXLN-g1uoWAxj8M2X59eGHImQPoL-4i7fE5yN28nzolkIphp7iz3qRKcJ4IOy9dBXBQSNo-QBbXDgqjJQ1evxP-qmW7I6AX5YJ1Uv0k11UC4eTsVgAxJjGqGh1DB5IIH1mVDnO22VoUicjr8T5nFFQCvlLJIllF8O5BqlMZeVKvkqrKgxt5Jm5Bdj9Sd94uGqOXz5WlX_KKhXXAER4MPnNyqHa5XuQDP0Cf2USChLKssTbuFoy7pppw3QUyIm6FCrdCTMa6KwBgNuyGnTfmNePfNdJWTEy-K13nKPITx7zUbmPhx7A';
-    await page.setExtraHTTPHeaders({
-      'content-Type': 'application/json',
-      Cookie: cookieValue,
+
+    await page.setRequestInterception(true);
+
+    page.on('request', (interceptedRequest) => {
+      const url = interceptedRequest.url();
+      if (url === 'https://api.realdevsquad.com/users?size=100&page=0') {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(allUsersData),
+        });
+      } else if (url === 'https://api.realdevsquad.com/users?search=randhir') {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(filteredUsersData),
+        });
+      } else {
+        interceptedRequest.continue();
+      }
     });
-    await page.goto('https://dev.realdevsquad.com/users');
+    await page.goto('http://localhost:8000/users');
     await page.waitForNetworkIdle();
 
     userListElement = await page.$('#user-list');
@@ -85,7 +114,7 @@ describe('Tests the User Management User Listing Screen', () => {
   });
 
   it('checks the next and previous button functionality', async () => {
-    await page.goto('https://dev.realdevsquad.com/users');
+    await page.goto('http://localhost:8000/users');
     await page.waitForNetworkIdle();
 
     // Get the "next" button and check if it is disabled
