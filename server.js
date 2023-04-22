@@ -6,7 +6,17 @@ const pathIsAbsolute = require('path-is-absolute');
 
 http
   .createServer(function (req, res) {
+    /**
+     * @param {string} urlPath - the path to the requested file
+     * @sanitizer path.normalize
+     */
     const urlPath = path.normalize(req.url);
+    /**
+     * @param {string} filePath - the absolute path to the requested file
+     * @flowsource urlPath
+     * @sanitizer path.join
+     * @sanitizer pathIsAbsolute
+     */
     let filePath = path.join(__dirname, urlPath);
 
     if (!pathIsAbsolute(filePath)) {
