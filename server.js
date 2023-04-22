@@ -30,14 +30,12 @@ http
     }
 
     // Check that the file exists before reading it
-    // // codeql:suppress-warning uncontrolled-path-taint
     if (!fs.existsSync(filePath)) {
       res.statusCode = 404;
       res.end('File not found');
       return;
     }
 
-    // codeql:suppress-warning uncontrolled-path-taint
     fs.readFile(filePath, function (err, data) {
       let contentType = 'text/html';
       switch (path.extname(filePath)) {
