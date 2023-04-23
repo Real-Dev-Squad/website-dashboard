@@ -477,7 +477,6 @@ function getFilteredUsersURL(checkedValuesSkills, checkedValuesAvailability) {
     params.append('state', availability);
   });
 
-  // return `search?${params.toString()}`;
   return `?${params.toString()}`;
 }
 
@@ -494,13 +493,11 @@ applyFilterButton.addEventListener('click', async () => {
     const usersRequest = await makeApiCall(
       `${RDS_API_USERS}/status/${queryParams}`,
     );
-    // const {users} = await usersRequest.json();
     const { allUserStatus } = await usersRequest.json();
     showUserList(allUserStatus);
   } catch (err) {
     throw new Error(`User list request failed with error: ${err}`);
   }
-  // const url = getFilteredUsersURLNew(checkedValuesSkills,checkedValuesAvailability)
 });
 
 function clearCheckboxes(name) {
