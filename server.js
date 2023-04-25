@@ -2,7 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const port = process.env.PORT || 8000;
-const pathIsAbsolute = require('path-is-absolute');
+const isAbsolutePath = require('path-is-absolute');
 
 http
   .createServer(function (req, res) {
@@ -15,11 +15,11 @@ http
      * @param {string} filePath - the absolute path to the requested file
      * @flowsource urlPath
      * @sanitizer path.join
-     * @sanitizer pathIsAbsolute
+     * @sanitizer isAbsolutePath
      */
     let filePath = path.join(__dirname, urlPath);
 
-    if (!pathIsAbsolute(filePath)) {
+    if (!isAbsolutePath(filePath)) {
       res.statusCode = 400;
       res.end('Invalid file path');
       return;

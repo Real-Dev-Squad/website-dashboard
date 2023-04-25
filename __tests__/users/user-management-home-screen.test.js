@@ -14,13 +14,12 @@ describe('Tests the User Management User Listing Screen', () => {
   let paginationElement;
   let prevBtn;
   let nextBtn;
-  jest.setTimeout(120000);
+  jest.setTimeout(80000);
 
   beforeAll(async () => {
     browser = await puppeteer.launch({
       headless: true,
       ignoreHTTPSErrors: true,
-      slowMo: 50,
       args: ['--incognito', '--disable-web-security'],
       devtools: false,
     });
@@ -117,7 +116,7 @@ describe('Tests the User Management User Listing Screen', () => {
     await page.goto('http://localhost:8000/users');
     await page.waitForNetworkIdle();
 
-    // Get the "next" button and check if it is disabled
+    // Get the "next" button and check if it is enabled
     const nextBtn = await page.$('#nextButton');
     const isNextButtonDisabled = await page.evaluate(
       (button) => button.disabled,
@@ -142,10 +141,19 @@ describe('Tests the User Management User Listing Screen', () => {
   });
 
   it('Clicking on filter button should display filter modal', async () => {
-    await page.click('#filter-button');
     const modal = await page.$('.filter-modal');
-    expect(modal).not.toBeNull();
+    expect(await modal.evaluate((el) => el.classList.contains('hidden'))).toBe(
+      true,
+    );
     await page.click('#filter-button');
+    expect(modal).not.toBeNull();
+    expect(await modal.evaluate((el) => el.classList.contains('hidden'))).toBe(
+      false,
+    );
+    await page.click('#filter-button');
+    expect(await modal.evaluate((el) => el.classList.contains('hidden'))).toBe(
+      true,
+    );
   });
 
   it('Selecting filters and clicking on apply should filter user list', async () => {
