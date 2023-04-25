@@ -63,6 +63,8 @@ body {
   min-width: 100vw;
   min-height: 100vh;
   background-color: var(--modal-color);
+  overflow-y: scroll;
+  padding-bottom: 1rem;
 }
 
 .extension-requests-modal-parent > * {
@@ -70,9 +72,6 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  width: 40%;
-  height: 100%;
-  margin: 10px 0px;
   background-color: var(--white);
   padding: 1.25rem;
   border-radius: 5px;
@@ -86,6 +85,13 @@ body {
 /* task info */
 .extension-requests-modal-parent[show='info'] .extension-requests-info {
   display: flex;
+}
+
+.extension-requests-info {
+  position: absolute;
+  left: 30%;
+  right: 30%;
+  height: fit-content;
 }
 
 .extension-requests-info table {
@@ -111,6 +117,16 @@ body {
 /* update form */
 .extension-requests-modal-parent[show='update-form'] .extension-requests-form {
   display: flex;
+}
+
+.extension-requests-form {
+  position: absolute;
+  left: 30%;
+  right: 30%;
+  height: min-content;
+  overflow-y: scroll;
+  top: 10%;
+  bottom: 10%;
 }
 
 .extension-requests-form input,
@@ -171,7 +187,7 @@ body {
 
 .extension-requests {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(475px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   flex-wrap: wrap;
 }
 
@@ -222,4 +238,24 @@ body {
 }
 .error-visible {
   display: block;
+}
+
+@media screen and (max-width: 800px) {
+  .extension-request {
+    margin: 0;
+    padding: 0.8rem;
+  }
+
+  .extension-request > tr > th {
+    max-width: fit-content;
+  }
+
+  .extension-requests-info {
+    left: 10%;
+    right: 10%;
+  }
+  .extension-requests-form {
+    left: 10%;
+    right: 10%;
+  }
 }
