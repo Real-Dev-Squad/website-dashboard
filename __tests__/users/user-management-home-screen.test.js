@@ -12,7 +12,7 @@ describe('Tests the User Management User Listing Screen', () => {
   let paginationElement;
   let prevBtn;
   let nextBtn;
-  jest.setTimeout(80000);
+  jest.setTimeout(60000);
 
   beforeAll(async () => {
     browser = await puppeteer.launch({
