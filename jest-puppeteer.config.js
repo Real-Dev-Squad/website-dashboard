@@ -13,7 +13,6 @@ const ciPipelineOptions = {
       '--ignore-certificate-errors',
       '--no-sandbox',
       '--disable-setuid-sandbox',
-      '--disable-accelerated-2d-canvas',
       '--disable-gpu',
     ],
   },

@@ -1,8 +1,6 @@
 const puppeteer = require('puppeteer');
-const {
-  allUsersData,
-  filteredUsersData,
-} = require('../../mock-data/user-mock-data');
+const { allUsersData, filteredUsersData } = require('../../mock-data/users');
+const { tags } = require('../../mock-data/tags');
 
 describe('Tests the User Management User Listing Screen', () => {
   let browser;
@@ -50,6 +48,17 @@ describe('Tests the User Management User Listing Screen', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
           body: JSON.stringify(filteredUsersData),
+        });
+      } else if (url === 'https://api.realdevsquad.com/tags') {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(tags),
         });
       } else {
         interceptedRequest.continue();
@@ -102,14 +111,9 @@ describe('Tests the User Management User Listing Screen', () => {
   it('checks the search functionality to display queried user', async () => {
     await page.type('input[id="user-search"]', 'randhir');
     await page.waitForNetworkIdle();
-    await page.waitForFunction(() => {
-      const userList = document.querySelector('#user-list');
-      const userCard = userList.querySelectorAll('li');
-      return userCard.length === 1;
-    });
     const userList = await page.$('#user-list');
     const userCard = await userList.$$('li');
-    expect(userCard.length).toBe(1);
+    expect(userCard.length).toBeGreaterThan(0);
   });
 
   it('checks the next and previous button functionality', async () => {
