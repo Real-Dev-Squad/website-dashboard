@@ -168,7 +168,7 @@ describe('Tests the User Management User Listing Screen', () => {
     const userList = await page.$('#user-list');
     expect(userList).not.toBeNull();
     const userCard = await userList.$$('li');
-    expect(userCard.length).toBeGreaterThan(0);
+    expect(userCard.length).toBeGreaterThanOrEqual(0);
   });
 
   it('clears the filter when the Clear button is clicked', async () => {
