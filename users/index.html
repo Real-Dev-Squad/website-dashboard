@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="/images/index.ico" type="image/x-icon" />
     <title>User Management | Real Dev Squad</title>
+    <link rel="stylesheet" href="/global.css" />
     <link rel="stylesheet" href="/users/style.css" />
+    <script src="/constants.js"></script>
     <script src="/utils.js"></script>
     <script src="/users/constants.js" defer></script>
     <script src="/users/utils.js" defer></script>
@@ -36,14 +38,10 @@
             <button id="clear-button" class="clear-btn">Clear</button>
           </div>
           <div class="filters-container">
-            <label for="filter-by-avaviability" class="filter-label"
-              >Availability</label
-            >
-            <select
-              id="filter-by-avaviability"
-              name="filter-by-avaviability"
-              class="filters"
-            ></select>
+            <h2>Availability</h2>
+            <form class="modal-form" id="availability-filter"></form>
+            <h2>Skills</h2>
+            <form class="modal-form" id="skills-filter"></form>
           </div>
           <button id="apply-filter-button" class="apply-filter-button">
             Apply Filter
@@ -79,5 +77,17 @@
         <button class="pagination-btn" id="nextButton">Next &raquo;</button>
       </div>
     </section>
+    <footer>
+      <p class="info-repo">
+        The contents of this website are deployed from this
+        <a
+          href="https://github.com/Real-Dev-Squad/website-dashboard"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          open sourced repo
+        </a>
+      </p>
+    </footer>
   </body>
 </html>
