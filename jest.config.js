@@ -1,11 +1,8 @@
-module.exports = {
-  clearMocks: true,
-
+const config = {
+  preset: 'jest-puppeteer',
   collectCoverage: true,
-
+  collectCoverageFrom: ['src/**/*'],
+  reporters: ['default'],
   coverageDirectory: 'coverage',
-
-  coverageProvider: 'v8',
-
-  testEnvironment: 'jsdom',
 };
+module.exports = config;
