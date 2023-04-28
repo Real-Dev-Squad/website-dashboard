@@ -278,7 +278,9 @@ function showUserList(users) {
     imgElement.src = userData.picture?.url ?? DEFAULT_AVATAR;
     imgElement.classList.add('user-img-dimension');
     const pElement = document.createElement('p');
-    const node = document.createTextNode(`${userData.full_name}`);
+    const node = document.createTextNode(
+      `${userData.first_name} ${userData.last_name}`,
+    );
     pElement.appendChild(node);
     listElement.appendChild(imgElement);
     listElement.appendChild(pElement);
@@ -491,10 +493,10 @@ applyFilterButton.addEventListener('click', async () => {
   );
   try {
     const usersRequest = await makeApiCall(
-      `${RDS_API_USERS}/status/${queryParams}`,
+      `${RDS_API_USERS}/search${queryParams}`,
     );
-    const { allUserStatus } = await usersRequest.json();
-    showUserList(allUserStatus);
+    const { users } = await usersRequest.json();
+    showUserList(users);
   } catch (err) {
     throw new Error(`User list request failed with error: ${err}`);
   }

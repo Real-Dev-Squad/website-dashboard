@@ -27,6 +27,27 @@
   color: var(--white-color);
 }
 
+html,
+body {
+  height: 100%;
+  min-height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+section {
+  flex: 1 0 calc(100% - 1rem);
+  margin-bottom: 1rem;
+}
+
+footer {
+  flex-shrink: 0;
+  margin-bottom: 1rem;
+}
+
 #main-section {
   margin: 1.5em 4em;
   text-align: center;
