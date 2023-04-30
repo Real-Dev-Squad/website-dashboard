@@ -42,9 +42,11 @@ footer {
 }
 
 #main-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   margin: 1.5em 4em;
   text-align: center;
-  flex: 1;
 }
 
 .search-filter {
@@ -66,7 +68,7 @@ footer {
 }
 
 #view-type-btn {
-  margin: 40px auto;
+  margin: 20px auto;
 }
 
 #view-type-btn button {
@@ -78,6 +80,13 @@ footer {
 
 .btn-active {
   background-color: var(--button-active-color);
+}
+
+#user-list {
+  flex-grow: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
 }
 
 #user-list > ul li {
@@ -139,7 +148,7 @@ li p {
 .pagination {
   display: flex;
   justify-content: space-between;
-  margin: 15px;
+  margin-top: auto;
 }
 
 .pagination-btn {

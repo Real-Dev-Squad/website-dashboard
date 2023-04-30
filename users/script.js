@@ -271,7 +271,10 @@ async function getParticularUserData(
 
 function showUserList(users) {
   const ulElement = document.createElement('ul');
-
+  if (!users.length) {
+    userListElement.innerHTML = 'No Users Found';
+    return;
+  }
   users.forEach((userData) => {
     const listElement = document.createElement('li');
     const imgElement = document.createElement('img');
