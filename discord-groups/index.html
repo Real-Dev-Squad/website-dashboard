@@ -12,6 +12,37 @@
     <script type="module" src="/discord-groups/script.js" defer></script>
   </head>
   <body>
-    <h1>Hello Discord</h1>
+    <div class="container">
+      <div class="groups-window">
+        <div class="groups-tab">
+          <div class="manage-groups-tab">Manage Groups</div>
+          <div class="create-groups-tab">Create Groups</div>
+        </div>
+        <div class="groups">
+          <ul class="groups-list"></ul>
+          <button>Add me to this group</button>
+        </div>
+        <div class="create-group hidden-tab">
+          <div class="group-fields">
+            <div class="group-fields-column">
+              <label for="label-for-new-group"
+                >Create Group Role (please don't add 'group' as prefix)</label
+              >
+              <div class="group-input-container">
+                <span class="group-tag">@group-</span>
+                <input
+                  type="text"
+                  placeholder="demo-discord-role"
+                  id="label-for-new-group"
+                />
+              </div>
+              <div class="">
+                <button>Create</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

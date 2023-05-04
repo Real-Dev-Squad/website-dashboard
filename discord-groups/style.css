@@ -1,0 +1,66 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100vh;
+}
+
+.groups-window {
+  width: 50%;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+.groups {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+}
+
+.groups-tab {
+  width: 100%;
+  display: flex;
+  justify-content: start;
+  gap: 2rem;
+  flex-direction: row;
+}
+
+.groups-tab div {
+  font-size: xx-large;
+}
+
+.groups button {
+  align-self: center;
+}
+.create-group {
+  display: block;
+}
+
+.group-fields {
+  display: flex;
+  flex-direction: row;
+}
+
+.group-fields-column {
+  display: flex;
+  flex-direction: column;
+  margin-right: 10px;
+}
+
+.group-input-container {
+  display: flex;
+  align-items: center;
+}
+
+.create-group-button-container {
+  display: flex;
+  justify-content: center;
+}
+
+.group-fields-column:last-child {
+  margin-right: 0;
+}
+
+.hidden-tab {
+  display: none;
+}
