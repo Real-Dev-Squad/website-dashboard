@@ -13,33 +13,35 @@
   </head>
   <body>
     <div class="container">
-      <div class="groups-window">
-        <div class="groups-tab">
-          <div class="manage-groups-tab">Manage Groups</div>
-          <div class="create-groups-tab">Create Groups</div>
-        </div>
-        <div class="groups">
+      <nav class="groups-tab">
+        <div class="manage-groups-tab">Manage Groups</div>
+        <div class="create-groups-tab">Create Groups</div>
+      </nav>
+      <div class="manage-groups">
+        <aside class="groups">
           <ul class="groups-list"></ul>
-          <button>Add me to this group</button>
-        </div>
-        <div class="create-group hidden-tab">
-          <div class="group-fields">
-            <div class="group-fields-column">
-              <label for="label-for-new-group"
-                >Create Group Role (please don't add 'group' as prefix)</label
-              >
-              <div class="group-input-container">
-                <span class="group-tag">@group-</span>
-                <input
-                  type="text"
-                  placeholder="demo-discord-role"
-                  id="label-for-new-group"
-                />
-              </div>
-              <div class="">
-                <button>Create</button>
-              </div>
-            </div>
+        </aside>
+        <main>
+          <button class="btn">Add me to this group</button>
+        </main>
+      </div>
+
+      <div class="create-group hidden-tab">
+        <div class="group-fields">
+          <label for="new-group" class="label-for-new-group"
+            >Create Group Role (please don't add 'group' as prefix)</label
+          >
+          <div class="group-input-container">
+            <span class="group-tag">@group-</span>
+            <input
+              type="text"
+              placeholder="demo-discord-role"
+              id="new-group"
+              class="input-field"
+            />
+          </div>
+          <div>
+            <button class="btn">Create</button>
           </div>
         </div>
       </div>

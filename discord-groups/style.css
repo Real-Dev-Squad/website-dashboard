@@ -1,34 +1,60 @@
+* {
+  margin: 0;
+  padding: 0;
+}
 .container {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  height: 100vh;
-}
-
-.groups-window {
-  width: 50%;
-  box-sizing: border-box;
-  padding: 20px;
-}
-
-.groups {
-  display: flex;
-  width: 100%;
-  flex-direction: row;
+  margin: 1rem;
 }
 
 .groups-tab {
   width: 100%;
   display: flex;
   justify-content: start;
-  gap: 2rem;
+  gap: 1rem;
   flex-direction: row;
+  box-shadow: 4px 4px 5px #636363a1;
+  background-color: #65656542;
 }
-
+.active-tab {
+  background-color: #33333387;
+}
 .groups-tab div {
-  font-size: xx-large;
+  font-size: larger;
+  cursor: pointer;
+  padding: 1rem;
 }
 
+.manage-groups {
+  display: flex;
+}
+.manage-groups main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn {
+  padding: 0.5rem 2rem;
+}
+.groups {
+  overflow: scroll;
+}
+.groups-list {
+  padding: 1rem;
+  list-style: none;
+  overflow: scroll;
+  height: 80vh;
+}
+.groups-list li {
+  padding: 1rem;
+  border: thin solid black;
+}
+.group-name {
+  font-size: larger;
+}
+.create-by {
+  opacity: 0.8;
+}
 .groups button {
   align-self: center;
 }
@@ -38,7 +64,11 @@
 
 .group-fields {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  margin: 1rem;
+  padding-block: 2rem;
+  align-items: center;
+  gap: 1rem;
 }
 
 .group-fields-column {
@@ -63,4 +93,14 @@
 
 .hidden-tab {
   display: none;
+}
+.details {
+}
+
+.label-for-new-group {
+  font-size: larger;
+}
+
+.input-field {
+  padding: 0.5rem;
 }

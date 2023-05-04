@@ -6,7 +6,7 @@ import {
   createDiscordGroupRole,
 } from './utils.js';
 const tabs = document.querySelectorAll('.groups-tab div');
-const sections = document.querySelectorAll('.groups, .create-group');
+const sections = document.querySelectorAll('.manage-groups, .create-group');
 
 const membersIdNameObject = {};
 const membersData = await getMembers();
@@ -18,10 +18,12 @@ const groupsData = await getDiscordGroups();
 const itemList = document.querySelector('.groups-list');
 groupsData.forEach((item) => {
   const group = document.createElement('li');
-  const groupname = document.createElement('div');
+  const groupname = document.createElement('p');
+  groupname.classList.add('group-name');
   const createdBy = document.createElement('span');
+  createdBy.classList.add('create-by');
   groupname.textContent = item.rolename;
-  createdBy.textContent = 'created by-' + membersIdNameObject[item.createdBy];
+  createdBy.textContent = 'created by ' + membersIdNameObject[item.createdBy];
   group.appendChild(groupname);
   group.appendChild(createdBy);
   itemList.appendChild(group);
@@ -29,6 +31,8 @@ groupsData.forEach((item) => {
 
 tabs.forEach((tab, index) => {
   tab.addEventListener('click', () => {
+    tab.classList.add('active-tab');
+
     sections.forEach((section) => {
       section.classList.add('hidden-tab');
     });
