@@ -1,5 +1,6 @@
+const BASE_URL = 'http://localhost:3000';
 async function getMembers() {
-  const res = await fetch(`http://localhost:3000/members/`, {
+  const res = await fetch(`${BASE_URL}/members/`, {
     method: 'GET',
     credentials: 'include',
     headers: {
@@ -10,8 +11,20 @@ async function getMembers() {
   const { members } = await res.json();
   return members;
 }
+async function getUserSelf() {
+  const res = await fetch(`${BASE_URL}/users/self`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: {
+      'Content-type': 'application/json',
+    },
+  });
+
+  const user_self = await res.json();
+  return user_self;
+}
 async function getDiscordGroups() {
-  const res = await fetch(`http://localhost:3000/discord-actions/groups`, {
+  const res = await fetch(`${BASE_URL}/discord-actions/groups`, {
     method: 'GET',
     credentials: 'include',
     headers: {
@@ -23,7 +36,7 @@ async function getDiscordGroups() {
   return groups;
 }
 async function createDiscordGroupRole(groupRoleBody) {
-  const res = await fetch(`http://localhost:3000/discord-actions/groups`, {
+  const res = await fetch(`${BASE_URL}/discord-actions/groups`, {
     method: 'POST',
     credentials: 'include',
     headers: {
@@ -37,7 +50,7 @@ async function createDiscordGroupRole(groupRoleBody) {
 }
 
 async function addGroupRoleToMember(memberRoleBody) {
-  const res = await fetch(`http://localhost:3000/discord-actions/roles`, {
+  const res = await fetch(`${BASE_URL}/discord-actions/roles`, {
     method: 'POST',
     credentials: 'include',
     headers: {
@@ -46,12 +59,13 @@ async function addGroupRoleToMember(memberRoleBody) {
     body: JSON.stringify(memberRoleBody),
   });
 
-  const self_user = await res.json();
-  return self_user;
+  const data = await res.json();
+  return data;
 }
 
 export {
   getMembers,
+  getUserSelf,
   getDiscordGroups,
   createDiscordGroupRole,
   addGroupRoleToMember,
