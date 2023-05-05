@@ -20,7 +20,7 @@ membersData.forEach((member) => {
 
 const userSelfData = await getUserSelf();
 const userIsVerified = !!userSelfData.discordId;
-!userIsVerified && userIsNotVerifiedText.classList.remove('hidden-tab');
+!userIsVerified && userIsNotVerifiedText.classList.remove('hidden');
 const memberAddRoleBody = {
   userid: userSelfData.discordId,
   roleid: '',
@@ -46,9 +46,9 @@ groupsData.forEach((item) => {
 tabs.forEach((tab, index) => {
   tab.addEventListener('click', (e) => {
     sections.forEach((section) => {
-      section.classList.add('hidden-tab');
+      section.classList.add('hidden');
     });
-    sections[index].classList.remove('hidden-tab');
+    sections[index].classList.remove('hidden');
   });
 });
 
@@ -75,11 +75,11 @@ groupRoles.addEventListener('click', function (event) {
 const buttonAddRole = document.querySelector('.btn-add-role');
 buttonAddRole.addEventListener('click', async function () {
   if (memberAddRoleBody.userid && memberAddRoleBody.roleid !== '') {
-    loader.classList.remove('hidden-tab');
+    loader.classList.remove('hidden');
     await addGroupRoleToMember(memberAddRoleBody)
       .then((res) => alert(res.message))
       .catch((err) => alert(err.message))
-      .finally(() => loader.classList.add('hidden-tab'));
+      .finally(() => loader.classList.add('hidden'));
   }
 });
 
@@ -100,7 +100,7 @@ createGroupButton.addEventListener('click', async () => {
     alert("Roles cannot contain 'group'.");
     return;
   }
-  loader.classList.remove('hidden-tab');
+  loader.classList.remove('hidden');
 
   const groupRoleBody = { rolename: inputValue };
   await createDiscordGroupRole(groupRoleBody)
@@ -108,7 +108,7 @@ createGroupButton.addEventListener('click', async () => {
     .catch((err) => alert(err.message))
     .finally(() => {
       inputField.value = '';
-      loader.classList.add('hidden-tab');
+      loader.classList.add('hidden');
       location.reload();
     });
 });

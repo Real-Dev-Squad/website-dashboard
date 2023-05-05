@@ -1,4 +1,4 @@
-const BASE_URL = API_BASE_URL; // REPLACE WITH YOUR LOCALHOST URL FOR TESTING LOCAL BACKEND
+const BASE_URL = 'http://localhost:3000'; // REPLACE WITH YOUR LOCALHOST URL FOR TESTING LOCAL BACKEND
 async function getMembers() {
   const res = await fetch(`${BASE_URL}/members/`, {
     method: 'GET',

@@ -12,11 +12,11 @@
     <script type="module" src="/discord-groups/script.js" defer></script>
   </head>
   <body>
-    <h3 class="not-verified-tag hidden-tab">
+    <h3 class="not-verified-tag hidden">
       Cannot use RDS Discord features as you are not verified
     </h3>
     <div class="container">
-      <div class="loader hidden-tab"></div>
+      <div class="loader hidden"></div>
       <nav class="groups-tab">
         <div class="manage-groups-tab active-tab">Manage Groups</div>
         <div class="create-groups-tab">Create Groups</div>
@@ -32,7 +32,7 @@
         </main>
       </div>
 
-      <div class="create-group hidden-tab">
+      <div class="create-group hidden">
         <div class="group-fields">
           <label for="new-group" class="label-for-new-group"
             >Create Group Role (Role name should not contain 'group')</label
@@ -47,7 +47,9 @@
             />
           </div>
           <div>
-            <button class="btn btn-create-group">Create</button>
+            <button id="create-button" class="btn btn-create-group">
+              Create
+            </button>
           </div>
         </div>
       </div>
