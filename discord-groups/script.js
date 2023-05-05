@@ -10,6 +10,7 @@ const groupTabs = document.querySelector('.groups-tab');
 const tabs = document.querySelectorAll('.groups-tab div');
 const sections = document.querySelectorAll('.manage-groups, .create-group');
 const loader = document.querySelector('.loader');
+const userIsNotVerifiedText = document.querySelector('.not-verified-tag');
 
 const membersIdNameObject = {};
 const membersData = await getMembers();
@@ -18,6 +19,8 @@ membersData.forEach((member) => {
 });
 
 const userSelfData = await getUserSelf();
+const userIsVerified = !!userSelfData.discordId;
+!userIsVerified && userIsNotVerifiedText.classList.remove('hidden-tab');
 const memberAddRoleBody = {
   userid: userSelfData.discordId,
   roleid: '',
@@ -65,6 +68,7 @@ groupRoles.addEventListener('click', function (event) {
   if (groupListItem) {
     groupListItem.classList.add('active-group');
     memberAddRoleBody.roleid = groupListItem.id;
+    userIsVerified && (buttonAddRole.disabled = false);
   }
 });
 
@@ -85,6 +89,8 @@ buttonAddRole.addEventListener('click', async function () {
  */
 const createGroupButton = document.querySelector('.btn-create-group');
 const inputField = document.querySelector('.new-group-input');
+
+!userIsVerified && (createGroupButton.disabled = true);
 
 createGroupButton.addEventListener('click', async () => {
   const inputValue = inputField.value.trim();

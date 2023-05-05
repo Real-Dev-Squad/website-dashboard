@@ -12,6 +12,9 @@
     <script type="module" src="/discord-groups/script.js" defer></script>
   </head>
   <body>
+    <h3 class="not-verified-tag hidden-tab">
+      Cannot use RDS Discord features as you are not verified
+    </h3>
     <div class="container">
       <div class="loader hidden-tab"></div>
       <nav class="groups-tab">
@@ -23,7 +26,9 @@
           <ul class="groups-list"></ul>
         </aside>
         <main>
-          <button class="btn btn-add-role">Add me to this group</button>
+          <button class="btn btn-add-role" disabled>
+            Add me to this group
+          </button>
         </main>
       </div>
 
