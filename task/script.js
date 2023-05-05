@@ -143,6 +143,7 @@ taskForm.onsubmit = async (e) => {
     status,
     category,
     level,
+    dependsOn,
     assignee,
     participants,
     priority,
@@ -167,6 +168,7 @@ taskForm.onsubmit = async (e) => {
     featureUrl,
     type,
     links: Array.isArray(links) ? links : [links],
+    dependsOn: Array.isArray(dependsOn) ? dependsOn : [dependsOn],
     endsOn,
     status,
     priority,
@@ -220,6 +222,21 @@ taskForm.onsubmit = async (e) => {
   } else {
     delete dataToBeSent.links;
   }
+
+  dataToBeSent.dependsOn = dataToBeSent.dependsOn.filter(
+    (dependOn) => dependOn,
+  );
+  console.log(dependsOn);
+  if (dataToBeSent.dependsOn.length !== 0) {
+    dataToBeSent.dependsOn = dataToBeSent.dependsOn[0].split(',');
+    dataToBeSent.dependsOn = dataToBeSent.dependsOn.filter(
+      (dependOn) => dependOn,
+    );
+    console.log('230', dependsOn);
+  } else {
+    delete dataToBeSent.dependsOn;
+  }
+  console.log(dataToBeSent);
 
   try {
     const response = await fetch(`${API_BASE_URL}/tasks`, {
