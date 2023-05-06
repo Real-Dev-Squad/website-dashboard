@@ -28,7 +28,7 @@ const memberAddRoleBody = {
 
 const groupsData = await getDiscordGroups();
 const groupRoles = document.querySelector('.groups-list');
-groupsData.forEach((item) => {
+groupsData?.forEach((item) => {
   const group = document.createElement('li');
   const groupname = document.createElement('p');
   groupname.classList.add('group-name');
@@ -43,7 +43,7 @@ groupsData.forEach((item) => {
   groupRoles.appendChild(group);
 });
 
-tabs.forEach((tab, index) => {
+tabs?.forEach((tab, index) => {
   tab.addEventListener('click', (e) => {
     sections.forEach((section) => {
       section.classList.add('hidden');

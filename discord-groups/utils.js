@@ -1,6 +1,6 @@
 const BASE_URL = 'http://localhost:3000'; // REPLACE WITH YOUR LOCALHOST URL FOR TESTING LOCAL BACKEND
 async function getMembers() {
-  const res = await fetch(`${BASE_URL}/members/`, {
+  const res = await fetch(`${BASE_URL}/users/`, {
     method: 'GET',
     credentials: 'include',
     headers: {
@@ -8,8 +8,8 @@ async function getMembers() {
     },
   });
 
-  const { members } = await res.json();
-  return members;
+  const { users } = await res.json();
+  return users;
 }
 async function getUserSelf() {
   const res = await fetch(`${BASE_URL}/users/self`, {
