@@ -113,7 +113,7 @@ buttonAddRole.addEventListener('click', async function () {
 const createGroupButton = document.querySelector('.btn-create-group');
 const inputField = document.querySelector('.new-group-input');
 
-!userIsVerified && (createGroupButton?.disabled = true);
+!userIsVerified && (createGroupButton.disabled = true);
 
 /**
  * CREATING A NEW GROUP ROLE
