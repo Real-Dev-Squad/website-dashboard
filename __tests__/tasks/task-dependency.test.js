@@ -5,7 +5,12 @@ describe('Input box', () => {
   let page;
 
   beforeAll(async () => {
-    browser = await puppeteer.launch();
+    browser = await puppeteer.launch({
+      headless: true,
+      ignoreHTTPSErrors: true,
+      args: ['--incognito', '--disable-web-security'],
+      devtools: false,
+    });
     page = await browser.newPage();
     await page.goto('http://localhost:5500/task');
   });
