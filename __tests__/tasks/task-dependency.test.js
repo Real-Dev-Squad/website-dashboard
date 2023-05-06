@@ -14,6 +14,21 @@ describe('Input box', () => {
     await browser.close();
   });
 
+  it('DependsOn input box should exist', async () => {
+    const inputBox = await page.evaluate(() =>
+      document.querySelector('.inputBox'),
+    );
+
+    expect(inputBox).toBeTruthy();
+  });
+
+  it('Links display span should exist', async () => {
+    const linksDisplay = await page.evaluate(() =>
+      document.querySelector('#linksDisplay'),
+    );
+    expect(linksDisplay).toBeTruthy();
+  });
+
   test('DependsOn input box should exist', async () => {
     const inputBox = await page.evaluate(() =>
       document.querySelector('.inputBox'),
