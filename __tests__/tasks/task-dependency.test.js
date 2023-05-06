@@ -12,7 +12,7 @@ describe('Input box', () => {
       devtools: false,
     });
     page = await browser.newPage();
-    await page.goto('http://localhost:5500/task');
+    await page.goto('http://localhost:8000/task');
   });
 
   afterAll(async () => {
