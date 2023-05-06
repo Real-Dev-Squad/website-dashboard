@@ -14,18 +14,27 @@ const userIsNotVerifiedText = document.querySelector('.not-verified-tag');
 
 const membersIdNameObject = {};
 const membersData = await getMembers();
+
+// CREATED A MAP OF {id:username}
 membersData.forEach((member) => {
   if (member.username) membersIdNameObject[member.id] = member.username;
 });
 
+/**
+ * GET SELF DATA
+ */
 const userSelfData = await getUserSelf();
 const userIsVerified = !!userSelfData.discordId;
 !userIsVerified && userIsNotVerifiedText.classList.remove('hidden');
 const memberAddRoleBody = {
-  userid: userSelfData.discordId,
+  userid: userSelfData?.discordId,
   roleid: '',
 };
 
+/**
+ *
+ * FOR RENDERING GROUP ROLES IN 'MANAGE ROLES' TAB
+ */
 const groupsData = await getDiscordGroups();
 const groupRoles = document.querySelector('.groups-list');
 groupsData?.forEach((item) => {
@@ -43,6 +52,10 @@ groupsData?.forEach((item) => {
   groupRoles.appendChild(group);
 });
 
+/**
+ * FOR RENDERING TABS
+ * I.E. MANAGE ROLES, CREATE GROUP
+ */
 tabs?.forEach((tab, index) => {
   tab.addEventListener('click', (e) => {
     sections.forEach((section) => {
@@ -52,19 +65,25 @@ tabs?.forEach((tab, index) => {
   });
 });
 
+/**
+ * FOR CHANGING TABS
+ */
 groupTabs.addEventListener('click', (e) => {
   tabs.forEach((tab) => {
-    tab.classList.remove('active-tab');
+    tab.classList?.remove('active-tab');
   });
-  if (e.target.nodeName !== 'NAV') e.target.classList.add('active-tab');
+  if (e.target.nodeName !== 'NAV') e.target?.classList?.add('active-tab');
 });
 
+/**
+ * FOR SELECTING A GROUP
+ */
 const groupRolesList = document.querySelectorAll('.group-role');
-groupRoles.addEventListener('click', function (event) {
+groupRoles?.addEventListener('click', function (event) {
   groupRolesList.forEach((groupItem) => {
-    groupItem.classList.remove('active-group');
+    groupItem.classList?.remove('active-group');
   });
-  const groupListItem = event.target.closest('li');
+  const groupListItem = event.target?.closest('li');
   if (groupListItem) {
     groupListItem.classList.add('active-group');
     memberAddRoleBody.roleid = groupListItem.id;
@@ -72,10 +91,14 @@ groupRoles.addEventListener('click', function (event) {
   }
 });
 
+/**
+ * TO ASSIGN YOURSELF A ROLE
+ */
 const buttonAddRole = document.querySelector('.btn-add-role');
 buttonAddRole.addEventListener('click', async function () {
-  if (memberAddRoleBody.userid && memberAddRoleBody.roleid !== '') {
+  if (memberAddRoleBody?.userid && memberAddRoleBody?.roleid !== '') {
     loader.classList.remove('hidden');
+
     await addGroupRoleToMember(memberAddRoleBody)
       .then((res) => alert(res.message))
       .catch((err) => alert(err.message))
@@ -90,17 +113,20 @@ buttonAddRole.addEventListener('click', async function () {
 const createGroupButton = document.querySelector('.btn-create-group');
 const inputField = document.querySelector('.new-group-input');
 
-!userIsVerified && (createGroupButton.disabled = true);
+!userIsVerified && (createGroupButton?.disabled = true);
 
+/**
+ * CREATING A NEW GROUP ROLE
+ */
 createGroupButton.addEventListener('click', async () => {
-  const inputValue = inputField.value.trim();
+  const inputValue = inputField?.value.trim();
   if (inputValue === '') return;
 
   if (inputValue.includes('group')) {
     alert("Roles cannot contain 'group'.");
     return;
   }
-  loader.classList.remove('hidden');
+  loader?.classList?.remove('hidden');
 
   const groupRoleBody = { rolename: inputValue };
   await createDiscordGroupRole(groupRoleBody)
