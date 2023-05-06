@@ -3,7 +3,7 @@ const { allUsersData } = require('../../mock-data/users');
 const { API_BASE_URL } = require('../../constants');
 const { discordGroups } = require('../../mock-data/discord-groups');
 
-const BASE_URL = API_BASE_URL;
+const BASE_URL = 'https://api.realdevsquad.com';
 
 describe('Discord Groups Page', () => {
   let browser;
@@ -90,6 +90,8 @@ describe('Discord Groups Page', () => {
         } else {
           interceptedRequest.continue();
         }
+      } else {
+        interceptedRequest.continue();
       }
     });
     await page.goto('http://localhost:8000/discord-groups');
