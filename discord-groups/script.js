@@ -1,4 +1,5 @@
 'use strict';
+import { CANNOT_CONTAIN_GROUP, NO_SPACES_ALLOWED } from './constants.js';
 import {
   getMembers,
   getDiscordGroups,
@@ -123,7 +124,11 @@ createGroupButton.addEventListener('click', async () => {
   if (inputValue === '') return;
 
   if (inputValue.includes('group')) {
-    alert("Roles cannot contain 'group'.");
+    alert(CANNOT_CONTAIN_GROUP);
+    return;
+  }
+  if (inputValue.split(' ').length > 1) {
+    alert(NO_SPACES_ALLOWED);
     return;
   }
   loader?.classList?.remove('hidden');

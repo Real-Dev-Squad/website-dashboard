@@ -152,38 +152,4 @@ describe('Discord Groups Page', () => {
 
     expect(msg).toContain("Roles cannot contain 'group'.");
   });
-
-  // test('Should display a success message and reload the page on successful group creation', async () => {
-  //   page.waitForNavigation();
-  //   await page.type('.new-group-input', 'myrole');
-  //   await page.click('.btn-create-group');
-  //   let alertText;
-  //   page.on('dialog', async (dialog) => {
-  //     alertText = dialog.message();
-  //     await dialog.accept();
-  //   });
-  //   expect(alertText).toContain('Group created successfully');
-  //   await page.waitForNavigation();
-  //   const groupListLength = await page.$$eval(
-  //     '.group-role',
-  //     (list) => list.length,
-  //   );
-  //   await expect(groupListLength).toBe(2);
-  // });
-
-  // test('Should display a success message and enable the add role button on successful role addition', async () => {
-  //   await page.click('.group-role');
-  //   const isButtonEnabled = await page.$eval(
-  //     '.btn-add-role',
-  //     (button) => !button.disabled,
-  //   );
-  //   expect(isButtonEnabled).toBe(true);
-  //   await page.click('.btn-add-role');
-  //   let alertText;
-  //   page.on('dialog', async (dialog) => {
-  //     alertText = dialog.message();
-  //     await dialog.accept();
-  //   });
-  //   await expect(alertText).toContain('Role added successfully');
-  // });
 });
