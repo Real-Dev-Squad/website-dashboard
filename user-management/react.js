@@ -1,10 +1,4 @@
-const react = {
-  createElement: function (tag, props, children) {
-    const el = { tag, props, children };
-    return el;
-  },
-};
-export const render = (element, container) => {
+const render = (element, container) => {
   if (!element) return container;
   if (typeof element == 'string' || typeof element == 'number') {
     container.appendChild(document.createTextNode(String(element)));
@@ -26,4 +20,10 @@ export const render = (element, container) => {
   container.appendChild(component);
 };
 
-export default react;
+const react = {
+  createElement: function (tag, props, children) {
+    const el = { tag, props, children };
+    return el;
+  },
+  render,
+};

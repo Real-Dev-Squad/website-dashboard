@@ -1,6 +1,6 @@
-import react, { render } from './react.js';
+// <script src="/constants.js"></script>
 import { App } from './App.js';
 
 console.log(App);
 window['root'].lastElementChild?.remove();
-render(App, window['root']);
+react.render(App, window['root']);
