@@ -18,7 +18,9 @@ const membersData = await getMembers();
 
 // CREATED A MAP OF {id:username}
 membersData.forEach((member) => {
-  if (member.username) membersIdNameObject[member.id] = member.username;
+  if (member.username) {
+    membersIdNameObject[member.id] = member.username;
+  }
 });
 
 /**
