@@ -25,7 +25,7 @@ membersData.forEach((member) => {
  * GET SELF DATA
  */
 const userSelfData = await getUserSelf();
-const userIsVerified = !!userSelfData.discordId;
+const IsUserVerified = !!userSelfData.discordId;
 !userIsVerified && userIsNotVerifiedText.classList.remove('hidden');
 const memberAddRoleBody = {
   userid: userSelfData?.discordId,
