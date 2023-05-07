@@ -100,7 +100,7 @@ buttonAddRole.addEventListener('click', async function () {
   if (memberAddRoleBody?.userid && memberAddRoleBody?.roleid !== '') {
     loader.classList.remove('hidden');
 
-    await addGroupRoleToMember(memberAddRoleBody)
+    addGroupRoleToMember(memberAddRoleBody)
       .then((res) => alert(res.message))
       .catch((err) => alert(err.message))
       .finally(() => loader.classList.add('hidden'));
@@ -117,24 +117,43 @@ const inputField = document.querySelector('.new-group-input');
 !IsUserVerified && (createGroupButton.disabled = true);
 
 /**
+ *
+ * Check if group role is valid
+ */
+
+const isValidGroupRole = (rolename) => {
+  const error = {
+    valid: true,
+    message: '',
+  };
+  if (rolename.includes('group')) {
+    error.valid = false;
+    error.message = CANNOT_CONTAIN_GROUP;
+  }
+  if (rolename.split(' ').length > 1) {
+    error.valid = false;
+    error.message = NO_SPACES_ALLOWED;
+  }
+  return error;
+};
+
+/**
  * CREATING A NEW GROUP ROLE
  */
 createGroupButton.addEventListener('click', async () => {
   const inputValue = inputField?.value.trim();
   if (inputValue === '') return;
 
-  if (inputValue.includes('group')) {
-    alert(CANNOT_CONTAIN_GROUP);
+  const isValidRole = isValidGroupRole(inputValue);
+  if (!isValidRole.valid) {
+    alert(isValidRole.message);
     return;
   }
-  if (inputValue.split(' ').length > 1) {
-    alert(NO_SPACES_ALLOWED);
-    return;
-  }
+
   loader?.classList?.remove('hidden');
 
   const groupRoleBody = { rolename: inputValue };
-  await createDiscordGroupRole(groupRoleBody)
+  createDiscordGroupRole(groupRoleBody)
     .then((res) => alert(res.message))
     .catch((err) => alert(err.message))
     .finally(() => {
