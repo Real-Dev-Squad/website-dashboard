@@ -26,7 +26,7 @@ membersData.forEach((member) => {
  */
 const userSelfData = await getUserSelf();
 const IsUserVerified = !!userSelfData.discordId;
-!userIsVerified && userIsNotVerifiedText.classList.remove('hidden');
+!IsUserVerified && userIsNotVerifiedText.classList.remove('hidden');
 const memberAddRoleBody = {
   userid: userSelfData?.discordId,
   roleid: '',
@@ -88,7 +88,7 @@ groupRoles?.addEventListener('click', function (event) {
   if (groupListItem) {
     groupListItem.classList.add('active-group');
     memberAddRoleBody.roleid = groupListItem.id;
-    userIsVerified && (buttonAddRole.disabled = false);
+    IsUserVerified && (buttonAddRole.disabled = false);
   }
 });
 
@@ -114,7 +114,7 @@ buttonAddRole.addEventListener('click', async function () {
 const createGroupButton = document.querySelector('.btn-create-group');
 const inputField = document.querySelector('.new-group-input');
 
-!userIsVerified && (createGroupButton.disabled = true);
+!IsUserVerified && (createGroupButton.disabled = true);
 
 /**
  * CREATING A NEW GROUP ROLE
