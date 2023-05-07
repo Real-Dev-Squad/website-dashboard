@@ -36,7 +36,9 @@ const handleUserSelected = (e) => {
     e.target.parentElement?.getAttribute('data_key');
 
   if (selectedUserId) {
-    showUser = users?.findIndex((user) => user.id === selectedUserId);
+    showUser = usersData[activeTab]?.findIndex(
+      (user) => user.id === selectedUserId,
+    );
     rerender(App(), window['root']);
   }
 };

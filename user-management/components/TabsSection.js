@@ -1,7 +1,6 @@
 const { createElement } = react;
 
 export const TabsSection = ({ tabs, activeTab, handleTabNavigation }) => {
-  console.log(activeTab);
   return createElement(
     'div',
     { class: 'tabs_section', onclick: handleTabNavigation },
