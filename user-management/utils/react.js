@@ -1,4 +1,4 @@
-const render = (element, container) => {
+const render = function (element, container) {
   if (!element) return container;
   if (typeof element == 'string' || typeof element == 'number') {
     container.appendChild(document.createTextNode(String(element)));

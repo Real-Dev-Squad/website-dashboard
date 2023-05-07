@@ -61,11 +61,6 @@ describe('App Component', () => {
 
     expect(usersSection).toBeDefined();
 
-    // expect(userDetailsSection).toBeNull();
-
-    // await firstUser.click();
-
-    // Check if the UserDetailsSection is now rendered
     expect(userDetailsSection).toBeDefined();
   });
 });

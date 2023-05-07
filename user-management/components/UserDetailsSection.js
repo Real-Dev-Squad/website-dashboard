@@ -27,11 +27,9 @@ export const UserDetailsSection = ({
         'a',
         {
           target: '_bllank',
-          href: `https://dashboard.realdevsquad.com/users/details/?username=${username}`,
+          href: `${USER_MANAGEMENT_URL}${username}`,
         },
-        [
-          `https://dashboard.realdevsquad.com/users/details/?username=${username}`,
-        ],
+        [`${USER_MANAGEMENT_URL}${username}`],
       ),
     ]),
   ]);
