@@ -226,17 +226,14 @@ taskForm.onsubmit = async (e) => {
   dataToBeSent.dependsOn = dataToBeSent.dependsOn.filter(
     (dependOn) => dependOn,
   );
-  console.log(dependsOn);
   if (dataToBeSent.dependsOn.length !== 0) {
     dataToBeSent.dependsOn = dataToBeSent.dependsOn[0].split(',');
     dataToBeSent.dependsOn = dataToBeSent.dependsOn.filter(
       (dependOn) => dependOn,
     );
-    console.log('230', dependsOn);
   } else {
     delete dataToBeSent.dependsOn;
   }
-  console.log(dataToBeSent);
 
   try {
     const response = await fetch(`${API_BASE_URL}/tasks`, {
