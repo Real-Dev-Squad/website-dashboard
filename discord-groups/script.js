@@ -14,7 +14,11 @@ const loader = document.querySelector('.loader');
 const userIsNotVerifiedText = document.querySelector('.not-verified-tag');
 
 const membersIdNameObject = {};
-const membersData = await getMembers();
+
+const [membersData, userSelfData] = await Promise.all([
+  getMembers(),
+  getUserSelf(),
+]);
 
 // CREATED A MAP OF {id:username}
 membersData.forEach((member) => {
@@ -26,7 +30,6 @@ membersData.forEach((member) => {
 /**
  * GET SELF DATA
  */
-const userSelfData = await getUserSelf();
 const IsUserVerified = !!userSelfData.discordId;
 if (!IsUserVerified) {
   userIsNotVerifiedText.classList.remove('hidden');
@@ -118,7 +121,7 @@ buttonAddRole.addEventListener('click', async function () {
  * Create group roles section
  */
 const createGroupButton = document.querySelector('.btn-create-group');
-const inputField = document.querySelector('.new-group-input');
+const inputNewGroupRole = document.querySelector('.new-group-input');
 
 if (!IsUserVerified) {
   createGroupButton.disabled = true;
@@ -149,7 +152,7 @@ const isValidGroupRole = (rolename) => {
  * CREATING A NEW GROUP ROLE
  */
 createGroupButton.addEventListener('click', async () => {
-  const inputValue = inputField?.value.trim();
+  const inputValue = inputNewGroupRole?.value.trim();
   if (inputValue === '') return;
 
   const isValidRole = isValidGroupRole(inputValue);
@@ -165,7 +168,7 @@ createGroupButton.addEventListener('click', async () => {
     .then((res) => alert(res.message))
     .catch((err) => alert(err.message))
     .finally(() => {
-      inputField.value = '';
+      inputNewGroupRole.value = '';
       loader.classList.add('hidden');
       location.reload();
     });
