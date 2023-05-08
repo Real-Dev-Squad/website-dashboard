@@ -3,6 +3,7 @@ import { UsersSection } from './components/UsersSection.js';
 import { UserDetailsSection } from './components/UserDetailsSection.js';
 import { getUsers } from './utils/util.js';
 import { usersData } from './data.js';
+import { NoUserFound } from './components/NoUserFound.js';
 
 const { createElement, render } = react;
 
@@ -46,13 +47,19 @@ const handleUserSelected = (e) => {
 export const App = () => {
   const users = usersData[activeTab] ?? [];
 
+  if (users.length)
+    return createElement('main', {}, [
+      TabsSection({ tabs, activeTab, handleTabNavigation }),
+      UsersSection({
+        users,
+        showUser,
+        handleUserSelected,
+      }),
+      UserDetailsSection({ user: users[showUser] ?? {} }),
+    ]);
+
   return createElement('main', {}, [
     TabsSection({ tabs, activeTab, handleTabNavigation }),
-    UsersSection({
-      users,
-      showUser,
-      handleUserSelected,
-    }),
-    UserDetailsSection({ user: users[showUser] ?? {} }),
+    NoUserFound(),
   ]);
 };

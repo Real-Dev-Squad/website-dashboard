@@ -68,3 +68,9 @@ main {
 .user_details_field {
   padding: 0.5rem;
 }
+.no_user_found {
+  width: 100vw;
+  text-align: center;
+  font-size: larger;
+  padding: 2rem;
+}
