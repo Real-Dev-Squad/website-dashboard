@@ -1,3 +1,4 @@
+const API_BASE_URL = 'https://api.realdevsquad.com';
 const puppeteer = require('puppeteer');
 const { tags } = require('../../mock-data/tags');
 const { levels } = require('../../mock-data/levels');
@@ -20,8 +21,8 @@ describe('Input box', () => {
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-const API_BASE_URL = "https://api.realdevsquad.com"
-      if (url === '${API_BASE_URL}/levels') {
+
+      if (url === `${API_BASE_URL}/levels`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -32,7 +33,7 @@ const API_BASE_URL = "https://api.realdevsquad.com"
           },
           body: JSON.stringify(levels),
         });
-      } else if (url === 'https://api.realdevsquad.com/members') {
+      } else if (url === `${API_BASE_URL}/members`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -43,7 +44,7 @@ const API_BASE_URL = "https://api.realdevsquad.com"
           },
           body: JSON.stringify(users),
         });
-      } else if (url === 'https://api.realdevsquad.com/tags') {
+      } else if (url === `${API_BASE_URL}/tags`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
