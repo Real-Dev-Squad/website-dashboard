@@ -20,7 +20,8 @@ describe('Input box', () => {
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-      if (url === 'https://api.realdevsquad.com/levels') {
+const API_BASE_URL = "https://api.realdevsquad.com"
+      if (url === '${API_BASE_URL}/levels') {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
