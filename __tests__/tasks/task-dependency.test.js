@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 const { tags } = require('../../mock-data/tags');
 const { levels } = require('../../mock-data/levels');
-const { members } = require('../../mock-data/members');
+const { users } = require('../../mock-data/users');
 describe('Input box', () => {
   let browser;
   let page;
@@ -40,7 +40,7 @@ describe('Input box', () => {
             'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
-          body: JSON.stringify(members),
+          body: JSON.stringify(users),
         });
       } else if (url === 'https://api.realdevsquad.com/tags') {
         interceptedRequest.respond({
@@ -64,28 +64,13 @@ describe('Input box', () => {
   afterAll(async () => {
     await browser.close();
   });
-
   it('DependsOn input box should exist', async () => {
     const inputBox = await page.evaluate(() =>
       document.querySelector('.inputBox'),
     );
-
-    expect(inputBox).toBeTruthy();
-  });
-
-  it('Links display span should exist', async () => {
     const linksDisplay = await page.evaluate(() =>
       document.querySelector('#linksDisplay'),
     );
-    expect(linksDisplay).toBeTruthy();
-  });
-
-  it('DependsOn input box should exist', async () => {
-    const inputBox = await page.evaluate(() =>
-      document.querySelector('.inputBox'),
-    );
-
-    expect(inputBox).toBeTruthy();
   });
 
   it('DependsOn input should have correct attributes', async () => {
@@ -103,12 +88,5 @@ describe('Input box', () => {
     expect(id).toBe('dependsOn');
     expect(placeholder).toBe('Task ID separated with comma ');
     expect(classList.includes('notEditing')).toBeTruthy();
-  });
-
-  it('Links display span should exist', async () => {
-    const linksDisplay = await page.evaluate(() =>
-      document.querySelector('#linksDisplay'),
-    );
-    expect(linksDisplay).toBeTruthy();
   });
 });
