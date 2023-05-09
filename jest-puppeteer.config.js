@@ -3,6 +3,7 @@ const baseOptions = {
   server: {
     command: 'npm start',
     port: 8000,
+    launchTimeout: 10000,
   },
 };
 const ciPipelineOptions = {
