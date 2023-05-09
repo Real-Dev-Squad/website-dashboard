@@ -1,8 +1,11 @@
 const puppeteer = require('puppeteer');
-
+const { tags } = require('../../mock-data/tags');
+const { levels } = require('../../mock-data/levels');
+const { members } = require('../../mock-data/members');
 describe('Input box', () => {
   let browser;
   let page;
+  jest.setTimeout(60000);
 
   beforeAll(async () => {
     browser = await puppeteer.launch({
@@ -12,7 +15,50 @@ describe('Input box', () => {
       devtools: false,
     });
     page = await browser.newPage();
+
+    await page.setRequestInterception(true);
+
+    page.on('request', (interceptedRequest) => {
+      const url = interceptedRequest.url();
+      if (url === 'https://api.realdevsquad.com/levels') {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(levels),
+        });
+      } else if (url === 'https://api.realdevsquad.com/members') {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(members),
+        });
+      } else if (url === 'https://api.realdevsquad.com/tags') {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(tags),
+        });
+      } else {
+        interceptedRequest.continue();
+      }
+    });
     await page.goto('http://localhost:8000/task');
+    await page.waitForNetworkIdle();
   });
 
   afterAll(async () => {
@@ -34,7 +80,7 @@ describe('Input box', () => {
     expect(linksDisplay).toBeTruthy();
   });
 
-  test('DependsOn input box should exist', async () => {
+  it('DependsOn input box should exist', async () => {
     const inputBox = await page.evaluate(() =>
       document.querySelector('.inputBox'),
     );
@@ -42,7 +88,7 @@ describe('Input box', () => {
     expect(inputBox).toBeTruthy();
   });
 
-  test('DependsOn input should have correct attributes', async () => {
+  it('DependsOn input should have correct attributes', async () => {
     const input = await page.$('#dependsOn');
     const type = await input.evaluate((el) => el.getAttribute('type'));
     const name = await input.evaluate((el) => el.getAttribute('name'));
