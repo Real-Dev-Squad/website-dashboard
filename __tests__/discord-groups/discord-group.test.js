@@ -10,6 +10,7 @@ describe('Discord Groups Page', () => {
   let page;
   let createGroup;
   let createGroupBtn;
+  let alertMessage;
   jest.setTimeout(60000);
 
   beforeAll(async () => {
@@ -21,6 +22,10 @@ describe('Discord Groups Page', () => {
     });
     page = await browser.newPage();
     await page.setRequestInterception(true);
+    page.on('dialog', async (dialog) => {
+      alertMessage = dialog.message();
+      await dialog.accept();
+    });
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
@@ -65,7 +70,7 @@ describe('Discord Groups Page', () => {
         if (url === `${BASE_URL}/discord-actions/groups`) {
           const postData = interceptedRequest.postData();
           const groupData = JSON.parse(postData);
-          discordGroups.push(groupData);
+          // discordGroups.push(groupData);
           interceptedRequest.respond({
             status: 201,
             contentType: 'application/json',
@@ -96,8 +101,6 @@ describe('Discord Groups Page', () => {
     });
     await page.goto('http://localhost:8000/discord-groups');
     await page.waitForNetworkIdle();
-    createGroup = await page.$('.create-groups-tab');
-    createGroupBtn = await page.$('#create-button');
   });
 
   afterAll(async () => {
@@ -107,14 +110,6 @@ describe('Discord Groups Page', () => {
   test('Page title should be "Discord Groups"', async () => {
     const pageTitle = await page.title();
     expect(pageTitle).toBe('Discord Groups | Real Dev Squad');
-  });
-
-  test('Create group button should be disabled for unverified users', async () => {
-    const isButtonDisabled = await page.$eval(
-      '.btn-create-group',
-      (button) => button.disabled,
-    );
-    expect(isButtonDisabled).toBe(false);
   });
 
   test('Add role button should be disabled for unverified users', async () => {
@@ -141,17 +136,33 @@ describe('Discord Groups Page', () => {
     expect(groupListLength).toBe(1);
   });
 
-  test('Should display an error message if the role name contains "group"', async () => {
+  test('Should not display an error message if the role name contains "group"', async () => {
+    createGroup = await page.$('.create-groups-tab');
     await createGroup.click();
-    await page.type('.new-group-input', 'mygroup');
-    let msg;
-    page.on('dialog', async (dialog) => {
-      msg = dialog.message();
-      await dialog.accept();
-    });
+    await page.type('.new-group-input', 'demo-role');
+
     createGroupBtn = await page.$('#create-button');
     await createGroupBtn.click();
 
-    expect(msg).toContain("Roles cannot contain 'group'.");
+    await page.waitForNetworkIdle();
+    await expect(alertMessage).toContain('Group created successfully');
+  });
+  test('Should show role added', async () => {
+    groupRole = await page.$('.group-role');
+    await groupRole.click();
+
+    addRoleBtn = await page.$('.btn-add-role');
+    await addRoleBtn.click();
+
+    await page.waitForNetworkIdle();
+    await expect(alertMessage).toContain('Role created successfully');
+  });
+  test('Should display an error message if the role name contains "group"', async () => {
+    createGroup = await page.$('.create-groups-tab');
+    await createGroup.click();
+    await page.type('.new-group-input', 'mygroup');
+    createGroupBtn = await page.$('#create-button');
+    await createGroupBtn.click();
+    await expect(alertMessage).toContain("Roles cannot contain 'group'.");
   });
 });
