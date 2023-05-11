@@ -98,6 +98,7 @@ const filteredUsersData = {
       roles: {
         archived: false,
         member: true,
+        in_discord: true,
       },
     },
   ],
