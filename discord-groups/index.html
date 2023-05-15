@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/images/index.ico" type="image/x-icon" />
+    <title>Discord Groups | Real Dev Squad</title>
+    <link rel="stylesheet" href="/global.css" />
+    <link rel="stylesheet" href="/discord-groups/style.css" />
+    <script src="/constants.js"></script>
+    <script type="module" src="/discord-groups/script.js" defer></script>
+  </head>
+  <body>
+    <h3 class="not-verified-tag hidden">
+      Cannot use RDS Discord features as you are not verified
+    </h3>
+    <div class="container">
+      <div class="loader hidden"></div>
+      <nav class="groups-tab">
+        <div class="manage-groups-tab active-tab">Manage Groups</div>
+        <div class="create-groups-tab">Create Groups</div>
+      </nav>
+      <div class="manage-groups">
+        <aside class="groups">
+          <ul class="groups-list"></ul>
+        </aside>
+        <main>
+          <button class="btn btn-add-role" disabled>
+            Add me to this group
+          </button>
+        </main>
+      </div>
+
+      <div class="create-group hidden">
+        <div class="group-fields">
+          <label for="new-group" class="label-for-new-group"
+            >Create Group Role (Role name should not contain 'group')</label
+          >
+          <div class="group-input-container">
+            <span class="group-tag">@group-</span>
+            <input
+              type="text"
+              placeholder="demo-discord-role"
+              id="new-group"
+              class="input-field new-group-input"
+            />
+          </div>
+          <div>
+            <button id="create-button" class="btn btn-create-group">
+              Create
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

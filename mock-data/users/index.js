@@ -4,6 +4,7 @@ const allUsersData = {
     {
       id: 'V4rqL1aDecNGoa1IxiCu',
       incompleteUserDetails: false,
+      discordId: '12345',
       roles: {
         archived: false,
       },
@@ -98,6 +99,7 @@ const filteredUsersData = {
       roles: {
         archived: false,
         member: true,
+        in_discord: true,
       },
     },
   ],
