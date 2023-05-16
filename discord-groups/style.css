@@ -1,0 +1,163 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+:root {
+  --color-groups-tab-background: #65656542;
+  --color-groups-tab-box-shadow: #65656542;
+  --color-active-tabs-background: #636363a1;
+  --color-active-groups-background: #337ad7b0;
+  --color-loader-border: #f3f3f3;
+  --color-loader-border-top: #3498db;
+}
+.container {
+  margin: 1rem;
+}
+
+.btn {
+  padding: 0.5rem 2rem;
+}
+
+/*
+    FOR TAB GROUPS [MANAGE AND CREATE]
+*/
+
+.groups-tab {
+  width: 100%;
+  display: flex;
+  justify-content: start;
+  gap: 1rem;
+  flex-direction: row;
+  box-shadow: 4px 4px 5px var(--color-groups-tab-box-shadow);
+  background-color: var(--color-groups-tab-background);
+}
+.groups-tab div {
+  font-size: larger;
+  cursor: pointer;
+  padding: 1rem;
+}
+.active-tab {
+  background-color: var(--color-active-tabs-background);
+}
+
+.active-group {
+  background-color: var(--color-active-groups-background);
+}
+
+/*
+    FOR MANAGE GROUPS
+*/
+
+.manage-groups {
+  display: flex;
+}
+.manage-groups main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.groups {
+  overflow: scroll;
+}
+.groups-list {
+  padding: 1rem;
+  list-style: none;
+  overflow: scroll;
+  height: 80vh;
+}
+.groups-list li {
+  padding: 1rem;
+  border: thin solid black;
+}
+.group-name {
+  font-size: larger;
+}
+.create-by {
+  opacity: 0.8;
+}
+.groups button {
+  align-self: center;
+}
+.create-group {
+  display: block;
+}
+
+.group-fields {
+  display: flex;
+  flex-direction: column;
+  margin: 1rem;
+  padding-block: 2rem;
+  align-items: center;
+  gap: 1rem;
+}
+
+.group-fields-column {
+  display: flex;
+  flex-direction: column;
+  margin-right: 10px;
+}
+
+.group-input-container {
+  display: flex;
+  align-items: center;
+}
+
+.create-group-button-container {
+  display: flex;
+  justify-content: center;
+}
+
+.group-fields-column:last-child {
+  margin-right: 0;
+}
+
+.hidden {
+  display: none;
+}
+
+.label-for-new-group {
+  font-size: larger;
+}
+
+.input-field {
+  padding: 0.5rem;
+}
+
+/*
+*
+    LOADER CLASSES
+*
+*/
+
+.loader {
+  border: 8px solid var(--color-loader-border);
+  border-top: 8px solid var(--color-loader-border-top);
+  border-radius: 50%;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+/*
+NOT VERIFIED TEXT ABOVE
+*/
+.not-verified-tag {
+  color: red;
+  text-align: center;
+}

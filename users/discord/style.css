@@ -1,0 +1,76 @@
+:root {
+  --light-gray: #d4d4d478;
+}
+
+.header {
+  background-color: var(--blue-color);
+  text-align: center;
+  color: var(--white-color);
+}
+
+main {
+  display: grid;
+  grid-template-columns: minmax(10rem, 20rem) 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    'tab tab '
+    'aside details';
+  height: 100vh;
+}
+
+.users_section {
+  grid-area: aside;
+  overflow: scroll;
+  padding-inline: 1rem;
+}
+
+.tabs_section {
+  padding: 1rem 0;
+  margin: 1rem;
+  grid-area: tab;
+}
+
+.tab {
+  padding: 0.5rem;
+  margin-inline-end: 0.5rem;
+  cursor: pointer;
+}
+
+.active_tab {
+  border: 2px solid gray;
+}
+
+.user_card {
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-block: 0.5rem;
+  width: 100%;
+  background-color: var(--light-gray);
+  cursor: pointer;
+}
+
+.user_image {
+  border-radius: 50%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  width: 3rem;
+}
+
+.user_details_section {
+  grid-area: details;
+  padding: 1rem;
+  margin: 0 1rem;
+  background-color: var(--light-gray);
+}
+
+.user_details_field {
+  padding: 0.5rem;
+}
+.no_user_found {
+  width: 100vw;
+  text-align: center;
+  font-size: larger;
+  padding: 2rem;
+}
