@@ -5,12 +5,7 @@ import { getUsers } from './utils/util.js';
 import { usersData } from './data.js';
 import { NoUserFound } from './components/NoUserFound.js';
 
-const { createElement, render } = react;
-
-const rerender = function (element, container) {
-  container.firstChild.remove();
-  render(element, container);
-};
+const { createElement, rerender } = react;
 
 const tabs = [
   { display_name: 'In Discord', id: 'in_discord' },
@@ -19,17 +14,23 @@ const tabs = [
 ];
 
 // const users = await getUsers();
+const urlParams = new URLSearchParams(window.location.search);
 
-let activeTab = 'in_discord';
-let showUser = 0;
+let activeTab = urlParams.get('tab') ?? 'in_discord';
+const userParam = urlParams.get('user');
+let showUser = usersData[activeTab]?.findIndex((user) => user.id === userParam);
+showUser = showUser >= 0 ? showUser : 0;
 
 const handleTabNavigation = (e) => {
   const selectedTabId = e.target.getAttribute('data_key');
   if (selectedTabId) {
+    document.location.search = `tab=${selectedTabId}`;
+
     activeTab = selectedTabId;
     rerender(App(), window['root']);
   }
 };
+console.log(document.location.search);
 
 const handleUserSelected = (e) => {
   const selectedUserId =
@@ -37,6 +38,8 @@ const handleUserSelected = (e) => {
     e.target.parentElement?.getAttribute('data_key');
 
   if (selectedUserId) {
+    urlParams.set('user', selectedUserId);
+    document.location.search = urlParams;
     showUser = usersData[activeTab]?.findIndex(
       (user) => user.id === selectedUserId,
     );

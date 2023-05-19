@@ -7,15 +7,11 @@ describe('App Component', () => {
   let page;
   let config = {
     launchOptions: {
-      headless: 'new',
+      headless: false,
       ignoreHTTPSErrors: true,
       args: ['--incognito', '--disable-web-security'],
     },
   };
-  let tabsSection;
-  let usersSection;
-  let firstUser;
-  let userDetailsSection;
 
   const BASE_URL = 'http://localhost:8000';
   const API_BASE_URL = 'http://localhost:3000';
@@ -44,7 +40,7 @@ describe('App Component', () => {
       }
     });
 
-    await page.goto(`${BASE_URL}/user-management/`); // Replace with your app's URL
+    await page.goto(`${BASE_URL}/users/discord/`); // Replace with your app's URL
     await page.waitForNetworkIdle();
   });
 
@@ -53,14 +49,42 @@ describe('App Component', () => {
   });
 
   it('should render all sections', async () => {
-    tabsSection = await page.$('.tabs_section');
-    usersSection = await page.$('.users_section');
-    firstUser = await page.$('.user_card');
-    userDetailsSection = await page.$('.user_details_section');
+    let tabsSection = await page.$('.tabs_section');
+    let usersSection = await page.$('.users_section');
+    let firstUser = await page.$('.user_card');
+    let userDetailsSection = await page.$('.user_details_section');
     expect(tabsSection).toBeDefined();
+    const tabs = await tabsSection.$$('.tab');
+    expect(tabs.length).toEqual(3);
 
     expect(usersSection).toBeDefined();
 
     expect(userDetailsSection).toBeDefined();
   });
+
+  it('should update the URL query string and re-render the app', async () => {
+    // Click on the "Linked Accounts" tab
+    await page.click('[data-key="verified"]');
+
+    // Get the current URL and make sure the query string has been updated
+    const url = await page.url();
+    expect(url).toContain('?tab=verified');
+
+    // Check that the app has re-rendered with the "Linked Accounts" tab active
+    const tabIsActive = await page.evaluate(() => {
+      const activeTabId = document
+        .querySelector('.tab.active')
+        .getAttribute('data-key');
+      return activeTabId === 'verified';
+    });
+    expect(tabIsActive).toBe(true);
+  });
+
+  // describe('handleUserSelected', () => {
+  //   it('should show the selected User details', async () => {
+  //     const rerender = jest.fn();
+
+  //     expect(rerender).toHaveBeenCalled();
+  //   });
+  // });
 });
