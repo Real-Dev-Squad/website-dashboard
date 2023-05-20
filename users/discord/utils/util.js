@@ -15,7 +15,6 @@ export const getUsers = async (tab) => {
 
     const data = await response.json();
     return data.users ?? [];
-    
   } catch (err) {
     console.error(err);
   }

@@ -79,7 +79,7 @@ describe('App Component', () => {
 
   it('should update the URL query string and re-render the app', async () => {
     // Click on the "Linked Accounts" tab
-    await page.click('[data-key="verified"]');
+    await page.click('[data_key="verified"]');
 
     // Get the current URL and make sure the query string has been updated
     const url = await page.url();
@@ -89,7 +89,7 @@ describe('App Component', () => {
     const tabIsActive = await page.evaluate(() => {
       const activeTabId = document
         .querySelector('.tab.active')
-        .getAttribute('data-key');
+        .getAttribute('data_key');
       return activeTabId === 'verified';
     });
     expect(tabIsActive).toBe(true);
