@@ -57,6 +57,7 @@ describe('App Component', () => {
     usersSection = await page.$('.users_section');
     firstUser = await page.$('.user_card');
     userDetailsSection = await page.$('.user_details_section');
+
     expect(tabsSection).toBeDefined();
 
     expect(usersSection).toBeDefined();
