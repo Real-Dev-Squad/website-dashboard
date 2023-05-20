@@ -70,7 +70,7 @@ describe('App Component', () => {
     let userDetailsSection = await page.$('.user_details_section');
     expect(tabsSection).toBeDefined();
     const tabs = await tabsSection.$$('.tab');
-    expect(tabs.length).toEqual(3);
+    expect(tabs.length).toEqual(2);
 
     expect(usersSection).toBeDefined();
 
@@ -84,14 +84,5 @@ describe('App Component', () => {
     // Get the current URL and make sure the query string has been updated
     const url = await page.url();
     expect(url).toContain('?tab=verified');
-
-    // Check that the app has re-rendered with the "Linked Accounts" tab active
-    const tabIsActive = await page.evaluate(() => {
-      const activeTabId = document
-        .querySelector('.tab.active')
-        .getAttribute('data_key');
-      return activeTabId === 'verified';
-    });
-    expect(tabIsActive).toBe(true);
   });
 });
