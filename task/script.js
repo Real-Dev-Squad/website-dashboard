@@ -143,6 +143,7 @@ taskForm.onsubmit = async (e) => {
     status,
     category,
     level,
+    dependsOn,
     assignee,
     participants,
     priority,
@@ -167,6 +168,7 @@ taskForm.onsubmit = async (e) => {
     featureUrl,
     type,
     links: Array.isArray(links) ? links : [links],
+    dependsOn: Array.isArray(dependsOn) ? dependsOn : [dependsOn],
     endsOn,
     status,
     priority,
@@ -219,6 +221,18 @@ taskForm.onsubmit = async (e) => {
     dataToBeSent.links = dataToBeSent.links.filter((link) => link);
   } else {
     delete dataToBeSent.links;
+  }
+
+  dataToBeSent.dependsOn = dataToBeSent.dependsOn.filter(
+    (dependOn) => dependOn,
+  );
+  if (dataToBeSent.dependsOn.length !== 0) {
+    dataToBeSent.dependsOn = dataToBeSent.dependsOn[0].split(',');
+    dataToBeSent.dependsOn = dataToBeSent.dependsOn.filter(
+      (dependOn) => dependOn,
+    );
+  } else {
+    delete dataToBeSent.dependsOn;
   }
 
   try {
