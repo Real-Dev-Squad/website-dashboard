@@ -7,14 +7,19 @@ describe('App Component', () => {
   let page;
   let config = {
     launchOptions: {
-      headless: false,
+      headless: 'new',
       ignoreHTTPSErrors: true,
       args: ['--incognito', '--disable-web-security'],
     },
   };
 
   const BASE_URL = 'http://localhost:8000';
-  const API_BASE_URL = 'http://localhost:3000';
+
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  };
   beforeAll(async () => {
     browser = await puppeteer.launch(config.launchOptions);
     page = await browser.newPage();
@@ -23,18 +28,28 @@ describe('App Component', () => {
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-      if (url === `${API_BASE_URL}/users/inDiscord`) {
+      if (url === `${API_BASE_URL}/users/search/?role=in_discord`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-          },
-          body: JSON.stringify(filteredUsersData),
+          headers,
+          body: JSON.stringify({
+            ...filteredUsersData,
+            users: filteredUsersData.users.filter(
+              (user) => user.roles.in_discord,
+            ),
+          }),
         });
-      } else if (url === `${API_BASE_URL}/users/verified`) {
+      } else if (url === `${API_BASE_URL}/users/search/?verified=true`) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers,
+          body: JSON.stringify({
+            ...filteredUsersData,
+            users: filteredUsersData.users.filter((user) => user.discordId),
+          }),
+        });
       } else {
         interceptedRequest.continue();
       }
@@ -79,12 +94,4 @@ describe('App Component', () => {
     });
     expect(tabIsActive).toBe(true);
   });
-
-  // describe('handleUserSelected', () => {
-  //   it('should show the selected User details', async () => {
-  //     const rerender = jest.fn();
-
-  //     expect(rerender).toHaveBeenCalled();
-  //   });
-  // });
 });
