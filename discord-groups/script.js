@@ -31,7 +31,8 @@ membersData.forEach((member) => {
  * GET SELF DATA
  */
 const IsUserVerified = !!userSelfData.discordId;
-if (!IsUserVerified) {
+const IsUserArchived = userSelfData.roles.archived
+if (!IsUserVerified || IsUserArchived) {
   userIsNotVerifiedText.classList.remove('hidden');
 }
 const memberAddRoleBody = {
