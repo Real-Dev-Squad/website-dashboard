@@ -19,7 +19,6 @@
   "bugs": {
     "url": "https://github.com/Real-Dev-Squad/website-dashboard"
   },
-  "pre-commit": "check",
   "homepage": "https://github.com/Real-Dev-Squad/website-dashboard#readme",
   "devDependencies": {
     "jest": "^29.5.0",
@@ -31,6 +30,7 @@
     "puppeteer": "^19.9.0",
     "puppeteer-core": "^19.9.0"
   },
+  "pre-commit": ["check"],
   "volta": {
     "node": "18.16.0",
     "yarn": "1.22.19"
