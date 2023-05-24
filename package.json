@@ -19,8 +19,8 @@
   "bugs": {
     "url": "https://github.com/Real-Dev-Squad/website-dashboard"
   },
-  "homepage": "https://github.com/Real-Dev-Squad/website-dashboard#readme",
   "pre-commit": "check",
+  "homepage": "https://github.com/Real-Dev-Squad/website-dashboard#readme",
   "devDependencies": {
     "jest": "^29.5.0",
     "jest-puppeteer": "^8.0.6",
