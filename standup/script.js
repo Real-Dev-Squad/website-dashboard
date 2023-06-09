@@ -55,9 +55,9 @@ function getStatusArray(apiResponse) {
       );
     });
     if (filteredData.length > 0 && day === 1) {
-      statusArray.push('🟢');
+      statusArray.push('✅');
     } else {
-      statusArray.push('🔴');
+      statusArray.push('❌');
     }
   }
   return statusArray;
@@ -120,10 +120,8 @@ const renderTableBody = (usersName, imageUrl, standupStatus) => {
 };
 const searchButtonHandler = async () => {
   username = usersInput.value.split(',');
-  console.log(username);
   username.forEach(async (user) => {
     const userData = await getUserData(user);
-    console.log(userData.id + ' ' + userData.first_name);
     const standupData = await getStandupData(userData.id);
     const statusArray = getStatusArray(standupData);
     const tr = renderTableBody(user, userData?.picture?.url, statusArray);
