@@ -5,22 +5,6 @@ const table = document.createElement('table');
 table.classList.add('user-standup-table');
 const tableBody = document.createElement('tbody');
 
-async function makeApiCall(url, method, body, credentials, headers, options) {
-  try {
-    const response = await fetch(url, {
-      method,
-      body,
-      headers,
-      credentials,
-      ...options,
-    });
-    return response;
-  } catch (err) {
-    console.error(err);
-    throw err;
-  }
-}
-
 async function getUserData(username) {
   const response = await makeApiCall(`${RDS_API_USERS}/${username}`);
   const data = await response.json();
@@ -143,7 +127,7 @@ function initializeTable() {
   const tableHeader = renderTableHeader();
   table.appendChild(tableHeader);
   table.appendChild(tableBody);
-  tableContainer.innerHTML = ''; // Clear the table container first
+  tableContainer.innerHTML = '';
   tableContainer.appendChild(table);
 }
 
