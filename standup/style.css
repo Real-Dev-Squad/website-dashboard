@@ -3,6 +3,7 @@
   --white-color: white;
   --blue-color: #1d1283;
 }
+
 body {
   margin: 0;
   padding: 0;
@@ -10,24 +11,27 @@ body {
   flex-direction: column;
   height: 100vh;
 }
+
 .navbar {
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: var(--blue-color);
   color: var(--white-color);
-  min-height: 3rem;
 }
+
 .user-standup-nav {
   font-size: 1.4rem;
   font-weight: 600;
 }
+
 .standup-page {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 1rem;
 }
+
 /* Search User */
 .user-search-container {
   display: flex;
@@ -36,12 +40,14 @@ body {
   width: 90%;
   margin-bottom: 1rem;
 }
+
 .input-container {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
 }
+
 .user-search-input {
   width: 60%;
   border-radius: 0.5rem;
@@ -51,6 +57,7 @@ body {
   border: 2px solid var(--blue-color);
   transition: all 0.3s ease-in-out;
 }
+
 .user-search-button {
   border-radius: 0.5rem;
   padding: 0.6rem 1.2rem;
@@ -62,10 +69,12 @@ body {
   color: var(--blue-color);
   border: 2px solid var(--blue-color);
 }
+
 .user-search-button:hover {
   background-color: var(--blue-color);
   color: var(--white-color);
 }
+
 /* User Standup */
 .user-list-item {
   width: 12rem;
@@ -79,12 +88,14 @@ body {
   color: var(--white-color);
   transition: all 0.3s ease-in-out;
 }
+
 .user-image {
   width: 3rem;
   height: 3rem;
   border-radius: 50%;
   margin-right: 0.5rem;
 }
+
 .user-name {
   font-size: 1rem;
   font-weight: 600;
@@ -92,60 +103,75 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
 .user-standup-table {
   color: var(--blue-color);
   font-family: monospace;
   font-size: 1rem;
 }
+
 .user-standup-table {
   border-collapse: collapse;
   width: 100%;
 }
+
 .date {
   position: sticky;
   top: 0;
   padding: 1rem;
   background-color: var(--blue-color);
   color: var(--white-color);
+  border: 1px solid black;
 }
-td {
+
+.status {
   border: 1px solid black;
   text-align: center;
+  border-collapse: collapse;
 }
+
 tr:nth-child(even) {
   background-color: #e3e2e2;
 }
+
 tr:hover {
   background-color: #c0bbbb;
   cursor: pointer;
 }
+
 .table-container {
   overflow-x: auto;
   max-width: 100%;
   min-height: 70vh;
   max-height: 75vh;
 }
+
 .user {
   position: sticky;
   left: 0;
   z-index: 1;
   background-color: var(--blue-color);
 }
+
 .table-head {
   position: sticky;
   z-index: 100;
 }
+
 ::-webkit-scrollbar {
   width: 0.5rem;
   height: 0.5rem;
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--blue-color);
   border-radius: 0.5rem;
 }
+
 .info-repo {
   text-align: center;
 }
+
 .info-repo-link {
   color: black;
   text-decoration: none;

@@ -117,6 +117,7 @@ function renderTableRow({ userName, imageUrl, standupStatus }) {
   standupStatus.forEach((status) => {
     const statusCell = document.createElement('td');
     statusCell.textContent = status;
+    statusCell.className = 'status';
     row.appendChild(statusCell);
   });
 
