@@ -1,17 +1,3 @@
-import {
-  getTaskLogs,
-  getUserData,
-  getSelfDetails,
-  createElement,
-  getData,
-  addLoader,
-  addErrorMessage,
-  removeLoader,
-  getUserSkills,
-  getTagLevelOptions,
-  addSkillToUser,
-} from './utils.js';
-
 import skillElement from './skillElement.js';
 
 import { createEventCard } from './logCard.js';

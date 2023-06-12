@@ -1,4 +1,3 @@
-import { createElement } from './utils.js';
 const mainContainer = document.getElementById('main-container');
 const main = document.getElementById('main');
 const loading = document.getElementById('loading');

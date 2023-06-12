@@ -1,7 +1,6 @@
 import { TabsSection } from './components/TabsSection.js';
 import { UsersSection } from './components/UsersSection.js';
 import { UserDetailsSection } from './components/UserDetailsSection.js';
-import { getUsers } from './utils/util.js';
 import { NoUserFound } from './components/NoUserFound.js';
 
 const { createElement, rerender } = react;

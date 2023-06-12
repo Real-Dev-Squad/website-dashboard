@@ -1,11 +1,4 @@
 'use strict';
-import {
-  getMembers,
-  getDiscordGroups,
-  addGroupRoleToMember,
-  createDiscordGroupRole,
-  getUserSelf,
-} from './utils.js';
 const groupTabs = document.querySelector('.groups-tab');
 const tabs = document.querySelectorAll('.groups-tab div');
 const sections = document.querySelectorAll('.manage-groups, .create-group');

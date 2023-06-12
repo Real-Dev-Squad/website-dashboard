@@ -1,11 +1,3 @@
-import {
-  getProfileDiffs,
-  getSelfUser,
-  getUser,
-  wantedData,
-  createCard,
-} from './utils.js';
-
 const self_user = await getSelfUser();
 
 if (self_user?.roles[SUPER_USER]) {

@@ -1,5 +1,3 @@
-import { createElement } from './utils.js';
-
 function createSummarySection({
   username,
   newData,

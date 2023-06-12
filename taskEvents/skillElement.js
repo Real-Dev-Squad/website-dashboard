@@ -1,4 +1,3 @@
-import { createElement, removeSkillFromUser } from './utils.js';
 import { modalOverlay } from './script.js';
 
 const modal = document.getElementById('modal');
