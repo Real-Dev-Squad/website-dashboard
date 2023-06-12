@@ -3,9 +3,8 @@
   padding: 0;
 }
 :root {
-  --color-groups-tab-background: #1d1283; /*#65656542*/
-  /* --color-groups-tab-box-shadow: #65656542; */
-  --color-active-tabs-color: #87d870 /*#636363a1*/;
+  --color-groups-tab-background: #1d1283;
+  --color-active-tabs-color: #87d870;
   --color-active-groups-background: #337ad7b0;
   --color-buttons-background: #041187;
   --color-loader-border: #f3f3f3;
@@ -30,10 +29,9 @@
   justify-content: start;
   gap: 1rem;
   flex-direction: row;
-  /* box-shadow: 4px 4px 5px var(--color-groups-tab-box-shadow); */
   background-color: var(--color-groups-tab-background);
 }
-.groups-tab div {
+.groups-tab .tab {
   font-size: larger;
   font-weight: bolder;
   color: #fff;
@@ -41,11 +39,11 @@
   margin: 1.5rem;
   padding-bottom: 0.5rem;
 }
-.groups-tab div.active-tab {
+.groups-tab .tab.active-tab {
   color: var(--color-active-tabs-color);
   border-bottom: 4px solid var(--color-active-tabs-color);
 }
-.groups-tab div:hover {
+.groups-tab .tab:hover {
   color: var(--color-active-tabs-color);
 }
 
@@ -81,8 +79,7 @@
 .groups-list {
   padding: 1rem;
   list-style: none;
-  /* overflow: scroll; */
-  height: 75vh;
+  height: 80vh;
 }
 .groups-list li {
   padding: 1rem;
@@ -94,7 +91,7 @@
   font-size: larger;
 }
 .create-by {
-  opacity: 0.5;
+  opacity: 0.6;
 }
 .groups button {
   align-self: center;
