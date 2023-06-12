@@ -1,6 +1,5 @@
 const puppeteer = require('puppeteer');
 const { allUsersData } = require('../../mock-data/users');
-const { API_BASE_URL } = require('../../constants');
 const { discordGroups } = require('../../mock-data/discord-groups');
 
 const BASE_URL = 'https://api.realdevsquad.com';

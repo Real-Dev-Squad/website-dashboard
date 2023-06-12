@@ -1,18 +1,3 @@
-import {
-  YEARS_OF_EXPERIENCE,
-  APPROVE_BUTTON_TEXT,
-  REJECT_BUTTON_TEXT,
-  APPROVAL_PROMPT_TEXT,
-  ALERT_APPROVED,
-  ALERT_ERROR,
-  ALERT_REJECTED,
-  OLD_DATA,
-  NEW_DATA,
-  DIFF_CLASS,
-  OLD_DIFF_CLASS,
-  NEW_DIFF_CLASS,
-} from './constants.js';
-
 async function getProfileDiffs() {
   try {
     const profileDiffsResponse = await fetch(`${API_BASE_URL}/profileDiffs`, {

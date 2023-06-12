@@ -1,5 +1,4 @@
 'use strict';
-import { CANNOT_CONTAIN_GROUP, NO_SPACES_ALLOWED } from './constants.js';
 import {
   getMembers,
   getDiscordGroups,

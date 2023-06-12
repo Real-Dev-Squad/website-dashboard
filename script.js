@@ -28,4 +28,4 @@ if (params.get('dev') === 'true') {
   createGoalButton.classList.remove('element-display-remove');
 }
 
-showUserManagementButton();
+// showUserManagementButton();
