@@ -13,3 +13,9 @@ async function makeApiCall(url, method, body, credentials, headers, options) {
     throw err;
   }
 }
+
+function createElement({ type, classList }) {
+  const element = document.createElement(type);
+  element.classList.add(...classList);
+  return element;
+}

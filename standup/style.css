@@ -128,6 +128,7 @@ body {
   border: 1px solid black;
   text-align: center;
   border-collapse: collapse;
+  position: relative;
 }
 
 tr:nth-child(even) {
@@ -176,4 +177,33 @@ tr:hover {
   color: black;
   text-decoration: none;
   font-weight: 600;
+}
+
+.tooltiptext {
+  border: 1px solid white;
+  background-color: black;
+  color: var(--white-color);
+  visibility: hidden;
+  text-align: center;
+  border-radius: 0.43rem;
+  padding: 0.5rem;
+  position: absolute;
+  z-index: 1000;
+  font-size: 0.6rem;
+  width: 15rem;
+  right: -125%;
+  bottom: 61%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.tooltiptext::after {
+  content: ' ';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  border: 0.43rem solid;
+  border-color: var(--blue-color) transparent transparent transparent;
 }

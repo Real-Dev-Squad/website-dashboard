@@ -57,14 +57,17 @@ function getStatusArray(apiResponse) {
 }
 
 function renderTableHeader() {
-  const tableHeader = document.createElement('thead');
-  tableHeader.className = 'table-header';
+  const tableHeader = createElement({
+    type: 'thead',
+    classList: ['table-header'],
+  });
 
-  const headerRow = document.createElement('tr');
-  headerRow.className = 'table-header';
+  const headerRow = createElement({ type: 'tr', classList: ['table-header'] });
 
-  const headerCell = document.createElement('th');
-  headerCell.className = 'user date table-head';
+  const headerCell = createElement({
+    type: 'th',
+    classList: ['user', 'date', 'table-head'],
+  });
   headerCell.innerHTML = 'DATES ➡️<hr />USERS ⬇️';
   headerRow.appendChild(headerCell);
 
@@ -78,9 +81,8 @@ function renderTableHeader() {
   ).getDate();
 
   for (let day = 1; day <= daysInMonth; day++) {
-    const dateCell = document.createElement('th');
+    const dateCell = createElement({ type: 'th', classList: ['date'] });
     dateCell.scope = 'col';
-    dateCell.className = 'date';
     dateCell.textContent = day + ' ' + currentMonth + ' ' + currentYear;
     headerRow.appendChild(dateCell);
   }
@@ -89,24 +91,26 @@ function renderTableHeader() {
   return tableHeader;
 }
 
-function renderTableRow({ userName, imageUrl, standupStatus }) {
-  const row = document.createElement('tr');
-  row.className = 'table-row';
+function renderTableRow({ userName, imageUrl, standupStatus, standupText }) {
+  console.log(standupText);
+  const row = createElement({ type: 'tr', classList: ['table-row'] });
 
-  const userCell = document.createElement('td');
+  const userCell = createElement({ type: 'td', classList: ['user'] });
   userCell.scope = 'row';
-  userCell.className = 'user';
 
-  const userContainer = document.createElement('div');
-  userContainer.className = 'user-list-item';
+  const userContainer = createElement({
+    type: 'div',
+    classList: ['user-list-item'],
+  });
 
-  const userImage = document.createElement('img');
-  userImage.src = imageUrl;
+  const userImage = createElement({ type: 'img', classList: ['user-image'] });
+  userImage.src = imageUrl || defaultAvatar;
   userImage.alt = userName;
-  userImage.className = 'user-image';
 
-  const userNameElement = document.createElement('p');
-  userNameElement.className = 'user-name';
+  const userNameElement = createElement({
+    type: 'p',
+    classList: ['user-name'],
+  });
   userNameElement.textContent = userName;
 
   userContainer.appendChild(userImage);
@@ -115,9 +119,56 @@ function renderTableRow({ userName, imageUrl, standupStatus }) {
   row.appendChild(userCell);
 
   standupStatus.forEach((status) => {
-    const statusCell = document.createElement('td');
+    const statusCell = createElement({ type: 'td', classList: ['status'] });
     statusCell.textContent = status;
-    statusCell.className = 'status';
+
+    const tooltip = createElement({ type: 'div', classList: ['tooltiptext'] });
+
+    const completedText = createElement({
+      type: 'p',
+      classList: ['today-standup'],
+    });
+
+    const yesterdayStandup = createElement({
+      type: 'p',
+      classList: ['yesterday-standup'],
+    });
+
+    const blockers = createElement({ type: 'p', classList: ['blockers'] });
+
+    const noStandupText = createElement({
+      type: 'p',
+      classList: ['no-standup-text'],
+    });
+
+    if (standupText) {
+      completedText.textContent += `: ${standupText?.completed}`;
+      yesterdayStandup.textContent += `: ${standupText?.planned}`;
+      blockers.textContent += `: ${standupText?.blockers}`;
+      tooltip.appendChild(completedText);
+      tooltip.appendChild(yesterdayStandup);
+      tooltip.appendChild(blockers);
+    } else {
+      noStandupText.textContent = 'No Standup';
+      tooltip.appendChild(noStandupText);
+    }
+
+    statusCell.appendChild(tooltip);
+
+    row.addEventListener('mouseover', (e) => {
+      const tooltip = e.target.querySelector('.tooltiptext');
+      if (tooltip) {
+        tooltip.style.visibility = 'visible';
+      }
+    });
+
+    row.addEventListener('mouseout', (e) => {
+      const tooltip = e.target.querySelector('.tooltiptext');
+      if (tooltip) {
+        tooltip.style.visibility = 'hidden';
+      }
+    });
+
     row.appendChild(statusCell);
   });
 
@@ -150,6 +201,7 @@ async function searchButtonHandler() {
         userName: username.trim(),
         imageUrl: picture?.url,
         standupStatus: statusArray,
+        standupText: standupData,
       });
       tableBody.appendChild(tableRow);
     } catch (error) {
