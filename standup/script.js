@@ -17,43 +17,41 @@ async function getStandupData(userId) {
   return data.data;
 }
 
-function getStatusArray(apiResponse) {
-  if (!Array.isArray(apiResponse) || apiResponse.length === 0) {
-    const currentDate = new Date();
-    const daysInMonth = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + 1,
-      0,
-    ).getDate();
-    return Array(daysInMonth).fill('❌');
-  }
+function processStandupData(apiData) {
+  const standupData = {
+    standupFrequency: [],
+    completedText: [],
+    plannedText: [],
+    blockersText: [],
+  };
 
   const currentDate = new Date();
-  const currentMonth = currentDate.getMonth();
+  const currentMonth = currentDate.getMonth() + 1;
   const currentYear = currentDate.getFullYear();
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const statusArray = [];
 
-  for (let day = 1; day <= daysInMonth; day++) {
-    const filteredData = apiResponse.filter((item) => {
-      const itemDate = new Date(item.createdAt);
-      const itemMonth = itemDate.getMonth();
-      const itemYear = itemDate.getFullYear();
-      return (
-        itemDate.getDate() === day &&
-        itemMonth === currentMonth &&
-        itemYear === currentYear
-      );
-    });
+  const numDays = new Date(currentYear, currentMonth, 0).getDate();
 
-    if (filteredData.length > 0 && day === 1) {
-      statusArray.push('✅');
-    } else {
-      statusArray.push(filteredData.length > 0 ? '✅' : '❌');
-    }
+  standupData.standupFrequency = Array(numDays).fill('❌');
+  standupData.completedText = Array(numDays).fill('No data');
+  standupData.plannedText = Array(numDays).fill('No data');
+  standupData.blockersText = Array(numDays).fill('No data');
+
+  if (!apiData) {
+    return standupData;
   }
+  apiData.forEach((item) => {
+    const date = new Date(item.date);
+    const day = date.getDate();
 
-  return statusArray;
+    const index = day - 1;
+
+    standupData.standupFrequency[index] = '✅';
+    standupData.completedText[index] = item.completed;
+    standupData.plannedText[index] = item.planned;
+    standupData.blockersText[index] = item.blockers;
+  });
+
+  return standupData;
 }
 
 function renderTableHeader() {
@@ -91,8 +89,7 @@ function renderTableHeader() {
   return tableHeader;
 }
 
-function renderTableRow({ userName, imageUrl, standupStatus, standupText }) {
-  console.log(standupText);
+function renderTableRow({ userName, imageUrl, standupData }) {
   const row = createElement({ type: 'tr', classList: ['table-row'] });
 
   const userCell = createElement({ type: 'td', classList: ['user'] });
@@ -118,33 +115,33 @@ function renderTableRow({ userName, imageUrl, standupStatus, standupText }) {
   userCell.appendChild(userContainer);
   row.appendChild(userCell);
 
-  standupStatus.forEach((status) => {
+  const standupStatus = standupData.standupFrequency;
+  const completedTextData = standupData.completedText;
+  const plannedText = standupData.plannedText;
+  const blockersText = standupData.blockersText;
+
+  for (let i = 0; i < standupStatus.length; i++) {
     const statusCell = createElement({ type: 'td', classList: ['status'] });
-    statusCell.textContent = status;
+    statusCell.textContent = standupStatus[i];
 
     const tooltip = createElement({ type: 'div', classList: ['tooltiptext'] });
-
     const completedText = createElement({
       type: 'p',
       classList: ['today-standup'],
     });
-
     const yesterdayStandup = createElement({
       type: 'p',
       classList: ['yesterday-standup'],
     });
-
     const blockers = createElement({ type: 'p', classList: ['blockers'] });
-
     const noStandupText = createElement({
       type: 'p',
       classList: ['no-standup-text'],
     });
-
-    if (standupText) {
-      completedText.textContent += `: ${standupText?.completed}`;
-      yesterdayStandup.textContent += `: ${standupText?.planned}`;
-      blockers.textContent += `: ${standupText?.blockers}`;
+    if (standupStatus[i] === '✅') {
+      completedText.textContent += `Today's Standup : ${completedTextData[i]}`;
+      yesterdayStandup.textContent += `Yesterday's Standup : ${plannedText[i]}`;
+      blockers.textContent += `Blockers : ${blockersText[i]}`;
       tooltip.appendChild(completedText);
       tooltip.appendChild(yesterdayStandup);
       tooltip.appendChild(blockers);
@@ -170,7 +167,7 @@ function renderTableRow({ userName, imageUrl, standupStatus, standupText }) {
     });
 
     row.appendChild(statusCell);
-  });
+  }
 
   return row;
 }
@@ -196,12 +193,12 @@ async function searchButtonHandler() {
     try {
       const { id, picture } = await getUserData(username.trim());
       const standupData = await getStandupData(id);
-      const statusArray = getStatusArray(standupData);
+      const standupProcessedData = processStandupData(standupData);
+
       const tableRow = renderTableRow({
         userName: username.trim(),
         imageUrl: picture?.url,
-        standupStatus: statusArray,
-        standupText: standupData,
+        standupData: standupProcessedData,
       });
       tableBody.appendChild(tableRow);
     } catch (error) {
