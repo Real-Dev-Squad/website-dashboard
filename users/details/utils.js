@@ -1,23 +1,3 @@
-async function makeApiCall(
-  url,
-  method = 'get',
-  body = null,
-  headers = [],
-  options = null,
-) {
-  try {
-    const response = await fetch(url, {
-      method,
-      body,
-      headers,
-      ...options,
-    });
-    return response;
-  } catch (err) {
-    console.error(MESSAGE_SOMETHING_WENT_WRONG, err);
-    return err;
-  }
-}
 function generateNoDataFoundSection(message) {
   document.title = 'User Not Found';
   const notFoundDiv = createElement({ type: 'div', classList: ['not-found'] });

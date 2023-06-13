@@ -1,30 +1,3 @@
-function createElement({ type, attributes = {}, innerText }) {
-  const element = document.createElement(type);
-  Object.keys(attributes).forEach((item) => {
-    element.setAttribute(item, attributes[item]);
-  });
-  element.textContent = innerText;
-  return element;
-}
-
-function addLoader(container) {
-  const loader = createElement({
-    type: 'div',
-    attributes: { class: 'loader' },
-  });
-  const loadertext = createElement({
-    type: 'p',
-    attributes: { class: 'loader-text' },
-    innerText: 'Loading...',
-  });
-  loader.appendChild(loadertext);
-  container.appendChild(loader);
-}
-
-function removeLoader() {
-  document.querySelector('.loader').remove();
-}
-
 function addErrorMessage(container) {
   const errorDiv = createElement({
     type: 'div',
@@ -77,19 +50,6 @@ async function getUserData(username) {
   });
   const userData = await res.json();
   return userData;
-}
-
-async function getSelfDetails() {
-  const res = await fetch(`${API_BASE_URL}/users/self`, {
-    method: 'GET',
-    credentials: 'include',
-    headers: {
-      'Content-type': 'application/json',
-    },
-  });
-
-  const self_details = await res.json();
-  return self_details;
 }
 
 async function getData(data) {
@@ -228,7 +188,6 @@ export {
   getTaskLogs,
   getTaskData,
   getUserData,
-  getSelfDetails,
   getData,
   removeLoader,
   getUserSkills,

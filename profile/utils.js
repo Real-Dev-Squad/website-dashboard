@@ -317,19 +317,6 @@ function wantedData(data) {
   };
 }
 
-async function getSelfUser() {
-  const res = await fetch(`${API_BASE_URL}/users/self`, {
-    method: 'GET',
-    credentials: 'include',
-    headers: {
-      'Content-type': 'application/json',
-    },
-  });
-
-  const self_user = await res.json();
-  return self_user;
-}
-
 async function getUser(userId) {
   const userResponse = await fetch(`${API_BASE_URL}/users?id=${userId}`, {
     method: 'GET',
@@ -342,4 +329,4 @@ async function getUser(userId) {
   return user;
 }
 
-export { getProfileDiffs, getSelfUser, getUser, wantedData, createCard };
+export { getProfileDiffs, getUser, wantedData, createCard };

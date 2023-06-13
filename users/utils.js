@@ -1,4 +1,4 @@
-async function makeApiCall(
+async function makeApiCallForUsers(
   url,
   method = 'get',
   body = null,
@@ -19,17 +19,4 @@ async function makeApiCall(
     console.error(err);
     throw err;
   }
-}
-
-function debounce(func, delay) {
-  let timerId;
-  return (...args) => {
-    if (timerId) {
-      clearTimeout(timerId);
-    }
-
-    timerId = setTimeout(() => {
-      func(...args);
-    }, delay);
-  };
 }

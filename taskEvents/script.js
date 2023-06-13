@@ -1,12 +1,8 @@
 import {
   getTaskLogs,
   getUserData,
-  getSelfDetails,
-  createElement,
   getData,
-  addLoader,
   addErrorMessage,
-  removeLoader,
   getUserSkills,
   getTagLevelOptions,
   addSkillToUser,
@@ -350,7 +346,7 @@ async function renderCard({ container, title, username, isAllTasks }) {
 async function render() {
   try {
     addLoader(container);
-    const selfDetails = await getSelfDetails();
+    const selfDetails = await getSelfUser();
     if (selfDetails.roles.super_user) {
       renderCard({ container, title: 'All Task Logs', isAllTasks: true });
     } else {

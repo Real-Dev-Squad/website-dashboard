@@ -124,7 +124,7 @@ function showErrorMessage(
 
 async function getUsersData(page) {
   try {
-    const usersRequest = await makeApiCall(
+    const usersRequest = await makeApiCallForUsers(
       `${RDS_API_USERS}?size=${USER_FETCH_COUNT}&page=${page}`,
     );
     let usersDataList = [];
@@ -203,7 +203,7 @@ function generateUserList(
 
 async function fetchUsersData(searchInput) {
   try {
-    const usersRequest = await makeApiCall(
+    const usersRequest = await makeApiCallForUsers(
       `${RDS_API_USERS}?search=${searchInput}`,
     );
     const usersData = await usersRequest.json();
@@ -409,7 +409,7 @@ const populateFilters = () => {
 };
 async function getUsersSkills() {
   try {
-    const usersRequest = await makeApiCall(RDS_API_SKILLS);
+    const usersRequest = await makeApiCallForUsers(RDS_API_SKILLS);
     let usersSkillList = [];
     if (usersRequest.status === 200) {
       usersSkillList = await usersRequest.json();
@@ -495,7 +495,7 @@ applyFilterButton.addEventListener('click', async () => {
     checkedValuesAvailability,
   );
   try {
-    const usersRequest = await makeApiCall(
+    const usersRequest = await makeApiCallForUsers(
       `${RDS_API_USERS}/search${queryParams}`,
     );
     const { users } = await usersRequest.json();
