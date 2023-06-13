@@ -84,7 +84,6 @@ function renderTableHeader() {
 
 // Function to render the table body
 function renderTableRow({ userName, imageUrl, standupData }) {
-  console.log(standupData);
   const row = createElement({ type: 'tr', classList: ['table-row'] });
   const userCell = createElement({ type: 'td', classList: ['user'] });
   userCell.scope = 'row';
