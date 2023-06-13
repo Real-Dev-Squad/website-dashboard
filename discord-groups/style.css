@@ -43,7 +43,7 @@
   color: var(--color-active-tabs-color);
   border-bottom: 0.24rem solid var(--color-active-tabs-color);
 }
-.groups-tab .tab:hover {
+.tab:hover {
   color: var(--color-active-tabs-color);
 }
 
