@@ -31,7 +31,7 @@
   flex-direction: row;
   background-color: var(--color-groups-tab-background);
 }
-.groups-tab .tab {
+.tab {
   font-size: larger;
   font-weight: bolder;
   color: #fff;
