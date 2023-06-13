@@ -172,11 +172,6 @@ NOT VERIFIED TEXT ABOVE
   color: red;
   text-align: center;
 }
-
-/*
-    FOR RESPONSIVENESS
-*/
-
 @media (max-width: 650px) {
   .manage-groups {
     flex-direction: column-reverse;
