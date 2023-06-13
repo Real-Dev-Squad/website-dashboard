@@ -31,7 +31,7 @@
   flex-direction: row;
   background-color: var(--color-groups-tab-background);
 }
-.groups-tab .tab {
+.tab {
   font-size: larger;
   font-weight: bolder;
   color: #fff;
@@ -39,11 +39,11 @@
   margin: 1.6rem;
   padding-bottom: 0.4rem;
 }
-.groups-tab .tab.active-tab {
+.active-tab {
   color: var(--color-active-tabs-color);
   border-bottom: 0.24rem solid var(--color-active-tabs-color);
 }
-.groups-tab .tab:hover {
+.tab:hover {
   color: var(--color-active-tabs-color);
 }
 
@@ -172,10 +172,6 @@ NOT VERIFIED TEXT ABOVE
   color: red;
   text-align: center;
 }
-
-/*
-    FOR RESPONSIVENESS
-*/
 
 @media (max-width: 650px) {
   .manage-groups {
