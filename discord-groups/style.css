@@ -39,7 +39,7 @@
   margin: 1.6rem;
   padding-bottom: 0.4rem;
 }
-.groups-tab .tab.active-tab {
+.active-tab {
   color: var(--color-active-tabs-color);
   border-bottom: 0.24rem solid var(--color-active-tabs-color);
 }
