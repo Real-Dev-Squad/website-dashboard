@@ -182,14 +182,11 @@ async function removeSkillFromUser(tagId, userId) {
 }
 
 export {
-  createElement,
-  addLoader,
   addErrorMessage,
   getTaskLogs,
   getTaskData,
   getUserData,
   getData,
-  removeLoader,
   getUserSkills,
   getTagLevelOptions,
   addSkillToUser,
