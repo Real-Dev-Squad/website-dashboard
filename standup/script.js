@@ -200,7 +200,7 @@ async function searchButtonHandler() {
       const userStandupData = prepareStandupData(standupData);
       const tableRowElement = createTableRowElement({
         userName: userData.username,
-        imageUrl: userData.image,
+        imageUrl: userData.picture?.url,
         userStandupData,
       });
       tableBodyElement.appendChild(tableRowElement);
@@ -210,7 +210,7 @@ async function searchButtonHandler() {
 
 // Function to handle the enter key press
 function handleEnterKeyPress(event) {
-  if (event.keyCode === 13) {
+  if (event.key === 'Enter') {
     searchButtonHandler();
   }
 }
