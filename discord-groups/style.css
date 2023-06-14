@@ -41,7 +41,7 @@
 }
 .active-tab {
   color: var(--color-active-tabs-color);
-  border-bottom: 0.24rem solid var(--color-active-tabs-color);
+  border-bottom: 4px solid var(--color-active-tabs-color);
 }
 .tab:hover {
   color: var(--color-active-tabs-color);
@@ -69,8 +69,8 @@
   overflow: scroll;
 }
 .groups::-webkit-scrollbar {
-  width: 0.4rem;
-  height: 0.4rem;
+  width: 6px;
+  height: 6px;
 }
 .groups::-webkit-scrollbar-thumb {
   background: var(--color-buttons-background);
@@ -83,7 +83,7 @@
 }
 .groups-list li {
   padding: 0.8rem;
-  border: 0.08rem solid rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.2);
   margin-bottom: 0.6rem;
   border-radius: 0.6rem;
 }
@@ -141,8 +141,8 @@
 */
 
 .loader {
-  border: 0.6rem solid var(--color-loader-border);
-  border-top: 0.6rem solid var(--color-loader-border-top);
+  border: 6px solid var(--color-loader-border);
+  border-top: 6px solid var(--color-loader-border-top);
   border-radius: 50%;
   position: fixed;
   top: 0;
