@@ -40,7 +40,7 @@ body {
 .container {
   width: 100%;
   text-align: center;
-  padding: 10px;
+  padding: 40px;
 }
 
 .header {
@@ -52,6 +52,7 @@ body {
 .extension-requests-modal-parent {
   display: none;
 }
+
 .extension-requests-modal-parent.visible {
   z-index: 1;
   position: fixed;
@@ -137,10 +138,12 @@ body {
   border: none;
   border-bottom: 1px solid var(--gray);
 }
+
 .extension-requests-form input:focus {
   outline: none;
   border-bottom: 1px solid var(--gray);
 }
+
 .extension-requests-form button {
   background-color: var(--button-proceed);
   border: none;
@@ -168,10 +171,12 @@ body {
   border: none;
   border-bottom: 1px solid var(--gray);
 }
+
 .extension-requests-status-form input:focus {
   outline: none;
   border-bottom: 1px solid var(--gray);
 }
+
 .extension-requests-status-form button {
   background-color: var(--button-proceed);
   border: none;
@@ -187,17 +192,24 @@ body {
 
 .extension-requests {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, 350px);
+  grid-auto-rows: 450px;
   flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
 }
 
 .extension-request {
+  display: grid;
+  overflow: auto;
+  grid-template-rows: 8fr 1fr 1fr;
   text-align: left;
   border: 2px solid var(--black-transparent);
   padding: 1.25rem;
-  margin: 10px;
   color: var(--black);
   border-radius: 5px;
+  width: 100%;
+  border-spacing: 0px 10px;
 }
 
 .extension-request tr th {
@@ -223,6 +235,7 @@ body {
   text-align: center;
   font-size: 2rem;
 }
+
 .loader {
   margin: auto auto;
 }
@@ -236,6 +249,7 @@ body {
 .error {
   display: none;
 }
+
 .error-visible {
   display: block;
 }
@@ -254,6 +268,7 @@ body {
     left: 10%;
     right: 10%;
   }
+
   .extension-requests-form {
     left: 10%;
     right: 10%;
