@@ -5,7 +5,6 @@ const tableElement = document.createElement('table');
 tableElement.classList.add('user-standup-table');
 const tableBodyElement = document.createElement('tbody');
 
-// Date related variables
 const currentDateObj = new Date();
 const currentYearNum = currentDateObj.getFullYear();
 const daysInCurrentMonth = new Date(
@@ -17,22 +16,19 @@ const currentMonthName = currentDateObj.toLocaleString('default', {
   month: 'long',
 });
 
-// Function to fetch User Data from RDS API
 async function fetchUserData(username) {
   const response = await makeApiCall(`${RDS_API_USERS}/${username}`);
   const data = await response.json();
   return data.user;
 }
 
-// Function to fetch Standup Data from RDS API
 async function fetchStandupData(userId) {
   const response = await makeApiCall(`${RDS_API_STANDUP}${userId}`);
   const data = await response.json();
   return data.data;
 }
 
-// Function to Process Standup Data like completed, planned, blockers, and standup frequency
-function prepareStandupData(standupItems) {
+function processStandupData(standupItems) {
   const standupData = {
     standupFrequency: [],
     completedText: [],
@@ -59,7 +55,6 @@ function prepareStandupData(standupItems) {
   return standupData;
 }
 
-// Function to render the table header
 function createTableHeaderElement() {
   const tableHeaderElement = createElement({
     type: 'thead',
@@ -86,7 +81,6 @@ function createTableHeaderElement() {
   return tableHeaderElement;
 }
 
-// Function to render the table body
 function createTableRowElement({ userName, imageUrl, userStandupData }) {
   const rowElement = createElement({ type: 'tr', classList: ['table-row'] });
   const userCellElement = createElement({ type: 'td', classList: ['user'] });
@@ -112,13 +106,11 @@ function createTableRowElement({ userName, imageUrl, userStandupData }) {
   userCellElement.appendChild(userContainerElement);
   rowElement.appendChild(userCellElement);
 
-  // Variable to store the standup data
   const standupStatus = userStandupData.standupFrequency;
   const completedTextData = userStandupData.completedText;
   const plannedText = userStandupData.plannedText;
   const blockersText = userStandupData.blockersText;
 
-  // Loop to render the standup data for each day with tooltip
   for (let i = 0; i < daysInCurrentMonth; i++) {
     const statusCellElement = createElement({
       type: 'td',
@@ -146,7 +138,6 @@ function createTableRowElement({ userName, imageUrl, userStandupData }) {
       classList: ['no-standup-text'],
     });
 
-    // Condition to check if standup is completed or not and render the data accordingly
     if (standupStatus[i] === '✅') {
       completedTextElement.textContent += `Today's: ${completedTextData[i]}`;
       yesterdayStandupElement.textContent += `Yesterday's: ${plannedText[i]}`;
@@ -158,7 +149,6 @@ function createTableRowElement({ userName, imageUrl, userStandupData }) {
       statusCellElement.appendChild(tooltipElement);
     }
 
-    // Event listener to show and hide the tooltip
     rowElement.addEventListener('mouseover', (mouseEvent) => {
       const tooltip = mouseEvent.target.querySelector('.tooltiptext');
       if (tooltip) {
@@ -176,7 +166,6 @@ function createTableRowElement({ userName, imageUrl, userStandupData }) {
   return rowElement;
 }
 
-// Function to initialize the table
 function setupTable() {
   const tableHeaderElement = createTableHeaderElement();
   tableElement.appendChild(tableHeaderElement);
@@ -185,19 +174,18 @@ function setupTable() {
   tableContainerElement.appendChild(tableElement);
 }
 
-// Function to handle search button click
 async function searchButtonHandler() {
-  const usernames = searchInput.value.split(',');
-  tableBodyElement.innerHTML = '';
-
-  // remove duplicates from usernames
+  const usernames = searchInput.value
+    .split(',')
+    .map((username) => username.trim());
   const filteredUsernames = [...new Set(usernames)];
+  tableBodyElement.innerHTML = '';
 
   for (const username of filteredUsernames) {
     const userData = await fetchUserData(username);
     if (userData) {
       const standupData = await fetchStandupData(userData.id);
-      const userStandupData = prepareStandupData(standupData);
+      const userStandupData = processStandupData(standupData);
       const tableRowElement = createTableRowElement({
         userName: userData.username,
         imageUrl: userData.picture?.url,
@@ -208,7 +196,6 @@ async function searchButtonHandler() {
   }
 }
 
-// Function to handle the enter key press
 function handleEnterKeyPress(event) {
   if (event.key === 'Enter') {
     searchButtonHandler();

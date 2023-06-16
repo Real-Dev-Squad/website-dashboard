@@ -2,6 +2,8 @@
   --black-color: black;
   --white-color: white;
   --blue-color: #1d1283;
+  --gray-color: #e3e2e2;
+  --dark-gray-color: #a8a8a8;
 }
 
 body {
@@ -75,7 +77,6 @@ body {
   color: var(--white-color);
 }
 
-/* User Standup */
 .user-list-item {
   width: 12rem;
   display: flex;
@@ -114,7 +115,7 @@ body {
 
 .user-standup-table {
   width: 100%;
-  border: 1px solid black;
+  border: 1px solid var(--black-color);
 }
 
 .date {
@@ -124,22 +125,22 @@ body {
   background-color: var(--blue-color);
   color: var(--white-color);
   z-index: 10;
-  border: 1px solid black;
+  border: 1px solid var(--black-color);
 }
 
 .status {
   text-align: center;
   border-collapse: collapse;
   position: relative;
-  border: 1px solid black;
+  border: 1px solid var(--black-color);
 }
 
 tr:nth-child(even) {
-  background-color: #e3e2e2;
+  background-color: var(--gray-color);
 }
 
 tr:hover {
-  background-color: #c0bbbb;
+  background-color: var(--dark-gray-color);
   cursor: pointer;
 }
 
@@ -163,7 +164,7 @@ tr:hover {
 }
 
 .tooltiptext {
-  background-color: black;
+  background-color: var(--black-color);
   color: var(--white-color);
   visibility: hidden;
   text-align: center;
@@ -210,14 +211,14 @@ tr:hover {
 }
 
 .info-repo-link {
-  color: black;
+  color: var(--black-color);
   text-decoration: none;
   font-weight: 600;
 }
 
 @media screen and (max-width: 768px) {
   body {
-    font-size: 10px;
+    font-size: 0.8rem;
   }
 
   .user-search-input {
