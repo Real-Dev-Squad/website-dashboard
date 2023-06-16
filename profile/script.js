@@ -1,12 +1,6 @@
 import { SUPER_USER } from './constants.js';
 
-import {
-  getProfileDiffs,
-  getSelfUser,
-  getUser,
-  wantedData,
-  createCard,
-} from './utils.js';
+import { getProfileDiffs, getUser, wantedData, createCard } from './utils.js';
 
 const self_user = await getSelfUser();
 
