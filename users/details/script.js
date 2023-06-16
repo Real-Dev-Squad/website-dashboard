@@ -131,13 +131,13 @@ function generateUserData(userData) {
   const img = generateUserImage('profile');
   const socials = generateSocialMediaLinksList();
   if (userData.roles?.in_discord) {
-    const discord = createSocialMediaAnchorNode({
+    const discordSocialButton = createSocialMediaAnchorNode({
       href: `https://discord.com/users/${userData.discordId}`,
       id: 'discord',
       alt: 'Discord',
       src: './../images/discord.svg',
     });
-    socials.appendChild(discord);
+    socials.appendChild(discordSocialButton);
   }
 
   wrapper.append(img, fullName, username);
