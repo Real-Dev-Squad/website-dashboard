@@ -40,7 +40,7 @@ body {
 .container {
   width: 100%;
   text-align: center;
-  padding: 40px;
+  padding: 2.5rem;
 }
 
 .header {
@@ -192,11 +192,11 @@ body {
 
 .extension-requests {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 22rem));
+  grid-template-columns: repeat(auto-fill, minmax(12.5rem, 22rem));
   grid-auto-rows: 26rem;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 20px;
+  gap: 1.25rem;
 }
 
 .extension-request {
@@ -225,10 +225,9 @@ body {
   background-color: var(--button-proceed);
   border: none;
   color: var(--white);
-  width: 35%;
-  min-width: max-content;
+  width: 48%;
   padding: 0.5rem 1rem;
-  font-size: medium;
+  font-size: 0.85rem;
   font-weight: bold;
   border-radius: 5px;
 }
