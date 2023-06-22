@@ -117,9 +117,7 @@ function generateUserData(userData) {
     classList: ['user-details-fullname'],
   });
   fullName.appendChild(
-    createTextNode(
-      userData?.first_name + ' ' + userData?.last_name ?? userData.username,
-    ),
+    createTextNode(userData.first_name + ' ' + userData.last_name),
   );
 
   const username = createElement({
