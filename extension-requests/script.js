@@ -22,6 +22,7 @@ const render = async () => {
   try {
     addLoader(container);
     const extensionRequests = await getExtensionRequests();
+
     const allExtensionRequests = extensionRequests.allExtensionRequests;
     allExtensionRequests.forEach((data) => {
       extensionRequestsContainer.appendChild(
@@ -105,8 +106,12 @@ function createExtensionRequestCard(data, dataHeadings) {
 
   const main = createTable(dataHeadings, data, 'extension-request');
 
-  main.appendChild(moreInfoBtn);
-  main.appendChild(updateRequestBtn);
+  const wrapperDiv = createElement({ type: 'div' });
+
+  wrapperDiv.appendChild(moreInfoBtn);
+  wrapperDiv.appendChild(updateRequestBtn);
+
+  main.appendChild(wrapperDiv);
   return main;
 }
 render();
