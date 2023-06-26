@@ -20,6 +20,7 @@ html {
   --blue-hover-color: #0d0a4d;
   --razzmatazz-color: #e30464;
   --razzmatazz-hover-color: #a1034a;
+  --gray-color: gray;
 }
 
 body {
@@ -82,10 +83,18 @@ li {
   width: 100px;
 }
 
-.user-details-username {
+.user-details-fullname {
   font-size: 1.75rem;
   margin-top: 0.5rem;
   font-weight: 400;
+  text-transform: capitalize;
+}
+
+.user-details-username {
+  font-size: 1.25rem;
+  margin-top: 0.5rem;
+  font-weight: 400;
+  color: var(--gray-color);
 }
 
 .user-details-tags {
@@ -106,6 +115,8 @@ li {
   gap: 1rem;
   margin-top: 2rem;
   justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .social {
@@ -115,7 +126,13 @@ li {
   align-items: center;
   background-color: var(--loader-gray-color);
   padding: 0.4rem 0.5rem;
-  border-radius: 5px;
+  border-radius: 10px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 25%);
+}
+
+.social:hover {
+  transition: background-color 300ms ease;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 50%);
 }
 
 .social > img {
