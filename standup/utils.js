@@ -19,3 +19,21 @@ function createElement({ type, classList }) {
   element.classList.add(...classList);
   return element;
 }
+
+function createLoaderElement() {
+  const loaderElement = document.createElement('div');
+  loaderElement.classList.add('loader');
+  const wrapperElement = document.createElement('div');
+  wrapperElement.classList.add('wrapper');
+  const circleElement = document.createElement('div');
+  circleElement.classList.add('circle');
+  const line1Element = document.createElement('div');
+  line1Element.classList.add('line-1');
+  const line2Element = document.createElement('div');
+  line2Element.classList.add('line-2');
+  wrapperElement.appendChild(circleElement);
+  wrapperElement.appendChild(line1Element);
+  wrapperElement.appendChild(line2Element);
+  loaderElement.appendChild(wrapperElement);
+  return loaderElement;
+}
