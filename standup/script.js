@@ -4,6 +4,7 @@ const tableContainerElement = document.getElementById('table-container');
 const tableElement = document.createElement('table');
 tableElement.classList.add('user-standup-table');
 const tableBodyElement = document.createElement('tbody');
+const loaderElement = createLoaderElement();
 
 const currentDateObj = new Date();
 const currentYearNum = currentDateObj.getFullYear();
@@ -182,6 +183,7 @@ async function searchButtonHandler() {
   tableBodyElement.innerHTML = '';
 
   for (const username of filteredUsernames) {
+    tableContainerElement.appendChild(loaderElement);
     const userData = await fetchUserData(username);
     if (userData) {
       const standupData = await fetchStandupData(userData.id);
@@ -194,6 +196,7 @@ async function searchButtonHandler() {
       tableBodyElement.appendChild(tableRowElement);
     }
   }
+  tableContainerElement.removeChild(loaderElement);
 }
 
 function handleEnterKeyPress(event) {

@@ -4,6 +4,14 @@
   --blue-color: #1d1283;
   --gray-color: #e3e2e2;
   --dark-gray-color: #a8a8a8;
+  --loader-background-gradient: linear-gradient(
+    110deg,
+    rgba(227, 227, 227, 0) 0%,
+    rgba(227, 227, 227, 0) 40%,
+    rgba(227, 227, 227, 0.5) 50%,
+    rgba(227, 227, 227, 0) 60%,
+    rgba(227, 227, 227, 0) 100%
+  );
 }
 
 body {
@@ -214,6 +222,70 @@ tr:hover {
   color: var(--black-color);
   text-decoration: none;
   font-weight: 600;
+}
+
+/* Loader */
+.loader {
+  position: relative;
+  /* width: 100wh; */
+  margin-bottom: 10px;
+  border: 1px solid var(--dark-gray-color);
+  padding: 1rem;
+  background-color: var(--white-color);
+  overflow: hidden;
+}
+
+.loader:after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: var(--loader-background-gradient);
+  animation: gradient-animation 1.2s linear infinite;
+}
+
+.loader .wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.loader .wrapper > div {
+  background-color: var(--dark-gray-color);
+}
+
+.loader .circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.loader .line-1 {
+  position: absolute;
+  top: 0.5rem;
+  left: 4rem;
+  height: 0.6rem;
+  width: 95%;
+}
+
+.loader .line-2 {
+  position: absolute;
+  top: 2rem;
+  left: 4rem;
+  height: 0.6rem;
+  width: 95%;
+}
+
+@keyframes gradient-animation {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 @media screen and (max-width: 768px) {
