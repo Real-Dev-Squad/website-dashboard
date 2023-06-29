@@ -6,6 +6,18 @@ tableElement.classList.add('user-standup-table');
 const tableBodyElement = document.createElement('tbody');
 const loaderElement = createLoaderElement();
 
+function openSidebar(event) {
+  event.preventDefault();
+  document.getElementById('standupSidebar').style.width = '20%';
+  document.body.style.marginRight = '20%';
+}
+
+function closeSidebar(event) {
+  event.preventDefault();
+  document.getElementById('standupSidebar').style.width = '0';
+  document.body.style.marginRight = '0';
+}
+
 const currentDateObj = new Date();
 const currentYearNum = currentDateObj.getFullYear();
 const daysInCurrentMonth = new Date(
@@ -138,6 +150,14 @@ function createTableRowElement({ userName, imageUrl, userStandupData }) {
       type: 'p',
       classList: ['no-standup-text'],
     });
+    const sidebarElement = createSidebarPanelElement(
+      completedTextData[i],
+      plannedText[i],
+      blockersText[i],
+      i + 1,
+      currentMonthName,
+      currentYearNum,
+    );
 
     if (standupStatus[i] === '✅') {
       completedTextElement.textContent += `Today's: ${completedTextData[i]}`;
@@ -148,6 +168,18 @@ function createTableRowElement({ userName, imageUrl, userStandupData }) {
       tooltipElement.appendChild(yesterdayStandupElement);
       tooltipElement.appendChild(blockersElement);
       statusCellElement.appendChild(tooltipElement);
+
+      statusCellElement.addEventListener('click', (event) => {
+        document.body.appendChild(sidebarElement);
+        const sidebarWidth = sidebarElement.style.width;
+
+        if (sidebarWidth === '0px' || sidebarWidth === '') {
+          openSidebar(event);
+        } else {
+          closeSidebar(event);
+          document.body.removeChild(sidebarElement);
+        }
+      });
     }
 
     rowElement.addEventListener('mouseover', (mouseEvent) => {

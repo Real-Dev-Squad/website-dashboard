@@ -20,6 +20,7 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  transition: margin-left 0.5s;
 }
 
 .navbar {
@@ -337,4 +338,29 @@ tr:hover {
   .info-repo {
     font-size: 0.8rem;
   }
+}
+
+.sidebar {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 999;
+  top: 0;
+  right: 0;
+  background-color: #111;
+  color: var(--white-color);
+  overflow-x: hidden;
+  padding-top: 4rem;
+  transition: 0.5s;
+}
+
+.standup-head {
+  text-align: center;
+  border-bottom: 1px solid var(--white-color);
+}
+
+.sidebar div {
+  width: 100%;
+  padding: 0.5rem 0;
+  text-align: center;
 }
