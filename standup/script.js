@@ -6,18 +6,6 @@ tableElement.classList.add('user-standup-table');
 const tableBodyElement = document.createElement('tbody');
 const loaderElement = createLoaderElement();
 
-function openSidebar(event) {
-  event.preventDefault();
-  document.getElementById('standupSidebar').style.width = '20%';
-  document.body.style.marginRight = '20%';
-}
-
-function closeSidebar(event) {
-  event.preventDefault();
-  document.getElementById('standupSidebar').style.width = '0';
-  document.body.style.marginRight = '0';
-}
-
 const currentDateObj = new Date();
 const currentYearNum = currentDateObj.getFullYear();
 const daysInCurrentMonth = new Date(
@@ -170,14 +158,18 @@ function createTableRowElement({ userName, imageUrl, userStandupData }) {
       statusCellElement.appendChild(tooltipElement);
 
       statusCellElement.addEventListener('click', (event) => {
-        document.body.appendChild(sidebarElement);
-        const sidebarWidth = sidebarElement.style.width;
+        event.stopPropagation();
 
-        if (sidebarWidth === '0px' || sidebarWidth === '') {
-          openSidebar(event);
+        if (!document.body.contains(sidebarElement)) {
+          if (sidebarElement) {
+            document.body.appendChild(sidebarElement);
+            sidebarElement.classList.add('openSidebar');
+            document.body.style.marginRight = '20%';
+          }
         } else {
-          closeSidebar(event);
           document.body.removeChild(sidebarElement);
+          sidebarElement.classList.remove('openSidebar');
+          document.body.style.marginRight = '0%';
         }
       });
     }
@@ -240,3 +232,12 @@ function handleEnterKeyPress(event) {
 setupTable();
 searchButtonElement.addEventListener('click', searchButtonHandler);
 searchInput.addEventListener('keyup', handleEnterKeyPress);
+
+document.addEventListener('click', (event) => {
+  const sidebarElement = document.querySelector('.sidebar');
+  if (sidebarElement && !sidebarElement.contains(event.target)) {
+    document.body.removeChild(sidebarElement);
+    sidebarElement.classList.remove('openSidebar');
+    document.body.style.marginRight = '0%';
+  }
+});
