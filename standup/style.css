@@ -374,13 +374,11 @@ tr:hover {
     top: 0;
     left: 0;
     right: 0;
-    width: 100%;
     height: auto;
-    border-radius: 0 0 2rem 2rem;
-    padding: 1rem;
-    padding-left: 0;
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    padding: 1rem 0 1rem 0;
   }
-
   .openSidebar {
     width: 100%;
     animation: slideIn 0.5s ease-in-out forwards;
