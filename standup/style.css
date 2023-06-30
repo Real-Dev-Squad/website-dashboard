@@ -225,11 +225,9 @@ tr:hover {
   font-weight: 600;
 }
 
-/* Loader */
 .loader {
   position: relative;
-  /* width: 100wh; */
-  margin-bottom: 10px;
+  margin-bottom: 1.5rem;
   border: 1px solid var(--dark-gray-color);
   padding: 1rem;
   background-color: var(--white-color);
@@ -258,8 +256,8 @@ tr:hover {
 }
 
 .loader .circle {
-  width: 50px;
-  height: 50px;
+  width: 3.2rem;
+  height: 3.2rem;
   border-radius: 50%;
 }
 
@@ -301,7 +299,7 @@ tr:hover {
   padding-top: 6rem;
   border-radius: 1rem 0 0 1rem;
   background: rgba(14, 12, 168, 0.691);
-  box-shadow: 0 0 10px var(--blue-color);
+  box-shadow: 0 0 0.8rem var(--blue-color);
   backdrop-filter: blur(2rem);
 }
 .openSidebar {
