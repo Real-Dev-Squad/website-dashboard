@@ -2,7 +2,7 @@
 const { createElement } = react;
 
 export const UserDetailsSection = ({
-  user: { first_name, username, discordId, joined_discord },
+  user: { first_name, username, discordId, discordJoinedAt },
 }) => {
   return createElement('section', { class: 'user_details_section' }, [
     createElement('div', { class: 'user_details_field' }, [
@@ -19,7 +19,7 @@ export const UserDetailsSection = ({
     ]),
     createElement('div', { class: 'user_details_field' }, [
       createElement('span', {}, ['Joined RDS server on: ']),
-      createElement('span', {}, [new Date(joined_discord).toUTCString()]),
+      createElement('span', {}, [new Date(discordJoinedAt).toUTCString()]),
     ]),
     createElement('div', { class: 'user_details_field' }, [
       createElement('span', {}, ['User Management: ']),
