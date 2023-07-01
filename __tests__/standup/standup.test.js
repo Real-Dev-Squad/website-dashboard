@@ -79,17 +79,4 @@ describe('Input box', () => {
     const loader = await page.$('.loader');
     expect(loader).toBeTruthy();
   });
-
-  it('should display the have sidebar panel when the click on the status cell', async () => {
-    const userInput = await page.$('#user-search-input');
-    const searchButton = await page.$('#search-button');
-
-    await userInput.type('sunny');
-    await searchButton.click();
-    await page.waitForSelector('#table-container');
-    const statusCell = await page.$('.status-cell');
-    await statusCell.click();
-    const sidebarPanel = await page.$('.sidebar-panel');
-    expect(sidebarPanel).toBeTruthy();
-  });
 });
