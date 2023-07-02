@@ -68,4 +68,15 @@ describe('Input box', () => {
     const table = await page.$('.user-standup-table');
     expect(table).toBeTruthy();
   });
+
+  it('should display the loader when the search button is clicked', async () => {
+    const userInput = await page.$('#user-search-input');
+    const searchButton = await page.$('#search-button');
+
+    await userInput.type('sunny');
+    await searchButton.click();
+    await page.waitForSelector('#table-container');
+    const loader = await page.$('.loader');
+    expect(loader).toBeTruthy();
+  });
 });
