@@ -44,15 +44,17 @@ function processStandupData(standupItems) {
   if (!standupItems) {
     return standupData;
   }
-  standupItems.forEach((item) => {
-    const date = new Date(item.createdAt);
+  for (let i = 0; i < standupItems.length; i++) {
+    const date = new Date(standupItems[i].createdAt);
     const day = date.getDate();
     const index = day - 1;
-    standupData.standupFrequency[index] = '✅';
-    standupData.completedText[index] = item.completed;
-    standupData.plannedText[index] = item.planned;
-    standupData.blockersText[index] = item.blockers;
-  });
+    if (index < standupData.standupFrequency.length) {
+      standupData.standupFrequency[index] = '✅';
+      standupData.completedText[index] = standupItems[i].completed;
+      standupData.plannedText[index] = standupItems[i].planned;
+      standupData.blockersText[index] = standupItems[i].blockers;
+    }
+  }
   return standupData;
 }
 
@@ -72,8 +74,11 @@ function createTableHeaderElement() {
   headerCellElement.innerHTML = 'DATES ➡️<hr />USERS ⬇️';
   headerRowElement.appendChild(headerCellElement);
   for (let day = 1; day <= daysInCurrentMonth; day++) {
-    const dateCellElement = createElement({ type: 'th', classList: ['date'] });
-    dateCellElement.scope = 'col';
+    const dateCellElement = createElement({
+      type: 'th',
+      classList: ['date'],
+      scope: 'row',
+    });
     dateCellElement.textContent =
       day + ' ' + currentMonthName + ' ' + currentYearNum;
     headerRowElement.appendChild(dateCellElement);
@@ -121,6 +126,9 @@ function createTableRowElement({ userName, imageUrl, userStandupData }) {
     const tooltipElement = createElement({
       type: 'div',
       classList: ['tooltiptext'],
+      style: {
+        visibility: 'visible',
+      },
     });
     const completedTextElement = createElement({
       type: 'p',
@@ -212,9 +220,10 @@ async function searchButtonHandler() {
     if (userData) {
       const standupData = await fetchStandupData(userData.id);
       const userStandupData = processStandupData(standupData);
+      const imageUrl = userData.picture?.url;
       const tableRowElement = createTableRowElement({
         userName: userData.username,
-        imageUrl: userData.picture?.url,
+        imageUrl,
         userStandupData,
       });
       tableBodyElement.appendChild(tableRowElement);
