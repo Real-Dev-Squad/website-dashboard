@@ -298,7 +298,7 @@ tr:hover {
   padding-left: 1rem;
   padding-top: 6rem;
   border-radius: 1rem 0 0 1rem;
-  background: rgba(14, 12, 168, 0.691);
+  background: var(--blue-color);
   box-shadow: 0 0 0.8rem var(--blue-color);
   backdrop-filter: blur(2rem);
 }
