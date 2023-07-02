@@ -4,6 +4,7 @@
   --blue-color: #1d1283;
   --gray-color: #e3e2e2;
   --dark-gray-color: #a8a8a8;
+  --light-blur-color: rgba(14, 12, 168, 0.691);
   --loader-background-gradient: linear-gradient(
     110deg,
     rgba(227, 227, 227, 0) 0%,
@@ -298,7 +299,7 @@ tr:hover {
   padding-left: 1rem;
   padding-top: 6rem;
   border-radius: 1rem 0 0 1rem;
-  background: var(--blue-color);
+  background: var(--light-blur-color);
   box-shadow: 0 0 0.8rem var(--blue-color);
   backdrop-filter: blur(2rem);
 }

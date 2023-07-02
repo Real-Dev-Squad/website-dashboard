@@ -45,14 +45,22 @@ function processStandupData(standupItems) {
     return standupData;
   }
   for (let i = 0; i < standupItems.length; i++) {
-    const date = new Date(standupItems[i].createdAt);
+    const standupItem = standupItems[i];
+    const date = new Date(standupItem.createdAt);
     const day = date.getDate();
+    const month = date.getMonth();
     const index = day - 1;
-    if (index < standupData.standupFrequency.length) {
+
+    const isCurrentMonth = month === currentDateObj.getMonth();
+    const isValidIndex =
+      index >= 0 && index < standupData.standupFrequency.length;
+
+    if (isCurrentMonth && isValidIndex) {
+      const { completed, planned, blockers } = standupItem;
       standupData.standupFrequency[index] = '✅';
-      standupData.completedText[index] = standupItems[i].completed;
-      standupData.plannedText[index] = standupItems[i].planned;
-      standupData.blockersText[index] = standupItems[i].blockers;
+      standupData.completedText[index] = completed;
+      standupData.plannedText[index] = planned;
+      standupData.blockersText[index] = blockers;
     }
   }
   return standupData;
