@@ -63,6 +63,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+}
+.groups-search {
+  height: 4rem;
+  width: 15rem;
+  display: flex;
+  align-items: center;
+}
+.groups-search-input {
+  height: 2rem;
+  width: 100%;
+  padding-left: 2px;
 }
 
 .groups {

@@ -58,6 +58,9 @@ groupsData?.forEach((item) => {
   group.appendChild(createdBy);
   group.setAttribute('id', item.roleid);
   group.classList.add('group-role');
+  if(window.location.search.slice(1) === item.rolename){
+    group.classList.add('active-group')
+  }
   groupRoles.appendChild(group);
 });
 
@@ -87,13 +90,17 @@ groupTabs.addEventListener('click', (e) => {
 /**
  * FOR SELECTING A GROUP
  */
+const constURL = window.location.pathname
 const groupRolesList = document.querySelectorAll('.group-role');
 groupRoles?.addEventListener('click', function (event) {
   groupRolesList.forEach((groupItem) => {
+    window.history.pushState(null, null, constURL);
     groupItem.classList?.remove('active-group');
   });
   const groupListItem = event.target?.closest('li');
   if (groupListItem) {
+    const newURL = `${window.location.pathname}?${groupListItem.querySelector('p').textContent}`;
+    window.history.pushState(null, null, newURL);
     groupListItem.classList.add('active-group');
     memberAddRoleBody.roleid = groupListItem.id;
     if (IsUserVerified) {
@@ -101,6 +108,23 @@ groupRoles?.addEventListener('click', function (event) {
     }
   }
 });
+
+/**
+ * FOR SEARCHING A GROUP
+ */
+let divText, txtValue;
+const input = document.getElementById('search-groups');
+input.addEventListener('keyup', ()=>{
+  const filter = input.value.toUpperCase();
+  const li = document.querySelectorAll('.group-role');
+  const liArray = Array.from(li);
+  liArray.forEach((liItem) => {
+    divText = liItem.getElementsByTagName('p')[0];
+    txtValue = divText.textContent || divText.innerText;
+    const displayStyle = txtValue.toUpperCase().indexOf(filter) > -1 ? '' : 'none';
+    liItem.style.display = displayStyle;
+  });
+})
 
 /**
  * TO ASSIGN YOURSELF A ROLE
