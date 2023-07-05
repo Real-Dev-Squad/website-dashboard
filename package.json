@@ -22,13 +22,14 @@
   "pre-commit": "check",
   "homepage": "https://github.com/Real-Dev-Squad/website-dashboard#readme",
   "devDependencies": {
-    "jest": "^29.5.0",
+    "jest": "^25.0.0",
     "jest-puppeteer": "^8.0.6",
     "jest-puppeteer-istanbul": "^0.5.3",
     "jsdom": "^21.1.1",
+    "pptr-testing-library": "^0.7.0",
     "pre-commit": "^1.2.2",
     "prettier": "2.3.1",
-    "puppeteer": "^20.2.1",
+    "puppeteer": "^20.7.4",
     "puppeteer-core": "^19.9.0"
   },
   "volta": {

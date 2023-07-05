@@ -108,6 +108,38 @@ function generateUserData(userData) {
     type: 'div',
     classList: ['user-details-main'],
   });
+
+  const socials = generateSocialMediaLinksList();
+
+  if (userData?.profileURL) {
+    checkUserIsSuperUser().then(isSuperUser => {
+      console.log(isSuperUser);
+      const FormPivotButton = createSocialMediaAnchorNode({
+        href: `${userData.profileURL}`,
+        alt: 'Intro',
+        src: isSuperUser ? './../images/info.svg' : './../images/lock-icon.svg',
+      });
+      FormPivotButton.classList.add(isSuperUser ? 'enabled' : 'disabled');
+  
+      if (!isSuperUser) {
+        FormPivotButton.addEventListener('mouseover', () => {
+          const tooltip = createElement({ type: 'span', classList: ['tooltip'] });
+          tooltip.appendChild(createTextNode('You do not have required permissions to view this.'));
+          FormPivotButton.appendChild(tooltip);
+        });
+        FormPivotButton.addEventListener('mouseout', () => {
+          const tooltip = FormPivotButton.querySelector('.tooltip');
+          tooltip.remove();
+        });
+      }
+  
+      socials.appendChild(FormPivotButton);
+    }).catch(error => {
+      // Handle the error if needed
+      console.error(error);
+    });
+  }  
+
   const wrapper = createElement({
     type: 'div',
     classList: ['user-details-wrap'],
@@ -127,7 +159,6 @@ function generateUserData(userData) {
   username.appendChild(createTextNode('@' + userData.username));
 
   const img = generateUserImage('profile');
-  const socials = generateSocialMediaLinksList();
   if (userData.roles?.in_discord) {
     const discordSocialButton = createSocialMediaAnchorNode({
       href: `https://discord.com/users/${userData.discordId}`,

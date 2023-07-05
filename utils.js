@@ -16,7 +16,7 @@ async function getSelfUser() {
 
 async function checkUserIsSuperUser() {
   const self_user = await getSelfUser();
-  return self_user?.roles['super_user'];
+  return self_user?.roles['super_user'] || false;
 }
 
 function createElement({ type, attributes = {}, innerText }) {
