@@ -26,9 +26,7 @@ body {
 .header {
   display: flex;
   justify-content: space-between;
-  font:
-    700 14px Roboto,
-    sans-serif;
+  font: 700 14px Roboto, sans-serif;
   padding: 20px 10px;
   box-shadow: 0 8px 6px -6px rgb(0 0 0 / 65%);
   background-color: var(--bg-color);
@@ -37,9 +35,7 @@ body {
 .dropdown {
   background-color: rgb(255, 255, 255);
   color: var(--text-grey-color);
-  font:
-    700 14px Roboto,
-    sans-serif;
+  font: 700 14px Roboto, sans-serif;
   width: clamp(150px, 30%, 200px);
   border-radius: 4px;
   outline: none;

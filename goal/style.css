@@ -75,10 +75,8 @@ body {
   font-size: 1rem;
   padding: 1em 0.5em;
   outline: 0;
-  box-shadow:
-    var(--color-rgba-black-007) 0 1px 1px,
-    var(--color-rgba-black-007) 0 2px 2px,
-    var(--color-rgba-black-007) 0 4px 4px,
+  box-shadow: var(--color-rgba-black-007) 0 1px 1px,
+    var(--color-rgba-black-007) 0 2px 2px, var(--color-rgba-black-007) 0 4px 4px,
     var(--color-rgba-black-007) 0 8px 8px,
     var(--color-rgba-black-007) 0 16px 16px;
 }
