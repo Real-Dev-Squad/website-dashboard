@@ -140,6 +140,19 @@ li {
   height: 25px;
 }
 
+.enabled {
+  background-color: #dddddd;
+  color: black;
+  cursor: pointer;
+}
+
+.disabled {
+  background-color: #dddddd;
+  color: #999999;
+  cursor: pointer;
+  opacity: 0.5;
+}
+
 .accordion {
   padding-top: 1rem;
 }
