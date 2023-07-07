@@ -4,6 +4,7 @@ const tableContainerElement = document.getElementById('table-container');
 const tableElement = document.createElement('table');
 tableElement.classList.add('user-standup-table');
 const tableBodyElement = document.createElement('tbody');
+const loaderElement = createLoaderElement();
 
 const currentDateObj = new Date();
 const currentYearNum = currentDateObj.getFullYear();
@@ -44,14 +45,22 @@ function processStandupData(standupItems) {
     return standupData;
   }
   for (let i = 0; i < standupItems.length; i++) {
-    const date = new Date(standupItems[i].createdAt);
+    const standupItem = standupItems[i];
+    const date = new Date(standupItem.createdAt);
     const day = date.getDate();
+    const month = date.getMonth();
     const index = day - 1;
-    if (index < standupData.standupFrequency.length) {
+
+    const isCurrentMonth = month === currentDateObj.getMonth();
+    const isValidIndex =
+      index >= 0 && index < standupData.standupFrequency.length;
+
+    if (isCurrentMonth && isValidIndex) {
+      const { completed, planned, blockers } = standupItem;
       standupData.standupFrequency[index] = '✅';
-      standupData.completedText[index] = standupItems[i].completed;
-      standupData.plannedText[index] = standupItems[i].planned;
-      standupData.blockersText[index] = standupItems[i].blockers;
+      standupData.completedText[index] = completed;
+      standupData.plannedText[index] = planned;
+      standupData.blockersText[index] = blockers;
     }
   }
   return standupData;
@@ -145,6 +154,14 @@ function createTableRowElement({ userName, imageUrl, userStandupData }) {
       type: 'p',
       classList: ['no-standup-text'],
     });
+    const sidebarElement = createSidebarPanelElement(
+      completedTextData[i],
+      plannedText[i],
+      blockersText[i],
+      i + 1,
+      currentMonthName,
+      currentYearNum,
+    );
 
     if (standupStatus[i] === '✅') {
       completedTextElement.textContent += `Today's: ${completedTextData[i]}`;
@@ -155,6 +172,22 @@ function createTableRowElement({ userName, imageUrl, userStandupData }) {
       tooltipElement.appendChild(yesterdayStandupElement);
       tooltipElement.appendChild(blockersElement);
       statusCellElement.appendChild(tooltipElement);
+
+      statusCellElement.addEventListener('click', (event) => {
+        event.stopPropagation();
+
+        if (!document.body.contains(sidebarElement)) {
+          if (sidebarElement) {
+            document.body.appendChild(sidebarElement);
+            sidebarElement.classList.add('openSidebar');
+            document.body.style.marginRight = '20%';
+          }
+        } else {
+          document.body.removeChild(sidebarElement);
+          sidebarElement.classList.remove('openSidebar');
+          document.body.style.marginRight = '0%';
+        }
+      });
     }
 
     rowElement.addEventListener('mouseover', (mouseEvent) => {
@@ -190,6 +223,7 @@ async function searchButtonHandler() {
   tableBodyElement.innerHTML = '';
 
   for (const username of filteredUsernames) {
+    tableContainerElement.appendChild(loaderElement);
     const userData = await fetchUserData(username);
     if (userData) {
       const standupData = await fetchStandupData(userData.id);
@@ -203,6 +237,7 @@ async function searchButtonHandler() {
       tableBodyElement.appendChild(tableRowElement);
     }
   }
+  tableContainerElement.removeChild(loaderElement);
 }
 
 function handleEnterKeyPress(event) {
@@ -214,3 +249,12 @@ function handleEnterKeyPress(event) {
 setupTable();
 searchButtonElement.addEventListener('click', searchButtonHandler);
 searchInput.addEventListener('keyup', handleEnterKeyPress);
+
+document.addEventListener('click', (event) => {
+  const sidebarElement = document.querySelector('.sidebar');
+  if (sidebarElement && !sidebarElement.contains(event.target)) {
+    document.body.removeChild(sidebarElement);
+    sidebarElement.classList.remove('openSidebar');
+    document.body.style.marginRight = '0%';
+  }
+});
