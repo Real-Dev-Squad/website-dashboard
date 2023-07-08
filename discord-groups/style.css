@@ -66,9 +66,19 @@
   flex-direction: column;
   gap: 10px;
 }
+
+.groups {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .groups-search {
+  margin: 10px;
   height: 4rem;
   width: 15rem;
+  position: sticky;
+  top: 0;
+  background: #fff;
   display: flex;
   align-items: center;
 }
@@ -77,22 +87,19 @@
   width: 100%;
   padding-left: 2px;
 }
-
-.groups {
-  overflow: scroll;
-}
-.groups::-webkit-scrollbar {
+.groups-list::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
-.groups::-webkit-scrollbar-thumb {
+.groups-list::-webkit-scrollbar-thumb {
   background: var(--color-buttons-background);
   border-radius: 1.2rem;
 }
 .groups-list {
   padding: 0.8rem;
   list-style: none;
-  height: 80vh;
+  height: 66vh;
+  overflow-y: scroll;
 }
 .groups-list li {
   padding: 0.8rem;
@@ -190,10 +197,9 @@ NOT VERIFIED TEXT ABOVE
   .manage-groups {
     flex-direction: column-reverse;
     padding: 1.2rem;
-    gap: 1.2rem;
   }
   .groups-list {
-    height: 60vh;
+    height: 54vh;
   }
   .group-name {
     font-size: large;
