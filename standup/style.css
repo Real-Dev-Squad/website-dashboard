@@ -4,6 +4,15 @@
   --blue-color: #1d1283;
   --gray-color: #e3e2e2;
   --dark-gray-color: #a8a8a8;
+  --light-blur-color: rgba(14, 12, 168, 0.691);
+  --loader-background-gradient: linear-gradient(
+    110deg,
+    rgba(227, 227, 227, 0) 0%,
+    rgba(227, 227, 227, 0) 40%,
+    rgba(227, 227, 227, 0.5) 50%,
+    rgba(227, 227, 227, 0) 60%,
+    rgba(227, 227, 227, 0) 100%
+  );
 }
 
 body {
@@ -12,6 +21,7 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  transition: margin-left 0.5s;
 }
 
 .navbar {
@@ -216,6 +226,99 @@ tr:hover {
   font-weight: 600;
 }
 
+.loader {
+  position: relative;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--dark-gray-color);
+  padding: 1rem;
+  background-color: var(--white-color);
+  overflow: hidden;
+}
+
+.loader:after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: var(--loader-background-gradient);
+  animation: gradient-animation 1.2s linear infinite;
+}
+
+.loader .wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.loader .wrapper > div {
+  background-color: var(--dark-gray-color);
+}
+
+.loader .circle {
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 50%;
+}
+
+.loader .line-1 {
+  position: absolute;
+  top: 0.5rem;
+  left: 4rem;
+  height: 0.6rem;
+  width: 95%;
+}
+
+.loader .line-2 {
+  position: absolute;
+  top: 2rem;
+  left: 4rem;
+  height: 0.6rem;
+  width: 95%;
+}
+
+@keyframes gradient-animation {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+.sidebar {
+  height: 100vh;
+  width: 0;
+  position: fixed;
+  z-index: 999;
+  top: 0;
+  right: 0;
+  color: var(--white-color);
+  overflow-x: hidden;
+  padding-left: 1rem;
+  padding-top: 6rem;
+  border-radius: 1rem 0 0 1rem;
+  background: var(--light-blur-color);
+  box-shadow: 0 0 0.8rem var(--blue-color);
+  backdrop-filter: blur(2rem);
+}
+.openSidebar {
+  width: 20%;
+}
+
+.standup-head {
+  text-align: center;
+  border-bottom: 1px solid var(--white-color);
+  margin-bottom: 0.5rem;
+}
+
+.sidebar div {
+  width: 100%;
+  padding: 0.5rem 0;
+  text-align: center;
+}
+
 @media screen and (max-width: 768px) {
   body {
     font-size: 0.8rem;
@@ -258,11 +361,48 @@ tr:hover {
   }
 
   .tooltiptext {
-    font-size: 0.5rem;
-    width: 10rem;
+    display: none;
   }
 
   .info-repo {
     font-size: 0.8rem;
+  }
+  body {
+    width: 100%;
+  }
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: auto;
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    padding: 1rem 0 1rem 0;
+  }
+  .openSidebar {
+    width: 100%;
+    animation: slideIn 0.5s ease-in-out forwards;
+  }
+  @keyframes slideIn {
+    from {
+      transform: translateY(-100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  .closeSidebar {
+    animation: slideOut 0.5s ease-in-out forwards;
+  }
+
+  @keyframes slideOut {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(-100%);
+    }
   }
 }
