@@ -45,6 +45,7 @@ const memberAddRoleBody = {
  * FOR RENDERING GROUP ROLES IN 'MANAGE ROLES' TAB
  */
 const groupsData = await getDiscordGroups();
+console.log(groupsData);
 const groupRoles = document.querySelector('.groups-list');
 groupsData?.forEach((item) => {
   const group = document.createElement('li');
@@ -90,11 +91,11 @@ groupTabs.addEventListener('click', (e) => {
 /**
  * FOR SELECTING A GROUP
  */
-const constURL = window.location.pathname;
+const pathname = window.location.pathname;
 const groupRolesList = document.querySelectorAll('.group-role');
 groupRoles?.addEventListener('click', function (event) {
   groupRolesList.forEach((groupItem) => {
-    window.history.pushState(null, null, constURL);
+    window.history.pushState(null, null, pathname);
     groupItem.classList?.remove('active-group');
   });
   const groupListItem = event.target?.closest('li');
@@ -114,18 +115,18 @@ groupRoles?.addEventListener('click', function (event) {
 /**
  * FOR SEARCHING A GROUP
  */
-let divText, txtValue;
-const input = document.getElementById('search-groups');
-input.addEventListener('keyup', () => {
-  const filter = input.value.toUpperCase();
-  const li = document.querySelectorAll('.group-role');
-  const liArray = Array.from(li);
-  liArray.forEach((liItem) => {
-    divText = liItem.getElementsByTagName('p')[0];
-    txtValue = divText.textContent || divText.innerText;
-    const displayStyle =
-      txtValue.toUpperCase().indexOf(filter) > -1 ? '' : 'none';
-    liItem.style.display = displayStyle;
+let paragraphElement, paragraphContent;
+const searchInput = document.getElementById('search-groups');
+searchInput.addEventListener('keyup', () => {
+  const searchValue = searchInput.value.toUpperCase();
+  const groupRoles = document.querySelectorAll('.group-role');
+  const groupRolesArray = Array.from(groupRoles);
+  groupRolesArray.forEach((groupRole) => {
+    paragraphElement = groupRole.getElementsByTagName('p')[0];
+    paragraphContent = paragraphElement.textContent;
+    const displayValue =
+      paragraphContent.toUpperCase().indexOf(searchValue) > -1 ? '' : 'none';
+    groupRole.style.display = displayValue;
   });
 });
 
