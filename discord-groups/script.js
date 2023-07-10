@@ -45,7 +45,6 @@ const memberAddRoleBody = {
  * FOR RENDERING GROUP ROLES IN 'MANAGE ROLES' TAB
  */
 const groupsData = await getDiscordGroups();
-console.log(groupsData);
 const groupRoles = document.querySelector('.groups-list');
 groupsData?.forEach((item) => {
   const group = document.createElement('li');
