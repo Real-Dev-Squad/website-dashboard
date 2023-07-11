@@ -141,16 +141,22 @@ li {
 }
 
 .enabled {
-  background-color: #dddddd;
+  background-color: var(--loader-gray-color);
   color: black;
   cursor: pointer;
 }
 
 .disabled {
+  position: relative;
   background-color: #dddddd;
   color: #999999;
   cursor: pointer;
   opacity: 0.5;
+}
+
+.colorstyle {
+  font-weight: bold;
+  color: black;
 }
 
 .accordion {
