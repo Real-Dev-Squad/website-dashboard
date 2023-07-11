@@ -132,7 +132,7 @@ function generateUserData(userData) {
           });
           tooltip.appendChild(
             createTextNode(
-              'You do not have required permissions to view this.',
+              'You do not have required permissions to view these.',
             ),
           );
           FormPivotButton.appendChild(tooltip);
