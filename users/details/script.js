@@ -114,17 +114,21 @@ function generateUserData(userData) {
     checkUserIsSuperUser().then((isSuperUser) => {
       console.log(isSuperUser);
       const FormPivotButton = createSocialMediaAnchorNode({
-        href: `${userData.profileURL}`,
+        href: `https://realdevsquad.com/intro.html?id=${userData.id}`,
         alt: 'Intro',
         src: isSuperUser ? './../images/info.svg' : './../images/lock-icon.svg',
       });
       FormPivotButton.classList.add(isSuperUser ? 'enabled' : 'disabled');
 
       if (!isSuperUser) {
+        FormPivotButton.addEventListener('click', (event) => {
+          event.preventDefault();
+        });
+
         FormPivotButton.addEventListener('mouseover', () => {
           const tooltip = createElement({
             type: 'span',
-            classList: ['tooltip'],
+            classList: ['tooltip', 'colorstyle'],
           });
           tooltip.appendChild(
             createTextNode(
