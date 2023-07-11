@@ -75,17 +75,24 @@
 .groups-search {
   margin: 10px;
   height: 4rem;
-  width: 15rem;
+  width: 100%;
   position: sticky;
   top: 0;
   background: #fff;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 .groups-search-input {
   height: 2rem;
-  width: 100%;
+  width: 90%;
   padding-left: 2px;
+}
+.groups-list {
+  padding: 0.8rem;
+  list-style: none;
+  height: 66vh;
+  overflow-y: scroll;
 }
 .groups-list::-webkit-scrollbar {
   width: 6px;
@@ -94,12 +101,6 @@
 .groups-list::-webkit-scrollbar-thumb {
   background: var(--color-buttons-background);
   border-radius: 1.2rem;
-}
-.groups-list {
-  padding: 0.8rem;
-  list-style: none;
-  height: 66vh;
-  overflow-y: scroll;
 }
 .groups-list li {
   padding: 0.8rem;
