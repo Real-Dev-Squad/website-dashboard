@@ -8,6 +8,7 @@ describe('Tests the User Management User Listing Screen', () => {
   let userListElement;
   let tileViewBtn;
   let tableViewBtn;
+  let pivot;
   let userSearchElement;
   let paginationElement;
   let prevBtn;
@@ -78,6 +79,11 @@ describe('Tests the User Management User Listing Screen', () => {
 
   afterAll(async () => {
     await browser.close();
+  });
+
+  it('Checks the pivot button', async () => {
+    pivot = page.waitForSelector('.Intro');
+    expect(pivot).toBeTruthy();
   });
 
   it('Checks the UI elements on user listing page.', async () => {
