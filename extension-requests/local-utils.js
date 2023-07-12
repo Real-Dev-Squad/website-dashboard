@@ -72,8 +72,21 @@ function createTable(headings, data, className = '') {
     let rowHeading = createElement({ type: 'th', innerText: title });
 
     let contentText = '';
+    let contentElement;
     if (time) contentText = getTimeFromTimestamp(data[key]);
-    else contentText = key ? data[key] : data[title.toLowerCase()];
+    else if (title === 'Title' && className === 'extension-request') {
+      let anchorTag = createElement({
+        type: 'a',
+        innerText: data[title.toLowerCase()],
+        attributes: {
+          href: `https://status.realdevsquad.com/tasks/${data['taskId']}`,
+          target: '_blank',
+        },
+      });
+      contentElement = anchorTag;
+    } else {
+      contentText = key ? data[key] : data[title.toLowerCase()];
+    }
 
     let tableData = createElement({
       type: 'td',
@@ -82,6 +95,11 @@ function createTable(headings, data, className = '') {
         class: bold ? 'bold' : '',
       },
     });
+
+    if (contentElement) {
+      tableData.appendChild(contentElement);
+    }
+
     row.appendChild(rowHeading);
     row.appendChild(tableData);
     tableBody.appendChild(row);
