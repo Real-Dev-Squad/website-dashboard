@@ -186,8 +186,7 @@ describe('Discord Groups Page', () => {
       elements[1].click();
     });
     const url = await page.url();
-    const decodedParams = decodeURIComponent(url.split('?')[1]);
-    console.log(decodedParams);
-    expect(decodedParams).toMatch('group-DSA');
+    const searchParams = decodeURIComponent(url.split('?')[1]);
+    expect(searchParams).toMatch('group-DSA');
   });
 });
