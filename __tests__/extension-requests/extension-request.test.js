@@ -1,11 +1,9 @@
-const API_BASE_URL = 'https://api.realdevsquad.com';
 const puppeteer = require('puppeteer');
 const { extensionRequests } = require('../../mock-data/extension-requests');
 
 describe('Extension Request Listing Screen', () => {
   let browser;
   let page;
-  let extensionRequests1;
   jest.setTimeout(60000);
 
   beforeAll(async () => {
@@ -21,7 +19,7 @@ describe('Extension Request Listing Screen', () => {
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-      if (url === `${API_BASE_URL}/extension-requests`) {
+      if (url === 'https://api.realdevsquad.com/extension-requests') {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -39,15 +37,32 @@ describe('Extension Request Listing Screen', () => {
 
     await page.goto('http://localhost:8000/extension-requests');
     await page.waitForNetworkIdle();
-
-    extensionRequests1 = await page.$('.extension-requests');
   });
 
   afterAll(async () => {
     await browser.close();
   });
 
-  it('Checks the extension request listing page.', async () => {
-    expect(extensionRequests1).toBeTruthy();
+  it('renders the extension card and redirects on title click', async () => {
+    const extensionRequestCard = await page.$('.extension-request');
+
+    expect(extensionRequestCard).toBeTruthy();
+
+    const titleLink = await extensionRequestCard.$('a');
+    const titleLinkHref = await page.evaluate((el) => el.href, titleLink);
+
+    expect(titleLinkHref).toBe(
+      'https://status.realdevsquad.com/tasks/hlB0vSB5WsZPKcRVGKiA',
+    );
+
+    await titleLink.click();
+
+    await page.waitForNavigation();
+
+    const currentURL = await page.url();
+
+    expect(currentURL).toBe(
+      'https://status.realdevsquad.com/tasks/hlB0vSB5WsZPKcRVGKiA',
+    );
   });
 });

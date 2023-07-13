@@ -12,16 +12,7 @@ const extensionRequests = {
       timestamp: 1689050163,
       assignee: 'shubhamsigdar',
     },
-    {
-      reason: 'Adding feature flag',
-      newEndsOn: 1689222900,
-      oldEndsOn: 1689120000,
-      title: 'Make link clickable',
-      taskId: 'hlB0vSB5WsHjslJ',
-      status: 'PENDING',
-      id: '7L4uZkazl5DmxN1Xkkk',
-      timestamp: 1689050163,
-      assignee: 'shubhamsigdar',
-    },
   ],
 };
+
+module.exports = { extensionRequests };
