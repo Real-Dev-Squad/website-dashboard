@@ -236,7 +236,7 @@ taskForm.onsubmit = async (e) => {
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/tasks`, {
+    const response = await fetch(`${API_BASE_URL}/tasks?userStatusFlag=true`, {
       method: 'POST',
       credentials: 'include',
       body: JSON.stringify(dataToBeSent),
