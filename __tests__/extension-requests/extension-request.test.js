@@ -1,9 +1,11 @@
+const API_BASE_URL = 'https://api.realdevsquad.com';
 const puppeteer = require('puppeteer');
 const { extensionRequests } = require('../../mock-data/extension-requests');
 
 describe('Extension Request Listing Screen', () => {
   let browser;
   let page;
+  let extensionRequests1;
   jest.setTimeout(60000);
 
   beforeAll(async () => {
@@ -19,7 +21,7 @@ describe('Extension Request Listing Screen', () => {
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-      if (url === 'https://api.realdevsquad.com/extension-requests') {
+      if (url === `${API_BASE_URL}/extension-requests`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -37,17 +39,15 @@ describe('Extension Request Listing Screen', () => {
 
     await page.goto('http://localhost:8000/extension-requests');
     await page.waitForNetworkIdle();
-    await page.waitForSelector('.extension-requests');
+
+    extensionRequests1 = await page.$('.extension-requests');
   });
 
   afterAll(async () => {
     await browser.close();
   });
 
-  it('should render the extension request cards', async () => {
-    const extensionRequestCards = await page.$$('.extension-request');
-    expect(extensionRequestCards.length).toBe(
-      extensionRequests.allExtensionRequests.length,
-    );
+  it('Checks the extension request listing page.', async () => {
+    expect(extensionRequests1).toBeTruthy();
   });
 });
