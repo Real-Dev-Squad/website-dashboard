@@ -94,7 +94,7 @@ const pathname = window.location.pathname;
 const groupRolesList = document.querySelectorAll('.group-role');
 groupRoles?.addEventListener('click', function (event) {
   groupRolesList.forEach((groupItem) => {
-    window.history.pushState(null, null, pathname);
+    window.history.pushState({}, '', pathname);
     groupItem.classList?.remove('active-group');
   });
   const groupListItem = event.target?.closest('li');
@@ -102,7 +102,7 @@ groupRoles?.addEventListener('click', function (event) {
     const newURL = `${window.location.pathname}?${
       groupListItem.querySelector('p').textContent
     }`;
-    window.history.pushState(null, null, newURL);
+    window.history.pushState({}, '', newURL);
     groupListItem.classList.add('active-group');
     memberAddRoleBody.roleid = groupListItem.id;
     if (IsUserVerified) {
@@ -116,16 +116,31 @@ groupRoles?.addEventListener('click', function (event) {
  */
 let paragraphElement, paragraphContent;
 const searchInput = document.getElementById('search-groups');
+
+function debounce(func, delay) {
+  let timeoutId;
+  return function (...args) {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      func.apply(this, args);
+    }, delay);
+  };
+}
+
 searchInput.addEventListener('keyup', () => {
-  const searchValue = searchInput.value.toUpperCase();
-  const groupRoles = document.querySelectorAll('.group-role');
-  groupRoles.forEach((groupRole) => {
-    paragraphElement = groupRole.getElementsByTagName('p')[0];
-    paragraphContent = paragraphElement.textContent;
-    const displayValue =
-      paragraphContent.toUpperCase().indexOf(searchValue) > -1 ? '' : 'none';
-    groupRole.style.display = displayValue;
-  });
+  loader.classList.remove('hidden');
+  debounce(() => {
+    const searchValue = searchInput.value.toUpperCase();
+    const groupRoles = document.querySelectorAll('.group-role');
+    groupRoles.forEach((groupRole) => {
+      paragraphElement = groupRole.getElementsByTagName('p')[0];
+      paragraphContent = paragraphElement.textContent;
+      const displayValue =
+        paragraphContent.toUpperCase().indexOf(searchValue) > -1 ? '' : 'none';
+      groupRole.style.display = displayValue;
+      loader.classList.add('hidden');
+    });
+  }, 1000)();
 });
 
 /**

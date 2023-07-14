@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 const { allUsersData } = require('../../mock-data/users');
 const { API_BASE_URL } = require('../../constants');
-const { discordGroups } = require('../../mock-data/discord-groups');
+const { discordGroups } = require('../../mock-data/groups');
 
 const BASE_URL = 'https://api.realdevsquad.com';
 
@@ -99,7 +99,7 @@ describe('Discord Groups Page', () => {
         interceptedRequest.continue();
       }
     });
-    await page.goto('http://localhost:8000/discord-groups');
+    await page.goto('http://localhost:8000/groups');
     await page.waitForNetworkIdle();
   });
 
