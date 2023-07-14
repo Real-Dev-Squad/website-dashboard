@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -14,6 +14,7 @@
 
     <title>Task Requests | Real Dev Squad</title>
     <link rel="stylesheet" href="./style.css" />
+    <script src="/helpers/loadENV.js"></script>
     <script src="./script.js" defer></script>
   </head>
 
@@ -28,52 +29,18 @@
       <h1 class="container__title">Task Request</h1>
       <div class="container__body">
         <div class="container__body__loader hidden">Loading...</div>
-        <div class="container__filters">
-          <select defaultValue="" class="container__filters__status">
+        <div class="container__filters hidden">
+          <select
+            id="status"
+            defaultValue=""
+            class="container__filters__status"
+          >
             <option value="">All</option>
             <option value="WAITING">Waiting</option>
             <option value="APPROVED">Approved</option>
           </select>
-          <select defaultValue="newest" class="container__filters__status">
-            <option value="oldest">Oldest</option>
-            <option value="newest">Newest</option>
-          </select>
         </div>
-        <div id="task-request-container" class="taskRequest">
-          <div class="taskRequest__card">
-            <div class="taskRequest__card__header">
-              <h3 class="taskRequest__card__header__title">
-                Long Sample title for testing on cards
-              </h3>
-              <div
-                class="taskRequest__card__header__status taskRequest__card__header__status--approved"
-                title="approved"
-              ></div>
-            </div>
-            <div class="taskRequest__card__body">
-              <p>
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Hic
-                asperiores minus tenetur ipsum iste delectus consequatur
-                incidunt ex ratione, sit accusantium fuga aspernatur, accusamus
-                sed, sequi optio porro adipisci temporibus.
-              </p>
-            </div>
-            <div class="taskRequest__card__footer">
-              <p>Requested By</p>
-              <div class="taskRequest__card__footer__requestor">
-                <div class="taskRequest__card__footer__requestor__avatar">
-                  <img src="https://tanishqsingla.vercel.app/pfp.webp" alt="" />
-                </div>
-                <div class="taskRequest__card__footer__requestor__avatar">
-                  <img src="https://tanishqsingla.vercel.app/pfp.webp" alt="" />
-                </div>
-                <div class="taskRequest__card__footer__requestor__avatar">
-                  <span>+3</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <div id="task-request-container" class="taskRequest"></div>
       </div>
     </div>
   </body>

@@ -6,6 +6,7 @@ const taskRequestStatus = {
 const API_BASE_URL = window.API_BASE_URL;
 const taskRequestContainer = document.getElementById('task-request-container');
 const containerBody = document.querySelector('.container__body');
+const filterContainer = document.querySelector('.container__filters');
 
 const fetchedTaskRequests = [];
 
@@ -18,6 +19,11 @@ function createCustomElement(domObjectMap) {
   for (const [key, value] of Object.entries(domObjectMap)) {
     if (key === 'tagName') {
       continue;
+    }
+    if (key === 'eventListeners') {
+      value.forEach((obj) => {
+        el.addEventListener(obj.event, obj.func);
+      });
     }
     if (key === 'class') {
       if (Array.isArray(value)) {
@@ -37,11 +43,11 @@ function createCustomElement(domObjectMap) {
 async function getTaskRequests() {
   startLoading();
   try {
-    const res = await fetch(`http://localhost:3000/taskRequests`);
+    const res = await fetch(`${API_BASE_URL}/taskRequests`);
 
     if (res.ok) {
       const data = await res.json();
-      fetchedTaskRequests = [...data.data];
+      fetchedTaskRequests.push(...data.data);
       return;
     }
 
@@ -55,6 +61,11 @@ async function getTaskRequests() {
 
     if (res.status === 403) {
       showMessage('ERROR', 'You are unauthrozed to view this section');
+      return;
+    }
+
+    if (res.status === 404) {
+      showMessage('ERROR', 'Task Requests not found');
       return;
     }
 
@@ -87,22 +98,27 @@ function getAvatar(user) {
   }
   return createCustomElement({
     tagName: 'span',
-    textContent: user.user.charAt(0),
+    textContent: user.user.first_name[0],
   });
 }
 function getRemainingCount(requestors) {
-  if(requestors.length > 3) {
+  if (requestors.length > 3) {
     return createCustomElement({
       tagName: 'span',
       textContent: `+${requestors.length - 3}`,
-    })
+    });
   }
 }
 
-function createTaskRequestCard({ title, description, requestors, status }) {
+function openTaskDetails(id) {
+  window.location.href = new URL(`/taskRequest/details?id=${id}`, API_BASE_URL);
+}
+
+function createTaskRequestCard({ id, task, description, requestors, status }) {
   const card = createCustomElement({
     tagName: 'div',
     class: 'taskRequest__card',
+    eventListeners: [{ event: 'click', func: (e) => openTaskDetails(id, e) }],
     child: [
       createCustomElement({
         tagName: 'div',
@@ -111,7 +127,7 @@ function createTaskRequestCard({ title, description, requestors, status }) {
           createCustomElement({
             tagName: 'h3',
             class: 'taskRequest__card__header__title',
-            textContent: title,
+            textContent: task.title,
           }),
           createCustomElement({
             tagName: 'div',
@@ -146,7 +162,7 @@ function createTaskRequestCard({ title, description, requestors, status }) {
             class: 'taskRequest__card__footer__requestor',
             child: [
               ...requestors.map((requestor, index) => {
-                if (index < 2) {
+                if (index < 3) {
                   return createCustomElement({
                     tagName: 'div',
                     class: 'taskRequest__card__footer__requestor__avatar',
@@ -155,7 +171,7 @@ function createTaskRequestCard({ title, description, requestors, status }) {
                   });
                 }
               }),
-              getRemainingCount(requestors),
+              getRemainingCount(requestors) || '',
             ],
           }),
         ],
@@ -164,3 +180,17 @@ function createTaskRequestCard({ title, description, requestors, status }) {
   });
   return card;
 }
+
+function renderTaskRequestCards(taskRequests) {
+  if (taskRequests.length > 0) {
+    filterContainer.classList.remove('hidden');
+    taskRequests.forEach((taskRequest) => {
+      taskRequestContainer.appendChild(createTaskRequestCard(taskRequest));
+    });
+  }
+}
+
+(async () => {
+  await getTaskRequests();
+  renderTaskRequestCards(fetchedTaskRequests);
+})();
