@@ -126,6 +126,31 @@ function getAvatar(user) {
   });
 }
 
+async function approveTaskRequest(userId) {
+  try {
+    console.log(taskRequestId, userId);
+    const res = await fetch(`${API_BASE_URL}/taskRequests/approve`, {
+      credentials: 'include',
+      method: 'PATCH',
+      body: JSON.stringify({
+        taskRequestId: taskRequestId,
+        userId,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (res.ok) {
+      taskRequest = await fetchTaskRequest();
+      requestorsContainer.innerHTML = '';
+      renderRequestors(taskRequest.requestors);
+    }
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 function getActionButton(requestor) {
   if (taskRequest.status === taskRequestStatus.APPROVED) {
     if (taskRequest?.approvedTo === requestor.user.id) {
@@ -142,6 +167,9 @@ function getActionButton(requestor) {
     tagName: 'button',
     textContent: 'Approve',
     class: 'requestors__conatainer__list__button',
+    eventListeners: [
+      { event: 'click', func: () => approveTaskRequest(requestor.user.id) },
+    ],
   });
 }
 
@@ -184,23 +212,25 @@ async function renderRequestors(requestors) {
   });
 }
 
-const fetchTaskRequest = async () => {
+async function fetchTaskRequest() {
+  const res = await fetch(`${API_BASE_URL}/taskRequests/${taskRequestId}`);
+  const data = await res.json();
+  return data.data;
+}
+
+const renderTaskRequest = async () => {
   taskRequestSkeleton.classList.remove('hidden');
   taskContainer.classList.remove('hidden');
   try {
-    const res = await fetch(`${API_BASE_URL}/taskRequests/${taskRequestId}`);
-    const data = await res.json();
+    taskRequest = await fetchTaskRequest();
     taskRequestSkeleton.classList.add('hidden');
-    taskRequest = data.data;
 
-    renderTaskRequestDetails(data.data);
-    renderTaskDetails(data.data.taskId);
-    renderRequestors(data.data.requestors);
-
-    return data;
+    renderTaskRequestDetails(taskRequest);
+    renderTaskDetails(taskRequest.taskId);
+    renderRequestors(taskRequest.requestors);
   } catch (e) {
     console.log(e);
   }
 };
 
-fetchTaskRequest();
+renderTaskRequest();
