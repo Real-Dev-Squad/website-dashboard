@@ -114,7 +114,7 @@ function openTaskDetails(id) {
   window.location.href = new URL(`/taskRequest/details?id=${id}`, API_BASE_URL);
 }
 
-function createTaskRequestCard({ id, task, description, requestors, status }) {
+function createTaskRequestCard({ id, task, requestors, status }) {
   const card = createCustomElement({
     tagName: 'div',
     class: 'taskRequest__card',
@@ -145,7 +145,7 @@ function createTaskRequestCard({ id, task, description, requestors, status }) {
         child: [
           createCustomElement({
             tagName: 'p',
-            textContent: description,
+            textContent: task.purpose,
           }),
         ],
       }),
