@@ -1,5 +1,16 @@
 :root {
   font-family: 'Inter', sans-serif;
+  --color-primary: #1d1283;
+  --color-success: rgba(20, 102, 75, 0.6);
+  --color-error: #da1e28;
+  --color-warn: rgba(199, 129, 18, 0.4);
+  --color-gray-light: #eee;
+  --color-gray: #666;
+  --color-text-light: rgba(0, 0, 0, 0.6);
+  --elevation-1: 0 1px 3px 1px rgba(0, 0, 0, 0.1),
+    0 1px 2px 0 rgba(0, 0, 0, 0.1);
+  --elevation-3: 0px 1px 3px 0px rgba(0, 0, 0, 0.3),
+    0px 4px 8px 3px rgba(0, 0, 0, 0.15);
 }
 
 body {
@@ -12,7 +23,7 @@ body {
 }
 
 .header {
-  background: #1d1283;
+  background: var(--color-primary);
   padding: 1rem;
 }
 .header__contents {
@@ -66,12 +77,12 @@ body {
   line-height: 1.25rem;
 }
 .taskRequest__message--error {
-  color: #da1e28;
+  color: var(--color-error);
 }
 .taskRequest__card {
   cursor: pointer;
   padding: 1rem;
-  box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: var(--elevation-1);
   border-radius: 0.5rem;
   min-width: 16rem;
   display: flex;
@@ -79,12 +90,11 @@ body {
   gap: 0.5rem;
 }
 .taskRequest__card:hover {
-  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3),
-    0px 4px 8px 3px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--elevation-3);
   transition: 300ms ease-in;
 }
 .taskRequest__card:active {
-  box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: var(--elevation-1);
   transition: 100ms ease-in;
 }
 .taskRequest__card__header {
@@ -100,7 +110,7 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 90%;
-  color: #1d1283;
+  color: var(--color-primary);
 }
 .taskRequest__card__header__status {
   height: 0.75rem;
@@ -108,10 +118,10 @@ body {
   border-radius: 50%;
 }
 .taskRequest__card__header__status--approved {
-  background-color: rgba(20, 102, 75, 0.6);
+  background-color: var(--color-success);
 }
 .taskRequest__card__header__status--waiting {
-  background-color: rgba(199, 129, 18, 0.4);
+  background-color: var(--color-warn);
 }
 .taskRequest__card__body p {
   font-size: 0.875rem;
@@ -121,7 +131,7 @@ body {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
   overflow: hidden;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--color-text-light);
 }
 .taskRequest__card__footer {
   display: flex;
@@ -141,7 +151,7 @@ body {
   border: solid 2px white;
   overflow: hidden;
   border-radius: 50%;
-  background-color: #eee;
+  background-color: var(--color-gray-light);
 }
 .taskRequest__card__footer__requestor__avatar img {
   height: 100%;
@@ -149,7 +159,7 @@ body {
 }
 .taskRequest__card__footer__requestor__avatar span {
   font-size: 0.875rem;
-  color: #555;
+  color: var(--color-gray);
 }
 
 @media (max-width: 1439px) {

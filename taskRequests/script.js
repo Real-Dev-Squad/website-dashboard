@@ -1,8 +1,3 @@
-const taskRequestStatus = {
-  WAITING: 'WAITING',
-  APPROVED: 'APPROVED',
-};
-
 const API_BASE_URL = window.API_BASE_URL;
 const taskRequestContainer = document.getElementById('task-request-container');
 const containerBody = document.querySelector('.container__body');
@@ -52,24 +47,21 @@ async function getTaskRequests() {
     }
 
     if (res.status === 401) {
-      showMessage(
-        'ERROR',
-        'You are unauthenticated to view this section, please login!',
-      );
+      showMessage('ERROR', ErrorMessages.UNAUTHENTICATED);
       return;
     }
 
     if (res.status === 403) {
-      showMessage('ERROR', 'You are unauthrozed to view this section');
+      showMessage('ERROR', ErrorMessages.UNAUTHORIZED);
       return;
     }
 
     if (res.status === 404) {
-      showMessage('ERROR', 'Task Requests not found');
+      showMessage('ERROR', ErrorMessages.NOT_FOUND);
       return;
     }
 
-    showMessage('ERROR', 'Unexpected error occurred');
+    showMessage('ERROR', ErrorMessages.SERVER_ERROR);
   } catch (e) {
     console.log(e);
   } finally {
@@ -93,7 +85,7 @@ function getAvatar(user) {
   if (user.user?.picture?.url) {
     return createCustomElement({
       tagName: 'img',
-      src: 'user.user?.picture?.url',
+      src: user.user?.picture?.url,
     });
   }
   return createCustomElement({
