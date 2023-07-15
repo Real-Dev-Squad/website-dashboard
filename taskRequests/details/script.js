@@ -60,25 +60,30 @@ async function renderTaskDetails(taskId) {
     taskSkeleton.classList.add('hidden');
     const data = await res.json();
 
-    const { taskData } = data;
+    const { taskData } = data ?? {};
 
     taskContainer.append(
       createCustomElement({
         tagName: 'h2',
         class: 'task__title',
-        textContent: taskData.title,
+        textContent: taskData?.title || 'N/A',
       }),
       createCustomElement({
         tagName: 'p',
         class: 'task_type',
         textContent: 'Type: ',
         child: [
-          createCustomElement({
-            tagName: 'span',
-            class: ['task__type__chip', `task__type__chip--${taskData.type}`],
-            textContent: taskData.type,
-          }),
-          taskData.isNoteworthy
+          taskData?.type
+            ? createCustomElement({
+                tagName: 'span',
+                class: [
+                  'task__type__chip',
+                  `task__type__chip--${taskData.type}`,
+                ],
+                textContent: taskData?.type,
+              })
+            : '',
+          taskData?.isNoteworthy
             ? createCustomElement({
                 tagName: 'span',
                 class: ['task__type__chip', `task__type__chip--noteworthy`],
@@ -95,18 +100,18 @@ async function renderTaskDetails(taskId) {
           createCustomElement({
             tagName: 'a',
             href: `https://members.realdevsquad.com/${taskData.createdBy}`,
-            textContent: taskData.createdBy,
+            textContent: taskData?.createdBy || 'N/A',
           }),
         ],
       }),
       createCustomElement({
         tagName: 'p',
         class: 'task__purpose',
-        textContent: taskData.purpose,
+        textContent: taskData?.purpose || 'N/A',
       }),
     );
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
 }
 
@@ -128,7 +133,7 @@ function getAvatar(user) {
 
 async function approveTaskRequest(userId) {
   try {
-    console.log(taskRequestId, userId);
+    console.error(taskRequestId, userId);
     const res = await fetch(`${API_BASE_URL}/taskRequests/approve`, {
       credentials: 'include',
       method: 'PATCH',
@@ -147,7 +152,7 @@ async function approveTaskRequest(userId) {
       renderRequestors(taskRequest.requestors);
     }
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
 }
 
@@ -229,7 +234,7 @@ const renderTaskRequest = async () => {
     renderTaskDetails(taskRequest.taskId);
     renderRequestors(taskRequest.requestors);
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
 };
 
