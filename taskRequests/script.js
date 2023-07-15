@@ -75,7 +75,6 @@ function getRemainingCount(requestors) {
     });
   }
 }
-console.log(window.location.hostname);
 function openTaskDetails(id) {
   const url = new URL(`/taskRequests/details`, window.location.href);
 
@@ -154,7 +153,7 @@ function renderTaskRequestCards(taskRequests) {
   if (taskRequests.length > 0) {
     filterContainer.classList.remove('hidden');
     taskRequests.forEach((taskRequest) => {
-      taskRequestDetails.appendChild(createTaskRequestCard(taskRequest));
+      taskRequestContainer.appendChild(createTaskRequestCard(taskRequest));
     });
   }
 }
