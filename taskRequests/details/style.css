@@ -239,4 +239,12 @@ body {
     grid-column: 1 / span 12;
     border: none;
   }
+
+  .taskRequest__skeleton__title {
+    max-width: 80%;
+    height: 1rem;
+  }
+  .taskRequest__skeleton__subtitle {
+    max-width: 40%;
+  }
 }
