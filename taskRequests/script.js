@@ -37,7 +37,7 @@ async function getTaskRequests() {
 
     showMessage('ERROR', ErrorMessages.SERVER_ERROR);
   } catch (e) {
-    console.log(e);
+    console.error(e);
   } finally {
     stopLoading();
   }
