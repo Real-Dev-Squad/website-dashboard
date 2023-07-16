@@ -111,14 +111,14 @@ groupRoles?.addEventListener('click', function (event) {
   }
 });
 
-let paragraphElement, paragraphContent;
+// const paragraphElement = null, paragraphContent = '';
 const searchInput = document.getElementById('search-groups');
 
 function debounce(func, delay) {
   let timeoutId;
   return function (...args) {
-    clearTimeout(timeoutId);
     timeoutId = setTimeout(() => {
+      clearTimeout(timeoutId);
       func.apply(this, args);
     }, delay);
   };
@@ -130,8 +130,8 @@ searchInput.addEventListener('keyup', () => {
     const searchValue = searchInput.value.toUpperCase();
     const groupRoles = document.querySelectorAll('.group-role');
     groupRoles.forEach((groupRole) => {
-      paragraphElement = groupRole.getElementsByTagName('p')[0];
-      paragraphContent = paragraphElement.textContent;
+      const paragraphElement = groupRole.getElementsByTagName('p')[0];
+      const paragraphContent = paragraphElement.textContent;
       const displayValue =
         paragraphContent.toUpperCase().indexOf(searchValue) > -1 ? '' : 'none';
       groupRole.style.display = displayValue;
