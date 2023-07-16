@@ -111,9 +111,6 @@ groupRoles?.addEventListener('click', function (event) {
   }
 });
 
-/**
- * FOR SEARCHING A GROUP
- */
 let paragraphElement, paragraphContent;
 const searchInput = document.getElementById('search-groups');
 
