@@ -23,3 +23,7 @@ function createCustomElement(domObjectMap) {
   }
   return el;
 }
+
+module.exports = {
+  createCustomElement,
+};
