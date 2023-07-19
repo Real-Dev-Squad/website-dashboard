@@ -44,6 +44,7 @@ body {
 button {
   width: 250px;
   cursor: pointer;
+  position: relative;
 }
 
 .create-task-btn {
@@ -174,8 +175,60 @@ footer {
   color: var(--black-color);
 }
 
-.action-button:hover {
+.action-button:hover,
+.sync-button:hover {
   color: var(--white-color);
   background-color: var(--blue-color);
   border: none;
+}
+
+.syncButtonSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-top: 50px;
+  padding: 0 100px;
+  flex-wrap: wrap;
+}
+
+.syncButtonSection .button-container {
+  flex: 1 1 100%;
+  max-width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.syncButtonSection .spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #1d1283;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.syncButtonSection .status {
+  font-weight: bold;
+  margin-top: 10px;
+  text-align: center;
+}
+
+@keyframes spin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+.action-button.disabled {
+  opacity: 0.5;
+  pointer-events: none;
 }
