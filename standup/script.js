@@ -215,11 +215,24 @@ function setupTable() {
   tableContainerElement.appendChild(tableElement);
 }
 
+const urlParams = new URLSearchParams(window.location.search);
+const initialUsernames = urlParams.get('users')
+  ? urlParams.get('users').split('+')
+  : [];
+searchInput.value = initialUsernames.join(', ');
+
 async function searchButtonHandler() {
   const usernames = searchInput.value
     .split(',')
     .map((username) => username.trim());
   const filteredUsernames = [...new Set(usernames)];
+  const updatedUrlParams = new URLSearchParams();
+  updatedUrlParams.set('users', filteredUsernames.join('+'));
+  const newUrl = `${window.location.origin}${
+    window.location.pathname
+  }?${updatedUrlParams.toString()}`;
+  window.history.pushState({ path: newUrl }, '', newUrl);
+
   tableBodyElement.innerHTML = '';
 
   for (const username of filteredUsernames) {
@@ -258,3 +271,7 @@ document.addEventListener('click', (event) => {
     document.body.style.marginRight = '0%';
   }
 });
+
+if (initialUsernames.length) {
+  searchButtonHandler();
+}
