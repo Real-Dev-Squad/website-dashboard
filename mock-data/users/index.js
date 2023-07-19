@@ -134,4 +134,16 @@ const filteredUsersData = {
   ],
 };
 
-module.exports = { allUsersData, filteredUsersData };
+const user = {
+  id: 'iODXB6gfsjaZB9p0XlBw',
+  incompleteUserDetails: false,
+  github_display_name: 'Sunny Sahsi',
+  last_name: 'Sahsi',
+  github_id: 'sahsisunny',
+  first_name: 'Sunny',
+  username: 'sunny',
+  roles: {
+    archived: false,
+  },
+};
+module.exports = { allUsersData, filteredUsersData, user };
