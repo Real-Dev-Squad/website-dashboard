@@ -396,6 +396,7 @@ function populateAvailability() {
     { name: 'Active', id: 'ACTIVE' },
     { name: 'Ooo (Out of Office)', id: 'OOO' },
     { name: 'Idle', id: 'IDLE' },
+    { name: 'Onboarding', id: 'ONBOARDING' },
   ];
   for (let i = 0; i < availabilityArr.length; i++) {
     const { name, id } = availabilityArr[i];

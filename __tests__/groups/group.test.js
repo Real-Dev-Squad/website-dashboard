@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 const { allUsersData } = require('../../mock-data/users');
 const { API_BASE_URL } = require('../../constants');
-const { discordGroups } = require('../../mock-data/discord-groups');
+const { discordGroups } = require('../../mock-data/groups');
 
 const BASE_URL = 'https://api.realdevsquad.com';
 
@@ -99,7 +99,7 @@ describe('Discord Groups Page', () => {
         interceptedRequest.continue();
       }
     });
-    await page.goto('http://localhost:8000/discord-groups');
+    await page.goto('http://localhost:8000/groups');
     await page.waitForNetworkIdle();
   });
 
@@ -133,7 +133,7 @@ describe('Discord Groups Page', () => {
       '.group-role',
       (list) => list.length,
     );
-    expect(groupListLength).toBe(1);
+    expect(groupListLength).toBe(3);
   });
 
   test('Should not display an error message if the role name contains "group"', async () => {
@@ -164,5 +164,29 @@ describe('Discord Groups Page', () => {
     createGroupBtn = await page.$('#create-button');
     await createGroupBtn.click();
     await expect(alertMessage).toContain("Roles cannot contain 'group'.");
+  });
+
+  test('Filter groups based on search input', async () => {
+    const searchInput = await page.$('#search-groups');
+    await searchInput.type('DSA');
+
+    const filteredGroupNames = await page.$$eval('.group-role', (elements) => {
+      return elements
+        .map((element) => element.querySelector('.group-name').textContent)
+        .filter((name) => name.includes('DSA'));
+    });
+
+    expect(filteredGroupNames).toEqual(
+      expect.arrayContaining(['group-DSA', 'group-DSA-Coding-Group']),
+    );
+  });
+
+  test('should update the URL when a group role is clicked', async () => {
+    await page.$$eval('.group-role', (elements) => {
+      elements[1].click();
+    });
+    const url = await page.url();
+    const searchParams = decodeURIComponent(url.split('?')[1]);
+    expect(searchParams).toMatch('group-DSA');
   });
 });
