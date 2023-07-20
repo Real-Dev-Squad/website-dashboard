@@ -47,11 +47,8 @@ if (params.get('dev') === 'true') {
   createGoalButton.classList.remove('element-display-remove');
 }
 
-
-
 syncDiscordUserDataButton.addEventListener('click', syncDiscordUserData);
 syncUnverifiedUserDataButton.addEventListener('click', syncUnverifiedUserData);
-
 
 async function syncDiscordUserData(event) {
   const button = event.target;
