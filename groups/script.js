@@ -58,6 +58,9 @@ groupsData?.forEach((item) => {
   group.appendChild(createdBy);
   group.setAttribute('id', item.roleid);
   group.classList.add('group-role');
+  if (window.location.search.slice(1) === item.rolename) {
+    group.classList.add('active-group');
+  }
   groupRoles.appendChild(group);
 });
 
@@ -87,19 +90,54 @@ groupTabs.addEventListener('click', (e) => {
 /**
  * FOR SELECTING A GROUP
  */
+const pathname = window.location.pathname;
 const groupRolesList = document.querySelectorAll('.group-role');
 groupRoles?.addEventListener('click', function (event) {
   groupRolesList.forEach((groupItem) => {
+    window.history.pushState({}, '', pathname);
     groupItem.classList?.remove('active-group');
   });
   const groupListItem = event.target?.closest('li');
   if (groupListItem) {
+    const newURL = `${window.location.pathname}?${
+      groupListItem.querySelector('p').textContent
+    }`;
+    window.history.pushState({}, '', newURL);
     groupListItem.classList.add('active-group');
     memberAddRoleBody.roleid = groupListItem.id;
     if (IsUserVerified) {
       buttonAddRole.disabled = false;
     }
   }
+});
+
+// const paragraphElement = null, paragraphContent = '';
+const searchInput = document.getElementById('search-groups');
+
+function debounce(func, delay) {
+  let timeoutId;
+  return function (...args) {
+    timeoutId = setTimeout(() => {
+      clearTimeout(timeoutId);
+      func.apply(this, args);
+    }, delay);
+  };
+}
+
+searchInput.addEventListener('keyup', () => {
+  loader.classList.remove('hidden');
+  debounce(() => {
+    const searchValue = searchInput.value.toUpperCase();
+    const groupRoles = document.querySelectorAll('.group-role');
+    groupRoles.forEach((groupRole) => {
+      const paragraphElement = groupRole.getElementsByTagName('p')[0];
+      const paragraphContent = paragraphElement.textContent;
+      const displayValue =
+        paragraphContent.toUpperCase().indexOf(searchValue) > -1 ? '' : 'none';
+      groupRole.style.display = displayValue;
+      loader.classList.add('hidden');
+    });
+  }, 1000)();
 });
 
 /**
