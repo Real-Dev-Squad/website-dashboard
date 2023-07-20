@@ -164,8 +164,8 @@ function createTableRowElement({ userName, imageUrl, userStandupData }) {
     );
 
     if (standupStatus[i] === '✅') {
-      completedTextElement.textContent += `Today's: ${completedTextData[i]}`;
-      yesterdayStandupElement.textContent += `Yesterday's: ${plannedText[i]}`;
+      completedTextElement.textContent += `Yesterday's: ${completedTextData[i]}`;
+      yesterdayStandupElement.textContent += `Today's: ${plannedText[i]}`;
       blockersElement.textContent += `Blockers: ${blockersText[i]}`;
 
       tooltipElement.appendChild(completedTextElement);
