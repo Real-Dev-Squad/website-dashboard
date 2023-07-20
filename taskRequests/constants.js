@@ -3,6 +3,11 @@ const taskRequestStatus = {
   APPROVED: 'APPROVED',
 };
 
+const MessageStatus = {
+  SUCCESS: 'SUCCESS',
+  ERROR: 'ERROR',
+};
+
 const ErrorMessages = {
   UNAUTHENTICATED:
     'You are unauthenticated to view this section, please login!',

@@ -1,10 +1,5 @@
 const API_BASE_URL = window.API_BASE_URL;
 
-const taskRequestStatus = {
-  WAITING: 'WAITING',
-  APPROVED: 'APPROVED',
-};
-
 let taskRequest;
 
 const taskRequestSkeleton = document.querySelector('.taskRequest__skeleton');
