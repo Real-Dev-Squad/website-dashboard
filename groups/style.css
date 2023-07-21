@@ -68,6 +68,7 @@
   justify-content: center;
   flex-direction: column;
   gap: 10px;
+  position: relative;
 }
 
 .groups {
@@ -162,6 +163,12 @@
   border: none;
 }
 
+.btn-add-role {
+  position: absolute;
+  top: 3%;
+  left: 5%;
+}
+
 /*
 *
     LOADER CLASSES
@@ -202,6 +209,9 @@ NOT VERIFIED TEXT ABOVE
 }
 
 @media (max-width: 650px) {
+  .btn-add-role {
+    position: static;
+  }
   .manage-groups {
     flex-direction: column-reverse;
     padding: 1.2rem;
