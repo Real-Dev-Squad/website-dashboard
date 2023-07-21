@@ -66,13 +66,9 @@ async function syncDiscordUserData(event) {
       method: 'PATCH',
       credentials: 'include',
     });
-
-    // Check if the response is ok
-    if (response.ok) {
-      status.textContent = 'Last Sync: Successful';
-    } else {
-      status.textContent = 'Last Sync: Failed';
-    }
+    status.textContent = response.ok
+      ? 'Last Sync: Successful'
+      : 'Last Sync: Failed';
   } catch (err) {
     console.error(err);
     status.textContent = 'Last Sync: Failed';
@@ -103,12 +99,9 @@ async function syncUnverifiedUserData(event) {
         credentials: 'include',
       },
     );
-    // Check if the response is ok
-    if (response.ok) {
-      status.textContent = 'Last Sync: Successful';
-    } else {
-      status.textContent = 'Last Sync: Failed';
-    }
+    status.textContent = response.ok
+      ? 'Last Sync: Successful'
+      : 'Last Sync: Failed';
   } catch (err) {
     console.error(err);
     status.textContent = 'Last Sync: Failed';
@@ -119,4 +112,4 @@ async function syncUnverifiedUserData(event) {
   }
 }
 
-showUserManagementButton();
+//showUserManagementButton();
