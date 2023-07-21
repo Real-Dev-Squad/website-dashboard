@@ -111,6 +111,10 @@
   margin-bottom: 0.6rem;
   border-radius: 0.6rem;
 }
+.groups-list li:hover {
+  cursor: pointer;
+  background-color: var(--color-active-groups-background);
+}
 .group-name {
   font-size: larger;
 }
