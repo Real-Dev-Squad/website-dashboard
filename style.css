@@ -219,6 +219,11 @@ footer {
   text-align: center;
 }
 
+.action-button.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 @keyframes spin {
   0% {
     transform: translate(-50%, -50%) rotate(0deg);
@@ -226,9 +231,4 @@ footer {
   100% {
     transform: translate(-50%, -50%) rotate(360deg);
   }
-}
-
-.action-button.disabled {
-  opacity: 0.5;
-  pointer-events: none;
 }
