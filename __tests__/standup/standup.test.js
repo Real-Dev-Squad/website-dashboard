@@ -89,6 +89,6 @@ describe('Standup Page', () => {
     await searchButton.click();
     await page.waitForTimeout(1000);
     const updatedUrl = page.url();
-    expect(updatedUrl).toContain('users=sunny');
+    expect(updatedUrl).toContain('q=user:sunny');
   });
 });
