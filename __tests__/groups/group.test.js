@@ -189,4 +189,49 @@ describe('Discord Groups Page', () => {
     const searchParams = decodeURIComponent(url.split('?')[1]);
     expect(searchParams).toMatch('DSA');
   });
+
+  test('should not have group keyword in group list', async () => {
+    const renderedGroupNames = await page.$$eval('.group-name', (elements) => {
+      return elements.map((element) => element.innerText);
+    });
+    renderedGroupNames.forEach((groupName) =>
+      expect(/^group-.*/.test(groupName)).toBe(false),
+    );
+  });
+
+  test('should show count beside groupname', async () => {
+    const memberCounts = await page.$$eval('.group-name', (elements) => {
+      return elements.map((element) =>
+        element.getAttribute('data-member-count'),
+      );
+    });
+    expect(memberCounts).toEqual(['3', '200', '0']);
+  });
+
+  test("should show proper group creator's image", async () => {
+    const creatorImageSrcAndAltText = await page.$$eval(
+      '.created-by--avatar',
+      (elements) => {
+        return elements.map((element) => [
+          element.getAttribute('src'),
+          element.getAttribute('alt'),
+        ]);
+      },
+    );
+    const expectedImageSrcAndAltText = discordGroups.groups.map((group) => [
+      group.image,
+      "group's creator image",
+    ]);
+    expect(creatorImageSrcAndAltText).toEqual(expectedImageSrcAndAltText);
+  });
+
+  test("should show proper group creator's image", async () => {
+    const createdByLines = await page.$$eval('.created-by', (elements) => {
+      return elements.map((element) => element.innerText);
+    });
+    const expectedCreatedByLines = discordGroups.groups.map(
+      (group) => `created by ${group.firstName} ${group.lastName}`,
+    );
+    expect(expectedCreatedByLines).toEqual(createdByLines);
+  });
 });

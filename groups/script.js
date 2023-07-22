@@ -24,10 +24,10 @@ const createAuthorDetailsDOM = (firstName, lastName, imageUrl) => {
   const userAvatar = document.createElement('img');
   userAvatar.classList.add('created-by--avatar');
   userAvatar.src = imageUrl;
-  userAvatar.setAttribute('alt', 'group creator');
+  userAvatar.setAttribute('alt', "group's creator image");
 
   const createdBy = document.createElement('span');
-  createdBy.classList.add('create-by');
+  createdBy.classList.add('created-by');
   createdBy.textContent = `created by ${firstName} ${lastName}`;
 
   container.appendChild(userAvatar);
