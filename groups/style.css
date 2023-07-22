@@ -118,9 +118,32 @@
 }
 .group-name {
   font-size: larger;
+  display: flex;
 }
+
+.group-name::after {
+  content: '(' attr(data-member-count) ')';
+  margin: auto 0.26rem;
+  font-size: 0.8rem;
+  color: #717171;
+}
+
+.created-by--container {
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  display: flex;
+}
+
+.created-by--avatar {
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  clip-path: circle();
+}
+
 .create-by {
   opacity: 0.6;
+  margin: auto 0.4rem;
 }
 .groups button {
   align-self: center;
@@ -144,7 +167,7 @@
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .label-for-new-group {
@@ -175,15 +198,20 @@
 *
 */
 
+.backdrop {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
 .loader {
   border: 6px solid var(--color-loader-border);
   border-top: 6px solid var(--color-loader-border-top);
   border-radius: 50%;
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
   width: 4rem;
   height: 4rem;
   animation: spin 1s linear infinite;

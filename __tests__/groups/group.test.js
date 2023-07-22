@@ -177,7 +177,7 @@ describe('Discord Groups Page', () => {
     });
 
     expect(filteredGroupNames).toEqual(
-      expect.arrayContaining(['group-DSA', 'group-DSA-Coding-Group']),
+      expect.arrayContaining(['DSA', 'DSA-Coding-Group']),
     );
   });
 
@@ -187,6 +187,6 @@ describe('Discord Groups Page', () => {
     });
     const url = await page.url();
     const searchParams = decodeURIComponent(url.split('?')[1]);
-    expect(searchParams).toMatch('group-DSA');
+    expect(searchParams).toMatch('DSA');
   });
 });

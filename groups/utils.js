@@ -1,4 +1,5 @@
 const BASE_URL = 'https://api.realdevsquad.com'; // REPLACE WITH YOUR LOCALHOST URL FOR TESTING LOCAL BACKEND
+
 async function getMembers() {
   try {
     const res = await fetch(`${BASE_URL}/users/`, {
@@ -76,11 +77,25 @@ async function addGroupRoleToMember(memberRoleBody) {
       body: JSON.stringify(memberRoleBody),
     });
 
+    if (!res.ok) {
+      const error = await res.json();
+      throw error;
+    }
+
     const data = await res.json();
     return data;
   } catch (err) {
-    return err;
+    throw err;
   }
+}
+
+function removeGroupKeywordFromDiscordRoleName(groupName) {
+  if (/^group-.*/.test(groupName)) {
+    const splitNames = groupName.split('-');
+    splitNames.shift();
+    return splitNames.join('-');
+  }
+  return groupName;
 }
 
 export {
@@ -89,4 +104,5 @@ export {
   getDiscordGroups,
   createDiscordGroupRole,
   addGroupRoleToMember,
+  removeGroupKeywordFromDiscordRoleName,
 };
