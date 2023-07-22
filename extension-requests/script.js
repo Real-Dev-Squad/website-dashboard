@@ -190,6 +190,7 @@ function fillUpdateForm() {
   )
     .toISOString()
     .replace('Z', '');
+
   modalUpdateForm.querySelector('.extensionOldEndsOn').value = new Date(
     oldEndsOn * 1000,
   )
