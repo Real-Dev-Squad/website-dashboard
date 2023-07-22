@@ -158,6 +158,14 @@
   border: none;
 }
 
+footer{
+  padding: 8px;
+}
+.info-repo {
+  text-align: center;
+  font-weight: 100;
+}
+
 /*
 *
     LOADER CLASSES
