@@ -3,7 +3,7 @@ const API_BASE_URL = 'https://staging-api.realdevsquad.com';
 const { user } = require('../../mock-data/users');
 const { standup } = require('../../mock-data/standup');
 
-describe('Input box', () => {
+describe('Standup Page', () => {
   let browser;
   let page;
   jest.setTimeout(60000);
@@ -78,5 +78,17 @@ describe('Input box', () => {
     await page.waitForSelector('#table-container');
     const loader = await page.$('.loader');
     expect(loader).toBeTruthy();
+  });
+
+  it('should update the URL with the query parameter when the user writes a name', async () => {
+    const userInput = await page.$('#user-search-input');
+    const searchButton = await page.$('#search-button');
+    await userInput.click({ clickCount: 3 });
+    await userInput.press('Backspace');
+    await userInput.type('sunny');
+    await searchButton.click();
+    await page.waitForTimeout(1000);
+    const updatedUrl = page.url();
+    expect(updatedUrl).toContain('q=user:sunny');
   });
 });

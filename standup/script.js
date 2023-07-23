@@ -140,15 +140,15 @@ function createTableRowElement({ userName, imageUrl, userStandupData }) {
     });
     const completedTextElement = createElement({
       type: 'p',
-      classList: ['today-standup'],
+      classList: ['today-standup', 'tooltip-text'],
     });
     const yesterdayStandupElement = createElement({
       type: 'p',
-      classList: ['yesterday-standup'],
+      classList: ['yesterday-standup', 'tooltip-text'],
     });
     const blockersElement = createElement({
       type: 'p',
-      classList: ['blockers'],
+      classList: ['blockers', 'tooltip-text'],
     });
     const noStandupTextElement = createElement({
       type: 'p',
@@ -164,8 +164,8 @@ function createTableRowElement({ userName, imageUrl, userStandupData }) {
     );
 
     if (standupStatus[i] === '✅') {
-      completedTextElement.textContent += `Today's: ${completedTextData[i]}`;
-      yesterdayStandupElement.textContent += `Yesterday's: ${plannedText[i]}`;
+      completedTextElement.textContent += `Yesterday's: ${completedTextData[i]}`;
+      yesterdayStandupElement.textContent += `Today's: ${plannedText[i]}`;
       blockersElement.textContent += `Blockers: ${blockersText[i]}`;
 
       tooltipElement.appendChild(completedTextElement);
@@ -219,10 +219,15 @@ async function searchButtonHandler() {
   const usernames = searchInput.value
     .split(',')
     .map((username) => username.trim());
-  const filteredUsernames = [...new Set(usernames)];
+  const formattedUsernames = usernames.map((username) => `user:${username}`);
+  const queryString = formattedUsernames.join('+');
+
+  const newUrl = `${window.location.origin}${window.location.pathname}?q=${queryString}`;
+  window.history.pushState({ path: newUrl }, '', newUrl);
+
   tableBodyElement.innerHTML = '';
 
-  for (const username of filteredUsernames) {
+  for (const username of usernames) {
     tableContainerElement.appendChild(loaderElement);
     const userData = await fetchUserData(username);
     if (userData) {
@@ -246,7 +251,23 @@ function handleEnterKeyPress(event) {
   }
 }
 
+function getUsernames() {
+  const queryData = new URL(
+    decodeURIComponent(window.location.href),
+  ).searchParams.get('q');
+  const initialUsernames = queryData
+    ?.split(' ')
+    .map((username) => username.split(':')[1]);
+  return initialUsernames || [];
+}
+
+function setUsernames(usernames) {
+  searchInput.value = usernames.join(', ');
+}
+
+setUsernames(getUsernames());
 setupTable();
+
 searchButtonElement.addEventListener('click', searchButtonHandler);
 searchInput.addEventListener('keyup', handleEnterKeyPress);
 
@@ -258,3 +279,7 @@ document.addEventListener('click', (event) => {
     document.body.style.marginRight = '0%';
   }
 });
+
+if (getUsernames().length > 0) {
+  searchButtonHandler();
+}
