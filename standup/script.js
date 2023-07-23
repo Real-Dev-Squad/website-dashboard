@@ -219,7 +219,10 @@ async function searchButtonHandler() {
   const usernames = searchInput.value
     .split(',')
     .map((username) => username.trim());
-  const formattedUsernames = usernames.map((username) => `user:${username}`);
+  const uniqueUsernames = [...new Set(usernames)];
+  const formattedUsernames = uniqueUsernames.map(
+    (username) => `user:${username}`,
+  );
   const queryString = formattedUsernames.join('+');
 
   const newUrl = `${window.location.origin}${window.location.pathname}?q=${queryString}`;
@@ -227,7 +230,7 @@ async function searchButtonHandler() {
 
   tableBodyElement.innerHTML = '';
 
-  for (const username of usernames) {
+  for (const username of uniqueUsernames) {
     tableContainerElement.appendChild(loaderElement);
     const userData = await fetchUserData(username);
     if (userData) {
@@ -245,12 +248,6 @@ async function searchButtonHandler() {
   tableContainerElement.removeChild(loaderElement);
 }
 
-function handleEnterKeyPress(event) {
-  if (event.key === 'Enter') {
-    searchButtonHandler();
-  }
-}
-
 function getUsernames() {
   const queryData = new URL(
     decodeURIComponent(window.location.href),
@@ -262,9 +259,14 @@ function getUsernames() {
 }
 
 function setUsernames(usernames) {
-  searchInput.value = usernames.join(', ');
+  searchInput.value = [...new Set(usernames)].join(', ');
 }
 
+function handleEnterKeyPress(event) {
+  if (event.key === 'Enter') {
+    searchButtonHandler();
+  }
+}
 setUsernames(getUsernames());
 setupTable();
 
