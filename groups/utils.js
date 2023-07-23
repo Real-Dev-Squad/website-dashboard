@@ -90,7 +90,7 @@ async function addGroupRoleToMember(memberRoleBody) {
 }
 
 function removeGroupKeywordFromDiscordRoleName(groupName) {
-  if (/^group-.*/.test(groupName)) {
+  if (/^group.*/.test(groupName)) {
     const splitNames = groupName.split('-');
     splitNames.shift();
     return splitNames.join('-');

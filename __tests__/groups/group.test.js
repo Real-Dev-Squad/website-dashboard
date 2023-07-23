@@ -195,7 +195,7 @@ describe('Discord Groups Page', () => {
       return elements.map((element) => element.innerText);
     });
     renderedGroupNames.forEach((groupName) =>
-      expect(/^group-.*/.test(groupName)).toBe(false),
+      expect(/^group.*/.test(groupName)).toBe(false),
     );
   });
 
