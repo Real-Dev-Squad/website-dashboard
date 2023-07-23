@@ -14,6 +14,11 @@ const syncExternalAccountsUpdate = document.getElementById(
 const syncUnverifiedUsersUpdate = document.getElementById(
   SYNC_UNVERIFIED_USERS_UPDATE,
 );
+const buttonSection = document.getElementById('sync-buttons');
+
+function getCurrentTimestamp() {
+  return new Date().toLocaleString();
+}
 
 export async function showSuperUserOptions(...privateBtns) {
   try {
@@ -22,6 +27,19 @@ export async function showSuperUserOptions(...privateBtns) {
       privateBtns.forEach((btn) =>
         btn.classList.remove('element-display-remove'),
       );
+      buttonSection.classList.remove('element-display-remove');
+      syncUsersStatusUpdate.textContent = `Last Sync: ${
+        localStorage.getItem('lastSyncUsersStatus') ||
+        'Synced Data Not Available'
+      }`;
+      syncExternalAccountsUpdate.textContent = `Last Sync: ${
+        localStorage.getItem('lastSyncExternalAccounts') ||
+        'Synced Data Not Available'
+      }`;
+      syncUnverifiedUsersUpdate.textContent = `Last Sync: ${
+        localStorage.getItem('lastSyncUnverifiedUsers') ||
+        'Synced Data Not Available'
+      }`;
     }
   } catch (err) {
     console.log(err);
@@ -34,16 +52,7 @@ export async function showSuperUserOptions(...privateBtns) {
  * Then get the node from the DOM into a variable and pass that variable in the
  * function below.
  */
-showSuperUserOptions(
-  userManagementLink,
-  extensionRequestsLink,
-  syncUsersStatusButton,
-  syncExternalAccountsButton,
-  syncUsersStatusUpdate,
-  syncExternalAccountsUpdate,
-  syncUnverifiedUsersButton,
-  syncUnverifiedUsersUpdate,
-);
+showSuperUserOptions(userManagementLink, extensionRequestsLink);
 
 const createGoalButton = document.getElementById('create-goal');
 const params = new URLSearchParams(window.location.search);
@@ -51,11 +60,25 @@ if (params.get('dev') === 'true') {
   createGoalButton.classList.remove('element-display-remove');
 }
 
-syncUsersStatusButton.addEventListener('click', syncUsersStatus);
-syncExternalAccountsButton.addEventListener('click', syncExternalAccounts);
-syncUnverifiedUsersButton.addEventListener('click', syncUnverifiedUsers);
+function addClickEventListener(
+  button,
+  endpoint,
+  localStorageKey,
+  lastSyncElement,
+  method,
+) {
+  button.addEventListener('click', async (event) => {
+    await handleSync(endpoint, localStorageKey, lastSyncElement, method, event);
+  });
+}
 
-async function syncUsersStatus(event) {
+async function handleSync(
+  endpoint,
+  localStorageKey,
+  lastSyncElement,
+  method,
+  event,
+) {
   const button = event.target;
   const wrapper = button.parentElement;
   const spinner = wrapper.querySelector('.spinner');
@@ -67,11 +90,23 @@ async function syncUsersStatus(event) {
   status.textContent = SYNC_IN_PROGRESS;
 
   try {
-    const response = await fetch(`${API_BASE_URL}/users/status/update`, {
-      method: 'PATCH',
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: method,
       credentials: 'include',
     });
-    status.textContent = response.ok ? SYNC_SUCCESSFUL : SYNC_FAILED;
+
+    if (response.ok) {
+      status.textContent = SYNC_SUCCESSFUL;
+      const lastSyncTimestamp = getCurrentTimestamp();
+
+      localStorage.setItem(localStorageKey, lastSyncTimestamp);
+
+      if (lastSyncElement) {
+        lastSyncElement.textContent = `Last Sync: ${lastSyncTimestamp}`;
+      }
+    } else {
+      status.textContent = SYNC_FAILED;
+    }
   } catch (err) {
     console.error(err);
     status.textContent = SYNC_FAILED;
@@ -82,62 +117,25 @@ async function syncUsersStatus(event) {
   }
 }
 
-//for external accounts
-async function syncExternalAccounts(event) {
-  const button = event.target;
-  const wrapper = button.parentElement;
-  const spinner = wrapper.querySelector('.spinner');
-  const status = wrapper.querySelector('.status');
-
-  button.disabled = true;
-  button.classList.add(DISABLED);
-  spinner.style.display = 'inline-block';
-  status.textContent = SYNC_IN_PROGRESS;
-
-  try {
-    const response = await fetch(
-      `${API_BASE_URL}/external-accounts/discord-sync`,
-      {
-        method: 'PATCH',
-        credentials: 'include',
-      },
-    );
-    status.textContent = response.ok ? SYNC_SUCCESSFUL : SYNC_FAILED;
-  } catch (err) {
-    console.error(err);
-    status.textContent = SYNC_FAILED;
-  } finally {
-    spinner.style.display = 'none';
-    button.classList.remove(DISABLED);
-    button.disabled = false;
-  }
-}
-
-async function syncUnverifiedUsers(event) {
-  const button = event.target;
-  const wrapper = button.parentElement;
-  const spinner = wrapper.querySelector('.spinner');
-  const status = wrapper.querySelector('.status');
-
-  button.disabled = true;
-  button.classList.add(DISABLED);
-  spinner.style.display = 'inline-block';
-  status.textContent = SYNC_IN_PROGRESS;
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/users/`, {
-      method: 'POST',
-      credentials: 'include',
-    });
-    status.textContent = response.ok ? SYNC_SUCCESSFUL : SYNC_FAILED;
-  } catch (err) {
-    console.error(err);
-    status.textContent = SYNC_FAILED;
-  } finally {
-    spinner.style.display = 'none';
-    button.classList.remove(DISABLED);
-    button.disabled = false;
-  }
-}
-
-//showUserManagementButton();
+// Attach (button,API,cookie name,div element of status,HTTP method of API
+addClickEventListener(
+  syncUsersStatusButton,
+  '/users/status/update',
+  'lastSyncUsersStatus',
+  syncUsersStatusUpdate,
+  'PATCH',
+);
+addClickEventListener(
+  syncExternalAccountsButton,
+  '/external-accounts/discord-sync',
+  'lastSyncExternalAccounts',
+  syncExternalAccountsUpdate,
+  'PATCH',
+);
+addClickEventListener(
+  syncUnverifiedUsersButton,
+  '/users/',
+  'lastSyncUnverifiedUsers',
+  syncUnverifiedUsersUpdate,
+  'POST',
+);
