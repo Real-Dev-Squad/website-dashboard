@@ -91,6 +91,7 @@ describe('Standup Page', () => {
     const updatedUrl = page.url();
     expect(updatedUrl).toContain('q=user:sunny');
   });
+
   it('should update the URL with the query parameter when the user writes multiple names', async () => {
     const userInput = await page.$('#user-search-input');
     const searchButton = await page.$('#search-button');
@@ -102,6 +103,7 @@ describe('Standup Page', () => {
     const updatedUrl = page.url();
     expect(updatedUrl).toContain('q=user:sunny+user:pratiyush');
   });
+
   it('should update the URL with the query parameter when the user writes duplicate names', async () => {
     const userInput = await page.$('#user-search-input');
     const searchButton = await page.$('#search-button');
