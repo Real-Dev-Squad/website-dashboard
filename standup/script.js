@@ -252,11 +252,9 @@ function getUsernames() {
   const queryData = new URL(
     decodeURIComponent(window.location.href),
   ).searchParams.get('q');
-  console.log(queryData);
   const initialUsernames = queryData
     ?.split(' ')
     .map((username) => username.split(':')[1]);
-  console.log(initialUsernames);
   return initialUsernames || [];
 }
 
