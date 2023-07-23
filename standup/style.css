@@ -179,13 +179,13 @@ tr:hover {
   visibility: hidden;
   text-align: center;
   border-radius: 0.5rem;
-  padding: 0.5rem;
+  padding: 1rem;
   position: absolute;
   z-index: 100;
   font-size: 0.7rem;
-  width: 15rem;
-  right: -125%;
-  bottom: 61%;
+  width: 30ch;
+  right: -106%;
+  bottom: 60%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -202,6 +202,12 @@ tr:hover {
   border-color: var(--blue-color) transparent transparent transparent;
 }
 
+.tooltip-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
 ::-webkit-scrollbar {
   width: 0.5rem;
   height: 0.5rem;
@@ -296,8 +302,7 @@ tr:hover {
   right: 0;
   color: var(--white-color);
   overflow-x: hidden;
-  padding-left: 1rem;
-  padding-top: 6rem;
+  padding: 1rem;
   border-radius: 1rem 0 0 1rem;
   background: var(--light-blur-color);
   box-shadow: 0 0 0.8rem var(--blue-color);
