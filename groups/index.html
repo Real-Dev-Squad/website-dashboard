@@ -7,9 +7,9 @@
     <link rel="icon" href="/images/index.ico" type="image/x-icon" />
     <title>Discord Groups | Real Dev Squad</title>
     <link rel="stylesheet" href="/global.css" />
-    <link rel="stylesheet" href="/discord-groups/style.css" />
+    <link rel="stylesheet" href="/groups/style.css" />
     <script src="/constants.js"></script>
-    <script type="module" src="/discord-groups/script.js" defer></script>
+    <script type="module" src="/groups/script.js" defer></script>
   </head>
   <body>
     <h3 class="not-verified-tag hidden">
@@ -18,11 +18,19 @@
     <div class="container">
       <div class="loader hidden"></div>
       <nav class="groups-tab">
-        <div class="manage-groups-tab active-tab">Manage Groups</div>
-        <div class="create-groups-tab">Create Groups</div>
+        <div class="manage-groups-tab active-tab tab">Manage Groups</div>
+        <div class="create-groups-tab tab">Create Groups</div>
       </nav>
       <div class="manage-groups">
         <aside class="groups">
+          <div class="groups-search">
+            <input
+              type="text"
+              class="groups-search-input"
+              id="search-groups"
+              placeholder="Search for groups"
+            />
+          </div>
           <ul class="groups-list"></ul>
         </aside>
         <main>

@@ -26,4 +26,8 @@ const react = {
     return el;
   },
   render,
+  rerender: function (element, container) {
+    container.firstChild.remove();
+    render(element, container);
+  },
 };

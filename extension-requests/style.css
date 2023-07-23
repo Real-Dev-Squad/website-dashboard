@@ -40,7 +40,7 @@ body {
 .container {
   width: 100%;
   text-align: center;
-  padding: 10px;
+  padding: 2.5rem;
 }
 
 .header {
@@ -52,6 +52,7 @@ body {
 .extension-requests-modal-parent {
   display: none;
 }
+
 .extension-requests-modal-parent.visible {
   z-index: 1;
   position: fixed;
@@ -137,10 +138,12 @@ body {
   border: none;
   border-bottom: 1px solid var(--gray);
 }
+
 .extension-requests-form input:focus {
   outline: none;
   border-bottom: 1px solid var(--gray);
 }
+
 .extension-requests-form button {
   background-color: var(--button-proceed);
   border: none;
@@ -168,10 +171,12 @@ body {
   border: none;
   border-bottom: 1px solid var(--gray);
 }
+
 .extension-requests-status-form input:focus {
   outline: none;
   border-bottom: 1px solid var(--gray);
 }
+
 .extension-requests-status-form button {
   background-color: var(--button-proceed);
   border: none;
@@ -187,35 +192,44 @@ body {
 
 .extension-requests {
   display: grid;
-  grid-template-columns: 2fr;
+  grid-template-columns: repeat(auto-fill, minmax(12.5rem, 22rem));
+  grid-auto-rows: 26rem;
   flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.25rem;
 }
 
 .extension-request {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: auto;
   text-align: left;
   border: 2px solid var(--black-transparent);
   padding: 1.25rem;
-  margin: 10px;
   color: var(--black);
   border-radius: 5px;
+  border-spacing: 0px 10px;
 }
 
 .extension-request tr th {
   width: 50%;
 }
 
-.extension-request .more,
-.extension-request .update_request {
+.extension-request > div {
+  display: flex;
+  justify-content: space-between;
+}
+.extension-request > div .more,
+.extension-request > div .update_request {
   background-color: var(--button-proceed);
   border: none;
   color: var(--white);
-  width: 40%;
-  min-width: max-content;
+  width: 48%;
   padding: 0.5rem 1rem;
-  font-size: medium;
+  font-size: 0.85rem;
   font-weight: bold;
   border-radius: 5px;
-  margin: 10px 10px 0px 0px;
 }
 
 /* Loader Container */
@@ -223,6 +237,7 @@ body {
   text-align: center;
   font-size: 2rem;
 }
+
 .loader {
   margin: auto auto;
 }
@@ -236,6 +251,7 @@ body {
 .error {
   display: none;
 }
+
 .error-visible {
   display: block;
 }
@@ -254,6 +270,7 @@ body {
     left: 10%;
     right: 10%;
   }
+
   .extension-requests-form {
     left: 10%;
     right: 10%;

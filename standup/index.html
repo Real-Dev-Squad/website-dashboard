@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/images/index.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/standup/style.css" />
+    <title>User Standup | Real Dev Squad</title>
+  </head>
+
+  <body>
+    <nav class="navbar">
+      <h1 class="user-standup-nav">User Standup</h1>
+    </nav>
+
+    <main class="standup-page">
+      <section class="user-search-container">
+        <div class="input-container">
+          <input
+            type="text"
+            class="user-search-input"
+            placeholder="Search for a user"
+            id="user-search-input"
+          />
+
+          <button type="submit" class="user-search-button" id="search-button">
+            Search
+          </button>
+        </div>
+      </section>
+
+      <section class="table-container" id="table-container"></section>
+    </main>
+
+    <footer>
+      <p class="info-repo">
+        The contents of this website are deployed from this
+        <a
+          class="info-repo-link"
+          href="https://github.com/Real-Dev-Squad/website-dashboard"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Open sourced repo
+        </a>
+      </p>
+    </footer>
+    <script src="/constants.js"></script>
+    <script src="/standup/utils.js"></script>
+    <script src="/standup/constants.js"></script>
+    <script src="/standup/script.js"></script>
+  </body>
+</html>

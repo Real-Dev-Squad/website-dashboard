@@ -72,7 +72,7 @@ function generateUserImage(alt) {
 }
 
 function createSocialMediaAnchorNode({ href, id, alt, src }) {
-  const a = createElement({ type: 'a', classList: ['social'] });
+  const a = createElement({ type: 'a', classList: ['social', alt] });
   a.setAttribute('target', '_blank');
   a.setAttribute('rel', 'noopener noreferrer');
   a.setAttribute('href', `${href}/${userData[id] ? userData[id] : ''}`);
@@ -112,15 +112,33 @@ function generateUserData(userData) {
     type: 'div',
     classList: ['user-details-wrap'],
   });
-  const username = createElement({
+  const fullName = createElement({
     type: 'h2',
+    classList: ['user-details-fullname'],
+  });
+  fullName.appendChild(
+    createTextNode(userData.first_name + ' ' + userData.last_name),
+  );
+
+  const username = createElement({
+    type: 'h3',
     classList: ['user-details-username'],
   });
-  username.appendChild(createTextNode(userData.username));
+  username.appendChild(createTextNode('@' + userData.username));
 
   const img = generateUserImage('profile');
   const socials = generateSocialMediaLinksList();
-  wrapper.append(img, username);
+  if (userData.roles?.in_discord) {
+    const discordSocialButton = createSocialMediaAnchorNode({
+      href: `https://discord.com/users/${userData.discordId}`,
+      id: 'discord',
+      alt: 'Discord',
+      src: './../images/discord.svg',
+    });
+    socials.appendChild(discordSocialButton);
+  }
+
+  wrapper.append(img, fullName, username);
   main.append(wrapper, socials);
   document.querySelector('.user-details-header').appendChild(main);
 }
