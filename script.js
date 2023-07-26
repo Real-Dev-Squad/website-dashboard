@@ -127,7 +127,6 @@ async function handleSync(
 }
 
 function showToast(message, type) {
-  console.log(typeof message);
   if (typeof message === 'string') {
     toast.innerHTML = `<div class="message">${message}</div>`;
   }
@@ -138,7 +137,7 @@ function showToast(message, type) {
       if (message.merge_status[i].status.updated) {
         let repo = message.merge_status[i].repository;
         let text = repo.substring(repo.lastIndexOf('/') + 1) + ' synced';
-        toast.innerHTML = `<div class="message">${text}</div>`;
+        toast.innerHTML = `<div class="message"> ✓ ${text}</div>`;
       }
     }
     toast.classList.add('success');
@@ -178,12 +177,12 @@ const repoSyncHandler = async (event) => {
       showToast(response.body, 'success');
     } else {
       repoSyncStatusUpdate.textContent = SYNC_FAILED;
-      showToast('API response not as expected', 'failure');
+      showToast('✗ API response not as expected', 'failure');
     }
   } catch (err) {
     console.error('Error while fetching repo sync data');
     repoSyncStatusUpdate.textContent = SYNC_FAILED;
-    showToast('Something unexpected happened!', 'failure');
+    showToast('✗ Something unexpected happened!', 'failure');
   } finally {
     spinner.style.display = 'none';
     button.classList.remove(DISABLED);

@@ -237,16 +237,23 @@ footer {
 }
 
 #toast {
-  position: fixed;
-  top: 30px;
-  right: 20px;
+  position: absolute;
+  top: 3rem;
+  right: 0.5rem;
   padding: 10px;
   border-radius: 5px;
   font-weight: bold;
+  border: 1px solid #1d1283;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 }
 
 .success {
   color: green;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 }
 
 .failure {
@@ -254,7 +261,7 @@ footer {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .progress-bar {
