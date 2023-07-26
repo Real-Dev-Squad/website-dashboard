@@ -156,9 +156,7 @@ footer {
   margin-top: auto;
 }
 
-.element-display-remove {
-  display: none;
-}
+
 
 .action-button {
   color: var(--black-color);
@@ -238,4 +236,55 @@ footer {
   100% {
     transform: translate(-50%, -50%) rotate(360deg);
   }
+}
+
+#toast {
+  position: fixed;
+  top: 30px;
+  right: 20px;
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.success {
+  color: green;
+}
+
+.failure {
+  color: #F44336;
+}
+
+.hidden {
+  display: none;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 1px;
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.success .progress-bar {
+  background-color: #4CAF50;
+}
+
+.failure .progress-bar {
+  background-color: blue;
+}
+
+.fill {
+  height: 5px;
+  animation: fillAnimation 5s ease backwards;
+}
+
+@keyframes fillAnimation {
+  100% {
+    width: 0%;
+  }
+}
+
+.element-display-remove {
+  display: none !important;
 }
