@@ -156,8 +156,6 @@ footer {
   margin-top: auto;
 }
 
-
-
 .action-button {
   color: var(--black-color);
   font-weight: 500;
@@ -252,7 +250,7 @@ footer {
 }
 
 .failure {
-  color: #F44336;
+  color: #f44336;
 }
 
 .hidden {
@@ -267,7 +265,7 @@ footer {
 }
 
 .success .progress-bar {
-  background-color: #4CAF50;
+  background-color: #4caf50;
 }
 
 .failure .progress-bar {

@@ -24,7 +24,7 @@ function getCurrentTimestamp() {
 
 export async function showSuperUserOptions(...privateBtns) {
   try {
-    const isSuperUser = true;//await checkUserIsSuperUser();
+    const isSuperUser = true; //await checkUserIsSuperUser();
     if (isSuperUser) {
       privateBtns.forEach((btn) =>
         btn.classList.remove('element-display-remove'),
@@ -43,8 +43,7 @@ export async function showSuperUserOptions(...privateBtns) {
         'Synced Data Not Available'
       }`;
       repoSyncStatusUpdate.textContent = `Last Sync: ${
-        localStorage.getItem('lastSyncRepo') ||
-        'Synced Data Not Available'
+        localStorage.getItem('lastSyncRepo') || 'Synced Data Not Available'
       }`;
     }
   } catch (err) {
@@ -69,7 +68,6 @@ if (params.get('dev') === 'true') {
   createGoalButton.classList.remove('element-display-remove');
   repoSyncDiv.classList.remove('element-display-remove');
 }
-
 
 function addClickEventListener(
   button,
@@ -128,27 +126,25 @@ async function handleSync(
   }
 }
 
-
 function showToast(message, type) {
-  if(typeof message === String){
+  if (typeof message === String) {
     toast.innerHTML = `<div class="message">${message}</div>`;
   }
   toast.classList.remove('hidden');
 
-  
   if (type === 'success') {
-    for(let i=0;i<message.merge_status.length;i++){
-      if(message.merge_status[i].status.updated){
+    for (let i = 0; i < message.merge_status.length; i++) {
+      if (message.merge_status[i].status.updated) {
         let repo = message.merge_status[i].repository;
-        let text=repo.substring(repo.lastIndexOf('/')+1)+" synced";
+        let text = repo.substring(repo.lastIndexOf('/') + 1) + ' synced';
         toast.innerHTML = `<div class="message">${text}</div>`;
       }
     }
-      toast.classList.add('success');
-      toast.classList.remove('failure');
+    toast.classList.add('success');
+    toast.classList.remove('failure');
   } else if (type === 'failure') {
-      toast.classList.add('failure');
-      toast.classList.remove('success');
+    toast.classList.add('failure');
+    toast.classList.remove('success');
   }
 
   const progressBar = document.createElement('div');
@@ -157,35 +153,44 @@ function showToast(message, type) {
   toast.appendChild(progressBar);
 
   setTimeout(() => {
-      toast.classList.add('hidden');
-      toast.innerHTML = ''; // Clear any appended elements (progress bar)
+    toast.classList.add('hidden');
+    toast.innerHTML = ''; // Clear any appended elements (progress bar)
   }, 5000);
- 
 }
 
-const repoSyncHandler = async () => {
-  try{
-    const response = await fetch(REPO_SYNC_API_URL,
-      { mode: 'no-cors' });
+const repoSyncHandler = async (event) => {
+  const button = event.target;
+  const wrapper = button.parentElement;
+  const spinner = wrapper.querySelector('.spinner');
+  const status = wrapper.querySelector('.status');
+
+  button.disabled = true;
+  button.classList.add(DISABLED);
+  spinner.style.display = 'inline-block';
+  status.textContent = SYNC_IN_PROGRESS;
+
+  try {
+    const response = await fetch(REPO_SYNC_API_URL, { mode: 'no-cors' });
     console.log(response);
     if (response.ok) {
       repoSyncStatusUpdate.textContent = SYNC_SUCCESSFUL;
       showToast(response.body, 'success');
     } else {
-      console.log("hi");
       repoSyncStatusUpdate.textContent = SYNC_FAILED;
       showToast('API response not as expected', 'failure');
     }
-  }catch(err){
-    console.log("error");
-    console.error("Error while fetching repo sync data");
+  } catch (err) {
+    console.error('Error while fetching repo sync data');
     repoSyncStatusUpdate.textContent = SYNC_FAILED;
     showToast('Something unexpected happened!', 'failure');
+  } finally {
+    spinner.style.display = 'none';
+    button.classList.remove(DISABLED);
+    button.disabled = false;
   }
-}
+};
 
 repoSyncButton.addEventListener('click', repoSyncHandler);
-
 
 // Attach (button,API,cookie name,div element of status,HTTP method of API
 addClickEventListener(
