@@ -127,7 +127,8 @@ async function handleSync(
 }
 
 function showToast(message, type) {
-  if (typeof message === String) {
+  console.log(typeof message);
+  if (typeof message === 'string') {
     toast.innerHTML = `<div class="message">${message}</div>`;
   }
   toast.classList.remove('hidden');
