@@ -24,7 +24,7 @@ function getCurrentTimestamp() {
 
 export async function showSuperUserOptions(...privateBtns) {
   try {
-    const isSuperUser = true; //await checkUserIsSuperUser();
+    await checkUserIsSuperUser();
     if (isSuperUser) {
       privateBtns.forEach((btn) =>
         btn.classList.remove('element-display-remove'),
@@ -170,11 +170,11 @@ const repoSyncHandler = async (event) => {
   status.textContent = SYNC_IN_PROGRESS;
 
   try {
-    const response = await fetch(REPO_SYNC_API_URL, { mode: 'no-cors' });
-    console.log(response);
-    if (response.ok) {
+    const apiResponse = await fetch(REPO_SYNC_API_URL);
+    const response = await apiResponse.json();
+    if (apiResponse.ok) {
       repoSyncStatusUpdate.textContent = SYNC_SUCCESSFUL;
-      showToast(response.body, 'success');
+      showToast(response, 'success');
     } else {
       repoSyncStatusUpdate.textContent = SYNC_FAILED;
       showToast('✗ API response not as expected', 'failure');
