@@ -156,7 +156,7 @@ function showToast(message, type) {
 
   setTimeout(() => {
     toast.classList.add('hidden');
-    toast.innerHTML = ''; // Clear any appended elements (progress bar)
+    toast.innerHTML = '';
   }, 5000);
 }
 
