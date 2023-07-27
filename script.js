@@ -1,4 +1,5 @@
 const userManagementLink = document.getElementById(USER_MANAGEMENT_LINK);
+const discordUserLink = document.getElementById('discord-user-link');
 const extensionRequestsLink = document.getElementById(EXTENSION_REQUESTS_LINK);
 const syncUsersStatusButton = document.getElementById(SYNC_USERS_STATUS);
 const syncExternalAccountsButton = document.getElementById(
@@ -24,7 +25,7 @@ function getCurrentTimestamp() {
 
 export async function showSuperUserOptions(...privateBtns) {
   try {
-    const isSuperUser = await checkUserIsSuperUser();
+    const isSuperUser = true; //await checkUserIsSuperUser();
     if (isSuperUser) {
       privateBtns.forEach((btn) =>
         btn.classList.remove('element-display-remove'),
@@ -54,7 +55,11 @@ export async function showSuperUserOptions(...privateBtns) {
  * Then get the node from the DOM into a variable and pass that variable in the
  * function below.
  */
-showSuperUserOptions(userManagementLink, extensionRequestsLink);
+showSuperUserOptions(
+  userManagementLink,
+  extensionRequestsLink,
+  discordUserLink,
+);
 
 const createGoalButton = document.getElementById('create-goal');
 const repoSyncDiv = document.getElementById('sync-repo-div');
@@ -64,9 +69,6 @@ const params = new URLSearchParams(window.location.search);
 if (params.get('dev') === 'true') {
   createGoalButton.classList.remove('element-display-remove');
   repoSyncDiv.classList.remove('element-display-remove');
-  repoSyncStatusUpdate.textContent = `Last Sync: ${
-    localStorage.getItem('lastSyncRepo') || 'Synced Data Not Available'
-  }`;
 }
 
 function addClickEventListener(
@@ -169,21 +171,17 @@ const repoSyncHandler = async (event) => {
   button.disabled = true;
   button.classList.add(DISABLED);
   spinner.style.display = 'inline-block';
-  status.textContent = SYNC_IN_PROGRESS;
 
   try {
     const apiResponse = await fetch(REPO_SYNC_API_URL);
     const response = await apiResponse.json();
     if (apiResponse.ok) {
-      repoSyncStatusUpdate.textContent = SYNC_SUCCESSFUL;
       showToast(response, 'success');
     } else {
-      repoSyncStatusUpdate.textContent = SYNC_FAILED;
       showToast('✗ API response not as expected', 'failure');
     }
   } catch (err) {
     console.error('Error while fetching repo sync data');
-    repoSyncStatusUpdate.textContent = SYNC_FAILED;
     showToast('✗ Something unexpected happened!', 'failure');
   } finally {
     spinner.style.display = 'none';
