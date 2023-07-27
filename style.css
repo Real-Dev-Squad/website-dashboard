@@ -276,7 +276,7 @@ footer {
 }
 
 .failure .progress-bar {
-  background-color: blue;
+  background-color: red;
 }
 
 .fill {

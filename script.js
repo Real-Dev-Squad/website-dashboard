@@ -24,7 +24,7 @@ function getCurrentTimestamp() {
 
 export async function showSuperUserOptions(...privateBtns) {
   try {
-    await checkUserIsSuperUser();
+    const isSuperUser = await checkUserIsSuperUser();
     if (isSuperUser) {
       privateBtns.forEach((btn) =>
         btn.classList.remove('element-display-remove'),
@@ -41,9 +41,6 @@ export async function showSuperUserOptions(...privateBtns) {
       syncUnverifiedUsersUpdate.textContent = `Last Sync: ${
         localStorage.getItem('lastSyncUnverifiedUsers') ||
         'Synced Data Not Available'
-      }`;
-      repoSyncStatusUpdate.textContent = `Last Sync: ${
-        localStorage.getItem('lastSyncRepo') || 'Synced Data Not Available'
       }`;
     }
   } catch (err) {
@@ -67,6 +64,9 @@ const params = new URLSearchParams(window.location.search);
 if (params.get('dev') === 'true') {
   createGoalButton.classList.remove('element-display-remove');
   repoSyncDiv.classList.remove('element-display-remove');
+  repoSyncStatusUpdate.textContent = `Last Sync: ${
+    localStorage.getItem('lastSyncRepo') || 'Synced Data Not Available'
+  }`;
 }
 
 function addClickEventListener(
@@ -138,6 +138,8 @@ function showToast(message, type) {
         let repo = message.merge_status[i].repository;
         let text = repo.substring(repo.lastIndexOf('/') + 1) + ' synced';
         toast.innerHTML = `<div class="message"> ✓ ${text}</div>`;
+      } else {
+        toast.innerHTML = `<div class="message">✓ All repos uptodate</div>`;
       }
     }
     toast.classList.add('success');
