@@ -2,6 +2,7 @@ const userManagementLink = document.getElementById(USER_MANAGEMENT_LINK);
 const discordUserLink = document.getElementById('discord-user-link');
 const extensionRequestsLink = document.getElementById(EXTENSION_REQUESTS_LINK);
 const syncUsersStatusButton = document.getElementById(SYNC_USERS_STATUS);
+const UpdatedstatusMessage = 'All repos uptodate';
 const syncExternalAccountsButton = document.getElementById(
   SYNC_EXTERNAL_ACCOUNTS,
 );
@@ -141,7 +142,7 @@ function showToast(message, type) {
         let text = repo.substring(repo.lastIndexOf('/') + 1) + ' synced';
         toast.innerHTML = `<div class="message"> ✓ ${text}</div>`;
       } else {
-        toast.innerHTML = `<div class="message">✓ All repos uptodate</div>`;
+        toast.innerHTML = `<div class="message">✓ ${UpdatedstatusMessage} </div>`;
       }
     }
     toast.classList.add('success');
