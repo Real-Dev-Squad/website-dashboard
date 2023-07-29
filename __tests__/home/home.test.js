@@ -81,7 +81,8 @@ describe('Home Page', () => {
       (el) => el.innerText,
       discordUsersButton,
     );
-    expect(discordUsersButtonText).toBe('Discord Users');
+    const trimmedDiscordUsersButtonText = discordUsersButtonText.trim();
+    expect(trimmedDiscordUsersButtonText).toBe('Discord Users');
   });
 
   it('should display the User Management anchor button', async () => {
@@ -96,7 +97,8 @@ describe('Home Page', () => {
       (el) => el.innerText,
       userManagementButton,
     );
-    expect(userManagementButtonText).toBe('User Management');
+    const trimmedUserManagementButtonText = userManagementButtonText.trim();
+    expect(trimmedUserManagementButtonText).toBe('User Management');
   });
 
   it('should display the Sync Repo button', async () => {
