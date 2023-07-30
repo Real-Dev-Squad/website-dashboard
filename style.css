@@ -8,6 +8,8 @@
   --black-color: black;
   --white-color: white;
   --blue-color: #1d1283;
+  --success-color: green;
+  --failure-color: #f44336;
 }
 
 body {
@@ -20,13 +22,13 @@ body {
 }
 
 #tasksNav {
-  background-color: #1d1283;
+  background-color: var(--blue-color);
   padding: 10px;
   height: 40px;
 }
 
 #createTask {
-  color: white;
+  color: var(--white-color);
   padding-left: 50%;
   text-decoration: none;
   font-size: large;
@@ -48,20 +50,20 @@ button {
 }
 
 .create-task-btn {
-  color: black;
+  color: var(--black-color);
   font-weight: 500;
   font-size: larger;
-  background-color: white;
-  border: 2px solid black;
-  border-radius: 5px;
+  background-color: var(--white-color);
+  border: 0.13rem solid var(--black-color);
+  border-radius: 0.3rem;
   padding: 10px 50px;
   cursor: pointer;
   transition: all 0.5s ease;
   outline: none;
 }
 .create-task-btn:hover {
-  color: white;
-  background-color: #1d1283;
+  color: var(--white-color);
+  background-color: var(--blue-color);
   border-color: transparent;
 }
 
@@ -74,28 +76,28 @@ button {
 }
 
 .profile-task-btn {
-  color: black;
+  color: var(--black-color);
   font-weight: 500;
   font-size: larger;
-  background-color: white;
-  border: 2px solid black;
-  border-radius: 5px;
+  background-color: var(--white-color);
+  border: 0.13rem solid var(--black-color);
+  border-radius: 0.3rem;
   padding: 10px 50px;
   cursor: pointer;
   transition: all 0.5s ease;
 }
 .profile-task-btn:hover {
-  color: white;
-  background-color: #1d1283;
+  color: var(--white-color);
+  background-color: var(--blue-color);
   border-color: transparent;
 }
 #user-management-link {
-  color: black;
+  color: var(--black-color);
   font-weight: 500;
   font-size: larger;
   background-color: var(--white-color);
-  border: 2px solid var(--black-color);
-  border-radius: 5px;
+  border: 0.13rem solid var(--black-color);
+  border-radius: 0.3rem;
   padding: 10px 50px;
   cursor: pointer;
   transition: all 0.5s ease;
@@ -110,12 +112,12 @@ button {
 
 /* Extension Requests */
 #extension-requests-link {
-  color: black;
+  color: var(--black-color);
   font-weight: 500;
   font-size: larger;
   background-color: var(--white-color);
-  border: 2px solid var(--black-color);
-  border-radius: 5px;
+  border: 0.19rem solid var(--black-color);
+  border-radius: 0.3rem;
   padding: 10px 50px;
   cursor: pointer;
   transition: all 0.5s ease;
@@ -130,18 +132,18 @@ button {
 
 /* Online-members */
 .online-members-link {
-  color: black;
+  color: var(--black-color);
   font-weight: 500;
   font-size: larger;
-  border: 2px solid black;
-  border-radius: 5px;
+  border: 0.13rem solid var(--black-color);
+  border-radius: 0.3rem;
   padding: 10px 50px;
   transition: all 0.5s ease;
 }
 
 .online-members-link:hover {
-  color: white;
-  background-color: #1d1283;
+  color: var(--white-color);
+  background-color: var(--blue-color);
   border-color: transparent;
 }
 
@@ -161,7 +163,7 @@ footer {
   font-weight: 500;
   font-size: larger;
   background-color: var(--white-color);
-  border: 2px solid var(--black-color);
+  border: 0.13rem solid var(--black-color);
   border-radius: 0.31rem;
   padding: 0.62rem 3.12rem;
   cursor: pointer;
@@ -207,8 +209,8 @@ footer {
   display: none;
   width: 20px;
   height: 20px;
-  border: 3px solid #f3f3f3;
-  border-top: 3px solid #1d1283;
+  border: 0.19rem solid var(--white-color);
+  border-top: 0.19rem solid var(--blue-color);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -222,8 +224,8 @@ footer {
 
 .action-button.disabled {
   opacity: 0.5;
-  background-color: #1d1283;
-  color: #f3f3f3;
+  background-color: var(--blue-color);
+  color: var(--white-color);
   pointer-events: none;
 }
 
@@ -241,23 +243,23 @@ footer {
   top: 3rem;
   right: 0.5rem;
   padding: 10px;
-  border-radius: 5px;
+  border-radius: 0.3rem;
   font-weight: bold;
-  border: 1px solid #1d1283;
+  border: 0.06rem solid;
   display: flex;
   align-items: center;
   flex-direction: column;
 }
 
 .success {
-  color: green;
+  color: var(--green-color);
   display: flex;
   align-items: center;
   flex-direction: column;
 }
 
 .failure {
-  color: #f44336;
+  color: var(--red-color);
 }
 
 .hidden {
@@ -266,21 +268,21 @@ footer {
 
 .progress-bar {
   width: 100%;
-  height: 1px;
-  border-radius: 1px;
+  height: 0.06rem;
+  border-radius: 0.06rem;
   overflow: hidden;
 }
 
 .success .progress-bar {
-  background-color: #4caf50;
+  background-color: var(--success-color);
 }
 
 .failure .progress-bar {
-  background-color: red;
+  background-color: var(--failure-color);
 }
 
 .fill {
-  height: 5px;
+  height: 0.3rem;
   animation: fillAnimation 5s ease backwards;
 }
 
