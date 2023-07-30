@@ -18,10 +18,6 @@ body {
   margin: 0;
 }
 
-.hidden {
-  display: none !important;
-}
-
 .header {
   background: var(--color-primary);
   padding: 1rem;
@@ -160,6 +156,10 @@ body {
 .taskRequest__card__footer__requestor__avatar span {
   font-size: 0.875rem;
   color: var(--color-gray);
+}
+
+.hidden {
+  display: none;
 }
 
 @media (max-width: 1439px) {
