@@ -7,10 +7,6 @@ body {
   margin: 0;
 }
 
-.hidden {
-  display: none !important;
-}
-
 .skeleton {
   animation: skeleton 2s linear infinite;
   border-radius: 0.5rem;
@@ -202,6 +198,10 @@ body {
   border: none;
   color: #c3c3c3;
   font-weight: 600;
+}
+
+.hidden {
+  display: none;
 }
 
 @keyframes skeleton {

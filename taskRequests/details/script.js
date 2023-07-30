@@ -98,8 +98,7 @@ async function renderTaskDetails(taskId) {
         textContent: `Created By: `,
         child: [
           createCustomElement({
-            tagName: 'a',
-            href: `https://members.realdevsquad.com/${taskData.createdBy}`,
+            tagName: 'p',
             textContent: taskData?.createdBy || 'N/A',
           }),
         ],
