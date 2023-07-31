@@ -18,7 +18,7 @@ const filterModal = document.getElementsByClassName(FILTER_MODAL)[0];
 const filterButton = document.getElementById(FILTER_BUTTON);
 const applyFilterButton = document.getElementById(APPLY_FILTER_BUTTON);
 const clearButton = document.getElementById(CLEAR_BUTTON);
-const userSearchElement = document.getElementById(USER_SEARCH_ELEMENT);
+const searchElement = document.getElementById(SEARCH_ELEMENT);
 let allCardsList;
 let isFiltered = false;
 
@@ -51,7 +51,6 @@ async function populateExtensionRequests(query = {}) {
   } catch (error) {
     errorHeading.textContent = 'Something went wrong, Please reload';
     errorHeading.classList.add('error-visible');
-    // reload();
   } finally {
     removeLoader('loader');
   }
@@ -139,9 +138,8 @@ const renderFilteredCards = (predicate) => {
     errorHeading.innerHTML = '';
     errorHeading.classList.remove('error-visible');
   }
-  // extensionRequestsContainer.
 };
-userSearchElement.addEventListener(
+searchElement.addEventListener(
   'input',
   debounce((event) => {
     if (!event.target.value && isFiltered) {

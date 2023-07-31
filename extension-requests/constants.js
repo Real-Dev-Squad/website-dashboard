@@ -21,4 +21,4 @@ const FILTER_MODAL = 'filter-modal';
 const FILTER_BUTTON = 'filter-button';
 const APPLY_FILTER_BUTTON = 'apply-filter-button';
 const CLEAR_BUTTON = 'clear-button';
-const USER_SEARCH_ELEMENT = 'assignee-search';
+const SEARCH_ELEMENT = 'assignee-search';
