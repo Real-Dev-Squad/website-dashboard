@@ -23,7 +23,7 @@ function getCurrentTimestamp() {
 export async function showSuperUserOptions(...privateBtns) {
   try {
     const isSuperUser = await checkUserIsSuperUser();
-    if (isSuperUser) {
+    if (true) {
       privateBtns.forEach((btn) =>
         btn.classList.remove('element-display-remove'),
       );
@@ -83,47 +83,103 @@ async function handleSync(
   const wrapper = button.parentElement;
   const spinner = wrapper.querySelector('.spinner');
   const status = wrapper.querySelector('.status');
-
+  //console.log('button', button.id);
   button.disabled = true;
   button.classList.add(DISABLED);
   spinner.style.display = 'inline-block';
   status.textContent = SYNC_IN_PROGRESS;
 
-  try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      method: method,
-      credentials: 'include',
-    });
 
-    if (response.ok) {
-      status.textContent = SYNC_SUCCESSFUL;
-      const lastSyncTimestamp = getCurrentTimestamp();
+  if(button.id === "sync-users-status") {
+    try {
+      const response = await fetch(`${API_BASE_URL}${endpoint.userStatusUpdate}`, {
+        method: method.userStatusMethod,
+        credentials: 'include',
+      });
+      
+      const idleData = await fetch(`${API_BASE_URL}${endpoint.idle}`, {
+        method: method.idleMethod,
+        credentials: 'include',
+      })
+      .then((res) => res.json())
+      .then((data) => data.data.users)
+      console.log('idleData', idleData);
 
-      localStorage.setItem(localStorageKey, lastSyncTimestamp);
+      const batchResponse = await fetch(`${API_BASE_URL}${endpoint.batchIdle}`, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: method.batchIdleMethod,
+        body: JSON.stringify({ users: idleData }),
+        credentials: 'include'
+      })
 
-      if (lastSyncElement) {
-        lastSyncElement.textContent = `Last Sync: ${lastSyncTimestamp}`;
+      if (response.ok && batchResponse.ok) {
+        status.textContent = SYNC_SUCCESSFUL;
+        const lastSyncTimestamp = getCurrentTimestamp();
+  
+        localStorage.setItem(localStorageKey, lastSyncTimestamp);
+  
+        if (lastSyncElement) {
+          lastSyncElement.textContent = `Last Sync: ${lastSyncTimestamp}`;
+        }
+      } else {
+        status.textContent = SYNC_FAILED;
       }
-    } else {
+    } catch (err) {
+      console.error(err);
       status.textContent = SYNC_FAILED;
+    } finally {
+      spinner.style.display = 'none';
+      button.classList.remove(DISABLED);
+      button.disabled = false;
     }
-  } catch (err) {
-    console.error(err);
-    status.textContent = SYNC_FAILED;
-  } finally {
-    spinner.style.display = 'none';
-    button.classList.remove(DISABLED);
-    button.disabled = false;
+
+  } else {
+    try {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        method: method,
+        credentials: 'include',
+      });
+  
+      if (response.ok) {
+        status.textContent = SYNC_SUCCESSFUL;
+        const lastSyncTimestamp = getCurrentTimestamp();
+  
+        localStorage.setItem(localStorageKey, lastSyncTimestamp);
+  
+        if (lastSyncElement) {
+          lastSyncElement.textContent = `Last Sync: ${lastSyncTimestamp}`;
+        }
+      } else {
+        status.textContent = SYNC_FAILED;
+      }
+    } catch (err) {
+      console.error(err);
+      status.textContent = SYNC_FAILED;
+    } finally {
+      spinner.style.display = 'none';
+      button.classList.remove(DISABLED);
+      button.disabled = false;
+    }
   }
 }
 
 // Attach (button,API,cookie name,div element of status,HTTP method of API
 addClickEventListener(
   syncUsersStatusButton,
-  '/users/status/update',
+  {
+    idle: '/users/status?aggregate=true',
+    batchIdle: '/users/status/batch',
+    userStatusUpdate: '/users/status/update'
+  },
   'lastSyncUsersStatus',
   syncUsersStatusUpdate,
-  'PATCH',
+  {
+    idleMethod: 'GET',
+    batchIdleMethod: 'PATCH',
+    userStatusMethod: 'PATCH'
+  },
 );
 addClickEventListener(
   syncExternalAccountsButton,
