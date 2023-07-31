@@ -469,28 +469,47 @@ function getCheckedValues(groupName) {
   const checkboxes = document.querySelectorAll(
     `input[name="${groupName}"]:checked`,
   );
+  console.log(checkboxes);
   return Array.from(checkboxes).map((cb) => cb.value);
 }
 
 function getFilteredUsersURL(checkedValuesSkills, checkedValuesAvailability) {
   const params = new URLSearchParams();
-
+  console.log('params', params);
+  //creation of query params for skill of user
   checkedValuesSkills.forEach((skill) => {
     params.append('tagId', skill);
   });
-
+  //creation of query params for availability of user
   checkedValuesAvailability.forEach((availability) => {
     params.append('state', availability);
   });
-
+  console.log(`?${params.toString()}`);
   return `?${params.toString()}`;
 }
 
+//updating query params on the browser url
+function updateQueryParamstoURL(constructedQueryParam) {
+  const currentURLInstance = new URL(window.location.href);
+  const currentURL = currentURLInstance.href;
+  console.log(currentURL);
+  const newURLWithQueryParams = `${currentURL}${constructedQueryParam}`;
+  console.log(newURLWithQueryParams);
+  window.history.pushState(
+    { path: newURLWithQueryParams },
+    '',
+    newURLWithQueryParams,
+  );
+}
+
 applyFilterButton.addEventListener('click', async () => {
+  //remove previous query params.
   filterModal.classList.toggle('hidden');
   displayLoader();
   const checkedValuesSkills = getCheckedValues('skills-filter');
+  console.log(checkedValuesSkills); //array of ids
   const checkedValuesAvailability = getCheckedValues('availability-filter');
+  console.log(checkedValuesAvailability); //array of status names(string)
   const queryParams = getFilteredUsersURL(
     checkedValuesSkills,
     checkedValuesAvailability,
@@ -499,6 +518,7 @@ applyFilterButton.addEventListener('click', async () => {
     const usersRequest = await makeApiCall(
       `${RDS_API_USERS}/search${queryParams}`,
     );
+    updateQueryParamstoURL(queryParams);
     const { users } = await usersRequest.json();
     showUserList(users);
   } catch (err) {
