@@ -68,6 +68,7 @@
   justify-content: center;
   flex-direction: column;
   gap: 10px;
+  position: relative;
 }
 
 .groups {
@@ -110,6 +111,10 @@
   border: 1px solid var(--color-list-border);
   margin-bottom: 0.6rem;
   border-radius: 0.6rem;
+}
+.groups-list li:hover {
+  cursor: pointer;
+  background-color: var(--color-active-groups-background);
 }
 .group-name {
   font-size: larger;
@@ -158,6 +163,12 @@
   border: none;
 }
 
+.btn-add-role {
+  position: absolute;
+  top: 3%;
+  left: 5%;
+}
+
 /*
 *
     LOADER CLASSES
@@ -198,6 +209,9 @@ NOT VERIFIED TEXT ABOVE
 }
 
 @media (max-width: 650px) {
+  .btn-add-role {
+    position: static;
+  }
   .manage-groups {
     flex-direction: column-reverse;
     padding: 1.2rem;
