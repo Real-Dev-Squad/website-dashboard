@@ -4,7 +4,6 @@ const {
   extensionRequestsListPending,
   extensionRequestsListApproved,
 } = require('../../mock-data/extension-requests');
-const { tags } = require('../../mock-data/tags');
 
 describe('Tests the Extension Requests Screen', () => {
   let browser;
@@ -43,7 +42,7 @@ describe('Tests the Extension Requests Screen', () => {
         url === 'https://api.realdevsquad.com/extension-requests?status=PENDING'
       ) {
         interceptedRequest.respond({
-          status: 500,
+          status: 200,
           contentType: 'application/json',
           headers: {
             'Access-Control-Allow-Origin': '*',
@@ -57,7 +56,7 @@ describe('Tests the Extension Requests Screen', () => {
         'https://api.realdevsquad.com/extension-requests?status=ACCEPTED'
       ) {
         interceptedRequest.respond({
-          status: 500,
+          status: 200,
           contentType: 'application/json',
           headers: {
             'Access-Control-Allow-Origin': '*',
@@ -95,7 +94,7 @@ describe('Tests the Extension Requests Screen', () => {
     expect(extensionRequestsElement).toBeTruthy();
   });
 
-  it('checks the search functionality to display queried user', async () => {
+  it('checks the search functionality', async () => {
     const ele = await page.$('input[id="assignee-search"]');
     await page.type('#assignee-search', 'someone');
     await page.waitForTimeout(600); // wait for input debounce timer
@@ -108,7 +107,7 @@ describe('Tests the Extension Requests Screen', () => {
     expect(cardTextContent).toContain('someone');
   });
 
-  it('Clicking on filter button should display filter modal', async () => {
+  it('clicking on filter button should display filter modal', async () => {
     const modal = await page.$('.filter-modal');
     expect(await modal.evaluate((el) => el.classList.contains('hidden'))).toBe(
       true,
@@ -136,6 +135,7 @@ describe('Tests the Extension Requests Screen', () => {
     const isChecked = await currentState.jsonValue();
     expect(isChecked).toBe(true);
   });
+
   it('Selecting filters and clicking on apply should filter extension requests list', async () => {
     await page.click('#filter-button');
     await page.click('input[value="PENDING"]');
