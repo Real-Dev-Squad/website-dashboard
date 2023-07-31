@@ -1,3 +1,7 @@
+<<<<<<< HEAD:src/task/script.js
+const assigneeAvatar = document.getElementById('assigneeAvatar');
+const assigneeAvatarLoader = document.getElementById('assigneeAvatarLoader');
+=======
 const API_BASE_URL = window.API_BASE_URL;
 const suggestedUsers = [];
 const allUser = [];
@@ -22,6 +26,7 @@ category.addEventListener('change', async () => {
 });
 let membersData = [];
 
+>>>>>>> 09ae769b83762c25223d68ec62cc80bcf37323ed:task/script.js
 const getRemainingDays = (selectedDateInString) => {
   const selectedDate = new Date(selectedDateInString);
   const currentDate = new Date(getFutureDateString(0));
@@ -439,7 +444,32 @@ async function fetchMembers() {
   try {
     const response = await fetch(`${API_BASE_URL}/members`);
     const data = await response.json();
+<<<<<<< HEAD:src/task/script.js
+    clearSuggestionList();
+    wasAssigneeSet = false;
+    removeClass(assigneeAvatar, DISPLAY_REMOVE_CLASS);
+    removeClass(assigneeAvatarLoader, DISPLAY_REMOVE_CLASS);
+    if (searchInput.trim() !== '') {
+      const matches = data.members.filter((task) => {
+        if (task.username) {
+          clearUserNotFound();
+          return task.username
+            .toLowerCase()
+            .includes(searchInput.toLowerCase());
+        }
+      });
+      if (searchInput != '' && !matches.length) {
+        const unknownUser = document.createElement('small');
+        unknownUser.classList.add('unknownUsers-list');
+        unknownUser.innerText = 'User not found';
+        const assigneeInput = document.getElementById('assigneeInput');
+        assigneeInput.appendChild(unknownUser);
+      }
+      createSuggestionsList(matches);
+    }
+=======
     membersData = data.members;
+>>>>>>> 09ae769b83762c25223d68ec62cc80bcf37323ed:task/script.js
   } catch {
     return;
   }
@@ -480,20 +510,30 @@ function clearUserNotFound() {
 function createSuggestionsList(matches) {
   const listItems = document.getElementById('list-items');
   if (matches.length) {
-    matches.map(({ username }) => {
+    addClass(assigneeAvatarLoader, DISPLAY_REMOVE_CLASS);
+    matches.map(({ username, picture = {} }) => {
+      const imageUrl =
+        picture.hasOwnProperty('url') && picture.url
+          ? picture.url
+          : DEFAULT_ASSIGNEE_IMAGE_PATH;
       const listItem = document.createElement('p');
       listItem.classList.add('list-item');
-      listItem.style.cursor = 'pointer';
-      listItem.setAttribute('onclick', `setAssignee('${username}')`);
+      listItem.setAttribute(
+        'onclick',
+        `setAssignee('${username}', '${imageUrl}')`,
+      );
       listItem.innerText = username;
       listItems.appendChild(listItem);
     });
   }
 }
 
-function setAssignee(assignee) {
+function setAssignee(assignee, imgUrl) {
   assigneeEl.value = assignee;
   wasAssigneeSet = true;
+  addClass(assigneeAvatar, DISPLAY_REMOVE_CLASS);
+  removeClass(assigneeAvatarLoader, DISPLAY_REMOVE_CLASS);
+  assigneeAvatar.style.backgroundImage = `url(${imgUrl})`;
   stateHandle();
   clearSuggestionList();
 }
@@ -529,4 +569,14 @@ assigneeEl.addEventListener(
   debounce((event) => filterMembers(event.target.value), 500),
 );
 
+<<<<<<< HEAD:src/task/script.js
+function addClass(element, className) {
+  element.classList.remove(className);
+}
+
+function removeClass(element, className) {
+  element.classList.add(className);
+}
+=======
 assigneeEl.addEventListener('click', createSuggestedUserLists);
+>>>>>>> 09ae769b83762c25223d68ec62cc80bcf37323ed:task/script.js
