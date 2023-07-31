@@ -1,10 +1,21 @@
+const Status = {
+  APPROVED: 'APPROVED',
+  PENDING: 'PENDING',
+  DENIED: 'DENIED',
+};
 async function getExtensionRequests(query = {}) {
   const url = new URL(`${API_BASE_URL}/extension-requests`);
 
   queryParams = ['assignee', 'status', 'taskId'];
-  queryParams.forEach(
-    (key) => query[key] && url.searchParams.set(key, query[key]),
-  );
+  queryParams.forEach((key) => {
+    if (query[key]) {
+      if (Array.isArray(query[key])) {
+        query[key].forEach((value) => url.searchParams.append(key, value));
+      } else {
+        url.searchParams.append(key, query[key]);
+      }
+    }
+  });
 
   const res = await fetch(url, {
     credentials: 'include',
