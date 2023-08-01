@@ -83,38 +83,38 @@ async function handleSync(
   const wrapper = button.parentElement;
   const spinner = wrapper.querySelector('.spinner');
   const status = wrapper.querySelector('.status');
-  //console.log('button', button.id);
+  
   button.disabled = true;
   button.classList.add(DISABLED);
   spinner.style.display = 'inline-block';
   status.textContent = SYNC_IN_PROGRESS;
 
-
   if(button.id === "sync-users-status") {
     try {
-      const response = await fetch(`${API_BASE_URL}${endpoint.userStatusUpdate}`, {
+      const userStatus = fetch(`${API_BASE_URL}${endpoint.userStatusUpdate}`, {
         method: method.userStatusMethod,
         credentials: 'include',
       });
       
-      const idleData = await fetch(`${API_BASE_URL}${endpoint.idle}`, {
+      const idleUsers = fetch(`${API_BASE_URL}${endpoint.idle}`, {
         method: method.idleMethod,
         credentials: 'include',
       })
       .then((res) => res.json())
       .then((data) => data.data.users)
-      console.log('idleData', idleData);
+
+      const [ userStatusResponse, idleUsersData ] = await Promise.all([ userStatus, idleUsers ]);
 
       const batchResponse = await fetch(`${API_BASE_URL}${endpoint.batchIdle}`, {
         headers: {
           'Content-Type': 'application/json'
         },
         method: method.batchIdleMethod,
-        body: JSON.stringify({ users: idleData }),
+        body: JSON.stringify({ users: idleUsersData }),
         credentials: 'include'
       })
 
-      if (response.ok && batchResponse.ok) {
+      if (userStatusResponse.ok && batchResponse.ok) {
         status.textContent = SYNC_SUCCESSFUL;
         const lastSyncTimestamp = getCurrentTimestamp();
   
