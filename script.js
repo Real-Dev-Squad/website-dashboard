@@ -23,7 +23,7 @@ function getCurrentTimestamp() {
 export async function showSuperUserOptions(...privateBtns) {
   try {
     const isSuperUser = await checkUserIsSuperUser();
-    if (true) {
+    if (isSuperUser) {
       privateBtns.forEach((btn) =>
         btn.classList.remove('element-display-remove'),
       );
