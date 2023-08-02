@@ -244,8 +244,8 @@ footer {
 
 .list-item {
   display: flex;
-  align-items: center; /* Vertically center the content */
-  justify-content: flex-start; /* Align content to the left */
+  align-items: center;
+  justify-content: flex-start;
   text-align: left;
   padding: 1rem 0.5rem;
   font-size: 1rem;
