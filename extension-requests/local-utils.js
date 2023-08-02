@@ -70,6 +70,21 @@ function getTimeFromTimestamp(timestamp) {
   return new Date(timestamp * 1000).toLocaleString();
 }
 
+function formatTimestampToCustomDate(timestamp) {
+  const date = new Date(timestamp);
+
+  const options = {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  };
+
+  return new Intl.DateTimeFormat('en-US', options).format(date);
+}
+
 function createTable(headings, data, className = '') {
   const table = createElement({
     type: 'table',
@@ -83,7 +98,7 @@ function createTable(headings, data, className = '') {
     let rowHeading = createElement({ type: 'th', innerText: title });
 
     let contentText = '';
-    if (time) contentText = getTimeFromTimestamp(data[key]);
+    if (time) contentText = formatTimestampToCustomDate(data[key]);
     else contentText = key ? data[key] : data[title.toLowerCase()];
 
     let tableData = createElement({
@@ -109,4 +124,32 @@ function formDataToObject(formData) {
     result[key] = value;
   }
   return result;
+}
+
+function formatDateToHumanReadable(date) {
+  const now = new Date();
+  const inputDate = new Date(date);
+
+  const timeDifference = now.getTime() - inputDate.getTime();
+
+  const seconds = Math.floor(timeDifference / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const months = Math.floor(days / 30);
+  const years = Math.floor(days / 365);
+
+  if (seconds < 60) {
+    return 'Just now';
+  } else if (minutes < 60) {
+    return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
+  } else if (hours < 24) {
+    return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
+  } else if (days < 30) {
+    return `${days} ${days === 1 ? 'day' : 'days'} ago`;
+  } else if (months < 12) {
+    return `${months} ${months === 1 ? 'month' : 'months'} ago`;
+  } else {
+    return `${years} ${years === 1 ? 'year' : 'years'} ago`;
+  }
 }
