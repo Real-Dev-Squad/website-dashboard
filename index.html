@@ -57,6 +57,13 @@
       <a class="action-button" href="/task/index.html"> Create Tasks </a>
       <a class="action-button" href="/profile/index.html"> Profile </a>
       <a
+        id="discord-user-link"
+        class="action-button"
+        href="/users/discord/index.html"
+      >
+        Discord Users
+      </a>
+      <a
         id="user-management-link"
         class="element-display-remove action-button"
         href="/users/index.html"
@@ -75,6 +82,17 @@
       </a>
       <a class="action-button" href="/groups/index.html"> Discord Groups </a>
       <a class="action-button" href="/standup/index.html"> Standup Updates</a>
+      <div class="button-container element-display-remove" id="sync-repo-div">
+        <button id="repo-sync-button" class="action-button">
+          <span class="spinner"></span>
+          Sync Repo
+        </button>
+        <div class="status" id="sync-repo-status-update"></div>
+        <div id="toast" class="hidden">
+          <div class="message"></div>
+          <div class="progress-bar"></div>
+        </div>
+      </div>
     </section>
 
     <footer>

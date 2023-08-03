@@ -1,6 +1,8 @@
 const userManagementLink = document.getElementById(USER_MANAGEMENT_LINK);
+const discordUserLink = document.getElementById('discord-user-link');
 const extensionRequestsLink = document.getElementById(EXTENSION_REQUESTS_LINK);
 const syncUsersStatusButton = document.getElementById(SYNC_USERS_STATUS);
+const UpdatedstatusMessage = 'All repos uptodate';
 const syncExternalAccountsButton = document.getElementById(
   SYNC_EXTERNAL_ACCOUNTS,
 );
@@ -8,6 +10,8 @@ const syncUnverifiedUsersButton = document.getElementById(
   SYNC_UNVERIFIED_USERS,
 );
 const syncUsersStatusUpdate = document.getElementById(SYNC_USERS_STATUS_UPDATE);
+const repoSyncStatusUpdate = document.getElementById(SYNC_REPO_STATUS_UPDATE);
+
 const syncExternalAccountsUpdate = document.getElementById(
   SYNC_EXTERNAL_ACCOUNTS_UPDATE,
 );
@@ -52,12 +56,20 @@ export async function showSuperUserOptions(...privateBtns) {
  * Then get the node from the DOM into a variable and pass that variable in the
  * function below.
  */
-showSuperUserOptions(userManagementLink, extensionRequestsLink);
+showSuperUserOptions(
+  userManagementLink,
+  extensionRequestsLink,
+  discordUserLink,
+);
 
 const createGoalButton = document.getElementById('create-goal');
+const repoSyncDiv = document.getElementById('sync-repo-div');
+const repoSyncButton = document.getElementById('repo-sync-button');
+const toast = document.getElementById('toast');
 const params = new URLSearchParams(window.location.search);
 if (params.get('dev') === 'true') {
   createGoalButton.classList.remove('element-display-remove');
+  repoSyncDiv.classList.remove('element-display-remove');
 }
 
 function addClickEventListener(
@@ -164,6 +176,70 @@ async function handleSync(
     }
   }
 }
+
+function showToast(message, type) {
+  if (typeof message === 'string') {
+    toast.innerHTML = `<div class="message">${message}</div>`;
+  }
+  toast.classList.remove('hidden');
+
+  if (type === 'success') {
+    for (let i = 0; i < message.merge_status.length; i++) {
+      if (message.merge_status[i].status.updated) {
+        let repo = message.merge_status[i].repository;
+        let text = repo.substring(repo.lastIndexOf('/') + 1) + ' synced';
+        toast.innerHTML = `<div class="message"> ✓ ${text}</div>`;
+      } else {
+        toast.innerHTML = `<div class="message">✓ ${UpdatedstatusMessage} </div>`;
+      }
+    }
+    toast.classList.add('success');
+    toast.classList.remove('failure');
+  } else if (type === 'failure') {
+    toast.classList.add('failure');
+    toast.classList.remove('success');
+  }
+
+  const progressBar = document.createElement('div');
+  progressBar.classList.add('progress-bar');
+  progressBar.classList.add('fill');
+  toast.appendChild(progressBar);
+
+  setTimeout(() => {
+    toast.classList.add('hidden');
+    toast.innerHTML = '';
+  }, 5000);
+}
+
+const repoSyncHandler = async (event) => {
+  const button = event.target;
+  const wrapper = button.parentElement;
+  const spinner = wrapper.querySelector('.spinner');
+  const status = wrapper.querySelector('.status');
+
+  button.disabled = true;
+  button.classList.add(DISABLED);
+  spinner.style.display = 'inline-block';
+
+  try {
+    const apiResponse = await fetch(REPO_SYNC_API_URL);
+    const response = await apiResponse.json();
+    if (apiResponse.ok) {
+      showToast(response, 'success');
+    } else {
+      showToast('✗ API response not as expected', 'failure');
+    }
+  } catch (err) {
+    console.error('Error while fetching repo sync data');
+    showToast('✗ Something unexpected happened!', 'failure');
+  } finally {
+    spinner.style.display = 'none';
+    button.classList.remove(DISABLED);
+    button.disabled = false;
+  }
+};
+
+repoSyncButton.addEventListener('click', repoSyncHandler);
 
 // Attach (button,API,cookie name,div element of status,HTTP method of API
 addClickEventListener(
