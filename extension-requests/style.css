@@ -23,6 +23,10 @@
   box-sizing: border-box;
 }
 
+.card-more-details {
+  background-color: grey;
+}
+
 .extension-card {
   border-radius: 10px;
   text-align: left;
@@ -32,17 +36,14 @@
   margin-bottom: 25px;
   justify-content: space-between;
   border-width: 1px;
-  border-top-style: solid;
-  border-right-style: solid;
-  border-bottom-style: solid;
-  border-left-style: solid;
-  border-top-color: rgb(217, 217, 217);
-  border-right-color: rgb(217, 217, 217);
-  border-bottom-color: rgb(217, 217, 217);
-  border-left-color: rgb(217, 217, 217);
+  border-style: solid;
+  border-color: rgb(217, 217, 217);
   position: relative;
-  width: 50rem;
+  max-width: 48rem;
+  width: 100%;
+  gap: 1rem;
 }
+
 .accordion {
   background-color: transparent;
   /* color: #444; */
@@ -53,30 +54,160 @@
   outline: none;
   font-size: 15px;
   transition: 0.8s;
+  display: flex;
+  justify-content: center;
 }
 
-.line {
-  border-bottom: 1px solid #000;
+.details-container {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.accordion img {
+  transition: transform 500ms ease, scale 100ms ease;
+}
+.accordion:hover img {
+  transform: scale(1.25);
+}
+.accordion.active img {
+  transform: rotate(180deg);
+}
+
+.assignee-container {
+  display: flex;
+  align-items: center;
+  row-gap: 1rem;
+  column-gap: 1rem;
+}
+.assignee-image {
+  width: 30px;
+  height: 30px;
+  color: transparent;
+  border-radius: 50%;
+}
+.assignee-name {
+  font-size: 1.3rem;
+  font-weight: 500;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  width: 7rem;
+  height: 1.5rem;
+  text-transform: capitalize;
+}
+.approve-button {
+  width: 6rem;
+  height: 2rem;
+  background-color: #e1f9f1;
+  border-radius: 6px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #19805e;
+  transition: 200ms ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.approve-button:hover {
+  background-color: #19805e;
+}
+.edit-button {
+  background-color: transparent;
+  border: none;
+  height: 2rem;
+  width: 2rem;
+  padding: auto;
+  border-radius: 6px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  transition: 200ms ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.edit-button:hover {
+  background-color: #f2f2f2;
+}
+.task-details-container,
+.dates-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.deny-button {
+  width: 6rem;
+  height: 2rem;
+  background-color: #fff0f6;
+  border-radius: 6px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #b6004e;
+  transition: 200ms ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.deny-button:hover {
+  background-color: #b6004e;
+}
+.card-assignee-button-container {
+  display: flex;
+  justify-content: space-between;
+}
+.assignee-text {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: rgb(174, 174, 174);
+}
+.extension-card-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+.details-heading {
+  width: fit-content;
+  flex-shrink: 0;
+  font-size: small;
+  font-weight: 500;
+  color: #aeaeae;
+}
+
+.details-line {
+  border-bottom: 1px solid #aeaeae;
   width: 100%;
   display: inline-block;
 }
 
 .panel {
-  padding: 0 18px;
-  background-color: white;
+  background-color: #f2f2f3;
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.5s ease-out;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
+
+.panel div {
+  background-color: white;
+  border-radius: 4px;
+  margin: 2rem;
+  padding: 1rem;
+}
+
 .summary-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
 }
 .card-row-text {
   font-size: 1.1rem;
   font-weight: 500;
   color: #aeaeae;
 }
+
 .title-text {
   text-decoration-line: none;
   font-size: 1.6rem;
@@ -261,11 +392,14 @@ body {
 /* status form ends here */
 
 .extension-requests {
-  display: grid;
+  /* display: grid;
   grid-template-columns: repeat(auto-fill, minmax(12.5rem, 22rem));
   grid-auto-rows: 26rem;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-wrap: wrap; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
   gap: 1.25rem;
 }
 
@@ -485,11 +619,25 @@ body {
   }
 }
 
+@media screen and (max-width: 720px) {
+  .summary-container {
+    grid-template-columns: none;
+    grid-template-rows: 1fr 1fr;
+  }
+  .card-assignee-button-container {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
+
 @media screen and (max-width: 440px) {
   .filter-button {
     width: min-content;
   }
 
+  .assignee-text {
+    display: none;
+  }
   .filter-text {
     display: none;
   }

@@ -66,6 +66,21 @@ async function getTaskDetails(taskId) {
   return await res.json();
 }
 
+async function getUserDetails(username) {
+  if (!username) return;
+  const url = `${API_BASE_URL}/users?search=${username}&size=1`;
+  const res = await fetch(url, {
+    credentials: 'include',
+    method: 'GET',
+    headers: {
+      'Content-type': 'application/json',
+    },
+  });
+  const user = await res.json();
+
+  return user?.users[0];
+}
+
 function getTimeFromTimestamp(timestamp) {
   return new Date(timestamp * 1000).toLocaleString();
 }
@@ -126,11 +141,12 @@ function formDataToObject(formData) {
   return result;
 }
 
-function formatDateToHumanReadable(date) {
-  const now = new Date();
-  const inputDate = new Date(date);
+function dateDiff(date1, date2, formatter) {
+  if (date2 > date1) {
+    return dateDiff(date2, date1, formatter);
+  }
 
-  const timeDifference = now.getTime() - inputDate.getTime();
+  const timeDifference = new Date(date1).getTime() - new Date(date2).getTime();
 
   const seconds = Math.floor(timeDifference / 1000);
   const minutes = Math.floor(seconds / 60);
@@ -139,17 +155,20 @@ function formatDateToHumanReadable(date) {
   const months = Math.floor(days / 30);
   const years = Math.floor(days / 365);
 
+  let res;
   if (seconds < 60) {
-    return 'Just now';
+    res = `${seconds} ${seconds === 1 ? 'second' : 'seconds'}`;
   } else if (minutes < 60) {
-    return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
+    res = `${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`;
   } else if (hours < 24) {
-    return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
+    res = `${hours} ${hours === 1 ? 'hour' : 'hours'}`;
   } else if (days < 30) {
-    return `${days} ${days === 1 ? 'day' : 'days'} ago`;
+    res = `${days} ${days === 1 ? 'day' : 'days'}`;
   } else if (months < 12) {
-    return `${months} ${months === 1 ? 'month' : 'months'} ago`;
+    res = `${months} ${months === 1 ? 'month' : 'months'}`;
   } else {
-    return `${years} ${years === 1 ? 'year' : 'years'} ago`;
+    res = `${years} ${years === 1 ? 'year' : 'years'}`;
   }
+
+  return formatter ? formatter(res) : res;
 }
