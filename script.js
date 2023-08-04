@@ -95,43 +95,49 @@ async function handleSync(
   const wrapper = button.parentElement;
   const spinner = wrapper.querySelector('.spinner');
   const status = wrapper.querySelector('.status');
-  
+
   button.disabled = true;
   button.classList.add(DISABLED);
   spinner.style.display = 'inline-block';
   status.textContent = SYNC_IN_PROGRESS;
 
-  if(button.id === "sync-users-status") {
+  if (button.id === 'sync-users-status') {
     try {
       const userStatus = fetch(`${API_BASE_URL}${endpoint.userStatusUpdate}`, {
         method: method.userStatusMethod,
         credentials: 'include',
       });
-      
+
       const idleUsers = fetch(`${API_BASE_URL}${endpoint.idle}`, {
         method: method.idleMethod,
         credentials: 'include',
       })
-      .then((res) => res.json())
-      .then((data) => data.data.users)
+        .then((res) => res.json())
+        .then((data) => data.data.users);
 
-      const [ userStatusResponse, idleUsersData ] = await Promise.all([ userStatus, idleUsers ]);
+      const [userStatusResponse, idleUsersData] = await Promise.all([
+        userStatus,
+        idleUsers,
+      ]);
 
-      const batchResponse = await fetch(`${API_BASE_URL}${endpoint.batchIdle}`, {
-        headers: {
-          'Content-Type': 'application/json'
+      const batchResponse = await fetch(
+        `${API_BASE_URL}${endpoint.batchIdle}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          method: method.batchIdleMethod,
+          body: JSON.stringify({ users: idleUsersData }),
+          credentials: 'include',
         },
-        method: method.batchIdleMethod,
-        body: JSON.stringify({ users: idleUsersData }),
-        credentials: 'include'
-      })
+      );
 
       if (userStatusResponse.ok && batchResponse.ok) {
         status.textContent = SYNC_SUCCESSFUL;
         const lastSyncTimestamp = getCurrentTimestamp();
-  
+
         localStorage.setItem(localStorageKey, lastSyncTimestamp);
-  
+
         if (lastSyncElement) {
           lastSyncElement.textContent = `Last Sync: ${lastSyncTimestamp}`;
         }
@@ -146,20 +152,19 @@ async function handleSync(
       button.classList.remove(DISABLED);
       button.disabled = false;
     }
-
   } else {
     try {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: method,
         credentials: 'include',
       });
-  
+
       if (response.ok) {
         status.textContent = SYNC_SUCCESSFUL;
         const lastSyncTimestamp = getCurrentTimestamp();
-  
+
         localStorage.setItem(localStorageKey, lastSyncTimestamp);
-  
+
         if (lastSyncElement) {
           lastSyncElement.textContent = `Last Sync: ${lastSyncTimestamp}`;
         }
@@ -247,14 +252,14 @@ addClickEventListener(
   {
     idle: '/users/status?aggregate=true',
     batchIdle: '/users/status/batch',
-    userStatusUpdate: '/users/status/update'
+    userStatusUpdate: '/users/status/update',
   },
   'lastSyncUsersStatus',
   syncUsersStatusUpdate,
   {
     idleMethod: 'GET',
     batchIdleMethod: 'PATCH',
-    userStatusMethod: 'PATCH'
+    userStatusMethod: 'PATCH',
   },
 );
 addClickEventListener(
