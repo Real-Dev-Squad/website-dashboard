@@ -22,12 +22,12 @@
 ::before {
   box-sizing: border-box;
 }
-.extension-card-container {
+/* .extension-card-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 720px;
-}
+} */
 
 .card-more-details {
   background-color: grey;
@@ -45,6 +45,7 @@
   border-color: rgb(217, 217, 217);
   position: relative;
   max-width: 50rem;
+  min-width: 50%;
   gap: 1rem;
 }
 .accordion {
@@ -374,11 +375,14 @@ body {
 /* status form ends here */
 
 .extension-requests {
-  display: grid;
+  /* display: grid;
   grid-template-columns: repeat(auto-fill, minmax(12.5rem, 22rem));
   grid-auto-rows: 26rem;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-wrap: wrap; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
   gap: 1.25rem;
 }
 

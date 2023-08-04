@@ -27,25 +27,39 @@ const state = {
 };
 
 const render = async () => {
-  initializeAccordions();
   toggleStatusCheckbox(Status.PENDING);
   await populateExtensionRequests({ status: Status.PENDING });
+  initializeAccordions();
 };
 
 const initializeAccordions = () => {
-  var acc = document.getElementsByClassName('accordion');
-  var i;
+  let acc = document.getElementsByClassName('accordion');
+  let i;
 
   for (i = 0; i < acc.length; i++) {
     acc[i].addEventListener('click', function () {
       this.classList.toggle('active');
-      var panel = this.nextElementSibling;
+      let panel = this.nextElementSibling;
       if (panel.style.maxHeight) {
         panel.style.maxHeight = null;
       } else {
         panel.style.maxHeight = panel.scrollHeight + 'px';
+        console.log(panel);
+        // toggleAllOtherAccordions(i,acc);
       }
     });
+  }
+};
+const toggleAllOtherAccordions = (currIndex, accordionsList) => {
+  for (let i = 0; i < accordionsList.length; i++) {
+    if (currIndex !== i) {
+      let panel = accordionsList[i].nextElementSibling;
+      if (panel.style.maxHeight) {
+        accordionsList[i].classList.toggle('active');
+        panel.style.maxHeight = null;
+        console.log(panel);
+      }
+    }
   }
 };
 
@@ -58,10 +72,19 @@ async function populateExtensionRequests(query = {}) {
 
     allCardsList = [];
     allExtensionRequests.forEach((data) => {
-      const extensionRequestCard = createExtensionRequestCard(
-        data,
-        extensionRequestCardHeadings,
+      const extensionRequestCard = createExtensionCard(
+        data.assignee,
+        data.title,
+        data.reason,
+        2,
+        2,
+        2,
+        'IN_REVIEW',
       );
+      // = createExtensionRequestCard(
+      //   data,
+      //   extensionRequestCardHeadings,
+      // );
       data['htmlElement'] = extensionRequestCard;
       allCardsList.push(data);
       extensionRequestsContainer.appendChild(extensionRequestCard);
@@ -349,3 +372,275 @@ filterButton.addEventListener('click', (event) => {
 
 populateStatus();
 render();
+
+function createExtensionCard(
+  assigneeName,
+  title,
+  reason,
+  extensionDays,
+  deadlineDays,
+  requestedDaysAgo,
+  taskStatus,
+) {
+  // Root element
+  const rootElement = createElement({
+    type: 'div',
+    attributes: { class: 'extension-card' },
+  });
+
+  // Title container
+  const titleContainer = createElement({
+    type: 'div',
+    attributes: { class: 'title-container' },
+  });
+  rootElement.appendChild(titleContainer);
+
+  // Accordion button
+  const accordionButton = createElement({
+    type: 'button',
+    attributes: { class: 'accordion' },
+  });
+  titleContainer.appendChild(accordionButton);
+
+  // Title text
+  const titleText = createElement({
+    type: 'span',
+    attributes: { class: 'title-text' },
+    innerText: title,
+  });
+  accordionButton.appendChild(titleText);
+
+  // Down arrow icon
+  const downArrowIcon = createElement({
+    type: 'img',
+    attributes: { src: '/images/chevron-down.svg', alt: 'down-arrow' },
+  });
+  accordionButton.appendChild(downArrowIcon);
+
+  // Panel
+  const panel = createElement({ type: 'div', attributes: { class: 'panel' } });
+  titleContainer.appendChild(panel);
+
+  // Reason
+  const reasonContainer = createElement({ type: 'div' });
+  panel.appendChild(reasonContainer);
+
+  const reasonTitle = createElement({
+    type: 'span',
+    attributes: { class: 'panel-title' },
+    innerText: 'Reason',
+  });
+  reasonContainer.appendChild(reasonTitle);
+
+  const reasonDetailsLine = createElement({
+    type: 'span',
+    attributes: { class: 'details-line' },
+  });
+  reasonContainer.appendChild(reasonDetailsLine);
+
+  const reasonParagraph = createElement({ type: 'p', innerText: reason });
+  reasonContainer.appendChild(reasonParagraph);
+
+  // Summary container
+  const summaryContainer = createElement({
+    type: 'div',
+    attributes: { class: 'summary-container' },
+  });
+  rootElement.appendChild(summaryContainer);
+
+  // Task details container
+  const taskDetailsContainer = createElement({
+    type: 'div',
+    attributes: { class: 'task-details-container' },
+  });
+  summaryContainer.appendChild(taskDetailsContainer);
+
+  const detailsContainer = createElement({
+    type: 'div',
+    attributes: { class: 'details-container' },
+  });
+  taskDetailsContainer.appendChild(detailsContainer);
+
+  const taskDetailsHeading = createElement({
+    type: 'span',
+    attributes: { class: 'details-heading' },
+    innerText: 'Task Details',
+  });
+  detailsContainer.appendChild(taskDetailsHeading);
+
+  const externalLink = createElement({ type: 'a', attributes: { href: '' } });
+  detailsContainer.appendChild(externalLink);
+
+  const externalLinkIcon = createElement({
+    type: 'img',
+    attributes: {
+      src: '/images/external-link.svg',
+      height: '12px',
+      alt: 'external-link-icon',
+    },
+  });
+  externalLink.appendChild(externalLinkIcon);
+
+  const detailsLine = createElement({
+    type: 'span',
+    attributes: { class: 'details-line' },
+  });
+  detailsContainer.appendChild(detailsLine);
+
+  const deadlineContainer = createElement({ type: 'div' });
+  taskDetailsContainer.appendChild(deadlineContainer);
+
+  const deadlineText = createElement({
+    type: 'span',
+    attributes: { class: 'card-row-text' },
+    innerText: 'Deadline in:',
+  });
+  deadlineContainer.appendChild(deadlineText);
+
+  const deadlineValue = createElement({
+    type: 'span',
+    innerText: `${deadlineDays} days`,
+  });
+  deadlineContainer.appendChild(deadlineValue);
+
+  const taskStatusContainer = createElement({ type: 'div' });
+  taskDetailsContainer.appendChild(taskStatusContainer);
+
+  const taskStatusText = createElement({
+    type: 'span',
+    attributes: { class: 'card-row-text' },
+    innerText: 'Task status:',
+  });
+  taskStatusContainer.appendChild(taskStatusText);
+
+  const taskStatusValue = createElement({
+    type: 'span',
+    innerText: taskStatus,
+  });
+  taskStatusContainer.appendChild(taskStatusValue);
+
+  // Dates container
+  const datesContainer = createElement({
+    type: 'div',
+    attributes: { class: 'dates-container' },
+  });
+  summaryContainer.appendChild(datesContainer);
+
+  const datesDetailsContainer = createElement({
+    type: 'div',
+    attributes: { class: 'details-container' },
+  });
+  datesContainer.appendChild(datesDetailsContainer);
+
+  const extensionDetailsHeading = createElement({
+    type: 'span',
+    attributes: { class: 'details-heading' },
+    innerText: 'Extension Details',
+  });
+  datesDetailsContainer.appendChild(extensionDetailsHeading);
+
+  const extensionDetailsLine = createElement({
+    type: 'span',
+    attributes: { class: 'details-line' },
+  });
+  datesDetailsContainer.appendChild(extensionDetailsLine);
+
+  const extensionForContainer = createElement({ type: 'div' });
+  datesContainer.appendChild(extensionForContainer);
+
+  const extensionForText = createElement({
+    type: 'span',
+    attributes: { class: 'card-row-text' },
+    innerText: 'Extension for:',
+  });
+  extensionForContainer.appendChild(extensionForText);
+
+  const extensionForValue = createElement({
+    type: 'span',
+    innerText: `${extensionDays} days`,
+  });
+  extensionForContainer.appendChild(extensionForValue);
+
+  const requestedContainer = createElement({ type: 'div' });
+  datesContainer.appendChild(requestedContainer);
+
+  const requestedText = createElement({
+    type: 'span',
+    attributes: { class: 'card-row-text' },
+    innerText: 'Requested:',
+  });
+  requestedContainer.appendChild(requestedText);
+
+  const requestedValue = createElement({
+    type: 'span',
+    innerText: `${requestedDaysAgo} days ago`,
+  });
+  requestedContainer.appendChild(requestedValue);
+
+  // Card assignee button container
+  const cardAssigneeButtonContainer = createElement({
+    type: 'div',
+    attributes: { class: 'card-assignee-button-container' },
+  });
+  rootElement.appendChild(cardAssigneeButtonContainer);
+
+  // Assignee container
+  const assigneeContainer = createElement({
+    type: 'div',
+    attributes: { class: 'assignee-container' },
+  });
+  cardAssigneeButtonContainer.appendChild(assigneeContainer);
+
+  const assigneeText = createElement({
+    type: 'span',
+    attributes: { class: 'assignee-text' },
+    innerText: 'Assigned to',
+  });
+  assigneeContainer.appendChild(assigneeText);
+
+  const assigneeImage = createElement({
+    type: 'img',
+    attributes: { src: '', alt: 'pratiyush', class: 'assignee-image' },
+  });
+  assigneeContainer.appendChild(assigneeImage);
+
+  const assigneeNameElement = createElement({
+    type: 'span',
+    attributes: { class: 'assignee-name' },
+    innerText: assigneeName,
+  });
+  assigneeContainer.appendChild(assigneeNameElement);
+
+  // Extension card buttons
+  const extensionCardButtons = createElement({
+    type: 'div',
+    attributes: { class: 'extension-card-buttons' },
+  });
+  cardAssigneeButtonContainer.appendChild(extensionCardButtons);
+
+  const editButton = createElement({
+    type: 'button',
+    attributes: { class: 'edit-button' },
+  });
+  extensionCardButtons.appendChild(editButton);
+
+  const editIcon = createElement({
+    type: 'img',
+    attributes: { src: '/images/edit-icon.svg', alt: 'edit-icon' },
+  });
+  editButton.appendChild(editIcon);
+
+  const denyButton = createElement({
+    type: 'button',
+    attributes: { class: 'deny-button' },
+  });
+  extensionCardButtons.appendChild(denyButton);
+
+  const approveButton = createElement({
+    type: 'button',
+    attributes: { class: 'approve-button' },
+  });
+  extensionCardButtons.appendChild(approveButton);
+
+  return rootElement;
+}
