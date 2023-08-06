@@ -9,6 +9,32 @@ const loader = document.querySelector('.container__body__loader');
 const startLoading = () => loader.classList.remove('hidden');
 const stopLoading = () => loader.classList.add('hidden');
 
+function createCustomElement(domObjectMap) {
+  const el = document.createElement(domObjectMap.tagName);
+  for (const [key, value] of Object.entries(domObjectMap)) {
+    if (key === 'tagName') {
+      continue;
+    }
+    if (key === 'eventListeners') {
+      value.forEach((obj) => {
+        el.addEventListener(obj.event, obj.func);
+      });
+    }
+    if (key === 'class') {
+      if (Array.isArray(value)) {
+        el.classList.add(...value);
+      } else {
+        el.classList.add(value);
+      }
+    } else if (key === 'child') {
+      el.append(...value);
+    } else {
+      el[key] = value;
+    }
+  }
+  return el;
+}
+
 async function getTaskRequests() {
   startLoading();
   try {
@@ -37,7 +63,7 @@ async function getTaskRequests() {
 
     showMessage('ERROR', ErrorMessages.SERVER_ERROR);
   } catch (e) {
-    console.error(e);
+    console.log(e);
   } finally {
     stopLoading();
   }
@@ -75,11 +101,9 @@ function getRemainingCount(requestors) {
     });
   }
 }
-function openTaskDetails(id) {
-  const url = new URL(`/taskRequests/details`, window.location.href);
 
-  url.searchParams.append('id', id);
-  window.location.href = url;
+function openTaskDetails(id) {
+  window.location.href = new URL(`/taskRequest/details?id=${id}`, API_BASE_URL);
 }
 
 function createTaskRequestCard({ id, task, requestors, status }) {
