@@ -379,6 +379,8 @@ function addCheckbox(labelText, value, groupName) {
   checkbox.type = 'checkbox';
   checkbox.name = groupName;
   checkbox.value = value;
+  checkbox.id = value;
+  checkbox.className = 'checkbox';
   label.innerHTML = checkbox.outerHTML + '&nbsp;' + labelText;
   label.classList.add('checkbox-label');
   label.appendChild(document.createElement('br'));
@@ -457,44 +459,46 @@ window.onload = function () {
     prevBtn,
     nextBtn,
   );
+
   populateFilters();
+  if (window.location.search) {
+    persistUserDataBasedOnQueryParams();
+  }
 };
 
 filterButton.addEventListener('click', (event) => {
   event.stopPropagation();
   filterModal.classList.toggle('hidden');
+
+  if (window.location.search) {
+    const checkboxes = document.querySelectorAll('.checkbox');
+    selectFiltersBasedOnQueryParams(checkboxes);
+  }
 });
 
 function getCheckedValues(groupName) {
   const checkboxes = document.querySelectorAll(
     `input[name="${groupName}"]:checked`,
   );
-  console.log(checkboxes);
   return Array.from(checkboxes).map((cb) => cb.value);
 }
 
 function getFilteredUsersURL(checkedValuesSkills, checkedValuesAvailability) {
   const params = new URLSearchParams();
-  console.log('params', params);
-  //creation of query params for skill of user
   checkedValuesSkills.forEach((skill) => {
     params.append('tagId', skill);
   });
-  //creation of query params for availability of user
   checkedValuesAvailability.forEach((availability) => {
     params.append('state', availability);
   });
-  console.log(`?${params.toString()}`);
   return `?${params.toString()}`;
 }
 
-//updating query params on the browser url
-function updateQueryParamstoURL(constructedQueryParam) {
+function updateQueryParamsToURL(constructedQueryParam) {
   const currentURLInstance = new URL(window.location.href);
+  currentURLInstance.search = '';
   const currentURL = currentURLInstance.href;
-  console.log(currentURL);
   const newURLWithQueryParams = `${currentURL}${constructedQueryParam}`;
-  console.log(newURLWithQueryParams);
   window.history.pushState(
     { path: newURLWithQueryParams },
     '',
@@ -502,14 +506,60 @@ function updateQueryParamstoURL(constructedQueryParam) {
   );
 }
 
+function removeQueryParams() {
+  const currentURLInstance = new URL(window.location.href);
+  currentURLInstance.search = '';
+  const currentURL = currentURLInstance.href;
+  const newUrlWithoutQueryParams = `${currentURL}`;
+  window.history.pushState(
+    { path: newUrlWithoutQueryParams },
+    '',
+    newUrlWithoutQueryParams,
+  );
+}
+
+function selectFiltersBasedOnQueryParams(checkboxes) {
+  const urlString = window.location.href;
+  const urlObjInstance = new URL(urlString);
+  const queryParamsObj = urlObjInstance.searchParams.entries();
+  const queryObject = {};
+  for (const [key, value] of queryParamsObj) {
+    if (!queryObject[key]) {
+      queryObject[key] = [];
+    }
+    queryObject[key].push(value);
+  }
+  const checkBoxArray = Array.from(checkboxes);
+  checkBoxArray.map((checkbox) => {
+    for (let key in queryObject) {
+      const checkedValues = queryObject[key];
+      checkedValues.map((value) => {
+        if (checkbox.id === value) {
+          checkbox.checked = true;
+        }
+      });
+    }
+  });
+}
+
+async function persistUserDataBasedOnQueryParams() {
+  const queryParams = window.location.search;
+  try {
+    const usersRequest = await makeApiCall(
+      `${RDS_API_USERS}/search${queryParams}`,
+    );
+    const { users } = await usersRequest.json();
+    showUserList(users);
+  } catch (err) {
+    throw new Error(`User list request failed with error: ${err}`);
+  }
+}
+
 applyFilterButton.addEventListener('click', async () => {
-  //remove previous query params.
   filterModal.classList.toggle('hidden');
   displayLoader();
   const checkedValuesSkills = getCheckedValues('skills-filter');
-  console.log(checkedValuesSkills); //array of ids
   const checkedValuesAvailability = getCheckedValues('availability-filter');
-  console.log(checkedValuesAvailability); //array of status names(string)
   const queryParams = getFilteredUsersURL(
     checkedValuesSkills,
     checkedValuesAvailability,
@@ -518,7 +568,7 @@ applyFilterButton.addEventListener('click', async () => {
     const usersRequest = await makeApiCall(
       `${RDS_API_USERS}/search${queryParams}`,
     );
-    updateQueryParamstoURL(queryParams);
+    updateQueryParamsToURL(queryParams);
     const { users } = await usersRequest.json();
     showUserList(users);
   } catch (err) {
@@ -546,6 +596,7 @@ clearButton.addEventListener('click', function () {
     prevBtn,
     nextBtn,
   );
+  removeQueryParams();
 });
 
 filterModal.addEventListener('click', (event) => {
