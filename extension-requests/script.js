@@ -19,8 +19,14 @@ const filterButton = document.getElementById(FILTER_BUTTON);
 const applyFilterButton = document.getElementById(APPLY_FILTER_BUTTON);
 const clearButton = document.getElementById(CLEAR_BUTTON);
 const searchElement = document.getElementById(SEARCH_ELEMENT);
+const params = new URLSearchParams(window.location.search);
+
 let allCardsList;
 let isFiltered = false;
+if (params.get('dev') === 'true') {
+  extensionRequestsContainer.classList.remove('extension-requests');
+  extensionRequestsContainer.classList.add('extension-requests-new');
+}
 
 const state = {
   currentExtensionRequest: null,
@@ -68,26 +74,35 @@ async function populateExtensionRequests(query = {}) {
     const allExtensionRequests = extensionRequests.allExtensionRequests;
 
     allCardsList = [];
-    const extensionRequestPromiseList = [];
-    for (let data of allExtensionRequests) {
-      const extensionRequestCardPromise = createExtensionCard(data);
-      extensionRequestPromiseList.push(extensionRequestCardPromise);
-      allCardsList.push(data);
-      extensionRequestCardPromise.then((extensionRequestCard) => {
+
+    if (params.get('dev') === 'true') {
+      const extensionRequestPromiseList = [];
+      for (let data of allExtensionRequests) {
+        const extensionRequestCardPromise = createExtensionCard(data);
+        extensionRequestPromiseList.push(extensionRequestCardPromise);
+        allCardsList.push(data);
+        extensionRequestCardPromise.then((extensionRequestCard) => {
+          data['htmlElement'] = extensionRequestCard;
+        });
+      }
+
+      const extensionRequestCardList = await Promise.all(
+        extensionRequestPromiseList,
+      );
+
+      for (let extensionRequestCard of extensionRequestCardList) {
+        extensionRequestsContainer.appendChild(extensionRequestCard);
+      }
+    } else {
+      allExtensionRequests.forEach((data) => {
+        const extensionRequestCard = createExtensionRequestCard(
+          data,
+          extensionRequestCardHeadings,
+        );
         data['htmlElement'] = extensionRequestCard;
+        allCardsList.push(data);
+        extensionRequestsContainer.appendChild(extensionRequestCard);
       });
-      // = createExtensionRequestCard(
-      //   data,
-      //   extensionRequestCardHeadings,
-      // );
-    }
-
-    const extensionRequestCardList = await Promise.all(
-      extensionRequestPromiseList,
-    );
-
-    for (let extensionRequestCard of extensionRequestCardList) {
-      extensionRequestsContainer.appendChild(extensionRequestCard);
     }
   } catch (error) {
     errorHeading.textContent = 'Something went wrong, Please reload';

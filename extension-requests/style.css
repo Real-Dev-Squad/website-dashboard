@@ -401,14 +401,17 @@ body {
 /* status form ends here */
 
 .extension-requests {
-  /* display: grid;
+  display: grid;
   grid-template-columns: repeat(auto-fill, minmax(12.5rem, 22rem));
   grid-auto-rows: 26rem;
-  flex-wrap: wrap; */
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.extension-requests-new {
   display: flex;
   flex-direction: column;
   align-items: center;
-
   gap: 1.25rem;
 }
 
