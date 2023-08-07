@@ -494,31 +494,28 @@ function getFilteredUsersURL(checkedValuesSkills, checkedValuesAvailability) {
   return `?${params.toString()}`;
 }
 
-function updateQueryParamsToURL(constructedQueryParam) {
+function manipulateQueryParamsToURL(constructedQueryParam) {
   const currentURLInstance = new URL(window.location.href);
   currentURLInstance.search = '';
   const currentURL = currentURLInstance.href;
-  const newURLWithQueryParams = `${currentURL}${constructedQueryParam}`;
-  window.history.pushState(
-    { path: newURLWithQueryParams },
-    '',
-    newURLWithQueryParams,
-  );
+  if (constructedQueryParam) {
+    const newURLWithQueryParams = `${currentURL}${constructedQueryParam}`;
+    window.history.pushState(
+      { path: newURLWithQueryParams },
+      '',
+      newURLWithQueryParams,
+    );
+  } else {
+    const newUrlWithoutQueryParams = `${currentURL}`;
+    window.history.pushState(
+      { path: newUrlWithoutQueryParams },
+      '',
+      newUrlWithoutQueryParams,
+    );
+  }
 }
 
-function removeQueryParams() {
-  const currentURLInstance = new URL(window.location.href);
-  currentURLInstance.search = '';
-  const currentURL = currentURLInstance.href;
-  const newUrlWithoutQueryParams = `${currentURL}`;
-  window.history.pushState(
-    { path: newUrlWithoutQueryParams },
-    '',
-    newUrlWithoutQueryParams,
-  );
-}
-
-function selectFiltersBasedOnQueryParams(checkboxes) {
+function parseQueryParams() {
   const urlString = window.location.href;
   const urlObjInstance = new URL(urlString);
   const queryParamsObj = urlObjInstance.searchParams.entries();
@@ -527,12 +524,21 @@ function selectFiltersBasedOnQueryParams(checkboxes) {
     if (!queryObject[key]) {
       queryObject[key] = [];
     }
-    queryObject[key].push(value);
+    if (key === 'state') {
+      queryObject[key].push(value.toLocaleUpperCase());
+    } else {
+      queryObject[key].push(value);
+    }
   }
+  return queryObject;
+}
+
+function selectFiltersBasedOnQueryParams(checkboxes) {
+  const parsedQuery = parseQueryParams();
   const checkBoxArray = Array.from(checkboxes);
   checkBoxArray.map((checkbox) => {
-    for (let key in queryObject) {
-      const checkedValues = queryObject[key];
+    for (let key in parsedQuery) {
+      const checkedValues = parsedQuery[key];
       checkedValues.map((value) => {
         if (checkbox.id === value) {
           checkbox.checked = true;
@@ -543,26 +549,16 @@ function selectFiltersBasedOnQueryParams(checkboxes) {
 }
 
 async function persistUserDataBasedOnQueryParams() {
-  const urlString = window.location.href;
-  const urlObjInstance = new URL(urlString);
-  const queryParamsObj = urlObjInstance.searchParams.entries();
-  const queryObject = {};
-  for (const [key, value] of queryParamsObj) {
-    if (!queryObject[key]) {
-      queryObject[key] = [];
-    }
-    queryObject[key].push(value.toUpperCase());
-  }
+  const parsedQuery = parseQueryParams();
   const urlSearchParams = new URLSearchParams();
   console.log(urlSearchParams);
-  for (const key in queryObject) {
-    for (const value of queryObject[key]) {
+  for (const key in parsedQuery) {
+    for (const value of parsedQuery[key]) {
       urlSearchParams.append(key, encodeURIComponent(value));
     }
   }
   const queryString = urlSearchParams.toString();
   console.log(queryString);
-  // const queryParams = window.location.search;
 
   try {
     const usersRequest = await makeApiCall(
@@ -588,7 +584,7 @@ applyFilterButton.addEventListener('click', async () => {
     const usersRequest = await makeApiCall(
       `${RDS_API_USERS}/search${queryParams}`,
     );
-    updateQueryParamsToURL(queryParams);
+    manipulateQueryParamsToURL(queryParams);
     const { users } = await usersRequest.json();
     showUserList(users);
   } catch (err) {
@@ -616,7 +612,7 @@ clearButton.addEventListener('click', function () {
     prevBtn,
     nextBtn,
   );
-  removeQueryParams();
+  manipulateQueryParamsToURL();
 });
 
 filterModal.addEventListener('click', (event) => {
