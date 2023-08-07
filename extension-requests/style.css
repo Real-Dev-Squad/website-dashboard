@@ -523,7 +523,7 @@ body {
   width: 20%;
   min-width: 15rem;
   border: 1px solid var(--light-gray-color);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 10px var(--black-transparent);
   border-radius: 0.31rem;
   display: flex;
   flex-direction: column;

@@ -4,6 +4,7 @@ const DOWN_ARROW_ICON = '/images/chevron-down.svg';
 const CHECK_ICON = '/images/check-icon.svg';
 const CANCEL_ICON = '/images/x-icon.svg';
 const EDIT_ICON = '/images/edit-icon.svg';
+const ERROR_MESSAGE_RELOAD = 'Something went wrong, Please reload';
 
 const taskInfoModelHeadings = [
   { title: 'Title' },
