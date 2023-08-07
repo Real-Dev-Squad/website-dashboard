@@ -49,7 +49,7 @@ async function populateExtensionRequests(query = {}) {
       extensionRequestsContainer.appendChild(extensionRequestCard);
     });
   } catch (error) {
-    errorHeading.textContent = 'Something went wrong, Please reload';
+    errorHeading.textContent = ERROR_MESSAGE_RELOAD;
     errorHeading.classList.add('error-visible');
   } finally {
     removeLoader('loader');

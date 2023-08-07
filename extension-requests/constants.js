@@ -1,3 +1,4 @@
+const ERROR_MESSAGE_RELOAD = 'Something went wrong, Please reload';
 const taskInfoModelHeadings = [
   { title: 'Title' },
   { title: 'Ends On', key: 'endsOn', time: true },
