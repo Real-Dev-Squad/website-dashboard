@@ -588,43 +588,81 @@ async function createExtensionCard(data) {
   });
   cardAssigneeButtonContainer.appendChild(extensionCardButtons);
 
-  const editButton = createElement({
-    type: 'button',
-    attributes: { class: 'edit-button' },
-  });
-  extensionCardButtons.appendChild(editButton);
+  //Conditionally render the buttons bases on status
+  if (data.status === Status.APPROVED) {
+    const approveButton = createElement({
+      type: 'button',
+      attributes: { class: 'approve-button approved' },
+      innerText: Status.APPROVED,
+    });
+    extensionCardButtons.appendChild(approveButton);
+  } else if (data.status === Status.DENIED) {
+    const denyButton = createElement({
+      type: 'button',
+      attributes: { class: 'deny-button denied' },
+      innerText: Status.DENIED,
+    });
+    extensionCardButtons.appendChild(denyButton);
+  } else {
+    const editButton = createElement({
+      type: 'button',
+      attributes: { class: 'edit-button' },
+    });
+    extensionCardButtons.appendChild(editButton);
 
-  const editIcon = createElement({
-    type: 'img',
-    attributes: { src: EDIT_ICON, alt: 'edit-icon' },
-  });
-  editButton.appendChild(editIcon);
+    const editIcon = createElement({
+      type: 'img',
+      attributes: { src: EDIT_ICON, alt: 'edit-icon' },
+    });
+    editButton.appendChild(editIcon);
 
-  const denyButton = createElement({
-    type: 'button',
-    attributes: { class: 'deny-button' },
-  });
+    const denyButton = createElement({
+      type: 'button',
+      attributes: { class: 'deny-button' },
+    });
 
-  const denyIcon = createElement({
-    type: 'img',
-    attributes: { src: CANCEL_ICON, alt: 'edit-icon' },
-  });
+    const denyIcon = createElement({
+      type: 'img',
+      attributes: { src: CANCEL_ICON, alt: 'edit-icon' },
+    });
 
-  denyButton.appendChild(denyIcon);
+    denyButton.appendChild(denyIcon);
 
-  extensionCardButtons.appendChild(denyButton);
+    extensionCardButtons.appendChild(denyButton);
 
-  const approveButton = createElement({
-    type: 'button',
-    attributes: { class: 'approve-button' },
-  });
-  const approveIcon = createElement({
-    type: 'img',
-    attributes: { src: CHECK_ICON, alt: 'edit-icon' },
-  });
-  approveButton.appendChild(approveIcon);
+    const approveButton = createElement({
+      type: 'button',
+      attributes: { class: 'approve-button' },
+    });
+    const approveIcon = createElement({
+      type: 'img',
+      attributes: { src: CHECK_ICON, alt: 'edit-icon' },
+    });
+    approveButton.appendChild(approveIcon);
 
-  extensionCardButtons.appendChild(approveButton);
+    extensionCardButtons.appendChild(approveButton);
+
+    //Event listeners
+    editButton.addEventListener('click', () => {
+      showModal('update-form');
+      state.currentExtensionRequest = data;
+      fillUpdateForm();
+    });
+
+    approveButton.addEventListener('click', () => {
+      updateExtensionRequestStatus({
+        id: data.id,
+        body: { status: Status.APPROVED },
+      });
+    });
+
+    denyButton.addEventListener('click', () => {
+      updateExtensionRequestStatus({
+        id: data.id,
+        body: { status: Status.DENIED },
+      });
+    });
+  }
 
   const accordionButton = createElement({
     type: 'button',
@@ -668,27 +706,6 @@ async function createExtensionCard(data) {
   cardFooter.appendChild(accordionContainer);
 
   rootElement.appendChild(cardFooter);
-
-  //Event listeners
-  editButton.addEventListener('click', () => {
-    showModal('update-form');
-    state.currentExtensionRequest = data;
-    fillUpdateForm();
-  });
-
-  approveButton.addEventListener('click', () => {
-    updateExtensionRequestStatus({
-      id: data.id,
-      body: { status: Status.APPROVED },
-    });
-  });
-
-  denyButton.addEventListener('click', () => {
-    updateExtensionRequestStatus({
-      id: data.id,
-      body: { status: Status.DENIED },
-    });
-  });
 
   return rootElement;
 }

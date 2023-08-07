@@ -108,6 +108,7 @@
   align-items: center;
   justify-content: center;
 }
+
 .approve-button:hover {
   background-color: var(--green500);
 }
@@ -149,6 +150,19 @@
 .deny-button:hover {
   background-color: var(--secondary600);
 }
+
+.approved {
+  pointer-events: none;
+  color: var(--green500);
+  font-weight: 600;
+}
+
+.denied {
+  pointer-events: none;
+  color: var(--secondary600);
+  font-weight: 600;
+}
+
 .card-assignee-button-container {
   display: flex;
   justify-content: space-between;
