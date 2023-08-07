@@ -43,22 +43,19 @@ const initializeAccordions = () => {
       if (panel.style.maxHeight) {
         panel.style.maxHeight = null;
       } else {
+        closeAllAccordions();
         panel.style.maxHeight = panel.scrollHeight + 'px';
-        console.log(panel);
-        // toggleAllOtherAccordions(i,acc);
       }
     });
   }
 };
-const toggleAllOtherAccordions = (currIndex, accordionsList) => {
+const closeAllAccordions = () => {
+  let accordionsList = document.getElementsByClassName('accordion');
   for (let i = 0; i < accordionsList.length; i++) {
-    if (currIndex !== i) {
-      let panel = accordionsList[i].nextElementSibling;
-      if (panel.style.maxHeight) {
-        accordionsList[i].classList.toggle('active');
-        panel.style.maxHeight = null;
-        console.log(panel);
-      }
+    let panel = accordionsList[i].nextElementSibling;
+    if (panel.style.maxHeight) {
+      accordionsList[i].classList.remove('active');
+      panel.style.maxHeight = null;
     }
   }
 };
@@ -71,24 +68,32 @@ async function populateExtensionRequests(query = {}) {
     const allExtensionRequests = extensionRequests.allExtensionRequests;
 
     allCardsList = [];
-    allExtensionRequests.forEach((data) => {
-      const extensionRequestCard = createExtensionCard(
-        data.assignee,
-        data.title,
-        data.reason,
-        2,
-        2,
-        2,
+    const extensionRequestPromiseList = [];
+    for (let data of allExtensionRequests) {
+      console.log(data);
+      const extensionRequestCardPromise = createExtensionCard(
+        data,
         'IN_REVIEW',
       );
+      extensionRequestPromiseList.push(extensionRequestCardPromise);
+      allCardsList.push(data);
+      extensionRequestCardPromise.then((extensionRequestCard) => {
+        data['htmlElement'] = extensionRequestCard;
+      });
       // = createExtensionRequestCard(
       //   data,
       //   extensionRequestCardHeadings,
       // );
-      data['htmlElement'] = extensionRequestCard;
-      allCardsList.push(data);
+    }
+
+    const extensionRequestCardList = await Promise.all(
+      extensionRequestPromiseList,
+    );
+
+    for (let extensionRequestCard of extensionRequestCardList) {
+      console.log(extensionRequestCard);
       extensionRequestsContainer.appendChild(extensionRequestCard);
-    });
+    }
   } catch (error) {
     errorHeading.textContent = 'Something went wrong, Please reload';
     errorHeading.classList.add('error-visible');
@@ -373,34 +378,38 @@ filterButton.addEventListener('click', (event) => {
 populateStatus();
 render();
 
-function createExtensionCard(
-  assigneeName,
-  title,
-  reason,
-  extensionDays,
-  deadlineDays,
-  requestedDaysAgo,
-  taskStatus,
-) {
+async function createExtensionCard(data) {
+  const title = data.title;
+  const reason = data.reason;
+  const userDataPromise = getUserDetails(data.assignee);
+  const taskDataPromise = getTaskDetails(data.taskId);
+
+  const [{ taskData }, userData] = await Promise.all([
+    taskDataPromise,
+    userDataPromise,
+  ]);
+  const userImage = userData?.picture?.url ?? DEFAULT_AVATAR;
+  const userFirstName = userData?.first_name ?? data.assignee;
+  console.log(taskData);
+
+  const extensionDays = dateDiff(data.newEndsOn * 1000, data.oldEndsOn * 1000);
+  const isDeadLineCrossed = Date.now() > data.oldEndsOn * 1000;
+  const deadlineDays = dateDiff(
+    new Date(),
+    data.oldEndsOn * 1000,
+    (d) => d + (isDeadLineCrossed ? ' ago' : ''),
+  );
+  const requestedDaysAgo = dateDiff(
+    Date.now(),
+    data.timestamp * 1000,
+    (s) => s + ' ago',
+  );
+
   // Root element
   const rootElement = createElement({
     type: 'div',
     attributes: { class: 'extension-card' },
   });
-
-  // Title container
-  const titleContainer = createElement({
-    type: 'div',
-    attributes: { class: 'title-container' },
-  });
-  rootElement.appendChild(titleContainer);
-
-  // Accordion button
-  const accordionButton = createElement({
-    type: 'button',
-    attributes: { class: 'accordion' },
-  });
-  titleContainer.appendChild(accordionButton);
 
   // Title text
   const titleText = createElement({
@@ -408,38 +417,7 @@ function createExtensionCard(
     attributes: { class: 'title-text' },
     innerText: title,
   });
-  accordionButton.appendChild(titleText);
-
-  // Down arrow icon
-  const downArrowIcon = createElement({
-    type: 'img',
-    attributes: { src: '/images/chevron-down.svg', alt: 'down-arrow' },
-  });
-  accordionButton.appendChild(downArrowIcon);
-
-  // Panel
-  const panel = createElement({ type: 'div', attributes: { class: 'panel' } });
-  titleContainer.appendChild(panel);
-
-  // Reason
-  const reasonContainer = createElement({ type: 'div' });
-  panel.appendChild(reasonContainer);
-
-  const reasonTitle = createElement({
-    type: 'span',
-    attributes: { class: 'panel-title' },
-    innerText: 'Reason',
-  });
-  reasonContainer.appendChild(reasonTitle);
-
-  const reasonDetailsLine = createElement({
-    type: 'span',
-    attributes: { class: 'details-line' },
-  });
-  reasonContainer.appendChild(reasonDetailsLine);
-
-  const reasonParagraph = createElement({ type: 'p', innerText: reason });
-  reasonContainer.appendChild(reasonParagraph);
+  rootElement.appendChild(titleText);
 
   // Summary container
   const summaryContainer = createElement({
@@ -468,7 +446,10 @@ function createExtensionCard(
   });
   detailsContainer.appendChild(taskDetailsHeading);
 
-  const externalLink = createElement({ type: 'a', attributes: { href: '' } });
+  const externalLink = createElement({
+    type: 'a',
+    attributes: { href: `${STATUS_BASE_URL}/tasks/${data.taskId}` },
+  });
   detailsContainer.appendChild(externalLink);
 
   const externalLinkIcon = createElement({
@@ -493,13 +474,13 @@ function createExtensionCard(
   const deadlineText = createElement({
     type: 'span',
     attributes: { class: 'card-row-text' },
-    innerText: 'Deadline in:',
+    innerText: `Deadline${isDeadLineCrossed ? ': ' : ' in: '}`,
   });
   deadlineContainer.appendChild(deadlineText);
 
   const deadlineValue = createElement({
     type: 'span',
-    innerText: `${deadlineDays} days`,
+    innerText: `${deadlineDays}`,
   });
   deadlineContainer.appendChild(deadlineValue);
 
@@ -515,7 +496,7 @@ function createExtensionCard(
 
   const taskStatusValue = createElement({
     type: 'span',
-    innerText: taskStatus,
+    innerText: ` ${taskData.status}`,
   });
   taskStatusContainer.appendChild(taskStatusValue);
 
@@ -557,7 +538,7 @@ function createExtensionCard(
 
   const extensionForValue = createElement({
     type: 'span',
-    innerText: `${extensionDays} days`,
+    innerText: ` ${extensionDays}`,
   });
   extensionForContainer.appendChild(extensionForValue);
 
@@ -573,7 +554,7 @@ function createExtensionCard(
 
   const requestedValue = createElement({
     type: 'span',
-    innerText: `${requestedDaysAgo} days ago`,
+    innerText: ` ${requestedDaysAgo}`,
   });
   requestedContainer.appendChild(requestedValue);
 
@@ -582,7 +563,6 @@ function createExtensionCard(
     type: 'div',
     attributes: { class: 'card-assignee-button-container' },
   });
-  rootElement.appendChild(cardAssigneeButtonContainer);
 
   // Assignee container
   const assigneeContainer = createElement({
@@ -600,14 +580,14 @@ function createExtensionCard(
 
   const assigneeImage = createElement({
     type: 'img',
-    attributes: { src: '', alt: 'pratiyush', class: 'assignee-image' },
+    attributes: { src: userImage, alt: userFirstName, class: 'assignee-image' },
   });
   assigneeContainer.appendChild(assigneeImage);
 
   const assigneeNameElement = createElement({
     type: 'span',
     attributes: { class: 'assignee-name' },
-    innerText: assigneeName,
+    innerText: userFirstName,
   });
   assigneeContainer.appendChild(assigneeNameElement);
 
@@ -624,6 +604,12 @@ function createExtensionCard(
   });
   extensionCardButtons.appendChild(editButton);
 
+  editButton.addEventListener('click', () => {
+    showModal('update-form');
+    state.currentExtensionRequest = data;
+    fillUpdateForm();
+  });
+
   const editIcon = createElement({
     type: 'img',
     attributes: { src: '/images/edit-icon.svg', alt: 'edit-icon' },
@@ -634,13 +620,88 @@ function createExtensionCard(
     type: 'button',
     attributes: { class: 'deny-button' },
   });
+
+  const denyIcon = createElement({
+    type: 'img',
+    attributes: { src: '/images/x-icon.svg', alt: 'edit-icon' },
+  });
+
+  denyButton.appendChild(denyIcon);
+
   extensionCardButtons.appendChild(denyButton);
+
+  denyButton.addEventListener('click', () => {
+    updateExtensionRequestStatus({
+      id: data.id,
+      body: { status: Status.DENIED },
+    });
+  });
 
   const approveButton = createElement({
     type: 'button',
     attributes: { class: 'approve-button' },
   });
+  const approveIcon = createElement({
+    type: 'img',
+    attributes: { src: '/images/check-icon.svg', alt: 'edit-icon' },
+  });
+
+  approveButton.appendChild(approveIcon);
+
+  approveButton.addEventListener('click', () => {
+    updateExtensionRequestStatus({
+      id: data.id,
+      body: { status: Status.APPROVED },
+    });
+  });
+
   extensionCardButtons.appendChild(approveButton);
+
+  // Accordion button
+  const accordionButton = createElement({
+    type: 'button',
+    attributes: { class: 'accordion' },
+  });
+
+  const accordionContainer = createElement({ type: 'div' });
+  accordionContainer.appendChild(accordionButton);
+  // Down arrow icon
+  const downArrowIcon = createElement({
+    type: 'img',
+    attributes: { src: '/images/chevron-down.svg', alt: 'down-arrow' },
+  });
+  accordionButton.appendChild(downArrowIcon);
+
+  // Panel
+  const panel = createElement({ type: 'div', attributes: { class: 'panel' } });
+  accordionContainer.appendChild(panel);
+
+  // Reason
+  const reasonContainer = createElement({ type: 'div' });
+  panel.appendChild(reasonContainer);
+
+  const reasonTitle = createElement({
+    type: 'span',
+    attributes: { class: 'panel-title' },
+    innerText: 'Reason',
+  });
+  reasonContainer.appendChild(reasonTitle);
+
+  const reasonDetailsLine = createElement({
+    type: 'span',
+    attributes: { class: 'details-line' },
+  });
+  reasonContainer.appendChild(reasonDetailsLine);
+
+  const reasonParagraph = createElement({ type: 'p', innerText: reason });
+  reasonContainer.appendChild(reasonParagraph);
+
+  const cardFooter = createElement({ type: 'div' });
+  cardFooter.appendChild(cardAssigneeButtonContainer);
+
+  cardFooter.appendChild(accordionContainer);
+
+  rootElement.appendChild(cardFooter);
 
   return rootElement;
 }

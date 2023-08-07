@@ -7,6 +7,8 @@ const taskInfoModelHeadings = [
   { title: 'Is Noteworthy', key: 'isNoteworthy' },
 ];
 
+const DEFAULT_AVATAR = '/images/avatar.png';
+
 const extensionRequestCardHeadings = [
   { title: 'Title' },
   { title: 'Reason' },
