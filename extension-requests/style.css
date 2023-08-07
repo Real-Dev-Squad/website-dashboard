@@ -406,6 +406,7 @@ body {
   grid-auto-rows: 26rem;
   flex-wrap: wrap;
   gap: 1.25rem;
+  justify-content: center;
 }
 
 .extension-requests-new {

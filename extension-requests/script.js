@@ -35,7 +35,6 @@ const state = {
 const render = async () => {
   toggleStatusCheckbox(Status.PENDING);
   await populateExtensionRequests({ status: Status.PENDING });
-  initializeAccordions();
 };
 
 const initializeAccordions = () => {
@@ -93,6 +92,7 @@ async function populateExtensionRequests(query = {}) {
       for (let extensionRequestCard of extensionRequestCardList) {
         extensionRequestsContainer.appendChild(extensionRequestCard);
       }
+      initializeAccordions();
     } else {
       allExtensionRequests.forEach((data) => {
         const extensionRequestCard = createExtensionRequestCard(

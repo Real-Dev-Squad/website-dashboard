@@ -13,7 +13,7 @@ const SYNC_FAILED = 'Last Sync: Failed';
 const DISABLED = 'disabled';
 const STATUS_BASE_URL_PROD = 'https://status.realdevsquad.com';
 const STATUS_BASE_URL_STAGING = 'https://staging-status.realdevsquad.com';
-const STATUS_BASE_URL = STATUS_BASE_URL_STAGING;
+const STATUS_BASE_URL = STATUS_BASE_URL_PROD;
 
 const dummyPicture =
   'https://dashboard.realdevsquad.com/users/images/avatar.png';
