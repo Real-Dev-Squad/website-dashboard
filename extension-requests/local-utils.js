@@ -81,23 +81,12 @@ async function getUserDetails(username) {
   return user?.users[0];
 }
 
-function getTimeFromTimestamp(timestamp) {
-  return new Date(timestamp * 1000).toLocaleString();
+function secondsToMilliSeconds(seconds) {
+  return seconds * 1000;
 }
 
-function formatTimestampToCustomDate(timestamp) {
-  const date = new Date(timestamp);
-
-  const options = {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  };
-
-  return new Intl.DateTimeFormat('en-US', options).format(date);
+function getTimeFromTimestamp(timestamp) {
+  return new Date(timestamp * 1000).toLocaleString();
 }
 
 function createTable(headings, data, className = '') {
@@ -113,7 +102,7 @@ function createTable(headings, data, className = '') {
     let rowHeading = createElement({ type: 'th', innerText: title });
 
     let contentText = '';
-    if (time) contentText = formatTimestampToCustomDate(data[key]);
+    if (time) contentText = getTimeFromTimestamp(data[key]);
     else contentText = key ? data[key] : data[title.toLowerCase()];
 
     let tableData = createElement({

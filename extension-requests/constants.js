@@ -1,3 +1,10 @@
+const DEFAULT_AVATAR = '/images/avatar.png';
+const EXTERNAL_LINK_ICON = '/images/external-link.svg';
+const DOWN_ARROW_ICON = '/images/chevron-down.svg';
+const CHECK_ICON = '/images/check-icon.svg';
+const CANCEL_ICON = '/images/x-icon.svg';
+const EDIT_ICON = '/images/edit-icon.svg';
+
 const taskInfoModelHeadings = [
   { title: 'Title' },
   { title: 'Ends On', key: 'endsOn', time: true },
@@ -6,8 +13,6 @@ const taskInfoModelHeadings = [
   { title: 'Created By', key: 'createdBy' },
   { title: 'Is Noteworthy', key: 'isNoteworthy' },
 ];
-
-const DEFAULT_AVATAR = '/images/avatar.png';
 
 const extensionRequestCardHeadings = [
   { title: 'Title' },

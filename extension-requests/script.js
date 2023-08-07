@@ -70,11 +70,7 @@ async function populateExtensionRequests(query = {}) {
     allCardsList = [];
     const extensionRequestPromiseList = [];
     for (let data of allExtensionRequests) {
-      console.log(data);
-      const extensionRequestCardPromise = createExtensionCard(
-        data,
-        'IN_REVIEW',
-      );
+      const extensionRequestCardPromise = createExtensionCard(data);
       extensionRequestPromiseList.push(extensionRequestCardPromise);
       allCardsList.push(data);
       extensionRequestCardPromise.then((extensionRequestCard) => {
@@ -91,7 +87,6 @@ async function populateExtensionRequests(query = {}) {
     );
 
     for (let extensionRequestCard of extensionRequestCardList) {
-      console.log(extensionRequestCard);
       extensionRequestsContainer.appendChild(extensionRequestCard);
     }
   } catch (error) {
@@ -379,8 +374,7 @@ populateStatus();
 render();
 
 async function createExtensionCard(data) {
-  const title = data.title;
-  const reason = data.reason;
+  //Api calls
   const userDataPromise = getUserDetails(data.assignee);
   const taskDataPromise = getTaskDetails(data.taskId);
 
@@ -388,45 +382,45 @@ async function createExtensionCard(data) {
     taskDataPromise,
     userDataPromise,
   ]);
+
   const userImage = userData?.picture?.url ?? DEFAULT_AVATAR;
   const userFirstName = userData?.first_name ?? data.assignee;
-  console.log(taskData);
+  const isDeadLineCrossed = Date.now() > secondsToMilliSeconds(data.oldEndsOn);
 
-  const extensionDays = dateDiff(data.newEndsOn * 1000, data.oldEndsOn * 1000);
-  const isDeadLineCrossed = Date.now() > data.oldEndsOn * 1000;
+  const extensionDays = dateDiff(
+    secondsToMilliSeconds(data.newEndsOn),
+    secondsToMilliSeconds(data.oldEndsOn),
+  );
   const deadlineDays = dateDiff(
-    new Date(),
-    data.oldEndsOn * 1000,
+    Date.now(),
+    secondsToMilliSeconds(data.oldEndsOn),
     (d) => d + (isDeadLineCrossed ? ' ago' : ''),
   );
   const requestedDaysAgo = dateDiff(
     Date.now(),
-    data.timestamp * 1000,
+    secondsToMilliSeconds(data.timestamp),
     (s) => s + ' ago',
   );
 
-  // Root element
+  //Create card element
   const rootElement = createElement({
     type: 'div',
     attributes: { class: 'extension-card' },
   });
 
-  // Title text
   const titleText = createElement({
     type: 'span',
     attributes: { class: 'title-text' },
-    innerText: title,
+    innerText: data.title,
   });
   rootElement.appendChild(titleText);
 
-  // Summary container
   const summaryContainer = createElement({
     type: 'div',
     attributes: { class: 'summary-container' },
   });
   rootElement.appendChild(summaryContainer);
 
-  // Task details container
   const taskDetailsContainer = createElement({
     type: 'div',
     attributes: { class: 'task-details-container' },
@@ -455,8 +449,8 @@ async function createExtensionCard(data) {
   const externalLinkIcon = createElement({
     type: 'img',
     attributes: {
-      src: '/images/external-link.svg',
       height: '12px',
+      src: EXTERNAL_LINK_ICON,
       alt: 'external-link-icon',
     },
   });
@@ -500,7 +494,6 @@ async function createExtensionCard(data) {
   });
   taskStatusContainer.appendChild(taskStatusValue);
 
-  // Dates container
   const datesContainer = createElement({
     type: 'div',
     attributes: { class: 'dates-container' },
@@ -558,13 +551,11 @@ async function createExtensionCard(data) {
   });
   requestedContainer.appendChild(requestedValue);
 
-  // Card assignee button container
   const cardAssigneeButtonContainer = createElement({
     type: 'div',
     attributes: { class: 'card-assignee-button-container' },
   });
 
-  // Assignee container
   const assigneeContainer = createElement({
     type: 'div',
     attributes: { class: 'assignee-container' },
@@ -591,7 +582,6 @@ async function createExtensionCard(data) {
   });
   assigneeContainer.appendChild(assigneeNameElement);
 
-  // Extension card buttons
   const extensionCardButtons = createElement({
     type: 'div',
     attributes: { class: 'extension-card-buttons' },
@@ -604,15 +594,9 @@ async function createExtensionCard(data) {
   });
   extensionCardButtons.appendChild(editButton);
 
-  editButton.addEventListener('click', () => {
-    showModal('update-form');
-    state.currentExtensionRequest = data;
-    fillUpdateForm();
-  });
-
   const editIcon = createElement({
     type: 'img',
-    attributes: { src: '/images/edit-icon.svg', alt: 'edit-icon' },
+    attributes: { src: EDIT_ICON, alt: 'edit-icon' },
   });
   editButton.appendChild(editIcon);
 
@@ -623,19 +607,12 @@ async function createExtensionCard(data) {
 
   const denyIcon = createElement({
     type: 'img',
-    attributes: { src: '/images/x-icon.svg', alt: 'edit-icon' },
+    attributes: { src: CANCEL_ICON, alt: 'edit-icon' },
   });
 
   denyButton.appendChild(denyIcon);
 
   extensionCardButtons.appendChild(denyButton);
-
-  denyButton.addEventListener('click', () => {
-    updateExtensionRequestStatus({
-      id: data.id,
-      body: { status: Status.DENIED },
-    });
-  });
 
   const approveButton = createElement({
     type: 'button',
@@ -643,21 +620,12 @@ async function createExtensionCard(data) {
   });
   const approveIcon = createElement({
     type: 'img',
-    attributes: { src: '/images/check-icon.svg', alt: 'edit-icon' },
+    attributes: { src: CHECK_ICON, alt: 'edit-icon' },
   });
-
   approveButton.appendChild(approveIcon);
-
-  approveButton.addEventListener('click', () => {
-    updateExtensionRequestStatus({
-      id: data.id,
-      body: { status: Status.APPROVED },
-    });
-  });
 
   extensionCardButtons.appendChild(approveButton);
 
-  // Accordion button
   const accordionButton = createElement({
     type: 'button',
     attributes: { class: 'accordion' },
@@ -665,18 +633,16 @@ async function createExtensionCard(data) {
 
   const accordionContainer = createElement({ type: 'div' });
   accordionContainer.appendChild(accordionButton);
-  // Down arrow icon
+
   const downArrowIcon = createElement({
     type: 'img',
-    attributes: { src: '/images/chevron-down.svg', alt: 'down-arrow' },
+    attributes: { src: DOWN_ARROW_ICON, alt: 'down-arrow' },
   });
   accordionButton.appendChild(downArrowIcon);
 
-  // Panel
   const panel = createElement({ type: 'div', attributes: { class: 'panel' } });
   accordionContainer.appendChild(panel);
 
-  // Reason
   const reasonContainer = createElement({ type: 'div' });
   panel.appendChild(reasonContainer);
 
@@ -693,7 +659,7 @@ async function createExtensionCard(data) {
   });
   reasonContainer.appendChild(reasonDetailsLine);
 
-  const reasonParagraph = createElement({ type: 'p', innerText: reason });
+  const reasonParagraph = createElement({ type: 'p', innerText: data.reason });
   reasonContainer.appendChild(reasonParagraph);
 
   const cardFooter = createElement({ type: 'div' });
@@ -702,6 +668,27 @@ async function createExtensionCard(data) {
   cardFooter.appendChild(accordionContainer);
 
   rootElement.appendChild(cardFooter);
+
+  //Event listeners
+  editButton.addEventListener('click', () => {
+    showModal('update-form');
+    state.currentExtensionRequest = data;
+    fillUpdateForm();
+  });
+
+  approveButton.addEventListener('click', () => {
+    updateExtensionRequestStatus({
+      id: data.id,
+      body: { status: Status.APPROVED },
+    });
+  });
+
+  denyButton.addEventListener('click', () => {
+    updateExtensionRequestStatus({
+      id: data.id,
+      body: { status: Status.DENIED },
+    });
+  });
 
   return rootElement;
 }
