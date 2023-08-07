@@ -543,10 +543,30 @@ function selectFiltersBasedOnQueryParams(checkboxes) {
 }
 
 async function persistUserDataBasedOnQueryParams() {
-  const queryParams = window.location.search;
+  const urlString = window.location.href;
+  const urlObjInstance = new URL(urlString);
+  const queryParamsObj = urlObjInstance.searchParams.entries();
+  const queryObject = {};
+  for (const [key, value] of queryParamsObj) {
+    if (!queryObject[key]) {
+      queryObject[key] = [];
+    }
+    queryObject[key].push(value.toUpperCase());
+  }
+  const urlSearchParams = new URLSearchParams();
+  console.log(urlSearchParams);
+  for (const key in queryObject) {
+    for (const value of queryObject[key]) {
+      urlSearchParams.append(key, encodeURIComponent(value));
+    }
+  }
+  const queryString = urlSearchParams.toString();
+  console.log(queryString);
+  // const queryParams = window.location.search;
+
   try {
     const usersRequest = await makeApiCall(
-      `${RDS_API_USERS}/search${queryParams}`,
+      `${RDS_API_USERS}/search?${queryString}`,
     );
     const { users } = await usersRequest.json();
     showUserList(users);
