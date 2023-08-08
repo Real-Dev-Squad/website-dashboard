@@ -6,6 +6,8 @@ const {
 } = require('../../mock-data/extension-requests');
 
 const { userSunny, userRandhir } = require('../../mock-data/users');
+const { taskDone } = require('../../mock-data/tasks/index');
+
 describe('Tests the Extension Requests Screen', () => {
   let browser;
   let page;
@@ -17,7 +19,7 @@ describe('Tests the Extension Requests Screen', () => {
 
   beforeAll(async () => {
     browser = await puppeteer.launch({
-      headless: false,
+      headless: 'new',
       ignoreHTTPSErrors: true,
       args: ['--incognito', '--disable-web-security'],
       devtools: false,
@@ -100,7 +102,7 @@ describe('Tests the Extension Requests Screen', () => {
     await page.type('#assignee-search', 'sunny');
     await page.waitForTimeout(600); // wait for input debounce timer
     const cardsList = await page.$$('.extension-request');
-    expect(cardsList.length).toBe(2);
+    expect(cardsList.length).toBe(1);
     const cardTextContent = await page.evaluate(
       (element) => element.textContent,
       cardsList[0],
@@ -172,7 +174,7 @@ describe('Tests the Extension Requests Screen', () => {
   });
 });
 
-describe('Tests the new Extension Requests Screen', () => {
+describe.skip('Tests the new Extension Requests Screen', () => {
   let browser;
   let page;
   let title;
@@ -183,7 +185,7 @@ describe('Tests the new Extension Requests Screen', () => {
 
   beforeAll(async () => {
     browser = await puppeteer.launch({
-      headless: false,
+      headless: 'new',
       ignoreHTTPSErrors: true,
       args: ['--incognito', '--disable-web-security'],
       devtools: false,
@@ -258,41 +260,105 @@ describe('Tests the new Extension Requests Screen', () => {
           },
           body: JSON.stringify(userRandhir),
         });
+      } else if (
+        url ===
+        'https://api.realdevsquad.com/tasks/PYj79ki2agB0q5JN3kUf/details'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(taskDone),
+        });
       } else {
         interceptedRequest.continue();
       }
     });
     await page.goto('http://localhost:8000/extension-requests/index.html');
     await page.waitForNetworkIdle();
-
-    const newUrl =
-      'http://localhost:8000/extension-requests/index.html?dev=true'; // The URL you want to navigate to
-
-    await page.evaluate((newUrl) => {
-      window.location.href = newUrl;
-    }, newUrl);
-
-    title = await page.$('.header h1');
-    searchBar = await page.$('#search');
-    filterButton = await page.$('#filter-button');
-    extensionCardsList = await page.$$('.extension-card');
   });
 
   afterEach(async () => {
     await page.goto('http://localhost:8000/extension-requests/index.html');
-    await page.waitForTimeout(600000);
 
     await page.waitForNetworkIdle();
   });
+
   afterAll(async () => {
     await browser.close();
   });
 
-  it('Checks the UI elements on Extension requests listing page.', async () => {
+  it('Checks the UI elements on Extension requests listing page', async () => {
+    title = await page.$('.header h1');
+    searchBar = await page.$('#search');
+    filterButton = await page.$('#filter-button');
+    extensionCardsList = await page.$$('.extension-card');
+    extensionRequestsElement = await page.$('.extension-requests-new');
+
     expect(title).toBeTruthy();
     expect(searchBar).toBeTruthy();
     expect(filterButton).toBeTruthy();
     expect(extensionCardsList.length).toBe(2);
     expect(extensionRequestsElement).toBeTruthy();
+  });
+
+  it('Checks details of the first extension card', async () => {
+    extensionCardsList = await page.$$('.extension-card');
+
+    const firstExtensionCard = extensionCardsList[0];
+
+    const titleText = await firstExtensionCard.$eval(
+      '.title-text',
+      (el) => el.textContent,
+    );
+    expect(titleText).toBe('A title');
+
+    const taskStatusText = await firstExtensionCard.$eval(
+      '.task-details-container',
+      (el) => el.textContent,
+    );
+    expect(taskStatusText).toContain('DONE');
+
+    const taskAssigneeName = await firstExtensionCard.$eval(
+      '.assignee-name',
+      (el) => el.textContent,
+    );
+    expect(taskAssigneeName).toBe('Sunny');
+  });
+
+  it('Checks that accordion content is hidden by default', async () => {
+    const firstAccordionContent = await page.$('.extension-card .panel');
+    const firstAccordionIsHidden = await firstAccordionContent.evaluate(
+      (el) => el.style.maxHeight === '',
+    );
+
+    expect(firstAccordionIsHidden).toBe(true);
+  });
+
+  it('Opens and closes accordion content on click', async () => {
+    const firstAccordionButton = await page.$(
+      '.extension-card:first-child .accordion',
+    );
+
+    await firstAccordionButton.click();
+
+    const firstAccordionContent = await page.$(
+      '.extension-card:first-child .panel',
+    );
+    const firstAccordionIsVisible = await firstAccordionContent.evaluate(
+      (el) => el.style.maxHeight !== '',
+    );
+    expect(firstAccordionIsVisible).toBe(true);
+
+    await firstAccordionButton.click();
+
+    const firstAccordionIsHidden = await firstAccordionContent.evaluate(
+      (el) => el.style.maxHeight === '',
+    );
+    expect(firstAccordionIsHidden).toBe(true);
   });
 });

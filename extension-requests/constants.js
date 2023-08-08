@@ -24,6 +24,7 @@ const extensionRequestCardHeadings = [
   { title: 'Created At', key: 'timestamp', time: true },
   { title: 'Task', key: 'taskId' },
 ];
+
 const FILTER_MODAL = 'filter-modal';
 const FILTER_BUTTON = 'filter-button';
 const APPLY_FILTER_BUTTON = 'apply-filter-button';

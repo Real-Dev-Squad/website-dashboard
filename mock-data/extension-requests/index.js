@@ -21,7 +21,7 @@ const extensionRequestsList = {
       status: 'DENIED',
       taskId: 'PYj79ki2agB0q5JN3kUf',
       timestamp: 1689233034,
-      title: 'j',
+      title: 'A new title',
     },
   ],
 };
@@ -38,7 +38,7 @@ const extensionRequestsListPending = {
       status: 'PENDING',
       taskId: 'PYj79ki2agB0q5JN3kUf',
       timestamp: 1689233034,
-      title: 'j',
+      title: 'A title',
     },
     {
       assignee: 'randhir',
@@ -49,7 +49,7 @@ const extensionRequestsListPending = {
       status: 'PENDING',
       taskId: 'PYj79ki2agB0q5JN3kUf',
       timestamp: 1689233034,
-      title: 'j',
+      title: 'A new title',
     },
   ],
 };
