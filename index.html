@@ -20,11 +20,11 @@
 
     <section id="sync-buttons" class="element-display-remove">
       <div class="button-container">
-        <button class="action-button" id="sync-users-status">
+        <button class="action-button" id="sync-unverified-users">
           <span class="spinner"></span>
-          Sync Users Status
+          Sync Unverified Users
         </button>
-        <div class="status" id="sync-users-status-update"></div>
+        <div class="status" id="sync-unverified-users-update"></div>
       </div>
 
       <div class="button-container">
@@ -36,11 +36,11 @@
       </div>
 
       <div class="button-container">
-        <button class="action-button" id="sync-unverified-users">
+        <button class="action-button" id="sync-users-status">
           <span class="spinner"></span>
-          Sync Unverified Users
+          Sync Users Status
         </button>
-        <div class="status" id="sync-unverified-users-update"></div>
+        <div class="status" id="sync-users-status-update"></div>
       </div>
     </section>
 
@@ -54,6 +54,13 @@
       </a>
       <a class="action-button" href="/task/index.html"> Create Tasks </a>
       <a class="action-button" href="/profile/index.html"> Profile </a>
+      <a
+        id="discord-user-link"
+        class="action-button"
+        href="/users/discord/index.html"
+      >
+        Discord Users
+      </a>
       <a
         id="user-management-link"
         class="element-display-remove action-button"
@@ -73,6 +80,17 @@
       </a>
       <a class="action-button" href="/groups/index.html"> Discord Groups </a>
       <a class="action-button" href="/standup/index.html"> Standup Updates</a>
+      <div class="button-container element-display-remove" id="sync-repo-div">
+        <button id="repo-sync-button" class="action-button">
+          <span class="spinner"></span>
+          Sync Repo
+        </button>
+        <div class="status" id="sync-repo-status-update"></div>
+        <div id="toast" class="hidden">
+          <div class="message"></div>
+          <div class="progress-bar"></div>
+        </div>
+      </div>
     </section>
 
     <footer>
