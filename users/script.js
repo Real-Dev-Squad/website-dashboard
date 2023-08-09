@@ -379,6 +379,8 @@ function addCheckbox(labelText, value, groupName) {
   checkbox.type = 'checkbox';
   checkbox.name = groupName;
   checkbox.value = value;
+  checkbox.id = value;
+  checkbox.className = 'checkbox';
   label.innerHTML = checkbox.outerHTML + '&nbsp;' + labelText;
   label.classList.add('checkbox-label');
   label.appendChild(document.createElement('br'));
@@ -457,12 +459,21 @@ window.onload = function () {
     prevBtn,
     nextBtn,
   );
+
   populateFilters();
+  if (window.location.search) {
+    persistUserDataBasedOnQueryParams();
+  }
 };
 
 filterButton.addEventListener('click', (event) => {
   event.stopPropagation();
   filterModal.classList.toggle('hidden');
+
+  if (window.location.search) {
+    const checkboxes = document.querySelectorAll('.checkbox');
+    selectFiltersBasedOnQueryParams(checkboxes);
+  }
 });
 
 function getCheckedValues(groupName) {
@@ -474,16 +485,98 @@ function getCheckedValues(groupName) {
 
 function getFilteredUsersURL(checkedValuesSkills, checkedValuesAvailability) {
   const params = new URLSearchParams();
-
   checkedValuesSkills.forEach((skill) => {
     params.append('tagId', skill);
   });
-
   checkedValuesAvailability.forEach((availability) => {
     params.append('state', availability);
   });
-
   return `?${params.toString()}`;
+}
+
+function manipulateQueryParamsToURL(constructedQueryParam) {
+  const currentURLInstance = new URL(window.location.href);
+  currentURLInstance.search = '';
+  const currentURL = currentURLInstance.href;
+  if (constructedQueryParam) {
+    const newURLWithQueryParams = `${currentURL}${constructedQueryParam}`;
+    window.history.pushState(
+      { path: newURLWithQueryParams },
+      '',
+      newURLWithQueryParams,
+    );
+  } else {
+    const newUrlWithoutQueryParams = `${currentURL}`;
+    window.history.pushState(
+      { path: newUrlWithoutQueryParams },
+      '',
+      newUrlWithoutQueryParams,
+    );
+  }
+}
+
+/**
+ * Parses the query parameters from the current URL and organizes them into an object.
+ *
+ * @function
+ * @returns {Object.<string, string[]>} An object containing query parameter keys as properties
+ * and arrays of corresponding values. Values are either in uppercase (for 'state') or as provided in the URL.
+ */
+function parseQueryParams() {
+  // Create a new URL object instance based on the current URL of the web page.
+  const urlObjInstance = new URL(window.location.href);
+  // Get an iterator for the query parameters.
+  const queryParamsObj = urlObjInstance.searchParams.entries();
+  // Create an empty object to store the parsed query parameters.
+  const queryObject = {};
+  for (const [key, value] of queryParamsObj) {
+    if (!queryObject[key]) {
+      queryObject[key] = [];
+    }
+    if (key === 'state') {
+      queryObject[key].push(value.toLocaleUpperCase());
+    } else {
+      queryObject[key].push(value);
+    }
+  }
+  // Return the parsed query parameters object
+  return queryObject;
+}
+
+function selectFiltersBasedOnQueryParams(filters) {
+  const parsedQuery = parseQueryParams();
+
+  filters.forEach((filter) => {
+    for (const key in parsedQuery) {
+      if (parsedQuery.hasOwnProperty(key)) {
+        if (parsedQuery[key].includes(filter.id)) {
+          filter.checked = true;
+          break;
+        }
+      }
+    }
+  });
+}
+
+async function persistUserDataBasedOnQueryParams() {
+  const parsedQuery = parseQueryParams();
+  const urlSearchParams = new URLSearchParams();
+  for (const key in parsedQuery) {
+    for (const value of parsedQuery[key]) {
+      urlSearchParams.append(key, encodeURIComponent(value));
+    }
+  }
+  const queryString = urlSearchParams.toString();
+
+  try {
+    const usersRequest = await makeApiCall(
+      `${RDS_API_USERS}/search?${queryString}`,
+    );
+    const { users } = await usersRequest.json();
+    showUserList(users);
+  } catch (err) {
+    throw new Error(`User list request failed with error: ${err}`);
+  }
 }
 
 applyFilterButton.addEventListener('click', async () => {
@@ -499,6 +592,7 @@ applyFilterButton.addEventListener('click', async () => {
     const usersRequest = await makeApiCall(
       `${RDS_API_USERS}/search${queryParams}`,
     );
+    manipulateQueryParamsToURL(queryParams);
     const { users } = await usersRequest.json();
     showUserList(users);
   } catch (err) {
@@ -526,6 +620,7 @@ clearButton.addEventListener('click', function () {
     prevBtn,
     nextBtn,
   );
+  manipulateQueryParamsToURL();
 });
 
 filterModal.addEventListener('click', (event) => {
