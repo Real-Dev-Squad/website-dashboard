@@ -63,7 +63,6 @@ describe('Task Page - Assignee Profile Pic', () => {
 
     await page.waitForTimeout(2000);
     const imgSrc = await page.$eval('#list-items img', (img) => img.src);
-    console.log(imgSrc);
     const expectedImageFilename =
       'https://res.cloudinary.com/imgprc/image/upload/v1688145505/profile/tu4zVmwFX91e9oEuSWLg/woqilcqdbp0cudcexkem.jpg';
     expect(imgSrc.endsWith(expectedImageFilename)).toBe(true);
@@ -85,7 +84,6 @@ describe('Task Page - Assignee Profile Pic', () => {
     await page.waitForTimeout(2000);
 
     const imgSrc = await page.$eval('#list-items img', (img) => img.src);
-    console.log(imgSrc);
     const expectedImageFilename = 'No-profile-pic.jpg';
     expect(imgSrc.endsWith(expectedImageFilename)).toBe(true);
   });
