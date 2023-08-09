@@ -561,14 +561,12 @@ function selectFiltersBasedOnQueryParams(filters) {
 async function persistUserDataBasedOnQueryParams() {
   const parsedQuery = parseQueryParams();
   const urlSearchParams = new URLSearchParams();
-  console.log(urlSearchParams);
   for (const key in parsedQuery) {
     for (const value of parsedQuery[key]) {
       urlSearchParams.append(key, encodeURIComponent(value));
     }
   }
   const queryString = urlSearchParams.toString();
-  console.log(queryString);
 
   try {
     const usersRequest = await makeApiCall(
