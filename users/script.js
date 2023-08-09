@@ -543,21 +543,6 @@ function parseQueryParams() {
   return queryObject;
 }
 
-// function selectFiltersBasedOnQueryParams(filters) {
-//   const parsedQuery = parseQueryParams();
-//   const checkBoxArray = Array.from(filters);
-//   checkBoxArray.map((filter) => {
-//     for (let key in parsedQuery) {
-//       const checkedValues = parsedQuery[key];
-//       checkedValues.map((value) => {
-//         if (filter.id === value) {
-//           filter.checked = true;
-//         }
-//       });
-//     }
-//   });
-// }
-
 function selectFiltersBasedOnQueryParams(filters) {
   const parsedQuery = parseQueryParams();
 
