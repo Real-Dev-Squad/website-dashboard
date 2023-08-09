@@ -515,10 +515,19 @@ function manipulateQueryParamsToURL(constructedQueryParam) {
   }
 }
 
+/**
+ * Parses the query parameters from the current URL and organizes them into an object.
+ *
+ * @function
+ * @returns {Object.<string, string[]>} An object containing query parameter keys as properties
+ * and arrays of corresponding values. Values are either in uppercase (for 'state') or as provided in the URL.
+ */
 function parseQueryParams() {
-  const urlString = window.location.href;
-  const urlObjInstance = new URL(urlString);
+  // Create a new URL object instance based on the current URL of the web page.
+  const urlObjInstance = new URL(window.location.href);
+  // Get an iterator for the query parameters.
   const queryParamsObj = urlObjInstance.searchParams.entries();
+  // Create an empty object to store the parsed query parameters.
   const queryObject = {};
   for (const [key, value] of queryParamsObj) {
     if (!queryObject[key]) {
@@ -530,20 +539,36 @@ function parseQueryParams() {
       queryObject[key].push(value);
     }
   }
+  // Return the parsed query parameters object
   return queryObject;
 }
 
-function selectFiltersBasedOnQueryParams(checkboxes) {
+// function selectFiltersBasedOnQueryParams(filters) {
+//   const parsedQuery = parseQueryParams();
+//   const checkBoxArray = Array.from(filters);
+//   checkBoxArray.map((filter) => {
+//     for (let key in parsedQuery) {
+//       const checkedValues = parsedQuery[key];
+//       checkedValues.map((value) => {
+//         if (filter.id === value) {
+//           filter.checked = true;
+//         }
+//       });
+//     }
+//   });
+// }
+
+function selectFiltersBasedOnQueryParams(filters) {
   const parsedQuery = parseQueryParams();
-  const checkBoxArray = Array.from(checkboxes);
-  checkBoxArray.map((checkbox) => {
-    for (let key in parsedQuery) {
-      const checkedValues = parsedQuery[key];
-      checkedValues.map((value) => {
-        if (checkbox.id === value) {
-          checkbox.checked = true;
+
+  filters.forEach((filter) => {
+    for (const key in parsedQuery) {
+      if (parsedQuery.hasOwnProperty(key)) {
+        if (parsedQuery[key].includes(filter.id)) {
+          filter.checked = true;
+          break;
         }
-      });
+      }
     }
   });
 }
