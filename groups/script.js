@@ -65,7 +65,7 @@ groupsData?.forEach((item) => {
   const groupname = document.createElement('p');
   groupname.classList.add('group-name');
   groupname.setAttribute('id', `name-${item.roleid}`);
-  groupname.setAttribute('data-member-count', item.count);
+  groupname.setAttribute('data-member-count', item.memberCount);
   groupname.textContent = removeGroupKeywordFromDiscordRoleName(item.rolename);
 
   const createdBy = createAuthorDetailsDOM(

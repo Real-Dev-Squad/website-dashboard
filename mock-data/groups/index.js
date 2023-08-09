@@ -13,7 +13,7 @@ const discordGroups = {
       firstName: 'Test',
       lastName: 'User1',
       image: 'https://image.cdn.com/123dfg',
-      count: 2,
+      memberCount: 2,
     },
     {
       id: 'Mky71E6f6QWCY5MOBJFy',
@@ -27,7 +27,7 @@ const discordGroups = {
       firstName: 'Test',
       lastName: 'User2',
       image: 'https://image.cdn.com/12dfg',
-      count: 200,
+      memberCount: 200,
     },
     {
       id: '"mvWVuAxtSuhQtunjcywv"',
@@ -41,7 +41,7 @@ const discordGroups = {
       firstName: 'Test',
       lastName: 'User1',
       image: 'https://image.cdn.com/123dfgh',
-      count: 0,
+      memberCount: 0,
     },
   ],
 };
