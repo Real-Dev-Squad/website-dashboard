@@ -14,29 +14,147 @@ const modalStatusForm = document.querySelector(
 );
 const modalUpdateForm = document.querySelector('.extension-requests-form');
 
+const filterModal = document.getElementsByClassName(FILTER_MODAL)[0];
+const filterButton = document.getElementById(FILTER_BUTTON);
+const applyFilterButton = document.getElementById(APPLY_FILTER_BUTTON);
+const clearButton = document.getElementById(CLEAR_BUTTON);
+const searchElement = document.getElementById(SEARCH_ELEMENT);
+let allCardsList;
+let isFiltered = false;
+
 const state = {
   currentExtensionRequest: null,
 };
 
 const render = async () => {
+  toggleStatusCheckbox(Status.PENDING);
+  await populateExtensionRequests({ status: Status.PENDING });
+};
+
+async function populateExtensionRequests(query = {}) {
   try {
     addLoader(container);
-    const extensionRequests = await getExtensionRequests();
-
+    extensionRequestsContainer.innerHTML = '';
+    const extensionRequests = await getExtensionRequests(query);
     const allExtensionRequests = extensionRequests.allExtensionRequests;
+
+    allCardsList = [];
     allExtensionRequests.forEach((data) => {
-      extensionRequestsContainer.appendChild(
-        createExtensionRequestCard(data, extensionRequestCardHeadings),
+      const extensionRequestCard = createExtensionRequestCard(
+        data,
+        extensionRequestCardHeadings,
       );
+      data['htmlElement'] = extensionRequestCard;
+      allCardsList.push(data);
+      extensionRequestsContainer.appendChild(extensionRequestCard);
     });
   } catch (error) {
-    errorHeading.textContent = 'Something went wrong';
+    errorHeading.textContent = ERROR_MESSAGE_RELOAD;
     errorHeading.classList.add('error-visible');
-    reload();
   } finally {
     removeLoader('loader');
   }
+}
+function addCheckbox(labelText, value, groupName) {
+  const group = document.getElementById(groupName);
+  const label = document.createElement('label');
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.name = groupName;
+  checkbox.value = value;
+  label.innerHTML = checkbox.outerHTML + '&nbsp;' + labelText;
+  label.classList.add('checkbox-label');
+  label.appendChild(document.createElement('br'));
+  group.appendChild(label);
+}
+
+function populateStatus() {
+  const statusList = [
+    { name: 'Approved', id: 'APPROVED' },
+    { name: 'Pending', id: 'PENDING' },
+    { name: 'Denied', id: 'DENIED' },
+  ];
+  for (let i = 0; i < statusList.length; i++) {
+    const { name, id } = statusList[i];
+    addCheckbox(name, id, 'status-filter');
+  }
+}
+function toggleStatusCheckbox(statusValue) {
+  const element = document.querySelector(
+    `#status-filter input[value=${statusValue}]`,
+  );
+  element.checked = !element.checked;
+}
+
+function clearCheckboxes(groupName) {
+  const checkboxes = document.querySelectorAll(`input[name="${groupName}"]`);
+  checkboxes.forEach((cb) => {
+    cb.checked = false;
+  });
+}
+
+function getCheckedValues(groupName) {
+  const checkboxes = document.querySelectorAll(
+    `input[name="${groupName}"]:checked`,
+  );
+  return Array.from(checkboxes).map((cb) => cb.value);
+}
+
+applyFilterButton.addEventListener('click', async () => {
+  filterModal.classList.toggle('hidden');
+  const checkedValuesStatus = getCheckedValues('status-filter');
+
+  await populateExtensionRequests({ status: checkedValuesStatus });
+});
+
+clearButton.addEventListener('click', async function () {
+  clearCheckboxes('status-filter');
+  filterModal.classList.toggle('hidden');
+
+  await populateExtensionRequests();
+});
+filterModal.addEventListener('click', (event) => {
+  event.stopPropagation();
+});
+
+window.onclick = function () {
+  filterModal.classList.add('hidden');
 };
+
+const renderFilteredCards = (predicate) => {
+  extensionRequestsContainer.innerHTML = '';
+  let isEmpty = true;
+  for (const card of allCardsList) {
+    if (predicate(card)) {
+      isEmpty = false;
+      extensionRequestsContainer.append(card.htmlElement);
+    }
+  }
+
+  if (isEmpty) {
+    errorHeading.textContent = 'No Extension Requests found!';
+    errorHeading.classList.add('error-visible');
+  } else {
+    errorHeading.innerHTML = '';
+    errorHeading.classList.remove('error-visible');
+  }
+};
+searchElement.addEventListener(
+  'input',
+  debounce((event) => {
+    if (!event.target.value && isFiltered) {
+      isFiltered = false;
+      renderFilteredCards((c) => true);
+      return;
+    } else if (!event.target.value) {
+      return;
+    }
+
+    renderFilteredCards((card) => card.assignee.includes(event.target.value));
+    isFiltered = true;
+  }, 500),
+);
+
 const showTaskDetails = async (taskId, approved) => {
   if (!taskId) return;
   try {
@@ -114,7 +232,6 @@ function createExtensionRequestCard(data, dataHeadings) {
   main.appendChild(wrapperDiv);
   return main;
 }
-render();
 
 //PATCH requests functions
 async function onStatusFormSubmit(e) {
@@ -207,3 +324,10 @@ function fillUpdateForm() {
   modalUpdateForm.querySelector('.extensionAssignee').value = assignee;
   modalUpdateForm.querySelector('.extensionReason').value = reason;
 }
+filterButton.addEventListener('click', (event) => {
+  event.stopPropagation();
+  filterModal.classList.toggle('hidden');
+});
+
+populateStatus();
+render();
