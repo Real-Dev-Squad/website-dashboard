@@ -1,7 +1,7 @@
 'use strict';
 import { CANNOT_CONTAIN_GROUP, NO_SPACES_ALLOWED } from './constants.js';
 import {
-  getMembers,
+  removeGroupKeywordFromDiscordRoleName,
   getDiscordGroups,
   addGroupRoleToMember,
   createDiscordGroupRole,
@@ -10,22 +10,30 @@ import {
 const groupTabs = document.querySelector('.groups-tab');
 const tabs = document.querySelectorAll('.groups-tab div');
 const sections = document.querySelectorAll('.manage-groups, .create-group');
-const loader = document.querySelector('.loader');
+const loader = document.querySelector('.backdrop');
 const userIsNotVerifiedText = document.querySelector('.not-verified-tag');
+const userSelfData = await getUserSelf();
 
-const membersIdNameObject = {};
+/**
+ * Create DOM for "created by author" line under groupName
+ *
+ */
+const createAuthorDetailsDOM = (firstName, lastName, imageUrl) => {
+  const container = document.createElement('div');
+  container.classList.add('created-by--container');
+  const userAvatar = document.createElement('img');
+  userAvatar.classList.add('created-by--avatar');
+  userAvatar.src = imageUrl;
+  userAvatar.setAttribute('alt', "group's creator image");
 
-const [membersData, userSelfData] = await Promise.all([
-  getMembers(),
-  getUserSelf(),
-]);
+  const createdBy = document.createElement('span');
+  createdBy.classList.add('created-by');
+  createdBy.textContent = `created by ${firstName} ${lastName}`;
 
-// CREATED A MAP OF {id:username}
-membersData.forEach((member) => {
-  if (member.username) {
-    membersIdNameObject[member.id] = member.username;
-  }
-});
+  container.appendChild(userAvatar);
+  container.appendChild(createdBy);
+  return container;
+};
 
 /**
  * GET SELF DATA
@@ -48,19 +56,26 @@ const groupsData = await getDiscordGroups();
 const groupRoles = document.querySelector('.groups-list');
 groupsData?.forEach((item) => {
   const group = document.createElement('li');
-  const groupname = document.createElement('p');
-  groupname.classList.add('group-name');
-  const createdBy = document.createElement('span');
-  createdBy.classList.add('create-by');
-  groupname.textContent = item.rolename;
-  createdBy.textContent = 'created by ' + membersIdNameObject[item.createdBy];
-  group.appendChild(groupname);
-  group.appendChild(createdBy);
   group.setAttribute('id', item.roleid);
   group.classList.add('group-role');
   if (window.location.search.slice(1) === item.rolename) {
     group.classList.add('active-group');
   }
+
+  const groupname = document.createElement('p');
+  groupname.classList.add('group-name');
+  groupname.setAttribute('id', `name-${item.roleid}`);
+  groupname.setAttribute('data-member-count', item.memberCount);
+  groupname.textContent = removeGroupKeywordFromDiscordRoleName(item.rolename);
+
+  const createdBy = createAuthorDetailsDOM(
+    item.firstName,
+    item.lastName,
+    item.image,
+  );
+
+  group.appendChild(groupname);
+  group.appendChild(createdBy);
   groupRoles.appendChild(group);
 });
 
@@ -149,7 +164,17 @@ buttonAddRole.addEventListener('click', async function () {
     loader.classList.remove('hidden');
 
     addGroupRoleToMember(memberAddRoleBody)
-      .then((res) => alert(res.message))
+      .then((res) => {
+        const groupNameElement = document.getElementById(
+          `name-${memberAddRoleBody.roleid}`,
+        );
+        const currentCount =
+          +groupNameElement.getAttribute('data-member-count');
+        if (!isNaN(currentCount)) {
+          groupNameElement.setAttribute('data-member-count', currentCount + 1);
+        }
+        alert(res.message);
+      })
       .catch((err) => alert(err.message))
       .finally(() => loader.classList.add('hidden'));
   }
