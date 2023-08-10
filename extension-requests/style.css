@@ -92,7 +92,7 @@
 .assignee-name {
   font-size: 1.3rem;
   font-weight: 500;
-  border-radius: 5px 5px 5px 5px;
+  border-radius: 5px;
   width: 7rem;
   height: 1.5rem;
   text-transform: capitalize;
