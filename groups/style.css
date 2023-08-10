@@ -12,6 +12,7 @@
   --color-list-border: rgba(0, 0, 0, 0.2);
   --color-white: rgb(255, 255, 255);
   --color-not-verified: rgb(255, 0, 0);
+  --color-member-count: #717171;
 }
 .container {
   font-family: 'Roboto', sans-serif;
@@ -125,7 +126,7 @@
   content: '(' attr(data-member-count) ')';
   margin: auto 0.26rem;
   font-size: 0.8rem;
-  color: #717171;
+  color: var(--color-member-count);
 }
 
 .created-by--container {
