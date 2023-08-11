@@ -480,12 +480,19 @@ function clearUserNotFound() {
 function createSuggestionsList(matches) {
   const listItems = document.getElementById('list-items');
   if (matches.length) {
-    matches.map(({ username }) => {
+    matches.map(({ username, picture }) => {
       const listItem = document.createElement('p');
+      const userImage = document.createElement('img');
+      userImage.src = picture
+        ? `${picture.url}`
+        : '../images/No-profile-pic.jpg';
+      userImage.alt = `${username}`;
+      userImage.classList.add('assignee-image');
       listItem.classList.add('list-item');
       listItem.style.cursor = 'pointer';
       listItem.setAttribute('onclick', `setAssignee('${username}')`);
-      listItem.innerText = username;
+      listItem.appendChild(userImage);
+      listItem.innerHTML += username;
       listItems.appendChild(listItem);
     });
   }
