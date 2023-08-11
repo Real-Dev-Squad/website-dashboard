@@ -1,4 +1,6 @@
 :root {
+  --blue-color: #1d1283;
+  --blue-hover-color: #11085c;
   --dark-blue: #1b1378;
   --light-aqua: #d4f9f2;
   --scandal: #e5fcf5;
@@ -7,9 +9,12 @@
   --black: #181717;
   --light-gray: #d9d9d9;
   --razzmatazz: #df0057;
+  --red-color: red;
   --gray: #808080;
   --button-proceed: #008000;
   --modal-color: #00000048;
+  --black-color: black;
+  --light-gray-color: lightgray;
 }
 
 *,
@@ -254,6 +259,141 @@ body {
 
 .error-visible {
   display: block;
+  align-self: center;
+}
+
+.filter-button {
+  background-color: var(--blue-color);
+  color: var(--white);
+  border: none;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 9rem;
+  height: 100%;
+  padding: 0.7rem;
+}
+
+.funnel-icon {
+  width: 1.2rem;
+  height: 1.5rem;
+  margin-left: 0.5rem;
+}
+
+.filter-button:hover {
+  background-color: var(--blue-hover-color);
+}
+
+.search-filter {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  width: 100%;
+  padding: 2.5rem;
+}
+
+#assignee-search {
+  width: 90%;
+  max-width: 15rem;
+  min-width: 10rem;
+  padding: 0.7rem 0.7rem;
+  border-radius: 0.4rem;
+  border: 2.5px solid var(--black-color);
+  font-size: medium;
+  background-color: var(--light-gray-color);
+  margin: 0 10px;
+}
+
+/* Filter modal  */
+.filter-modal {
+  width: 20%;
+  min-width: 15rem;
+  border: 1px solid var(--light-gray-color);
+  box-shadow: 0 0 10px var(--black-transparent);
+  border-radius: 0.31rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  z-index: 1;
+  position: absolute;
+  top: 10.25rem;
+  right: 1rem;
+  background-color: var(--white);
+}
+
+.filter-head {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+
+.filters-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.modal-form {
+  text-align: initial;
+  padding: 0.5rem;
+  width: 80%;
+}
+
+.checkbox-label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.clear-btn {
+  background-color: var(--white);
+  border: 1px solid var(--light-gray-color);
+  border-radius: 0.31rem;
+  padding: 0.31rem 0.62rem;
+  cursor: pointer;
+}
+
+.clear-btn:hover {
+  background-color: var(--red-color);
+  color: var(--white);
+}
+
+.filters {
+  width: 100%;
+  padding: 0.62rem;
+  border: 1px solid var(--light-gray-color);
+  border-radius: 0.31rem;
+  margin: 0.31rem 0.62rem;
+  cursor: pointer;
+}
+
+.filters:hover {
+  background-color: var(--light-gray-color);
+  border: 1px solid var(--black-color);
+}
+
+.apply-filter-button {
+  border: 1px solid var(--light-gray-color);
+  border-radius: 0.31rem;
+  padding: 0.62rem;
+  cursor: pointer;
+  width: 100%;
+  background-color: var(--blue-color);
+  color: var(--white);
+}
+
+.apply-filter-button:hover {
+  background-color: var(--blue-hover-color);
+}
+
+/* Filter modal end */
+
+.hidden {
+  display: none;
 }
 
 @media screen and (max-width: 800px) {
@@ -274,5 +414,27 @@ body {
   .extension-requests-form {
     left: 10%;
     right: 10%;
+  }
+  .search-filter {
+    justify-content: center;
+  }
+}
+
+@media screen and (max-width: 440px) {
+  .filter-button {
+    width: min-content;
+  }
+
+  .filter-text {
+    display: none;
+  }
+  .funnel-icon {
+    margin: auto;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .filter-modal {
+    top: 12.5rem;
   }
 }
