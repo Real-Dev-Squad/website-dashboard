@@ -2,7 +2,7 @@ const extensionRequestsList = {
   message: 'Extension Requests returned successfully!',
   allExtensionRequests: [
     {
-      assignee: 'abc',
+      assignee: 'sunny',
       id: 'lGQ3AjUlgNB6Jd8jXaEC',
       newEndsOn: 1692149100,
       oldEndsOn: 1691639385.762,
@@ -13,18 +13,7 @@ const extensionRequestsList = {
       title: 'A title',
     },
     {
-      assignee: 'someone',
-      id: 'QISvF7kAmnD9vXHwwIsG',
-      newEndsOn: 1690528980,
-      oldEndsOn: 1689954609.948,
-      reason: 'b',
-      status: 'PENDING',
-      taskId: 'PYj79ki2agB0q5JN3kUf',
-      timestamp: 1689233034,
-      title: 'j',
-    },
-    {
-      assignee: 'someone 2',
+      assignee: 'randhir',
       id: 'QISvF7kAmnD9vXHwwIsG',
       newEndsOn: 1690528980,
       oldEndsOn: 1689954609.948,
@@ -32,7 +21,7 @@ const extensionRequestsList = {
       status: 'DENIED',
       taskId: 'PYj79ki2agB0q5JN3kUf',
       timestamp: 1689233034,
-      title: 'j',
+      title: 'A new title',
     },
   ],
 };
@@ -41,7 +30,7 @@ const extensionRequestsListPending = {
   message: 'Extension Requests returned successfully!',
   allExtensionRequests: [
     {
-      assignee: 'someone',
+      assignee: 'sunny',
       id: 'QISvF7kAmnD9vXHwwIsG',
       newEndsOn: 1690528980,
       oldEndsOn: 1689954609.948,
@@ -49,10 +38,10 @@ const extensionRequestsListPending = {
       status: 'PENDING',
       taskId: 'PYj79ki2agB0q5JN3kUf',
       timestamp: 1689233034,
-      title: 'j',
+      title: 'A title',
     },
     {
-      assignee: 'someone 2',
+      assignee: 'randhir',
       id: 'QISvF7kAmnD9vXHwwIsG',
       newEndsOn: 1690528980,
       oldEndsOn: 1689954609.948,
@@ -60,7 +49,7 @@ const extensionRequestsListPending = {
       status: 'PENDING',
       taskId: 'PYj79ki2agB0q5JN3kUf',
       timestamp: 1689233034,
-      title: 'j',
+      title: 'A new title',
     },
   ],
 };
@@ -69,7 +58,7 @@ const extensionRequestsListApproved = {
   message: 'Extension Requests returned successfully!',
   allExtensionRequests: [
     {
-      assignee: 'someone',
+      assignee: 'sunny',
       id: 'QISvF7kAmnD9vXHwwIsG',
       newEndsOn: 1690528980,
       oldEndsOn: 1689954609.948,
@@ -80,7 +69,7 @@ const extensionRequestsListApproved = {
       title: 'j',
     },
     {
-      assignee: 'someone 2',
+      assignee: 'randhir',
       id: 'QISvF7kAmnD9vXHwwIsG',
       newEndsOn: 1690528980,
       oldEndsOn: 1689954609.948,
