@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="/extension-requests/style.css" />
     <title>Extension Requests</title>
   </head>
 
@@ -97,14 +97,38 @@
     <header class="header">
       <h1>Extension Requests</h1>
     </header>
+
+    <div class="search-filter">
+      <div id="search">
+        <input id="assignee-search" type="text" placeholder="Search Assignee" />
+      </div>
+      <button id="filter-button" class="filter-button">
+        <span class="filter-text">Filters</span>
+
+        <img class="funnel-icon" src="/images/funnel.svg" alt="funnel icon" />
+      </button>
+      <div class="filter-modal hidden">
+        <div class="filter-head">
+          <h3>Filters</h3>
+          <button id="clear-button" class="clear-btn">Clear</button>
+        </div>
+        <div class="filters-container">
+          <h2>Status</h2>
+          <form class="modal-form" id="status-filter"></form>
+        </div>
+        <button id="apply-filter-button" class="apply-filter-button">
+          Apply Filter
+        </button>
+      </div>
+    </div>
     <div class="container">
       <div class="extension-requests"></div>
     </div>
     <h2 id="error"></h2>
     <script src="/constants.js"></script>
-    <script src="constants.js"></script>
+    <script src="/extension-requests/constants.js"></script>
     <script src="/utils.js"></script>
-    <script src="local-utils.js"></script>
-    <script src="script.js"></script>
+    <script src="/extension-requests/local-utils.js"></script>
+    <script src="/extension-requests/script.js"></script>
   </body>
 </html>

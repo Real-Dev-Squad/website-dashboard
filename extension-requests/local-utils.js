@@ -1,10 +1,21 @@
+const Status = {
+  APPROVED: 'APPROVED',
+  PENDING: 'PENDING',
+  DENIED: 'DENIED',
+};
 async function getExtensionRequests(query = {}) {
   const url = new URL(`${API_BASE_URL}/extension-requests`);
 
   queryParams = ['assignee', 'status', 'taskId'];
-  queryParams.forEach(
-    (key) => query[key] && url.searchParams.set(key, query[key]),
-  );
+  queryParams.forEach((key) => {
+    if (query[key]) {
+      if (Array.isArray(query[key])) {
+        query[key].forEach((value) => url.searchParams.append(key, value));
+      } else {
+        url.searchParams.append(key, query[key]);
+      }
+    }
+  });
 
   const res = await fetch(url, {
     credentials: 'include',
@@ -55,6 +66,25 @@ async function getTaskDetails(taskId) {
   return await res.json();
 }
 
+async function getUserDetails(username) {
+  if (!username) return;
+  const url = `${API_BASE_URL}/users?search=${username}&size=1`;
+  const res = await fetch(url, {
+    credentials: 'include',
+    method: 'GET',
+    headers: {
+      'Content-type': 'application/json',
+    },
+  });
+  const user = await res.json();
+
+  return user?.users[0];
+}
+
+function secondsToMilliSeconds(seconds) {
+  return seconds * 1000;
+}
+
 function getTimeFromTimestamp(timestamp) {
   return new Date(timestamp * 1000).toLocaleString();
 }
@@ -98,4 +128,36 @@ function formDataToObject(formData) {
     result[key] = value;
   }
   return result;
+}
+
+function dateDiff(date1, date2, formatter) {
+  if (date2 > date1) {
+    return dateDiff(date2, date1, formatter);
+  }
+
+  const timeDifference = new Date(date1).getTime() - new Date(date2).getTime();
+
+  const seconds = Math.floor(timeDifference / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const months = Math.floor(days / 30);
+  const years = Math.floor(days / 365);
+
+  let res;
+  if (seconds < 60) {
+    res = `${seconds} ${seconds === 1 ? 'second' : 'seconds'}`;
+  } else if (minutes < 60) {
+    res = `${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`;
+  } else if (hours < 24) {
+    res = `${hours} ${hours === 1 ? 'hour' : 'hours'}`;
+  } else if (days < 30) {
+    res = `${days} ${days === 1 ? 'day' : 'days'}`;
+  } else if (months < 12) {
+    res = `${months} ${months === 1 ? 'month' : 'months'}`;
+  } else {
+    res = `${years} ${years === 1 ? 'year' : 'years'}`;
+  }
+
+  return formatter ? formatter(res) : res;
 }

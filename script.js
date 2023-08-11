@@ -101,31 +101,84 @@ async function handleSync(
   spinner.style.display = 'inline-block';
   status.textContent = SYNC_IN_PROGRESS;
 
-  try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      method: method,
-      credentials: 'include',
-    });
+  if (button.id === 'sync-users-status') {
+    try {
+      const userStatus = fetch(`${API_BASE_URL}${endpoint.userStatusUpdate}`, {
+        method: method.userStatusMethod,
+        credentials: 'include',
+      });
 
-    if (response.ok) {
-      status.textContent = SYNC_SUCCESSFUL;
-      const lastSyncTimestamp = getCurrentTimestamp();
+      const idleUsers = fetch(`${API_BASE_URL}${endpoint.idle}`, {
+        method: method.idleMethod,
+        credentials: 'include',
+      })
+        .then((res) => res.json())
+        .then((data) => data.data.users);
 
-      localStorage.setItem(localStorageKey, lastSyncTimestamp);
+      const [userStatusResponse, idleUsersData] = await Promise.all([
+        userStatus,
+        idleUsers,
+      ]);
 
-      if (lastSyncElement) {
-        lastSyncElement.textContent = `Last Sync: ${lastSyncTimestamp}`;
+      const batchResponse = await fetch(
+        `${API_BASE_URL}${endpoint.batchIdle}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          method: method.batchIdleMethod,
+          body: JSON.stringify({ users: idleUsersData }),
+          credentials: 'include',
+        },
+      );
+
+      if (userStatusResponse.ok && batchResponse.ok) {
+        status.textContent = SYNC_SUCCESSFUL;
+        const lastSyncTimestamp = getCurrentTimestamp();
+
+        localStorage.setItem(localStorageKey, lastSyncTimestamp);
+
+        if (lastSyncElement) {
+          lastSyncElement.textContent = `Last Sync: ${lastSyncTimestamp}`;
+        }
+      } else {
+        status.textContent = SYNC_FAILED;
       }
-    } else {
+    } catch (err) {
+      console.error(err);
       status.textContent = SYNC_FAILED;
+    } finally {
+      spinner.style.display = 'none';
+      button.classList.remove(DISABLED);
+      button.disabled = false;
     }
-  } catch (err) {
-    console.error(err);
-    status.textContent = SYNC_FAILED;
-  } finally {
-    spinner.style.display = 'none';
-    button.classList.remove(DISABLED);
-    button.disabled = false;
+  } else {
+    try {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        method: method,
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        status.textContent = SYNC_SUCCESSFUL;
+        const lastSyncTimestamp = getCurrentTimestamp();
+
+        localStorage.setItem(localStorageKey, lastSyncTimestamp);
+
+        if (lastSyncElement) {
+          lastSyncElement.textContent = `Last Sync: ${lastSyncTimestamp}`;
+        }
+      } else {
+        status.textContent = SYNC_FAILED;
+      }
+    } catch (err) {
+      console.error(err);
+      status.textContent = SYNC_FAILED;
+    } finally {
+      spinner.style.display = 'none';
+      button.classList.remove(DISABLED);
+      button.disabled = false;
+    }
   }
 }
 
@@ -196,10 +249,18 @@ repoSyncButton.addEventListener('click', repoSyncHandler);
 // Attach (button,API,cookie name,div element of status,HTTP method of API
 addClickEventListener(
   syncUsersStatusButton,
-  '/users/status/update',
+  {
+    idle: '/users/status?aggregate=true',
+    batchIdle: '/users/status/batch',
+    userStatusUpdate: '/users/status/update',
+  },
   'lastSyncUsersStatus',
   syncUsersStatusUpdate,
-  'PATCH',
+  {
+    idleMethod: 'GET',
+    batchIdleMethod: 'PATCH',
+    userStatusMethod: 'PATCH',
+  },
 );
 addClickEventListener(
   syncExternalAccountsButton,
