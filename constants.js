@@ -14,6 +14,9 @@ const SYNC_IN_PROGRESS = 'Last Sync: In progress';
 const SYNC_SUCCESSFUL = 'Last Sync: Successful';
 const SYNC_FAILED = 'Last Sync: Failed';
 const DISABLED = 'disabled';
+const STATUS_BASE_URL_PROD = 'https://status.realdevsquad.com';
+const STATUS_BASE_URL_STAGING = 'https://staging-status.realdevsquad.com';
+const STATUS_BASE_URL = STATUS_BASE_URL_PROD;
 
 const dummyPicture =
   'https://dashboard.realdevsquad.com/users/images/avatar.png';
