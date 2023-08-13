@@ -13,6 +13,8 @@ const sections = document.querySelectorAll('.manage-groups, .create-group');
 const loader = document.querySelector('.backdrop');
 const userIsNotVerifiedText = document.querySelector('.not-verified-tag');
 const userSelfData = await getUserSelf();
+const params = new URLSearchParams(window.location.search);
+const isDev = params.get('dev');
 
 /**
  * Create DOM for "created by author" line under groupName
@@ -52,7 +54,7 @@ const memberAddRoleBody = {
  *
  * FOR RENDERING GROUP ROLES IN 'MANAGE ROLES' TAB
  */
-const groupsData = await getDiscordGroups();
+const groupsData = await getDiscordGroups(isDev);
 const groupRoles = document.querySelector('.groups-list');
 groupsData?.forEach((item) => {
   const group = document.createElement('li');
@@ -116,7 +118,7 @@ groupRoles?.addEventListener('click', function (event) {
   if (groupListItem) {
     const newURL = `${window.location.pathname}?${
       groupListItem.querySelector('p').textContent
-    }`;
+    }${isDev ? '&dev=true' : ''}`;
     window.history.pushState({}, '', newURL);
     groupListItem.classList.add('active-group');
     memberAddRoleBody.roleid = groupListItem.id;
