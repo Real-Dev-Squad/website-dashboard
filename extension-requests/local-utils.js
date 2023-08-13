@@ -50,6 +50,11 @@ async function updateExtensionRequestStatus({ id, body }) {
       'Content-type': 'application/json',
     },
   });
+
+  if (res.status !== 200) {
+    throw new Error('Update failed.');
+  }
+
   return await res.json();
 }
 

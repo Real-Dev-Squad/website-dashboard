@@ -4,6 +4,9 @@
   --dark-blue: #1b1378;
   --light-aqua: #d4f9f2;
   --scandal: #e5fcf5;
+  --green-transparent: rgba(0, 255, 0, 0.2);
+  --green-color: green;
+  --red-transparent: rgba(255, 0, 0, 0.145);
   --white: #ffffff;
   --black-transparent: #000000a8;
   --black: #181717;
@@ -47,6 +50,20 @@
   max-width: 48rem;
   width: 100%;
   gap: 1rem;
+  max-height: 100%;
+  overflow: hidden;
+  transition: 800ms ease-in-out;
+}
+
+.success-card {
+  transform: scaleY(0);
+  border: 1px solid var(--green-color);
+  background-color: var(--green-transparent);
+}
+
+.failed-card {
+  border: 1px solid var(--red-color);
+  background-color: var(--red-transparent);
 }
 
 .accordion {
@@ -637,6 +654,9 @@ body {
     grid-template-columns: none;
     grid-template-rows: 1fr 1fr;
   }
+  .panel div {
+    margin: 1.5rem;
+  }
   .card-assignee-button-container {
     flex-direction: column;
     gap: 0.75rem;
@@ -648,6 +668,9 @@ body {
     width: min-content;
   }
 
+  .panel div {
+    margin: 1rem;
+  }
   .assignee-text {
     display: none;
   }
