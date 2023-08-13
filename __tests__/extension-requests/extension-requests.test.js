@@ -3,6 +3,7 @@ const {
   extensionRequestsList,
   extensionRequestsListPending,
   extensionRequestsListApproved,
+  extensionRequestResponse,
 } = require('../../mock-data/extension-requests');
 
 const { userSunny, userRandhir } = require('../../mock-data/users');
@@ -274,6 +275,34 @@ describe.skip('Tests the new Extension Requests Screen', () => {
           },
           body: JSON.stringify(taskDone),
         });
+      } else if (
+        url ===
+        'https://api.realdevsquad.com/extension-requests/QISvF7kAmnD9vXHwwIsG/status'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(extensionRequestResponse),
+        });
+      } else if (
+        url ===
+        'https://api.realdevsquad.com/extension-requests/lGQ3AjUlgNB6Jd8jXaEC/status'
+      ) {
+        interceptedRequest.respond({
+          status: 400,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(extensionRequestResponse),
+        });
       } else {
         interceptedRequest.continue();
       }
@@ -360,5 +389,49 @@ describe.skip('Tests the new Extension Requests Screen', () => {
       (el) => el.style.maxHeight === '',
     );
     expect(firstAccordionIsHidden).toBe(true);
+  });
+
+  it('Checks that the card is removed from display when api call is successful', async () => {
+    const extensionCards = await page.$$('.extension-card');
+
+    for (const card of extensionCards) {
+      const titleText = await card.$eval(
+        '.title-text',
+        (title) => title.textContent,
+      );
+
+      if (titleText.includes('A new title')) {
+        const approveButton = await card.$('.approve-button');
+        await approveButton.click();
+        break;
+      }
+    }
+    await page.waitForTimeout(850);
+
+    const extensionCardsAfter = await page.$$('.extension-card');
+
+    expect(extensionCardsAfter.length).toBe(1);
+  });
+
+  it('Checks whether the card is not removed from display when api call is unsuccessful', async () => {
+    const extensionCards = await page.$$('.extension-card');
+
+    for (const card of extensionCards) {
+      const titleText = await card.$eval(
+        '.title-text',
+        (title) => title.textContent,
+      );
+
+      if (titleText.includes('A title')) {
+        const approveButton = await card.$('.approve-button');
+        await approveButton.click();
+        break;
+      }
+    }
+    await page.waitForTimeout(850);
+
+    const extensionCardsAfter = await page.$$('.extension-card');
+
+    expect(extensionCardsAfter.length).toBe(2);
   });
 });
