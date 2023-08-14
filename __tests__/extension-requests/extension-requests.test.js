@@ -196,7 +196,10 @@ describe.skip('Tests the new Extension Requests Screen', () => {
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-      if (url === 'https://api.realdevsquad.com/extension-requests') {
+      if (
+        url ===
+        'https://api.realdevsquad.com/extension-requests?size=10&dev=true'
+      ) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -208,7 +211,8 @@ describe.skip('Tests the new Extension Requests Screen', () => {
           body: JSON.stringify(extensionRequestsList),
         });
       } else if (
-        url === 'https://api.realdevsquad.com/extension-requests?status=PENDING'
+        url ===
+        'https://api.realdevsquad.com/extension-requests?status=PENDING&size=10&dev=true'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -222,7 +226,7 @@ describe.skip('Tests the new Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?status=ACCEPTED'
+        'https://api.realdevsquad.com/extension-requests?status=ACCEPTED&size=10&dev=true'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -302,7 +306,7 @@ describe.skip('Tests the new Extension Requests Screen', () => {
     expect(title).toBeTruthy();
     expect(searchBar).toBeTruthy();
     expect(filterButton).toBeTruthy();
-    expect(extensionCardsList.length).toBe(2);
+    expect(extensionCardsList.length).toBe(4);
     expect(extensionRequestsElement).toBeTruthy();
   });
 
@@ -360,5 +364,23 @@ describe.skip('Tests the new Extension Requests Screen', () => {
       (el) => el.style.maxHeight === '',
     );
     expect(firstAccordionIsHidden).toBe(true);
+  });
+
+  it('Checks that new items are loaded when scrolled to the bottom', async () => {
+    extensionCardsList = await page.$$('.extension-card');
+
+    expect(extensionCardsList.length).toBe(4);
+
+    await page.evaluate(() => {
+      const element = document.querySelector('.virtual');
+      if (element) {
+        element.scrollIntoView({ behavior: 'auto' });
+      }
+    });
+
+    await page.waitForNetworkIdle();
+
+    extensionCardsList = await page.$$('.extension-card');
+    expect(extensionCardsList.length).toBe(8);
   });
 });

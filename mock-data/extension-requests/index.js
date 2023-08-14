@@ -24,6 +24,7 @@ const extensionRequestsList = {
       title: 'A new title',
     },
   ],
+  next: '/extension-requests?size=10&dev=true',
 };
 
 const extensionRequestsListPending = {
@@ -51,7 +52,30 @@ const extensionRequestsListPending = {
       timestamp: 1689233034,
       title: 'A new title',
     },
+    {
+      assignee: 'randhir',
+      id: 'QISvF7kAmnD9vXHwwIs7',
+      newEndsOn: 1690528980,
+      oldEndsOn: 1689954609.948,
+      reason: 'b',
+      status: 'PENDING',
+      taskId: 'PYj79ki2agB0q5JN3kUf',
+      timestamp: 1689233034,
+      title: 'A new title',
+    },
+    {
+      assignee: 'randhir',
+      id: 'QISvF7kAmnD9vXHwwIs8',
+      newEndsOn: 1690528980,
+      oldEndsOn: 1689954609.948,
+      reason: 'b',
+      status: 'PENDING',
+      taskId: 'PYj79ki2agB0q5JN3kUf',
+      timestamp: 1689233034,
+      title: 'A new title',
+    },
   ],
+  next: '/extension-requests?status=PENDING&size=10&dev=true',
 };
 
 const extensionRequestsListApproved = {
@@ -80,6 +104,7 @@ const extensionRequestsListApproved = {
       title: 'j',
     },
   ],
+  next: '/extension-requests?status=APPROVED&size=10&dev=true',
 };
 module.exports = {
   extensionRequestsList,
