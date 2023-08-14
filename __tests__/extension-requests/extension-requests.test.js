@@ -411,7 +411,8 @@ describe.skip('Tests the new Extension Requests Screen', () => {
 
     extensionCardsList = await page.$$('.extension-card');
     expect(extensionCardsList.length).toBe(8);
-    
+  });
+
   it('Checks that the card is removed from display when api call is successful', async () => {
     const extensionCards = await page.$$('.extension-card');
 
