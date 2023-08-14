@@ -3,10 +3,13 @@ const Status = {
   PENDING: 'PENDING',
   DENIED: 'DENIED',
 };
-async function getExtensionRequests(query = {}) {
-  const url = new URL(`${API_BASE_URL}/extension-requests`);
 
-  queryParams = ['assignee', 'status', 'taskId'];
+async function getExtensionRequests(query = {}, nextLink) {
+  const initialURI = nextLink || '/extension-requests';
+
+  const url = new URL(API_BASE_URL + initialURI);
+
+  queryParams = ['assignee', 'status', 'taskId', 'size', 'dev'];
   queryParams.forEach((key) => {
     if (query[key]) {
       if (Array.isArray(query[key])) {
@@ -50,6 +53,11 @@ async function updateExtensionRequestStatus({ id, body }) {
       'Content-type': 'application/json',
     },
   });
+
+  if (res.status !== 200) {
+    throw new Error('Update failed.');
+  }
+
   return await res.json();
 }
 

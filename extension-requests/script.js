@@ -20,6 +20,9 @@ const applyFilterButton = document.getElementById(APPLY_FILTER_BUTTON);
 const clearButton = document.getElementById(CLEAR_BUTTON);
 const searchElement = document.getElementById(SEARCH_ELEMENT);
 const params = new URLSearchParams(window.location.search);
+const lastElementContainer = document.querySelector(LAST_ELEMENT_CONTAINER);
+let nextLink = '';
+let isDataLoading = false;
 
 let allCardsList;
 let isFiltered = false;
@@ -34,14 +37,37 @@ const state = {
 
 const render = async () => {
   toggleStatusCheckbox(Status.PENDING);
-  await populateExtensionRequests({ status: Status.PENDING });
+  statusChange();
+  await populateExtensionRequests({
+    status: Status.PENDING,
+    size: 10,
+    dev: params.get('dev') === 'true',
+  });
 };
 
+const addIntersectionObserver = () => {
+  if (params.get('dev') === 'true') {
+    intersectionObserver.observe(lastElementContainer);
+  }
+};
+
+const removeIntersectionObserver = () => {
+  if (params.get('dev') === 'true') {
+    intersectionObserver.unobserve(lastElementContainer);
+  }
+};
+
+const statusChange = () => {
+  nextLink = '';
+  extensionRequestsContainer.innerHTML = '';
+  addIntersectionObserver();
+};
 const initializeAccordions = () => {
-  let acc = document.getElementsByClassName('accordion');
+  let acc = document.querySelectorAll('.accordion.uninitialized');
   let i;
 
   for (i = 0; i < acc.length; i++) {
+    acc[i].classList.remove('uninitialized');
     acc[i].addEventListener('click', function () {
       this.classList.toggle('active');
       let panel = this.nextElementSibling;
@@ -55,7 +81,7 @@ const initializeAccordions = () => {
   }
 };
 const closeAllAccordions = () => {
-  let accordionsList = document.getElementsByClassName('accordion');
+  let accordionsList = document.querySelectorAll('.accordion.active');
   for (let i = 0; i < accordionsList.length; i++) {
     let panel = accordionsList[i].nextElementSibling;
     if (panel.style.maxHeight) {
@@ -65,11 +91,12 @@ const closeAllAccordions = () => {
   }
 };
 
-async function populateExtensionRequests(query = {}) {
+async function populateExtensionRequests(query = {}, newLink) {
   try {
+    isDataLoading = true;
     addLoader(container);
-    extensionRequestsContainer.innerHTML = '';
-    const extensionRequests = await getExtensionRequests(query);
+    const extensionRequests = await getExtensionRequests(query, newLink);
+    nextLink = extensionRequests.next;
     const allExtensionRequests = extensionRequests.allExtensionRequests;
 
     allCardsList = [];
@@ -109,8 +136,19 @@ async function populateExtensionRequests(query = {}) {
     errorHeading.classList.add('error-visible');
   } finally {
     removeLoader('loader');
+    isDataLoading = false;
   }
 }
+
+const intersectionObserver = new IntersectionObserver(async (entries) => {
+  if (!nextLink) {
+    return;
+  }
+  if (entries[0].isIntersecting && !isDataLoading) {
+    await populateExtensionRequests({}, nextLink);
+  }
+});
+
 function addCheckbox(labelText, value, groupName) {
   const group = document.getElementById(groupName);
   const label = document.createElement('label');
@@ -159,15 +197,22 @@ function getCheckedValues(groupName) {
 applyFilterButton.addEventListener('click', async () => {
   filterModal.classList.toggle('hidden');
   const checkedValuesStatus = getCheckedValues('status-filter');
-
-  await populateExtensionRequests({ status: checkedValuesStatus });
+  statusChange();
+  await populateExtensionRequests({
+    status: checkedValuesStatus,
+    size: 10,
+    dev: params.get('dev') === 'true',
+  });
 });
 
 clearButton.addEventListener('click', async function () {
   clearCheckboxes('status-filter');
   filterModal.classList.toggle('hidden');
-
-  await populateExtensionRequests();
+  statusChange();
+  await populateExtensionRequests({
+    size: 10,
+    dev: params.get('dev') === 'true',
+  });
 });
 filterModal.addEventListener('click', (event) => {
   event.stopPropagation();
@@ -200,13 +245,15 @@ searchElement.addEventListener(
   debounce((event) => {
     if (!event.target.value && isFiltered) {
       isFiltered = false;
+      addIntersectionObserver();
       renderFilteredCards((c) => true);
       return;
     } else if (!event.target.value) {
       return;
     }
 
-    renderFilteredCards((card) => card.assignee.includes(event.target.value));
+    removeIntersectionObserver();
+    renderFilteredCards((card) => card?.assignee?.includes(event.target.value));
     isFiltered = true;
   }, 500),
 );
@@ -505,7 +552,7 @@ async function createExtensionCard(data) {
 
   const taskStatusValue = createElement({
     type: 'span',
-    innerText: ` ${taskData.status}`,
+    innerText: ` ${taskData?.status}`,
   });
   taskStatusContainer.appendChild(taskStatusValue);
 
@@ -681,7 +728,7 @@ async function createExtensionCard(data) {
 
   const accordionButton = createElement({
     type: 'button',
-    attributes: { class: 'accordion' },
+    attributes: { class: 'accordion uninitialized' },
   });
 
   const accordionContainer = createElement({ type: 'div' });
