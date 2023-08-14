@@ -13,14 +13,18 @@ const daysInCurrentMonth = new Date(
   currentDateObj.getMonth() + 1,
   0,
 ).getDate();
-
+const numberOfMonthsAgo = 3;
 function isSunday(date) {
   return date.getDay() === 0; // 0 represents Sunday
 }
 const currentMonthNum = currentDateObj.getMonth();
 
 const endDate = currentDateObj;
-const startDate = new Date(currentYearNum, currentMonthNum - 3, 1); // Start from 3 months ago
+const startDate = new Date(
+  currentYearNum,
+  currentMonthNum - numberOfMonthsAgo,
+  1,
+); // Start from 3 months ago
 
 function formatDateFromTimestamp(timestamp) {
   const dateObject = new Date(timestamp);
@@ -71,7 +75,6 @@ function processStandupData(standupItems) {
         standupData.completedText.push('No data');
         standupData.plannedText.push('No data');
         standupData.blockersText.push('No data');
-        //${date.getDate()} ${date.toLocaleString('default', {month: 'long',})} ${date.getFullYear()}
         standupData.date.push(date.getDate());
         standupData.month.push(
           date.toLocaleString('default', { month: 'long' }),
