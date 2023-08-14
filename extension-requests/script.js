@@ -149,6 +149,11 @@ const intersectionObserver = new IntersectionObserver(async (entries) => {
   }
 });
 
+function removeCard(element) {
+  element.classList.add('success-card');
+  setTimeout(() => element.remove(), 800);
+}
+
 function addCheckbox(labelText, value, groupName) {
   const group = document.getElementById(groupName);
   const label = document.createElement('label');
@@ -715,14 +720,24 @@ async function createExtensionCard(data) {
       updateExtensionRequestStatus({
         id: data.id,
         body: { status: Status.APPROVED },
-      });
+      })
+        .then(() => removeCard(rootElement))
+        .catch(() => {
+          rootElement.classList.add('failed-card');
+          setTimeout(() => rootElement.classList.remove('failed-card'), 1000);
+        });
     });
 
     denyButton.addEventListener('click', () => {
       updateExtensionRequestStatus({
         id: data.id,
         body: { status: Status.DENIED },
-      });
+      })
+        .then(() => removeCard(rootElement))
+        .catch(() => {
+          rootElement.classList.add('failed-card');
+          setTimeout(() => rootElement.classList.remove('failed-card'), 1000);
+        });
     });
   }
 
