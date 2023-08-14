@@ -169,3 +169,18 @@ function dateDiff(date1, date2, formatter) {
 
   return formatter ? formatter(res) : res;
 }
+
+const addSpinner = (container) => {
+  const spinner = createElement({
+    type: 'div',
+    attributes: { class: 'spinner' },
+  });
+
+  container.append(spinner);
+
+  function removeSpinner() {
+    spinner.remove();
+  }
+
+  return removeSpinner;
+};

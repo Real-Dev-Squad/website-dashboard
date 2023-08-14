@@ -627,6 +627,44 @@ body {
   display: none;
 }
 
+.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.spinner {
+  border: 8px solid var(--white-gray);
+  border-radius: 50%;
+  border-top: 8px solid var(--dark-blue);
+  width: 1.5rem;
+  height: 1.5rem;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+  position: absolute;
+  top: 50%;
+  right: 50%;
+}
+
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 @media screen and (max-width: 800px) {
   .extension-request {
     margin: 0;

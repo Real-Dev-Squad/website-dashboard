@@ -717,6 +717,8 @@ async function createExtensionCard(data) {
     });
 
     approveButton.addEventListener('click', () => {
+      const removeSpinner = addSpinner(rootElement);
+      rootElement.classList.add('disabled');
       updateExtensionRequestStatus({
         id: data.id,
         body: { status: Status.APPROVED },
@@ -725,10 +727,16 @@ async function createExtensionCard(data) {
         .catch(() => {
           rootElement.classList.add('failed-card');
           setTimeout(() => rootElement.classList.remove('failed-card'), 1000);
+        })
+        .finally(() => {
+          rootElement.classList.remove('disabled');
+          removeSpinner();
         });
     });
 
     denyButton.addEventListener('click', () => {
+      const removeSpinner = addSpinner(rootElement);
+      rootElement.classList.add('disabled');
       updateExtensionRequestStatus({
         id: data.id,
         body: { status: Status.DENIED },
@@ -737,6 +745,10 @@ async function createExtensionCard(data) {
         .catch(() => {
           rootElement.classList.add('failed-card');
           setTimeout(() => rootElement.classList.remove('failed-card'), 1000);
+        })
+        .finally(() => {
+          rootElement.classList.remove('disabled');
+          removeSpinner();
         });
     });
   }
