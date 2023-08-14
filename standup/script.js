@@ -15,7 +15,7 @@ const daysInCurrentMonth = new Date(
 ).getDate();
 const numberOfMonthsAgo = 3;
 function isSunday(date) {
-  return date.getDay() === 0; // 0 represents Sunday
+  return date.getDay() === 0;
 }
 const currentMonthNum = currentDateObj.getMonth();
 
@@ -24,7 +24,7 @@ const startDate = new Date(
   currentYearNum,
   currentMonthNum - numberOfMonthsAgo,
   1,
-); // Start from 3 months ago
+);
 
 function formatDateFromTimestamp(timestamp) {
   const dateObject = new Date(timestamp);
