@@ -8,38 +8,21 @@ const loaderElement = createLoaderElement();
 
 const currentDateObj = new Date();
 const currentYearNum = currentDateObj.getFullYear();
-const daysInCurrentMonth = new Date(
-  currentYearNum,
-  currentDateObj.getMonth() + 1,
-  0,
-).getDate();
+
 const numberOfMonthsAgo = 3;
 function isSunday(date) {
   return date.getDay() === 0;
 }
+
 const currentMonthNum = currentDateObj.getMonth();
 
+const oneDay = 24 * 60 * 60 * 1000;
 const endDate = currentDateObj;
 const startDate = new Date(
   currentYearNum,
   currentMonthNum - numberOfMonthsAgo,
   1,
 );
-
-function formatDateFromTimestamp(timestamp) {
-  const dateObject = new Date(timestamp);
-  const year = dateObject.getFullYear();
-  const month = dateObject.getMonth() + 1;
-  const day = dateObject.getDate();
-  return `${day}-${month}-${year}`;
-}
-
-function formatDate(dateObject) {
-  const year = dateObject.getFullYear();
-  const month = dateObject.getMonth() + 1;
-  const day = dateObject.getDate();
-  return `${day}-${month}-${year}`;
-}
 
 async function fetchUserData(username) {
   const response = await makeApiCall(`${RDS_API_USERS}/${username}`);
@@ -52,7 +35,7 @@ async function fetchStandupData(userId) {
   const data = await response.json();
   return data.data;
 }
-const oneDay = 24 * 60 * 60 * 1000;
+
 function processStandupData(standupItems) {
   const standupData = {
     standupFrequency: [],
@@ -148,13 +131,14 @@ function createTableHeaderElement() {
     if (!isSunday(date)) {
       const dateCellElement = createElement({
         type: 'th',
-        classList: ['date'],
+        classList: ['dates'],
         scope: 'row',
       });
-      dateCellElement.textContent = `${date.getDate()} ${date.toLocaleString(
-        'default',
-        { month: 'long' },
-      )} ${date.getFullYear()}`;
+      dateCellElement.textContent = `${getDayOfWeek(
+        date,
+      )} ${date.getDate()} ${date.toLocaleString('default', {
+        month: 'long',
+      })} ${date.getFullYear()}`;
       headerRowElement.appendChild(dateCellElement);
     }
   }
@@ -277,6 +261,7 @@ function createTableRowElement({ userName, imageUrl, userStandupData }) {
 
 function setupTable() {
   const tableHeaderElement = createTableHeaderElement();
+  tableBodyElement.classList.add('tableheader');
   tableElement.appendChild(tableHeaderElement);
   tableElement.appendChild(tableBodyElement);
   tableContainerElement.innerHTML = '';

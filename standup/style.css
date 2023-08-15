@@ -128,7 +128,8 @@ body {
   border: 1px solid var(--black-color);
 }
 
-.date {
+.date,
+.dates {
   position: sticky;
   top: 0;
   padding: 1rem;
