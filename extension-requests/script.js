@@ -18,6 +18,9 @@ const filterModal = document.getElementsByClassName(FILTER_MODAL)[0];
 const filterButton = document.getElementById(FILTER_BUTTON);
 const applyFilterButton = document.getElementById(APPLY_FILTER_BUTTON);
 const clearButton = document.getElementById(CLEAR_BUTTON);
+const sortButton = document.querySelector(SORT_BUTTON);
+const ascIcon = document.getElementById(SORT_ASC_ICON);
+const descIcon = document.getElementById(SORT_DESC_ICON);
 const searchElement = document.getElementById(SEARCH_ELEMENT);
 const params = new URLSearchParams(window.location.search);
 const lastElementContainer = document.querySelector(LAST_ELEMENT_CONTAINER);
@@ -35,14 +38,22 @@ const state = {
   currentExtensionRequest: null,
 };
 
+const filterStates = {
+  status: Status.PENDING,
+  order: Order.ASCENDING,
+  size: DEFAULT_PAGE_SIZE,
+  dev: params.get('dev') === 'true',
+};
+
+const updateFilterStates = (key, value) => {
+  filterStates[key] = value;
+};
+
 const render = async () => {
   toggleStatusCheckbox(Status.PENDING);
-  statusChange();
-  await populateExtensionRequests({
-    status: Status.PENDING,
-    size: 10,
-    dev: params.get('dev') === 'true',
-  });
+  filterChange();
+  await populateExtensionRequests(filterStates);
+  addIntersectionObserver();
 };
 
 const addIntersectionObserver = () => {
@@ -57,11 +68,11 @@ const removeIntersectionObserver = () => {
   }
 };
 
-const statusChange = () => {
+const filterChange = () => {
   nextLink = '';
   extensionRequestsContainer.innerHTML = '';
-  addIntersectionObserver();
 };
+
 const initializeAccordions = () => {
   let acc = document.querySelectorAll('.accordion.uninitialized');
   let i;
@@ -202,22 +213,17 @@ function getCheckedValues(groupName) {
 applyFilterButton.addEventListener('click', async () => {
   filterModal.classList.toggle('hidden');
   const checkedValuesStatus = getCheckedValues('status-filter');
-  statusChange();
-  await populateExtensionRequests({
-    status: checkedValuesStatus,
-    size: 10,
-    dev: params.get('dev') === 'true',
-  });
+  filterChange();
+  updateFilterStates('status', checkedValuesStatus);
+  await populateExtensionRequests(filterStates);
 });
 
 clearButton.addEventListener('click', async function () {
   clearCheckboxes('status-filter');
   filterModal.classList.toggle('hidden');
-  statusChange();
-  await populateExtensionRequests({
-    size: 10,
-    dev: params.get('dev') === 'true',
-  });
+  filterChange();
+  updateFilterStates('status', '');
+  await populateExtensionRequests(filterStates);
 });
 filterModal.addEventListener('click', (event) => {
   event.stopPropagation();
@@ -262,6 +268,30 @@ searchElement.addEventListener(
     isFiltered = true;
   }, 500),
 );
+
+sortButton.addEventListener('click', async (event) => {
+  toggleSortIcon();
+  toggleOrder();
+  filterChange();
+  await populateExtensionRequests(filterStates);
+});
+
+const toggleOrder = () => {
+  if (filterStates.order === Order.DESCENDING) {
+    updateFilterStates('order', Order.ASCENDING);
+  } else {
+    updateFilterStates('order', Order.DESCENDING);
+  }
+};
+const toggleSortIcon = () => {
+  if (ascIcon.style.display === 'none') {
+    descIcon.style.display = 'none';
+    ascIcon.style.display = 'block';
+  } else {
+    descIcon.style.display = 'block';
+    ascIcon.style.display = 'none';
+  }
+};
 
 const showTaskDetails = async (taskId, approved) => {
   if (!taskId) return;
@@ -614,6 +644,8 @@ async function createExtensionCard(data) {
 
   const requestedValue = createElement({
     type: 'span',
+    attributes: { class: 'requested-day' },
+
     innerText: ` ${requestedDaysAgo}`,
   });
   requestedContainer.appendChild(requestedValue);

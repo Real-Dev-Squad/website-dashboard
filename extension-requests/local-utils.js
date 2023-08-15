@@ -4,12 +4,18 @@ const Status = {
   DENIED: 'DENIED',
 };
 
+const Order = {
+  DESCENDING: 'desc',
+  ASCENDING: 'asc',
+};
+
+const DEFAULT_PAGE_SIZE = 10;
 async function getExtensionRequests(query = {}, nextLink) {
   const initialURI = nextLink || '/extension-requests';
 
   const url = new URL(API_BASE_URL + initialURI);
 
-  queryParams = ['assignee', 'status', 'taskId', 'size', 'dev'];
+  queryParams = ['assignee', 'status', 'taskId', 'size', 'dev', 'order'];
   queryParams.forEach((key) => {
     if (query[key]) {
       if (Array.isArray(query[key])) {

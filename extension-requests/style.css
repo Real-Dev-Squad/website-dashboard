@@ -503,8 +503,18 @@ body {
   align-items: center;
   justify-content: center;
   width: 9rem;
-  height: 100%;
+  height: 2.5rem;
   padding: 0.7rem;
+}
+.sort-button {
+  background-color: var(--light-gray-color);
+  border-radius: 0.4rem;
+  border: 2.5px solid var(--black-color);
+  padding: 8px;
+  height: 2.5rem;
+}
+.sort-button:hover {
+  background-color: var(--medium-gray);
 }
 
 .funnel-icon {
@@ -523,6 +533,7 @@ body {
   align-items: center;
   width: 100%;
   padding: 2.5rem;
+  gap: 1rem;
 }
 
 #assignee-search {
@@ -535,8 +546,12 @@ body {
   font-size: medium;
   background-color: var(--light-gray-color);
   margin: 0 10px;
+  height: 2.5rem;
 }
 
+#desc-sort-icon {
+  display: none;
+}
 /* Filter modal  */
 .filter-modal {
   width: 20%;
