@@ -4,6 +4,7 @@ const {
   extensionRequestsListPending,
   extensionRequestsListApproved,
   extensionRequestResponse,
+  extensionRequestsListPendingDescending,
 } = require('../../mock-data/extension-requests');
 
 const { userSunny, userRandhir } = require('../../mock-data/users');
@@ -199,7 +200,7 @@ describe.skip('Tests the new Extension Requests Screen', () => {
       const url = interceptedRequest.url();
       if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?size=10&dev=true'
+        'https://api.realdevsquad.com/extension-requests?size=10&dev=true&order=asc'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -213,7 +214,7 @@ describe.skip('Tests the new Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?status=PENDING&size=10&dev=true'
+        'https://api.realdevsquad.com/extension-requests?status=PENDING&size=10&dev=true&order=asc'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -227,7 +228,21 @@ describe.skip('Tests the new Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?status=ACCEPTED&size=10&dev=true'
+        'https://api.realdevsquad.com/extension-requests?status=PENDING&size=10&dev=true&order=desc'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(extensionRequestsListPendingDescending),
+        });
+      } else if (
+        url ===
+        'https://api.realdevsquad.com/extension-requests?status=ACCEPTED&size=10&dev=true&order=asc'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -432,7 +447,7 @@ describe.skip('Tests the new Extension Requests Screen', () => {
 
     const extensionCardsAfter = await page.$$('.extension-card');
 
-    expect(extensionCardsAfter.length).toBe(1);
+    expect(extensionCardsAfter.length).toBe(3);
   });
 
   it('Checks whether the card is not removed from display when api call is unsuccessful', async () => {
@@ -454,6 +469,43 @@ describe.skip('Tests the new Extension Requests Screen', () => {
 
     const extensionCardsAfter = await page.$$('.extension-card');
 
-    expect(extensionCardsAfter.length).toBe(2);
+    expect(extensionCardsAfter.length).toBe(4);
+  });
+
+  it('Checks whether the timestamp are sorted', async () => {
+    const extensionCards = await page.$$('.extension-card');
+
+    const requestDaysArray = [];
+    for (const card of extensionCards) {
+      const requestedDays = await card.$eval(
+        '.requested-day',
+        (requestDays) => requestDays.textContent,
+      );
+      requestDaysArray.push(requestedDays);
+    }
+    const sortedRequestDaysArray = [...requestDaysArray].sort().reverse();
+
+    expect(requestDaysArray).toEqual(sortedRequestDaysArray);
+  });
+
+  it('Checks whether the cards displayed in descending order when sort icon is clicked', async () => {
+    const sortButton = await page.$('.sort-button');
+
+    await sortButton.click();
+
+    const extensionCards = await page.$$('.extension-card');
+
+    const requestDaysArray = [];
+    for (const card of extensionCards) {
+      const requestedDays = await card.$eval(
+        '.requested-day',
+        (requestDays) => requestDays.textContent,
+      );
+      requestDaysArray.push(requestedDays);
+    }
+
+    const sortedRequestDaysArray = [...requestDaysArray].sort();
+
+    expect(requestDaysArray).toEqual(sortedRequestDaysArray);
   });
 });
