@@ -153,7 +153,6 @@ describe('Standup Page', () => {
       return dateCells.map((cell) => cell.textContent.trim());
     });
     const expectedDateValues = generateExpectedDateValues();
-    console.log('expected ', expectedDateValues);
     expect(dateCellValues.length).toEqual(expectedDateValues.length);
   });
 });
