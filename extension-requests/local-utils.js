@@ -46,6 +46,9 @@ async function updateExtensionRequest({ id, body }) {
       'Content-type': 'application/json',
     },
   });
+  if (res.status !== 200) {
+    throw new Error('Update failed.');
+  }
   return await res.json();
 }
 
@@ -189,4 +192,8 @@ const addSpinner = (container) => {
   }
 
   return removeSpinner;
+};
+
+const dateTimeString = (timestamp) => {
+  return new Date(newEndsOn * 1000).toISOString().replace('Z', '');
 };
