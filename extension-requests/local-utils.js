@@ -195,5 +195,5 @@ const addSpinner = (container) => {
 };
 
 const dateTimeString = (timestamp) => {
-  return new Date(newEndsOn * 1000).toISOString().replace('Z', '');
+  return new Date(timestamp).toISOString().substring(0, 16);
 };

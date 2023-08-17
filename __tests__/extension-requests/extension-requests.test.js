@@ -322,11 +322,26 @@ describe.skip('Tests the new Extension Requests Screen', () => {
           },
           body: JSON.stringify(extensionRequestResponse),
         });
+      } else if (
+        url ===
+        'https://api.realdevsquad.com/extension-requests/lGQ3AjUlgNB6Jd8jXaEC'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify({}),
+        });
       } else {
         interceptedRequest.continue();
       }
     });
     await page.goto('http://localhost:8000/extension-requests/index.html');
+
     await page.waitForNetworkIdle();
   });
 
@@ -360,7 +375,7 @@ describe.skip('Tests the new Extension Requests Screen', () => {
     const firstExtensionCard = extensionCardsList[0];
 
     const titleText = await firstExtensionCard.$eval(
-      '.title-text',
+      '.card-title',
       (el) => el.textContent,
     );
     expect(titleText).toBe('A title');
@@ -433,7 +448,7 @@ describe.skip('Tests the new Extension Requests Screen', () => {
 
     for (const card of extensionCards) {
       const titleText = await card.$eval(
-        '.title-text',
+        '.card-title',
         (title) => title.textContent,
       );
 
@@ -455,7 +470,7 @@ describe.skip('Tests the new Extension Requests Screen', () => {
 
     for (const card of extensionCards) {
       const titleText = await card.$eval(
-        '.title-text',
+        '.card-title',
         (title) => title.textContent,
       );
 
@@ -507,5 +522,76 @@ describe.skip('Tests the new Extension Requests Screen', () => {
     const sortedRequestDaysArray = [...requestDaysArray].sort();
 
     expect(requestDaysArray).toEqual(sortedRequestDaysArray);
+  });
+
+  test('Checks whether the card can be edited', async () => {
+    await page.click('.edit-button');
+
+    const newTitle = 'New Title Text';
+    await page.$eval('.title-text-input', (el) => (el.value = ''));
+    await page.type('.title-text-input', newTitle);
+
+    const newDate = '2023-09-19T22:20';
+    await page.evaluate((newDate) => {
+      document.querySelector('.date-input').value = newDate;
+    }, newDate);
+
+    await page.$eval('.input-text-area', (el) => (el.innerText = ''));
+    const newReason = 'Updated reason text';
+    await page.type('.input-text-area', newReason);
+
+    await page.click('.update-button');
+
+    await page.waitForTimeout(1100);
+
+    await page.waitForNetworkIdle();
+
+    const updatedTitle = await page.$eval(
+      '.card-title',
+      (el) => el.textContent,
+    );
+
+    expect(updatedTitle).toBe(newTitle);
+
+    const updatedDateValue = await page.$eval('.date-input', (el) => el.value);
+    expect(updatedDateValue).toBe(newDate);
+
+    const updatedReasonValue = await page.$eval(
+      '.input-text-area',
+      (el) => el.value,
+    );
+    expect(updatedReasonValue).toBe(newReason);
+  });
+
+  test('Checks whether the card will return to initial state if the update is cancelled', async () => {
+    await page.click('.edit-button');
+
+    const newTitle = 'New Title Text';
+    await page.type('.title-text-input', newTitle);
+
+    const newDate = '2023-09-19T22:20';
+    await page.evaluate((newDate) => {
+      document.querySelector('.date-input').value = newDate;
+    }, newDate);
+    const newReason = 'Updated reason text';
+    await page.type('.input-text-area', newReason);
+
+    await page.click('.cancel-button');
+
+    await page.waitForNetworkIdle();
+
+    const originalTitle = await page.$eval(
+      '.card-title',
+      (el) => el.textContent,
+    );
+
+    expect(originalTitle).toBe('A title');
+
+    const originalReasonValue = await page.$eval(
+      '.reason-text',
+      (el) => el.textContent,
+    );
+
+    expect(originalReasonValue).toBe('b');
   });
 });

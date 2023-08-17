@@ -532,7 +532,7 @@ async function createExtensionCard(data) {
 
   const titleText = createElement({
     type: 'span',
-    attributes: { class: 'title-text' },
+    attributes: { class: 'card-title title-text' },
     innerText: data.title,
   });
 
@@ -908,7 +908,11 @@ async function createExtensionCard(data) {
   });
   reasonContainer.appendChild(reasonDetailsLine);
 
-  const reasonParagraph = createElement({ type: 'p', innerText: data.reason });
+  const reasonParagraph = createElement({
+    type: 'p',
+    attributes: { class: 'reason-text' },
+    innerText: data.reason,
+  });
   const reasonInput = createElement({
     type: 'textarea',
     attributes: {
