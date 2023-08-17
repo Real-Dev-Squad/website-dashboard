@@ -14,7 +14,7 @@ const loader = document.querySelector('.backdrop');
 const userIsNotVerifiedText = document.querySelector('.not-verified-tag');
 const userSelfData = await getUserSelf();
 const params = new URLSearchParams(window.location.search);
-const isDev = params.get('dev');
+const isDev = params.get('dev') === 'true';
 
 /**
  * Create DOM for "created by author" line under groupName
