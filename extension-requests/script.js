@@ -51,7 +51,7 @@ const updateFilterStates = (key, value) => {
 
 const render = async () => {
   toggleStatusCheckbox(Status.PENDING);
-  filterChange();
+  changeFilter();
   await populateExtensionRequests(filterStates);
   addIntersectionObserver();
 };
@@ -68,7 +68,7 @@ const removeIntersectionObserver = () => {
   }
 };
 
-const filterChange = () => {
+const changeFilter = () => {
   nextLink = '';
   extensionRequestsContainer.innerHTML = '';
 };
@@ -229,7 +229,7 @@ function getCheckedValues(groupName) {
 applyFilterButton.addEventListener('click', async () => {
   filterModal.classList.toggle('hidden');
   const checkedValuesStatus = getCheckedValues('status-filter');
-  filterChange();
+  changeFilter();
   updateFilterStates('status', checkedValuesStatus);
   await populateExtensionRequests(filterStates);
 });
@@ -237,7 +237,7 @@ applyFilterButton.addEventListener('click', async () => {
 clearButton.addEventListener('click', async function () {
   clearCheckboxes('status-filter');
   filterModal.classList.toggle('hidden');
-  filterChange();
+  changeFilter();
   updateFilterStates('status', '');
   await populateExtensionRequests(filterStates);
 });
@@ -288,7 +288,7 @@ searchElement.addEventListener(
 sortButton.addEventListener('click', async (event) => {
   toggleSortIcon();
   toggleOrder();
-  filterChange();
+  changeFilter();
   await populateExtensionRequests(filterStates);
 });
 
