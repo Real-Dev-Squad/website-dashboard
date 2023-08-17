@@ -44,7 +44,6 @@ describe('Task Requests', () => {
   describe('When the user is super user', () => {
     it('should display the task requests card', async () => {
       const url = await page.evaluate(() => API_BASE_URL);
-      console.log(url);
       const taskCards = await page.$$('.taskRequest__card');
       const title = await taskCards[0].evaluate(
         (el) => el.children[0].textContent,
