@@ -8,14 +8,21 @@ const loaderElement = createLoaderElement();
 
 const currentDateObj = new Date();
 const currentYearNum = currentDateObj.getFullYear();
-const daysInCurrentMonth = new Date(
+
+const numberOfMonthsAgo = 3;
+function isSunday(date) {
+  return date.getDay() === 0;
+}
+
+const currentMonthNum = currentDateObj.getMonth();
+
+const oneDay = 24 * 60 * 60 * 1000;
+const endDate = currentDateObj;
+const startDate = new Date(
   currentYearNum,
-  currentDateObj.getMonth() + 1,
-  0,
-).getDate();
-const currentMonthName = currentDateObj.toLocaleString('default', {
-  month: 'long',
-});
+  currentMonthNum - numberOfMonthsAgo,
+  1,
+);
 
 async function fetchUserData(username) {
   const response = await makeApiCall(`${RDS_API_USERS}/${username}`);
@@ -35,32 +42,67 @@ function processStandupData(standupItems) {
     completedText: [],
     plannedText: [],
     blockersText: [],
+    date: [],
+    month: [],
+    year: [],
   };
-  standupData.standupFrequency = Array(daysInCurrentMonth).fill('❌');
-  standupData.completedText = Array(daysInCurrentMonth).fill('No data');
-  standupData.plannedText = Array(daysInCurrentMonth).fill('No data');
-  standupData.blockersText = Array(daysInCurrentMonth).fill('No data');
 
   if (!standupItems) {
+    for (
+      let date = new Date(endDate);
+      date >= startDate;
+      date = new Date(date.getTime() - oneDay)
+    ) {
+      if (!isSunday(date)) {
+        standupData.standupFrequency.push('❌');
+        standupData.completedText.push('No data');
+        standupData.plannedText.push('No data');
+        standupData.blockersText.push('No data');
+        standupData.date.push(date.getDate());
+        standupData.month.push(
+          date.toLocaleString('default', { month: 'long' }),
+        );
+        standupData.year.push(date.getFullYear());
+      }
+    }
     return standupData;
   }
+
+  const standupDataByDate = {};
   for (let i = 0; i < standupItems.length; i++) {
-    const standupItem = standupItems[i];
-    const date = new Date(standupItem.createdAt);
-    const day = date.getDate();
-    const month = date.getMonth();
-    const index = day - 1;
+    const formattedDate = formatDateFromTimestamp(standupItems[i].createdAt);
+    standupDataByDate[formattedDate] = standupItems[i];
+  }
 
-    const isCurrentMonth = month === currentDateObj.getMonth();
-    const isValidIndex =
-      index >= 0 && index < standupData.standupFrequency.length;
-
-    if (isCurrentMonth && isValidIndex) {
-      const { completed, planned, blockers } = standupItem;
-      standupData.standupFrequency[index] = '✅';
-      standupData.completedText[index] = completed;
-      standupData.plannedText[index] = planned;
-      standupData.blockersText[index] = blockers;
+  for (
+    let date = new Date(endDate);
+    date >= startDate;
+    date = new Date(date.getTime() - oneDay)
+  ) {
+    if (!isSunday(date)) {
+      if (standupDataByDate[formatDate(date)]) {
+        const { completed, planned, blockers } =
+          standupDataByDate[formatDate(date)];
+        standupData.standupFrequency.push('✅');
+        standupData.completedText.push(completed);
+        standupData.plannedText.push(planned);
+        standupData.blockersText.push(blockers);
+        standupData.date.push(date.getDate());
+        standupData.month.push(
+          date.toLocaleString('default', { month: 'long' }),
+        );
+        standupData.year.push(date.getFullYear());
+      } else {
+        standupData.standupFrequency.push('❌');
+        standupData.completedText.push('No data');
+        standupData.plannedText.push('No data');
+        standupData.blockersText.push('No data');
+        standupData.date.push(date.getDate());
+        standupData.month.push(
+          date.toLocaleString('default', { month: 'long' }),
+        );
+        standupData.year.push(date.getFullYear());
+      }
     }
   }
   return standupData;
@@ -81,15 +123,24 @@ function createTableHeaderElement() {
   });
   headerCellElement.innerHTML = 'DATES ➡️<hr />USERS ⬇️';
   headerRowElement.appendChild(headerCellElement);
-  for (let day = 1; day <= daysInCurrentMonth; day++) {
-    const dateCellElement = createElement({
-      type: 'th',
-      classList: ['date'],
-      scope: 'row',
-    });
-    dateCellElement.textContent =
-      day + ' ' + currentMonthName + ' ' + currentYearNum;
-    headerRowElement.appendChild(dateCellElement);
+  for (
+    let date = new Date(endDate);
+    date >= startDate;
+    date = new Date(date.getTime() - oneDay)
+  ) {
+    if (!isSunday(date)) {
+      const dateCellElement = createElement({
+        type: 'th',
+        classList: ['dates'],
+        scope: 'row',
+      });
+      dateCellElement.textContent = `${getDayOfWeek(
+        date,
+      )} ${date.getDate()} ${date.toLocaleString('default', {
+        month: 'long',
+      })} ${date.getFullYear()}`;
+      headerRowElement.appendChild(dateCellElement);
+    }
   }
   tableHeaderElement.appendChild(headerRowElement);
   return tableHeaderElement;
@@ -119,13 +170,14 @@ function createTableRowElement({ userName, imageUrl, userStandupData }) {
   userContainerElement.appendChild(userNameElement);
   userCellElement.appendChild(userContainerElement);
   rowElement.appendChild(userCellElement);
-
   const standupStatus = userStandupData.standupFrequency;
   const completedTextData = userStandupData.completedText;
   const plannedText = userStandupData.plannedText;
   const blockersText = userStandupData.blockersText;
-
-  for (let i = 0; i < daysInCurrentMonth; i++) {
+  const date = userStandupData.date;
+  const month = userStandupData.month;
+  const year = userStandupData.year;
+  for (let i = 0; i < standupStatus.length; i++) {
     const statusCellElement = createElement({
       type: 'td',
       classList: ['status'],
@@ -140,15 +192,15 @@ function createTableRowElement({ userName, imageUrl, userStandupData }) {
     });
     const completedTextElement = createElement({
       type: 'p',
-      classList: ['today-standup'],
+      classList: ['today-standup', 'tooltip-text'],
     });
     const yesterdayStandupElement = createElement({
       type: 'p',
-      classList: ['yesterday-standup'],
+      classList: ['yesterday-standup', 'tooltip-text'],
     });
     const blockersElement = createElement({
       type: 'p',
-      classList: ['blockers'],
+      classList: ['blockers', 'tooltip-text'],
     });
     const noStandupTextElement = createElement({
       type: 'p',
@@ -158,14 +210,14 @@ function createTableRowElement({ userName, imageUrl, userStandupData }) {
       completedTextData[i],
       plannedText[i],
       blockersText[i],
-      i + 1,
-      currentMonthName,
-      currentYearNum,
+      date[i],
+      month[i],
+      year[i],
     );
 
     if (standupStatus[i] === '✅') {
-      completedTextElement.textContent += `Today's: ${completedTextData[i]}`;
-      yesterdayStandupElement.textContent += `Yesterday's: ${plannedText[i]}`;
+      completedTextElement.textContent += `Yesterday's: ${completedTextData[i]}`;
+      yesterdayStandupElement.textContent += `Today's: ${plannedText[i]}`;
       blockersElement.textContent += `Blockers: ${blockersText[i]}`;
 
       tooltipElement.appendChild(completedTextElement);
@@ -209,6 +261,7 @@ function createTableRowElement({ userName, imageUrl, userStandupData }) {
 
 function setupTable() {
   const tableHeaderElement = createTableHeaderElement();
+  tableBodyElement.classList.add('tableheader');
   tableElement.appendChild(tableHeaderElement);
   tableElement.appendChild(tableBodyElement);
   tableContainerElement.innerHTML = '';
@@ -219,10 +272,18 @@ async function searchButtonHandler() {
   const usernames = searchInput.value
     .split(',')
     .map((username) => username.trim());
-  const filteredUsernames = [...new Set(usernames)];
+  const uniqueUsernames = [...new Set(usernames)];
+  const formattedUsernames = uniqueUsernames.map(
+    (username) => `user:${username}`,
+  );
+  const queryString = formattedUsernames.join('+');
+
+  const newUrl = `${window.location.origin}${window.location.pathname}?q=${queryString}`;
+  window.history.pushState({ path: newUrl }, '', newUrl);
+
   tableBodyElement.innerHTML = '';
 
-  for (const username of filteredUsernames) {
+  for (const username of uniqueUsernames) {
     tableContainerElement.appendChild(loaderElement);
     const userData = await fetchUserData(username);
     if (userData) {
@@ -240,13 +301,28 @@ async function searchButtonHandler() {
   tableContainerElement.removeChild(loaderElement);
 }
 
+function getUsernames() {
+  const queryData = new URL(
+    decodeURIComponent(window.location.href),
+  ).searchParams.get('q');
+  const initialUsernames = queryData
+    ?.split(' ')
+    .map((username) => username.split(':')[1]);
+  return initialUsernames || [];
+}
+
+function setUsernames(usernames) {
+  searchInput.value = [...new Set(usernames)].join(', ');
+}
+
 function handleEnterKeyPress(event) {
   if (event.key === 'Enter') {
     searchButtonHandler();
   }
 }
-
+setUsernames(getUsernames());
 setupTable();
+
 searchButtonElement.addEventListener('click', searchButtonHandler);
 searchInput.addEventListener('keyup', handleEnterKeyPress);
 
@@ -258,3 +334,7 @@ document.addEventListener('click', (event) => {
     document.body.style.marginRight = '0%';
   }
 });
+
+if (getUsernames().length > 0) {
+  searchButtonHandler();
+}
