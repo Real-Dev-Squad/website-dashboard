@@ -3,6 +3,36 @@ const API_BASE_URL = 'https://staging-api.realdevsquad.com';
 const { user } = require('../../mock-data/users');
 const { standup } = require('../../mock-data/standup');
 
+const oneDay = 24 * 60 * 60 * 1000;
+const numberOfMonthsAgo = 3;
+const currentDateObj = new Date();
+const currentYearNum = currentDateObj.getFullYear();
+const currentMonthNum = currentDateObj.getMonth();
+const endDate = currentDateObj;
+const startDate = new Date(
+  currentYearNum,
+  currentMonthNum - numberOfMonthsAgo,
+  1,
+);
+
+function isSunday(date) {
+  return date.getDay() === 0;
+}
+
+function generateExpectedDateValues() {
+  const expectedDateValues = [];
+  for (
+    let date = new Date(endDate);
+    date >= startDate;
+    date = new Date(date.getTime() - oneDay)
+  ) {
+    if (!isSunday(date)) {
+      expectedDateValues.push(date);
+    }
+  }
+  return expectedDateValues;
+}
+
 describe('Standup Page', () => {
   let browser;
   let page;
@@ -26,6 +56,7 @@ describe('Standup Page', () => {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
+
           headers: {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
@@ -114,5 +145,14 @@ describe('Standup Page', () => {
     await page.waitForTimeout(1000);
     const updatedUrl = page.url();
     expect(updatedUrl).toContain('q=user:sunny+user:pratiyush');
+  });
+
+  it('should display the correct date range in the table header', async () => {
+    const dateCellValues = await page.evaluate(() => {
+      const dateCells = Array.from(document.querySelectorAll('.dates'));
+      return dateCells.map((cell) => cell.textContent.trim());
+    });
+    const expectedDateValues = generateExpectedDateValues();
+    expect(dateCellValues.length).toEqual(expectedDateValues.length);
   });
 });
