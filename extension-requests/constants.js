@@ -2,7 +2,10 @@ const DEFAULT_AVATAR = '/images/avatar.png';
 const EXTERNAL_LINK_ICON = '/images/external-link.svg';
 const DOWN_ARROW_ICON = '/images/chevron-down.svg';
 const CHECK_ICON = '/images/check-icon.svg';
+const CHECK_ICON_WHITE = '/images/check-icon-white.svg';
 const CANCEL_ICON = '/images/x-icon.svg';
+const CANCEL_ICON_WHITE = '/images/x-icon-white.svg';
+
 const EDIT_ICON = '/images/edit-icon.svg';
 const ERROR_MESSAGE_RELOAD = 'Something went wrong, Please reload';
 
@@ -35,3 +38,5 @@ const LAST_ELEMENT_CONTAINER = '.virtual';
 const SORT_BUTTON = '.sort-button';
 const SORT_ASC_ICON = 'asc-sort-icon';
 const SORT_DESC_ICON = 'desc-sort-icon';
+const OLDEST_FIRST = 'Oldest first';
+const NEWEST_FIRST = 'Newest first';

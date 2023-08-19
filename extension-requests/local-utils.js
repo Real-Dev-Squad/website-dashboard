@@ -197,3 +197,9 @@ const addSpinner = (container) => {
 const dateTimeString = (timestamp) => {
   return new Date(timestamp).toISOString().substring(0, 16);
 };
+
+const fullDateString = (timestamp) => {
+  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const date = new Date(timestamp);
+  return `${daysOfWeek[date.getDay()]}, ${date.toLocaleString()}`;
+};

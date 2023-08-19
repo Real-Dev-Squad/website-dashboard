@@ -47,7 +47,7 @@
   justify-content: space-between;
   border: 1px solid var(--medium-gray);
   position: relative;
-  max-width: 48rem;
+  max-width: 46rem;
   width: 100%;
   gap: 1rem;
   max-height: 100%;
@@ -69,11 +69,26 @@
   background-color: var(--green-transparent);
 }
 
+.external-link {
+  text-decoration: none;
+  color: var(--medium-gray);
+}
 .failed-card {
   border: 1px solid var(--red-color);
   background-color: var(--red-transparent);
 }
 
+.task-title {
+  border: 0.5px solid var(--light-gray-color);
+  border-radius: 5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+  padding: 2px;
+  max-width: 23rem;
+  overflow: hidden;
+  font-size: 0.9rem;
+}
 .accordion {
   background-color: transparent;
   cursor: pointer;
@@ -123,7 +138,7 @@
   text-transform: capitalize;
 }
 .approve-button {
-  width: 6rem;
+  width: 6.25rem;
   height: 2rem;
   background-color: var(--green10);
   border-radius: 6px;
@@ -157,13 +172,12 @@
 
 .update-button {
   background: none;
-  border: none;
-  padding: auto;
+  max-height: 2rem;
   border-radius: 6px;
   background-color: var(--green10);
   border: 1px solid var(--green500);
   color: var(--green500);
-  font-size: 0.9rem;
+  font-size: 0.7rem;
   transition: 200ms ease-in-out;
 }
 
@@ -174,10 +188,9 @@
 
 .cancel-button {
   background: none;
-  border: none;
-  padding: auto;
+  max-height: 2rem;
   border-radius: 6px;
-  font-size: 0.9rem;
+  font-size: 0.7rem;
   background-color: var(--secondary10);
   border: 1px solid var(--secondary600);
   color: var(--secondary600);
@@ -202,7 +215,7 @@
 }
 
 .deny-button {
-  width: 6rem;
+  width: 6.25rem;
   height: 2rem;
   background-color: var(--secondary10);
   border-radius: 6px;
@@ -240,6 +253,7 @@
 .extension-card-buttons {
   display: flex;
   gap: 0.5rem;
+  margin-right: 3.5rem;
 }
 .details-heading {
   width: fit-content;
@@ -273,11 +287,12 @@
 
 .summary-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2.5rem;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 1rem;
+  font-size: 0.9rem;
 }
 .card-row-text {
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   font-weight: 500;
   color: var(--medium-gray);
 }
@@ -311,6 +326,40 @@
 .virtual {
   width: 100%;
 }
+
+.tooltip-container {
+  position: relative;
+}
+.tooltip {
+  background-color: var(--black-color);
+  color: var(--white);
+  visibility: hidden;
+  text-align: center;
+  border-radius: 4px;
+  padding: 0.5rem;
+  position: absolute;
+  opacity: 0.9;
+  font-size: 0.7rem;
+  width: 10rem;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -5rem;
+}
+
+.sort-button-tooltip {
+  bottom: 120%;
+  width: 7rem;
+  margin-left: -3.5rem;
+}
+.tooltip-container:hover .tooltip {
+  visibility: visible;
+  transition-delay: 400ms;
+}
+.tooltip-container:hover .sort-button-tooltip {
+  visibility: visible;
+  transition-delay: 200ms;
+}
+
 button {
   cursor: pointer;
 }
@@ -769,12 +818,18 @@ body {
 }
 
 @media screen and (max-width: 720px) {
+  .extension-card {
+    max-width: 25rem;
+  }
   .summary-container {
-    grid-template-columns: none;
-    grid-template-rows: 1fr 1fr;
+    display: flex;
+    flex-direction: column;
   }
   .panel div {
     margin: 1.5rem;
+  }
+  .extension-card-buttons {
+    margin: 0;
   }
   .card-assignee-button-container {
     flex-direction: column;
@@ -783,6 +838,9 @@ body {
 }
 
 @media screen and (max-width: 440px) {
+  .container {
+    padding: 1.5rem;
+  }
   .filter-button {
     width: min-content;
   }
@@ -813,6 +871,9 @@ body {
 }
 
 @media screen and (max-width: 320px) {
+  .container {
+    padding: 1rem;
+  }
   .filter-modal {
     top: 12.5rem;
   }
