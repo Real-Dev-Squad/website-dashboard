@@ -74,12 +74,12 @@ const changeFilter = () => {
 };
 
 const initializeAccordions = () => {
-  let acc = document.querySelectorAll('.accordion.uninitialized');
+  let accordionList = document.querySelectorAll('.accordion.uninitialized');
   let i;
 
-  for (i = 0; i < acc.length; i++) {
-    acc[i].classList.remove('uninitialized');
-    acc[i].addEventListener('click', function () {
+  for (i = 0; i < accordionList.length; i++) {
+    accordionList[i].classList.remove('uninitialized');
+    accordionList[i].addEventListener('click', function () {
       this.classList.toggle('active');
       let panel = this.nextElementSibling;
       if (panel.style.maxHeight) {
