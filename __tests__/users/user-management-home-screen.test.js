@@ -16,9 +16,9 @@ describe('Tests the User Management User Listing Screen', () => {
 
   beforeAll(async () => {
     browser = await puppeteer.launch({
-      headless: 'new',
+      headless: false,
       ignoreHTTPSErrors: true,
-      args: ['--incognito', '--disable-web-security'],
+      args: ['--disable-web-security'],
       devtools: false,
     });
     page = await browser.newPage();

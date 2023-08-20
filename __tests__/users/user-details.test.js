@@ -93,14 +93,13 @@ describe('Pivot button', () => {
     //     return await t.evaluate(x => x.textContent);
     // }))
 
-
     // console.log({result : result, result2 : result2});
     // console.log(userCard)
     // console.log(userCard)
     await userCard.click();
     await page.waitForNetworkIdle();
     await page.$('.user-details');
-    const det = await page.$('.user-details')
+    const det = await page.$('.user-details');
     expect(det).toBeTruthy();
   });
 
@@ -114,11 +113,9 @@ describe('Pivot button', () => {
     await userCard.click();
     await page.waitForNetworkIdle();
     await page.$('.user-details');
-    const det = await page.$('.user-details')
+    const det = await page.$('.user-details');
     expect(det).toBeTruthy();
-
-  })
-
+  });
 
   // it.skip('testing', async () => {
   //   pivot = await page.waitForSelector('.Intro')
