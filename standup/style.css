@@ -128,7 +128,8 @@ body {
   border: 1px solid var(--black-color);
 }
 
-.date {
+.date,
+.dates {
   position: sticky;
   top: 0;
   padding: 1rem;
@@ -136,6 +137,7 @@ body {
   color: var(--white-color);
   z-index: 10;
   border: 1px solid var(--black-color);
+  min-width: 6rem;
 }
 
 .status {
