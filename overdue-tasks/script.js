@@ -21,7 +21,7 @@ const render = async () => {
   try {
     addLoader(container);
     const overdueTasks = await getCurrentOverdueTasks();
-    const alloverdueTasks = overdueTasks.overdueTasks;
+    const alloverdueTasks = overdueTasks.tasks;
     alloverdueTasks.forEach((data) => {
       overdueTasksContainer.appendChild(
         createOverdueTasksCard(data, taskInfoModelHeadings),
@@ -38,20 +38,25 @@ const render = async () => {
 };
 
 // to check if there are already extension requests created for this
-// async function checkTaskExtensionDetails(tasks){
-//   await Promise.all(
-//     tasks.map(async (task) => {
-//       let extensionRequestResponse = await getExtensionRequests({taskId: task.id, status: "PENDING"})
-//       let extensionRequests = extensionRequestResponse.allExtensionRequests
+async function checkTaskExtensionDetails(tasks) {
+  await Promise.all(
+    tasks.map(async (task) => {
+      let extensionRequestResponse = await getExtensionRequests({
+        taskId: task.id,
+        status: 'PENDING',
+      });
+      let extensionRequests = extensionRequestResponse.allExtensionRequests;
 
-//       if (extensionRequests.length){
-//         task_extensionRequest_button = document.querySelector(`.create-extension-btn-${task.id}`)
-//         task_extensionRequest_button.disabled = true
-//         task_extensionRequest_button.innerText = "Extension Requests Exists"
-//       }
-//     })
-//   );
-// }
+      if (extensionRequests.length) {
+        task_extensionRequest_button = document.querySelector(
+          `.create-extension-btn-${task.id}`,
+        );
+        task_extensionRequest_button.disabled = true;
+        task_extensionRequest_button.innerText = 'Extension Requests Exists';
+      }
+    }),
+  );
+}
 
 function createOverdueTasksCard(data, dataHeadings) {
   if (!data) return;
@@ -96,11 +101,11 @@ async function onCreateFormSubmit(e) {
     formData['oldEndsOn'] = new Date(formData['oldEndsOn']).getTime() / 1000;
     formData['newEndsOn'] = new Date(formData['newEndsOn']).getTime() / 1000;
     await createExtensionRequest(formData);
-    // reload();
+    reload();
   } catch (error) {
     errorHeading.textContent = 'Something went wrong';
     errorHeading.classList.add('error-visible');
-    // reload();
+    reload();
   } finally {
     removeLoader('loader');
   }

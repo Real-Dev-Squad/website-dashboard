@@ -1,5 +1,5 @@
 async function getCurrentOverdueTasks(query = {}) {
-  const url = new URL(`${API_BASE_URL}/tasks/overdue/current`);
+  const url = new URL(`${API_BASE_URL}/tasks?dev=true&status=overdue`);
 
   const res = await fetch(url, {
     credentials: 'include',
@@ -30,7 +30,7 @@ async function getExtensionRequests(query = {}) {
 }
 
 async function createExtensionRequest(extensionObject) {
-  const url = `${API_BASE_URL}/extension-requests/admin/`;
+  const url = `${API_BASE_URL}/extension-requests/`;
   const res = await fetch(url, {
     credentials: 'include',
     method: 'POST',

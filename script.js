@@ -21,7 +21,6 @@ function getCurrentTimestamp() {
   return new Date().toLocaleString();
 }
 
-
 export async function showSuperUserOptions(...privateBtns) {
   try {
     const isSuperUser = await checkUserIsSuperUser();
@@ -65,7 +64,6 @@ const params = new URLSearchParams(window.location.search);
 if (params.get('dev') === 'true') {
   createGoalButton.classList.remove('element-display-remove');
 }
-
 
 // showUserManagementButton();
 
