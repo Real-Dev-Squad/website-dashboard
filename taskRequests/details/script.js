@@ -132,7 +132,7 @@ async function approveTaskRequest(userId) {
       credentials: 'include',
       method: 'PATCH',
       body: JSON.stringify({
-        taskRequestId: taskRequestId,
+        taskRequestId,
         userId,
       }),
       headers: {
