@@ -20,6 +20,7 @@ html {
   --blue-hover-color: #0d0a4d;
   --razzmatazz-color: #e30464;
   --razzmatazz-hover-color: #a1034a;
+  --pivot-button-color: #dddddd;
   --gray-color: gray;
 }
 
@@ -138,6 +139,18 @@ li {
 .social > img {
   width: 25px;
   height: 25px;
+}
+
+.disabled {
+  position: relative;
+  background-color: var(--pivot-button-color);
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.colorstyle {
+  font-weight: bold;
+  color: black;
 }
 
 .accordion {
