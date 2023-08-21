@@ -1025,7 +1025,7 @@ async function createExtensionCard(data) {
       secondsToMilliSeconds(formData.newEndsOn),
       secondsToMilliSeconds(data.oldEndsOn),
     );
-    extensionForValue.innerText = ` ${extDays}`;
+    extensionForValue.innerText = ` +${extDays}`;
 
     function revertDataChange() {
       titleText.innerText = previousTitle;
