@@ -5,7 +5,6 @@ const CHECK_ICON = '/images/check-icon.svg';
 const CHECK_ICON_WHITE = '/images/check-icon-white.svg';
 const CANCEL_ICON = '/images/x-icon.svg';
 const CANCEL_ICON_WHITE = '/images/x-icon-white.svg';
-
 const EDIT_ICON = '/images/edit-icon.svg';
 const ERROR_MESSAGE_RELOAD = 'Something went wrong, Please reload';
 

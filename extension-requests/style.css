@@ -111,6 +111,7 @@
 .accordion img {
   transition: transform 500ms ease, scale 100ms ease;
 }
+
 .accordion:hover img {
   transform: scale(1.25);
 }
@@ -133,8 +134,10 @@
   font-size: 1.3rem;
   font-weight: 500;
   border-radius: 5px;
-  width: 7rem;
   height: 1.5rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
   text-transform: capitalize;
 }
 .approve-button {

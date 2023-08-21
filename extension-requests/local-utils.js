@@ -9,7 +9,7 @@ const Order = {
   ASCENDING: 'asc',
 };
 
-const DEFAULT_PAGE_SIZE = 10;
+const DEFAULT_PAGE_SIZE = 5;
 async function getExtensionRequests(query = {}, nextLink) {
   const initialURI = nextLink || '/extension-requests';
 
