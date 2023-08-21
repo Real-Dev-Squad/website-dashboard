@@ -12,6 +12,7 @@
   --color-list-border: rgba(0, 0, 0, 0.2);
   --color-white: rgb(255, 255, 255);
   --color-not-verified: rgb(255, 0, 0);
+  --color-member-count: #717171;
 }
 .container {
   font-family: 'Roboto', sans-serif;
@@ -68,6 +69,7 @@
   justify-content: center;
   flex-direction: column;
   gap: 10px;
+  position: relative;
 }
 
 .groups {
@@ -111,11 +113,38 @@
   margin-bottom: 0.6rem;
   border-radius: 0.6rem;
 }
+.groups-list li:hover {
+  cursor: pointer;
+  background-color: var(--color-active-groups-background);
+}
 .group-name {
   font-size: larger;
+  display: flex;
 }
-.create-by {
+
+.group-name::after {
+  content: '(' attr(data-member-count) ')';
+  margin: auto 0.26rem;
+  font-size: 0.8rem;
+  color: var(--color-member-count);
+}
+
+.created-by--container {
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  display: flex;
+}
+
+.created-by--avatar {
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  clip-path: circle();
+}
+
+.created-by {
   opacity: 0.6;
+  margin: auto 0.4rem;
 }
 .groups button {
   align-self: center;
@@ -139,7 +168,7 @@
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .label-for-new-group {
@@ -158,21 +187,32 @@
   border: none;
 }
 
+.btn-add-role {
+  position: absolute;
+  top: 3%;
+  left: 5%;
+}
+
 /*
 *
     LOADER CLASSES
 *
 */
 
+.backdrop {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
 .loader {
   border: 6px solid var(--color-loader-border);
   border-top: 6px solid var(--color-loader-border-top);
   border-radius: 50%;
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
   width: 4rem;
   height: 4rem;
   animation: spin 1s linear infinite;
@@ -198,6 +238,9 @@ NOT VERIFIED TEXT ABOVE
 }
 
 @media (max-width: 650px) {
+  .btn-add-role {
+    position: static;
+  }
   .manage-groups {
     flex-direction: column-reverse;
     padding: 1.2rem;
