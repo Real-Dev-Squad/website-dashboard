@@ -200,7 +200,7 @@ describe.skip('Tests the new Extension Requests Screen', () => {
       const url = interceptedRequest.url();
       if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?size=10&dev=true&order=asc'
+        'https://api.realdevsquad.com/extension-requests?size=5&dev=true&order=asc'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -214,7 +214,7 @@ describe.skip('Tests the new Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?status=PENDING&size=10&dev=true&order=asc'
+        'https://api.realdevsquad.com/extension-requests?status=PENDING&size=5&dev=true&order=asc'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -228,7 +228,7 @@ describe.skip('Tests the new Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?status=PENDING&size=10&dev=true&order=desc'
+        'https://api.realdevsquad.com/extension-requests?status=PENDING&size=5&dev=true&order=desc'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -242,7 +242,7 @@ describe.skip('Tests the new Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?status=ACCEPTED&size=10&dev=true&order=asc'
+        'https://api.realdevsquad.com/extension-requests?status=ACCEPTED&size=5&dev=true&order=asc'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -593,5 +593,26 @@ describe.skip('Tests the new Extension Requests Screen', () => {
     );
 
     expect(originalReasonValue).toBe('b');
+  });
+
+  test('Checks whether tooltip is visible on hover', async () => {
+    const element = await page.$('.tooltip-container');
+
+    await element.hover();
+
+    await page.waitForTimeout(500);
+    const isTooltipVisible = await page.evaluate(() => {
+      const tooltip = document.querySelector('.tooltip');
+      const style = window.getComputedStyle(tooltip);
+
+      return (
+        style &&
+        style.display !== 'none' &&
+        style.visibility !== 'hidden' &&
+        style.opacity !== '0'
+      );
+    });
+
+    expect(isTooltipVisible).toBe(true);
   });
 });

@@ -24,7 +24,7 @@ const extensionRequestsList = {
       title: 'A new title',
     },
   ],
-  next: '/extension-requests?size=10&dev=true&order=asc',
+  next: '/extension-requests?size=5&dev=true&order=asc',
 };
 
 const extensionRequestsListPendingDescending = {
@@ -75,7 +75,7 @@ const extensionRequestsListPendingDescending = {
       title: 'A title',
     },
   ],
-  next: '/extension-requests?status=PENDING&size=10&dev=true&order=desc',
+  next: '/extension-requests?status=PENDING&size=5&dev=true&order=desc',
 };
 const extensionRequestsListPending = {
   message: 'Extension Requests returned successfully!',
@@ -125,7 +125,7 @@ const extensionRequestsListPending = {
       title: 'A different title 2',
     },
   ],
-  next: '/extension-requests?status=PENDING&size=10&dev=true&order=asc',
+  next: '/extension-requests?status=PENDING&size=5&dev=true&order=asc',
 };
 
 const extensionRequestsListApproved = {
@@ -154,7 +154,7 @@ const extensionRequestsListApproved = {
       title: 'j',
     },
   ],
-  next: '/extension-requests?status=APPROVED&size=10&dev=true&order=asc',
+  next: '/extension-requests?status=APPROVED&size=5&dev=true&order=asc',
 };
 
 const extensionRequestResponse = {
