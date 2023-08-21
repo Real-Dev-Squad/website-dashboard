@@ -128,7 +128,6 @@ function getAvatar(user) {
 
 async function approveTaskRequest(userId) {
   try {
-    console.error(taskRequestId, userId);
     const res = await fetch(`${API_BASE_URL}/taskRequests/approve`, {
       credentials: 'include',
       method: 'PATCH',
