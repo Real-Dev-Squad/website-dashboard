@@ -69,7 +69,11 @@ groupsData?.forEach((item) => {
   const group = document.createElement('li');
   group.setAttribute('id', item.roleid);
   group.classList.add('group-role');
-  if (window.location.search.slice(1) === item.rolename) {
+  const formattedRoleName = removeGroupKeywordFromDiscordRoleName(
+    item.rolename,
+  );
+
+  if (params.has(formattedRoleName)) {
     group.classList.add('active-group');
   }
 
@@ -81,7 +85,7 @@ groupsData?.forEach((item) => {
     groupname.setAttribute('data-member-count', item.memberCount);
   }
 
-  groupname.textContent = removeGroupKeywordFromDiscordRoleName(item.rolename);
+  groupname.textContent = formattedRoleName;
 
   const createdBy = createAuthorDetailsDOM(
     item.firstName,
@@ -130,9 +134,8 @@ groupRoles?.addEventListener('click', function (event) {
   const groupListItem = event.target?.closest('li');
   if (groupListItem) {
     const devFeatureFlag = isDev ? '&dev=true' : '';
-    const newURL = `${window.location.pathname}?${
-      groupListItem.querySelector('p').textContent
-    }${devFeatureFlag}`;
+    const rolename = `${groupListItem.querySelector('p').textContent}`;
+    const newURL = `${window.location.pathname}?${rolename}${devFeatureFlag}`;
     window.history.pushState({}, '', newURL);
     groupListItem.classList.add('active-group');
     memberAddRoleBody.roleid = groupListItem.id;
