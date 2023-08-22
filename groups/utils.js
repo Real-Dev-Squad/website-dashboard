@@ -34,8 +34,9 @@ async function getUserSelf() {
 }
 async function getDiscordGroups(isDev) {
   try {
+    const devFeatureFlag = isDev ? '?dev=true' : '';
     const res = await fetch(
-      `${BASE_URL}/discord-actions/groups${isDev ? '?dev=true' : ''}`,
+      `${BASE_URL}/discord-actions/groups${devFeatureFlag}`,
       {
         method: 'GET',
         credentials: 'include',
