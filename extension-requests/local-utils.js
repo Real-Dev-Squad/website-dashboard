@@ -50,6 +50,11 @@ async function updateExtensionRequestStatus({ id, body }) {
       'Content-type': 'application/json',
     },
   });
+
+  if (res.status !== 200) {
+    throw new Error('Update failed.');
+  }
+
   return await res.json();
 }
 
@@ -161,3 +166,18 @@ function dateDiff(date1, date2, formatter) {
 
   return formatter ? formatter(res) : res;
 }
+
+const addSpinner = (container) => {
+  const spinner = createElement({
+    type: 'div',
+    attributes: { class: 'spinner' },
+  });
+
+  container.append(spinner);
+
+  function removeSpinner() {
+    spinner.remove();
+  }
+
+  return removeSpinner;
+};

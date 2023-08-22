@@ -111,6 +111,12 @@ async function populateExtensionRequests(query = {}) {
     removeLoader('loader');
   }
 }
+
+function removeCard(element) {
+  element.classList.add('success-card');
+  setTimeout(() => element.remove(), 800);
+}
+
 function addCheckbox(labelText, value, groupName) {
   const group = document.getElementById(groupName);
   const label = document.createElement('label');
@@ -505,7 +511,7 @@ async function createExtensionCard(data) {
 
   const taskStatusValue = createElement({
     type: 'span',
-    innerText: ` ${taskData.status}`,
+    innerText: ` ${taskData?.status}`,
   });
   taskStatusContainer.appendChild(taskStatusValue);
 
@@ -665,17 +671,39 @@ async function createExtensionCard(data) {
     });
 
     approveButton.addEventListener('click', () => {
+      const removeSpinner = addSpinner(rootElement);
+      rootElement.classList.add('disabled');
       updateExtensionRequestStatus({
         id: data.id,
         body: { status: Status.APPROVED },
-      });
+      })
+        .then(() => removeCard(rootElement))
+        .catch(() => {
+          rootElement.classList.add('failed-card');
+          setTimeout(() => rootElement.classList.remove('failed-card'), 1000);
+        })
+        .finally(() => {
+          rootElement.classList.remove('disabled');
+          removeSpinner();
+        });
     });
 
     denyButton.addEventListener('click', () => {
+      const removeSpinner = addSpinner(rootElement);
+      rootElement.classList.add('disabled');
       updateExtensionRequestStatus({
         id: data.id,
         body: { status: Status.DENIED },
-      });
+      })
+        .then(() => removeCard(rootElement))
+        .catch(() => {
+          rootElement.classList.add('failed-card');
+          setTimeout(() => rootElement.classList.remove('failed-card'), 1000);
+        })
+        .finally(() => {
+          rootElement.classList.remove('disabled');
+          removeSpinner();
+        });
     });
   }
 
