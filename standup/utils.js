@@ -78,3 +78,33 @@ function createSidebarPanelElement(
   sidebarPanelElement.appendChild(blockersElement);
   return sidebarPanelElement;
 }
+
+function formatDateFromTimestamp(timestamp) {
+  const dateObject = new Date(timestamp);
+  const year = dateObject.getFullYear();
+  const month = dateObject.getMonth() + 1;
+  const day = dateObject.getDate();
+  return `${day}-${month}-${year}`;
+}
+
+function formatDate(dateObject) {
+  const year = dateObject.getFullYear();
+  const month = dateObject.getMonth() + 1;
+  const day = dateObject.getDate();
+  return `${day}-${month}-${year}`;
+}
+
+function getDayOfWeek(date) {
+  const daysOfWeek = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ];
+  const dayIndex = date.getDay();
+
+  return daysOfWeek[dayIndex];
+}
