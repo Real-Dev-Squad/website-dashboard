@@ -36,7 +36,7 @@ describe('Intro User Button Users Detail Page', () => {
       }
     });
     await page.goto(
-      'http://localhost:5500/users/details/index.html?username=randhir',
+      'http://localhost:8000/users/details/index.html?username=randhir',
     );
     await page.waitForNetworkIdle();
   });
@@ -51,7 +51,6 @@ describe('Intro User Button Users Detail Page', () => {
   });
 
   it('should show tooltip on button hover for non-superusers', async () => {
-    
     const button = await page.$('.disabled');
     expect(button).toBeTruthy();
 

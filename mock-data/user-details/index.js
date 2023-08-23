@@ -33,4 +33,4 @@ const userDetails = {
   },
 };
 
-module.exports = { userDetails};
+module.exports = { userDetails };
