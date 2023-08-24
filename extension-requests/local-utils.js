@@ -11,28 +11,32 @@ const Order = {
 
 const DEFAULT_PAGE_SIZE = 5;
 async function getExtensionRequests(query = {}, nextLink) {
-  const initialURI = nextLink || '/extension-requests';
+  let initialURI = nextLink || '/extension-requests?q=';
 
-  const url = new URL(API_BASE_URL + initialURI);
-
-  queryParams = ['assignee', 'status', 'taskId', 'size', 'dev', 'order'];
+  const queryParams = ['assignee', 'status', 'taskId', 'size', 'dev', 'order'];
+  let queryStringList = [];
   queryParams.forEach((key) => {
     if (query[key]) {
+      let queryString = '';
       if (Array.isArray(query[key])) {
-        query[key].forEach((value) => url.searchParams.append(key, value));
+        queryString = key + ':' + query[key].join('+');
       } else {
-        url.searchParams.append(key, query[key]);
+        queryString = key + ':' + query[key];
       }
+      queryStringList.push(queryString);
     }
   });
 
-  const res = await fetch(url, {
-    credentials: 'include',
-    method: 'GET',
-    headers: {
-      'Content-type': 'application/json',
+  const res = await fetch(
+    API_BASE_URL + initialURI + queryStringList.join(','),
+    {
+      credentials: 'include',
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+      },
     },
-  });
+  );
   return await res.json();
 }
 
