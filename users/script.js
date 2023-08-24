@@ -186,7 +186,7 @@ function generateUserList(
     }
     listElement.onclick = () => {
       document.getElementById('user-search').value = '';
-      window.location.href = `details/index.html?username=${userData.username}`;
+      window.location.href = `/users/details/index.html?username=${userData.username}`;
     };
     ulElement.appendChild(listElement);
   });
@@ -295,7 +295,7 @@ function showUserList(users) {
     }
     listElement.onclick = () => {
       document.getElementById('user-search').value = '';
-      window.location.href = `details/index.html?username=${userData.username}`;
+      window.location.href = `/users/details/index.html?username=${userData.username}`;
     };
     ulElement.appendChild(listElement);
     paginationElement.classList.add('remove-element');
