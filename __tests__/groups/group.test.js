@@ -1,6 +1,5 @@
 const puppeteer = require('puppeteer');
 const { allUsersData } = require('../../mock-data/users');
-const { API_BASE_URL } = require('../../constants');
 const { discordGroups } = require('../../mock-data/groups');
 
 const BASE_URL = 'https://api.realdevsquad.com';
@@ -225,7 +224,7 @@ describe('Discord Groups Page', () => {
     expect(creatorImageSrcAndAltText).toEqual(expectedImageSrcAndAltText);
   });
 
-  test("should show proper group creator's image", async () => {
+  test("should show proper group creator's name", async () => {
     const createdByLines = await page.$$eval('.created-by', (elements) => {
       return elements.map((element) => element.innerText);
     });

@@ -32,15 +32,19 @@ async function getUserSelf() {
     return err;
   }
 }
-async function getDiscordGroups() {
+async function getDiscordGroups(isDev) {
   try {
-    const res = await fetch(`${BASE_URL}/discord-actions/groups`, {
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-        'Content-type': 'application/json',
+    const devFeatureFlag = isDev ? '?dev=true' : '';
+    const res = await fetch(
+      `${BASE_URL}/discord-actions/groups${devFeatureFlag}`,
+      {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-type': 'application/json',
+        },
       },
-    });
+    );
 
     const { groups } = await res.json();
     return groups;

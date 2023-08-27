@@ -112,6 +112,7 @@
   border: 1px solid var(--color-list-border);
   margin-bottom: 0.6rem;
   border-radius: 0.6rem;
+  min-width: 12rem;
 }
 .groups-list li:hover {
   cursor: pointer;
@@ -127,6 +128,10 @@
   margin: auto 0.26rem;
   font-size: 0.8rem;
   color: var(--color-member-count);
+}
+
+.group-name:not([data-member-count])::after {
+  display: none;
 }
 
 .created-by--container {
