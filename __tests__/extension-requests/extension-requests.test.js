@@ -43,7 +43,8 @@ describe('Tests the Extension Requests Screen', () => {
           body: JSON.stringify(extensionRequestsList),
         });
       } else if (
-        url === 'https://api.realdevsquad.com/extension-requests?status=PENDING'
+        url ===
+        'https://api.realdevsquad.com/extension-requests?status=PENDING&size=10'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -57,7 +58,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?status=ACCEPTED'
+        'https://api.realdevsquad.com/extension-requests?status=APPROVED&size=10'
       ) {
         interceptedRequest.respond({
           status: 200,
