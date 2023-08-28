@@ -44,7 +44,8 @@ describe('Tests the Extension Requests Screen', () => {
           body: JSON.stringify(extensionRequestsList),
         });
       } else if (
-        url === 'https://api.realdevsquad.com/extension-requests?status=PENDING'
+        url ===
+        'https://api.realdevsquad.com/extension-requests?order=asc&size=5&dev=true&q=status%3APENDING'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -58,7 +59,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?status=ACCEPTED'
+        'https://api.realdevsquad.com/extension-requests?q=status%3AAPPROVED&dev=true&size=5&order=asc'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -95,6 +96,8 @@ describe('Tests the Extension Requests Screen', () => {
     expect(title).toBeTruthy();
     expect(searchBar).toBeTruthy();
     expect(filterButton).toBeTruthy();
+
+    await page.waitForTimeout(60000);
 
     expect(extensionRequestsElement).toBeTruthy();
   });
