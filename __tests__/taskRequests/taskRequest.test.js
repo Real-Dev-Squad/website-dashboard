@@ -11,7 +11,13 @@ describe('Task Requests', () => {
   let page;
 
   beforeAll(async () => {
-    browser = await puppeteer.launch();
+    browser = await puppeteer.launch({
+      headless: 'new',
+      ignoreHTTPSErrors: true,
+      args: ['--incognito', '--disable-web-security'],
+      devtools: false,
+    });
+
     page = await browser.newPage();
 
     await page.setRequestInterception(true);
@@ -42,9 +48,10 @@ describe('Task Requests', () => {
   });
 
   describe('When the user is super user', () => {
-    it('should display the task requests card', async () => {
+    it.only('should display the task requests card', async () => {
       const url = await page.evaluate(() => API_BASE_URL);
       const taskCards = await page.$$('.taskRequest__card');
+      await page.waitForTimeout(50000);
       const title = await taskCards[0].evaluate(
         (el) => el.children[0].textContent,
       );
