@@ -31,3 +31,4 @@ const FILTER_BUTTON = 'filter-button';
 const APPLY_FILTER_BUTTON = 'apply-filter-button';
 const CLEAR_BUTTON = 'clear-button';
 const SEARCH_ELEMENT = 'assignee-search';
+const LAST_ELEMENT_CONTAINER = '.virtual';

@@ -244,7 +244,9 @@
   font-weight: 500;
   color: var(--blue-color-heading);
 }
-
+.virtual {
+  width: 100%;
+}
 button {
   cursor: pointer;
 }
