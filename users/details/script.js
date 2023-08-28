@@ -1025,7 +1025,7 @@ function lockAccordiansForNonSuperUser() {
 
 async function accessingUserData() {
   const isSuperUser = await checkUserIsSuperUser();
-  if (true) {
+  if (isSuperUser) {
     getUserTasks();
     getUserPrs();
     generateAcademicTabDetails();
