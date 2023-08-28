@@ -111,7 +111,7 @@ const extensionRequestsListPending = {
       status: 'PENDING',
       taskId: 'PYj79ki2agB0q5JN3kUf',
       timestamp: 1691907153.157,
-      title: 'A new title',
+      title: 'A different title 1',
     },
     {
       assignee: 'randhir',
@@ -122,7 +122,7 @@ const extensionRequestsListPending = {
       status: 'PENDING',
       taskId: 'PYj79ki2agB0q5JN3kUf',
       timestamp: 1691993520.03,
-      title: 'A new title',
+      title: 'A different title 2',
     },
   ],
   next: '/extension-requests?status=PENDING&size=10&dev=true&order=asc',

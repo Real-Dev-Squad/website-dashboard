@@ -80,16 +80,21 @@ const initializeAccordions = () => {
   for (i = 0; i < accordionList.length; i++) {
     accordionList[i].classList.remove('uninitialized');
     accordionList[i].addEventListener('click', function () {
+      handleFormPropagation(event);
       this.classList.toggle('active');
       let panel = this.nextElementSibling;
       if (panel.style.maxHeight) {
         panel.style.maxHeight = null;
       } else {
         closeAllAccordions();
-        panel.style.maxHeight = panel.scrollHeight + 'px';
+        updateAccordionHeight(panel);
       }
     });
   }
+};
+
+const updateAccordionHeight = (element) => {
+  element.style.maxHeight = element.scrollHeight + 'px';
 };
 const closeAllAccordions = () => {
   let accordionsList = document.querySelectorAll('.accordion.active');
@@ -160,8 +165,19 @@ const intersectionObserver = new IntersectionObserver(async (entries) => {
   }
 });
 
+function handleSuccess(element) {
+  element.classList.add('success-card');
+  setTimeout(() => element.classList.remove('success-card'), 1000);
+}
+
+function handleFailure(element) {
+  element.classList.add('failed-card');
+  setTimeout(() => element.classList.remove('failed-card'), 1000);
+}
+
 function removeCard(element) {
   element.classList.add('success-card');
+  element.classList.add('fade-out');
   setTimeout(() => element.remove(), 800);
 }
 
@@ -470,6 +486,10 @@ filterButton.addEventListener('click', (event) => {
 populateStatus();
 render();
 
+const handleFormPropagation = async (event) => {
+  event.preventDefault();
+};
+
 async function createExtensionCard(data) {
   //Api calls
   const userDataPromise = getUserDetails(data.assignee);
@@ -505,18 +525,35 @@ async function createExtensionCard(data) {
     attributes: { class: 'extension-card' },
   });
 
+  const formContainer = createElement({
+    type: 'form',
+    attributes: { class: 'extension-card-form' },
+  });
+
   const titleText = createElement({
     type: 'span',
-    attributes: { class: 'title-text' },
+    attributes: { class: 'card-title title-text' },
     innerText: data.title,
   });
-  rootElement.appendChild(titleText);
+
+  const titleInput = createElement({
+    type: 'input',
+    attributes: {
+      class: 'title-text title-text-input hidden',
+      id: 'title',
+      name: 'title',
+      value: data.title,
+    },
+  });
+
+  formContainer.appendChild(titleInput);
+  formContainer.appendChild(titleText);
 
   const summaryContainer = createElement({
     type: 'div',
     attributes: { class: 'summary-container' },
   });
-  rootElement.appendChild(summaryContainer);
+  formContainer.appendChild(summaryContainer);
 
   const taskDetailsContainer = createElement({
     type: 'div',
@@ -630,6 +667,19 @@ async function createExtensionCard(data) {
     type: 'span',
     innerText: ` ${extensionDays}`,
   });
+
+  const extensionInput = createElement({
+    type: 'input',
+    attributes: {
+      class: 'date-input hidden',
+      type: 'datetime-local',
+      name: 'newEndsOn',
+      id: 'newEndsOn',
+      value: dateTimeString(secondsToMilliSeconds(data.newEndsOn)),
+    },
+  });
+
+  extensionForContainer.appendChild(extensionInput);
   extensionForContainer.appendChild(extensionForValue);
 
   const requestedContainer = createElement({ type: 'div' });
@@ -715,6 +765,27 @@ async function createExtensionCard(data) {
     });
     editButton.appendChild(editIcon);
 
+    const updateWrapper = createElement({
+      type: 'div',
+      attributes: { class: 'update-wrapper hidden' },
+    });
+
+    extensionCardButtons.appendChild(updateWrapper);
+
+    const updateButton = createElement({
+      type: 'button',
+      attributes: { class: 'update-button' },
+      innerText: 'UPDATE',
+    });
+
+    const cancelButton = createElement({
+      type: 'button',
+      attributes: { class: 'cancel-button' },
+      innerText: 'CANCEL',
+    });
+    updateWrapper.appendChild(cancelButton);
+    updateWrapper.appendChild(updateButton);
+
     const denyButton = createElement({
       type: 'button',
       attributes: { class: 'deny-button' },
@@ -742,13 +813,33 @@ async function createExtensionCard(data) {
     extensionCardButtons.appendChild(approveButton);
 
     //Event listeners
-    editButton.addEventListener('click', () => {
-      showModal('update-form');
-      state.currentExtensionRequest = data;
-      fillUpdateForm();
+    editButton.addEventListener('click', (event) => {
+      handleFormPropagation(event);
+      toggleInputs();
+
+      editButton.classList.toggle('hidden');
+      updateWrapper.classList.toggle('hidden');
+      if (!panel.style.maxHeight) {
+        accordionButton.click();
+      }
+      updateAccordionHeight(panel);
     });
 
-    approveButton.addEventListener('click', () => {
+    updateButton.addEventListener('click', (event) => {
+      toggleInputs();
+      editButton.classList.toggle('hidden');
+      updateWrapper.classList.toggle('hidden');
+    });
+
+    cancelButton.addEventListener('click', (event) => {
+      handleFormPropagation(event);
+      toggleInputs();
+      editButton.classList.toggle('hidden');
+      updateWrapper.classList.toggle('hidden');
+    });
+
+    approveButton.addEventListener('click', (event) => {
+      handleFormPropagation(event);
       const removeSpinner = addSpinner(rootElement);
       rootElement.classList.add('disabled');
       updateExtensionRequestStatus({
@@ -757,8 +848,7 @@ async function createExtensionCard(data) {
       })
         .then(() => removeCard(rootElement))
         .catch(() => {
-          rootElement.classList.add('failed-card');
-          setTimeout(() => rootElement.classList.remove('failed-card'), 1000);
+          handleFailure(rootElement);
         })
         .finally(() => {
           rootElement.classList.remove('disabled');
@@ -766,7 +856,8 @@ async function createExtensionCard(data) {
         });
     });
 
-    denyButton.addEventListener('click', () => {
+    denyButton.addEventListener('click', (event) => {
+      handleFormPropagation(event);
       const removeSpinner = addSpinner(rootElement);
       rootElement.classList.add('disabled');
       updateExtensionRequestStatus({
@@ -775,8 +866,7 @@ async function createExtensionCard(data) {
       })
         .then(() => removeCard(rootElement))
         .catch(() => {
-          rootElement.classList.add('failed-card');
-          setTimeout(() => rootElement.classList.remove('failed-card'), 1000);
+          handleFailure(rootElement);
         })
         .finally(() => {
           rootElement.classList.remove('disabled');
@@ -818,7 +908,22 @@ async function createExtensionCard(data) {
   });
   reasonContainer.appendChild(reasonDetailsLine);
 
-  const reasonParagraph = createElement({ type: 'p', innerText: data.reason });
+  const reasonParagraph = createElement({
+    type: 'p',
+    attributes: { class: 'reason-text' },
+    innerText: data.reason,
+  });
+  const reasonInput = createElement({
+    type: 'textarea',
+    attributes: {
+      class: 'input-text-area hidden',
+      id: 'reason',
+      name: 'reason',
+    },
+    innerText: data.reason,
+  });
+  reasonContainer.appendChild(reasonInput);
+
   reasonContainer.appendChild(reasonParagraph);
 
   const cardFooter = createElement({ type: 'div' });
@@ -826,7 +931,65 @@ async function createExtensionCard(data) {
 
   cardFooter.appendChild(accordionContainer);
 
-  rootElement.appendChild(cardFooter);
+  formContainer.appendChild(cardFooter);
 
+  rootElement.appendChild(formContainer);
+
+  formContainer.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    let formData = formDataToObject(new FormData(e.target));
+    formData['newEndsOn'] = new Date(formData['newEndsOn']).getTime() / 1000;
+    const removeSpinner = addSpinner(rootElement);
+    rootElement.classList.add('disabled');
+    const revertDataChange = updateCardData(formData);
+    updateAccordionHeight(panel);
+    updateExtensionRequest({
+      id: data.id,
+      body: formData,
+    })
+      .then(() => {
+        handleSuccess(rootElement);
+      })
+      .catch(() => {
+        revertDataChange();
+        handleFailure(rootElement);
+      })
+      .finally(() => {
+        rootElement.classList.remove('disabled');
+        removeSpinner();
+      });
+  });
+
+  function updateCardData(formData) {
+    const previousTitle = titleText.innerText;
+    const previousReason = reasonParagraph.innerText;
+    const previousExtensionValue = extensionForValue.innerText;
+
+    titleText.innerText = formData.title;
+    reasonParagraph.innerText = formData.reason;
+    const extDays = dateDiff(
+      secondsToMilliSeconds(formData.newEndsOn),
+      secondsToMilliSeconds(data.oldEndsOn),
+    );
+    extensionForValue.innerText = ` ${extDays}`;
+
+    function revertDataChange() {
+      titleText.innerText = previousTitle;
+      reasonParagraph.innerText = previousReason;
+      extensionForValue.innerText = previousExtensionValue;
+    }
+    return revertDataChange;
+  }
+
+  function toggleInputs() {
+    titleInput.classList.toggle('hidden');
+    titleText.classList.toggle('hidden');
+
+    reasonInput.classList.toggle('hidden');
+    reasonParagraph.classList.toggle('hidden');
+
+    extensionForValue.classList.toggle('hidden');
+    extensionInput.classList.toggle('hidden');
+  }
   return rootElement;
 }
