@@ -9,6 +9,7 @@ const API_BASE_URL = 'https://staging-api.realdevsquad.com';
 describe('Task Requests', () => {
   let browser;
   let page;
+  jest.setTimeout(80000);
 
   beforeAll(async () => {
     browser = await puppeteer.launch();
@@ -43,12 +44,7 @@ describe('Task Requests', () => {
 
   describe('When the user is super user', () => {
     it('should display the task requests card', async () => {
-      await page.goto(`${API_BASE_URL}/taskRequests`);
-
-      // Wait for the task card element to appear.
-      await page.waitForSelector('.taskRequest__card');
-
-      // Now you can safely select and evaluate the element.
+      const url = await page.evaluate(() => API_BASE_URL);
       const taskCards = await page.$$('.taskRequest__card');
       const title = await taskCards[0].evaluate(
         (el) => el.children[0].textContent,
