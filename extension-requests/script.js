@@ -74,6 +74,23 @@ const changeFilter = () => {
   extensionRequestsContainer.innerHTML = '';
 };
 
+const addIntersectionObserver = () => {
+  if (params.get('dev') === 'true') {
+    intersectionObserver.observe(lastElementContainer);
+  }
+};
+
+const removeIntersectionObserver = () => {
+  if (params.get('dev') === 'true') {
+    intersectionObserver.unobserve(lastElementContainer);
+  }
+};
+
+const statusChange = () => {
+  nextLink = '';
+  extensionRequestsContainer.innerHTML = '';
+  addIntersectionObserver();
+};
 const initializeAccordions = () => {
   let accordionList = document.querySelectorAll('.accordion.uninitialized');
   let i;

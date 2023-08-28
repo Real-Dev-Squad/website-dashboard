@@ -10,14 +10,14 @@ http
      * @param {string} urlPath - the path to the requested file
      * @sanitizer path.normalize
      */
-    const urlPath = path.normalize(req.url);
+    const [url, params] = path.normalize(req.url).split('?');
     /**
      * @param {string} filePath - the absolute path to the requested file
      * @flowsource urlPath
      * @sanitizer path.join
      * @sanitizer isAbsolutePath
      */
-    let filePath = path.join(__dirname, urlPath);
+    let filePath = path.join(__dirname, url);
 
     if (!isAbsolutePath(filePath)) {
       res.statusCode = 400;
