@@ -12,7 +12,9 @@ const stopLoading = () => loader.classList.add('hidden');
 async function getTaskRequests() {
   startLoading();
   try {
-    const res = await fetch(`${API_BASE_URL}/taskRequests`);
+    const res = await fetch(`${API_BASE_URL}/taskRequests`, {
+      credentials: 'include',
+    });
 
     if (res.ok) {
       const data = await res.json();
