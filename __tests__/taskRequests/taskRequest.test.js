@@ -41,21 +41,24 @@ describe('Task Requests', () => {
     await browser.close();
   });
 
-  describe('When the user is super user', () => {
-    it('should display the task requests card', async () => {
-      const url = await page.evaluate(() => API_BASE_URL);
-      const taskCards = await page.$$('.taskRequest__card');
-      const title = await taskCards[0].evaluate(
-        (el) => el.children[0].textContent,
-      );
-      const purpose = await taskCards[0].evaluate(
-        (el) => el.children[1].textContent,
-      );
+  it('should display the task requests card', async () => {
+    await page.goto(`${SITE_URL}/taskRequests`);
 
-      expect(taskCards).toHaveLength(1);
-      expect(title).toMatch(/test title/i);
-      expect(purpose).toMatch(/test purpose/i);
-    });
+    // Wait for the task card element to appear.
+    await page.waitForSelector('.taskRequest__card');
+
+    // Now you can safely select and evaluate the element.
+    const taskCards = await page.$$('.taskRequest__card');
+    const title = await taskCards[0].evaluate(
+      (el) => el.children[0].textContent,
+    );
+    const purpose = await taskCards[0].evaluate(
+      (el) => el.children[1].textContent,
+    );
+
+    expect(taskCards).toHaveLength(1);
+    expect(title).toMatch(/test title/i);
+    expect(purpose).toMatch(/test purpose/i);
   });
 });
 
