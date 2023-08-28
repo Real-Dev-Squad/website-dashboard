@@ -9,7 +9,6 @@ const API_BASE_URL = 'https://staging-api.realdevsquad.com';
 describe('Task Requests', () => {
   let browser;
   let page;
-  jest.setTimeout(9000);
 
   beforeAll(async () => {
     browser = await puppeteer.launch();
