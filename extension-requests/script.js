@@ -50,6 +50,7 @@ const updateFilterStates = (key, value) => {
 };
 
 const render = async () => {
+  addTooltipToSortButton();
   toggleStatusCheckbox(Status.PENDING);
   changeFilter();
   await populateExtensionRequests(filterStates);
@@ -107,6 +108,14 @@ const closeAllAccordions = () => {
   }
 };
 
+const addTooltipToSortButton = () => {
+  const sortToolTip = createElement({
+    type: 'span',
+    attributes: { class: 'tooltip sort-button-tooltip' },
+    innerText: `Oldest first`,
+  });
+  sortButton.appendChild(sortToolTip);
+};
 async function populateExtensionRequests(query = {}, newLink) {
   try {
     isDataLoading = true;
@@ -286,12 +295,21 @@ searchElement.addEventListener(
 );
 
 sortButton.addEventListener('click', async (event) => {
+  toggleTooltipText();
   toggleSortIcon();
   toggleOrder();
   changeFilter();
   await populateExtensionRequests(filterStates);
 });
 
+const toggleTooltipText = () => {
+  const tooltip = sortButton.querySelector('.tooltip');
+  if (tooltip.textContent === OLDEST_FIRST) {
+    tooltip.textContent = NEWEST_FIRST;
+  } else {
+    tooltip.textContent = OLDEST_FIRST;
+  }
+};
 const toggleOrder = () => {
   if (filterStates.order === Order.DESCENDING) {
     updateFilterStates('order', Order.ASCENDING);
@@ -565,31 +583,24 @@ async function createExtensionCard(data) {
     type: 'div',
     attributes: { class: 'details-container' },
   });
-  taskDetailsContainer.appendChild(detailsContainer);
 
-  const taskDetailsHeading = createElement({
-    type: 'span',
-    attributes: { class: 'details-heading' },
-    innerText: 'Task Details',
-  });
-  detailsContainer.appendChild(taskDetailsHeading);
-
-  const externalLink = createElement({
+  const statusSiteLink = createElement({
     type: 'a',
-    attributes: { href: `${STATUS_BASE_URL}/tasks/${data.taskId}` },
-  });
-  detailsContainer.appendChild(externalLink);
-
-  const externalLinkIcon = createElement({
-    type: 'img',
     attributes: {
-      height: '12px',
-      src: EXTERNAL_LINK_ICON,
-      alt: 'external-link-icon',
+      href: `${STATUS_BASE_URL}/tasks/${data.taskId}`,
+      class: 'external-link',
     },
+    innerText: taskData.title,
   });
-  externalLink.appendChild(externalLinkIcon);
 
+  const taskTitle = createElement({
+    type: 'span',
+    attributes: { class: 'task-title' },
+    innerText: 'Task: ',
+  });
+
+  taskTitle.appendChild(statusSiteLink);
+  taskDetailsContainer.appendChild(taskTitle);
   const detailsLine = createElement({
     type: 'span',
     attributes: { class: 'details-line' },
@@ -609,8 +620,17 @@ async function createExtensionCard(data) {
   const deadlineValue = createElement({
     type: 'span',
     innerText: `${deadlineDays}`,
+    attributes: { class: 'tooltip-container' },
   });
   deadlineContainer.appendChild(deadlineValue);
+
+  const deadlineTooltip = createElement({
+    type: 'span',
+    attributes: { class: 'tooltip' },
+    innerText: `${fullDateString(secondsToMilliSeconds(data.oldEndsOn))}`,
+  });
+
+  deadlineValue.appendChild(deadlineTooltip);
 
   const taskStatusContainer = createElement({ type: 'div' });
   taskDetailsContainer.appendChild(taskStatusContainer);
@@ -653,7 +673,9 @@ async function createExtensionCard(data) {
   });
   datesDetailsContainer.appendChild(extensionDetailsLine);
 
-  const extensionForContainer = createElement({ type: 'div' });
+  const extensionForContainer = createElement({
+    type: 'div',
+  });
   datesContainer.appendChild(extensionForContainer);
 
   const extensionForText = createElement({
@@ -665,8 +687,19 @@ async function createExtensionCard(data) {
 
   const extensionForValue = createElement({
     type: 'span',
-    innerText: ` ${extensionDays}`,
+    attributes: { class: 'tooltip-container' },
+    innerText: ` +${extensionDays}`,
   });
+
+  const extensionToolTip = createElement({
+    type: 'span',
+    attributes: { class: 'tooltip' },
+    innerText: `New Deadline: ${fullDateString(
+      secondsToMilliSeconds(data.newEndsOn),
+    )}`,
+  });
+
+  extensionForValue.appendChild(extensionToolTip);
 
   const extensionInput = createElement({
     type: 'input',
@@ -681,8 +714,10 @@ async function createExtensionCard(data) {
 
   extensionForContainer.appendChild(extensionInput);
   extensionForContainer.appendChild(extensionForValue);
+  const requestedContainer = createElement({
+    type: 'div',
+  });
 
-  const requestedContainer = createElement({ type: 'div' });
   datesContainer.appendChild(requestedContainer);
 
   const requestedText = createElement({
@@ -694,10 +729,16 @@ async function createExtensionCard(data) {
 
   const requestedValue = createElement({
     type: 'span',
-    attributes: { class: 'requested-day' },
-
+    attributes: { class: 'requested-day tooltip-container' },
     innerText: ` ${requestedDaysAgo}`,
   });
+  const requestedToolTip = createElement({
+    type: 'span',
+    attributes: { class: 'tooltip' },
+    innerText: `${fullDateString(secondsToMilliSeconds(data.timestamp))}`,
+  });
+
+  requestedValue.appendChild(requestedToolTip);
   requestedContainer.appendChild(requestedValue);
 
   const cardAssigneeButtonContainer = createElement({
@@ -856,6 +897,13 @@ async function createExtensionCard(data) {
         });
     });
 
+    approveButton.addEventListener('mouseenter', (event) => {
+      approveIcon.src = CHECK_ICON_WHITE;
+    });
+    approveButton.addEventListener('mouseleave', (event) => {
+      approveIcon.src = CHECK_ICON;
+    });
+
     denyButton.addEventListener('click', (event) => {
       handleFormPropagation(event);
       const removeSpinner = addSpinner(rootElement);
@@ -872,6 +920,12 @@ async function createExtensionCard(data) {
           rootElement.classList.remove('disabled');
           removeSpinner();
         });
+    });
+    denyButton.addEventListener('mouseenter', (event) => {
+      denyIcon.src = CANCEL_ICON_WHITE;
+    });
+    denyButton.addEventListener('mouseleave', (event) => {
+      denyIcon.src = CANCEL_ICON;
     });
   }
 
@@ -971,7 +1025,7 @@ async function createExtensionCard(data) {
       secondsToMilliSeconds(formData.newEndsOn),
       secondsToMilliSeconds(data.oldEndsOn),
     );
-    extensionForValue.innerText = ` ${extDays}`;
+    extensionForValue.innerText = ` +${extDays}`;
 
     function revertDataChange() {
       titleText.innerText = previousTitle;

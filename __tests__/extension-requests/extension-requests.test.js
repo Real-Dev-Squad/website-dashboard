@@ -44,7 +44,8 @@ describe('Tests the Extension Requests Screen', () => {
           body: JSON.stringify(extensionRequestsList),
         });
       } else if (
-        url === 'https://api.realdevsquad.com/extension-requests?status=PENDING'
+        url ===
+        'https://api.realdevsquad.com/extension-requests?order=asc&size=5&dev=true&q=status%3APENDING'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -58,7 +59,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?status=ACCEPTED'
+        'https://api.realdevsquad.com/extension-requests?q=status%3AAPPROVED&dev=true&size=5&order=asc'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -95,7 +96,6 @@ describe('Tests the Extension Requests Screen', () => {
     expect(title).toBeTruthy();
     expect(searchBar).toBeTruthy();
     expect(filterButton).toBeTruthy();
-
     expect(extensionRequestsElement).toBeTruthy();
   });
 
@@ -200,7 +200,7 @@ describe.skip('Tests the new Extension Requests Screen', () => {
       const url = interceptedRequest.url();
       if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?size=10&dev=true&order=asc'
+        'https://api.realdevsquad.com/extension-requests?dev=true&size=5&order=asc'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -214,7 +214,7 @@ describe.skip('Tests the new Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?status=PENDING&size=10&dev=true&order=asc'
+        'https://api.realdevsquad.com/extension-requests?order=asc&size=5&dev=true&q=status%3APENDING'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -228,7 +228,7 @@ describe.skip('Tests the new Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?status=PENDING&size=10&dev=true&order=desc'
+        'https://api.realdevsquad.com/extension-requests?order=desc&size=5&dev=true&q=status%3APENDING'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -242,7 +242,7 @@ describe.skip('Tests the new Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?status=ACCEPTED&size=10&dev=true&order=asc'
+        'https://api.realdevsquad.com/extension-requests?q=status%3AAPPROVED&dev=true&size=5&order=asc'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -361,7 +361,6 @@ describe.skip('Tests the new Extension Requests Screen', () => {
     filterButton = await page.$('#filter-button');
     extensionCardsList = await page.$$('.extension-card');
     extensionRequestsElement = await page.$('.extension-requests-new');
-
     expect(title).toBeTruthy();
     expect(searchBar).toBeTruthy();
     expect(filterButton).toBeTruthy();
@@ -592,6 +591,27 @@ describe.skip('Tests the new Extension Requests Screen', () => {
       (el) => el.textContent,
     );
 
-    expect(originalReasonValue).toBe('b');
+    expect(originalReasonValue).toBe('test reason');
+  });
+
+  test('Checks whether tooltip is visible on hover', async () => {
+    const element = await page.$('.tooltip-container');
+
+    await element.hover();
+
+    await page.waitForTimeout(500);
+    const isTooltipVisible = await page.evaluate(() => {
+      const tooltip = document.querySelector('.tooltip');
+      const style = window.getComputedStyle(tooltip);
+
+      return (
+        style &&
+        style.display !== 'none' &&
+        style.visibility !== 'hidden' &&
+        style.opacity !== '0'
+      );
+    });
+
+    expect(isTooltipVisible).toBe(true);
   });
 });
