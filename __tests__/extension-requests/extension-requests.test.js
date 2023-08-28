@@ -96,9 +96,6 @@ describe('Tests the Extension Requests Screen', () => {
     expect(title).toBeTruthy();
     expect(searchBar).toBeTruthy();
     expect(filterButton).toBeTruthy();
-
-    await page.waitForTimeout(60000);
-
     expect(extensionRequestsElement).toBeTruthy();
   });
 
