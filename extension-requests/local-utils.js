@@ -11,22 +11,30 @@ const Order = {
 
 const DEFAULT_PAGE_SIZE = 5;
 async function getExtensionRequests(query = {}, nextLink) {
-  const initialURI = nextLink || '/extension-requests';
+  const { dev } = query;
+  let finalUrl;
+  if (dev) {
+    finalUrl =
+      API_BASE_URL + (nextLink || generateExtensionRequestParams(query));
+  } else {
+    const initialURI = nextLink || '/extension-requests';
 
-  const url = new URL(API_BASE_URL + initialURI);
+    const url = new URL(API_BASE_URL + initialURI);
 
-  queryParams = ['assignee', 'status', 'taskId', 'size', 'dev', 'order'];
-  queryParams.forEach((key) => {
-    if (query[key]) {
-      if (Array.isArray(query[key])) {
-        query[key].forEach((value) => url.searchParams.append(key, value));
-      } else {
-        url.searchParams.append(key, query[key]);
+    queryParams = ['assignee', 'status', 'taskId', 'size', 'dev', 'order'];
+    queryParams.forEach((key) => {
+      if (query[key]) {
+        if (Array.isArray(query[key])) {
+          query[key].forEach((value) => url.searchParams.append(key, value));
+        } else {
+          url.searchParams.append(key, query[key]);
+        }
       }
-    }
-  });
+    });
+    finalUrl = url.toString();
+  }
 
-  const res = await fetch(url, {
+  const res = await fetch(finalUrl, {
     credentials: 'include',
     method: 'GET',
     headers: {
@@ -35,7 +43,32 @@ async function getExtensionRequests(query = {}, nextLink) {
   });
   return await res.json();
 }
+const generateExtensionRequestParams = (nextPageParams) => {
+  const queryStringList = [];
+  const searchQueries = ['assignee', 'taskId', 'status'];
+  const urlSearchParams = new URLSearchParams();
 
+  for (const [key, value] of Object.entries(nextPageParams)) {
+    if (!value) continue;
+
+    if (searchQueries.includes(key)) {
+      let queryString;
+      if (Array.isArray(value)) {
+        queryString = key + ':' + value.join('+');
+      } else {
+        queryString = key + ':' + value;
+      }
+      queryStringList.push(queryString);
+    } else {
+      urlSearchParams.append(key, value);
+    }
+  }
+  if (queryStringList.length > 0)
+    urlSearchParams.append('q', queryStringList.join(','));
+
+  const uri = `/extension-requests?${urlSearchParams.toString()}`;
+  return uri;
+};
 async function updateExtensionRequest({ id, body }) {
   const url = `${API_BASE_URL}/extension-requests/${id}`;
   const res = await fetch(url, {
