@@ -59,6 +59,20 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
+        'https://api.realdevsquad.com/extension-requests?status=PENDING&size=5&order=asc'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(extensionRequestsListPending),
+        });
+      } else if (
+        url ===
         'https://api.realdevsquad.com/extension-requests?q=status%3AAPPROVED&dev=true&size=5&order=asc'
       ) {
         interceptedRequest.respond({
