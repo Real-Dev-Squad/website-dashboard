@@ -51,7 +51,6 @@ describe('Task Requests', () => {
     it.only('should display the task requests card', async () => {
       const url = await page.evaluate(() => API_BASE_URL);
       const taskCards = await page.$$('.taskRequest__card');
-      await page.waitForTimeout(50000);
       const title = await taskCards[0].evaluate(
         (el) => el.children[0].textContent,
       );
