@@ -212,10 +212,7 @@ async function renderRequestors(requestors) {
 }
 
 async function fetchTaskRequest() {
-  const res = await fetch(`${API_BASE_URL}/taskRequests/${taskRequestId}`, {
-    credentials: 'include',
-  });
-
+  const res = await fetch(`${API_BASE_URL}/taskRequests/${taskRequestId}`);
   const { data } = await res.json();
   return data;
 }
