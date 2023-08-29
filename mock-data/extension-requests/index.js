@@ -24,9 +24,59 @@ const extensionRequestsList = {
       title: 'A new title',
     },
   ],
-  next: '/extension-requests?size=10&dev=true',
+  next: '/extension-requests?dev=true&size=5&order=asc',
 };
 
+const extensionRequestsListPendingDescending = {
+  message: 'Extension Requests returned successfully!',
+  allExtensionRequests: [
+    {
+      assignee: 'randhir',
+      id: 'QISvF7kAmnD9vXHwwIs8',
+      newEndsOn: 1690528980,
+      oldEndsOn: 1689954609.948,
+      reason: 'b',
+      status: 'PENDING',
+      taskId: 'PYj79ki2agB0q5JN3kUf',
+      timestamp: 1691993520.03,
+      title: 'A new title',
+    },
+    {
+      assignee: 'randhir',
+      id: 'QISvF7kAmnD9vXHwwIs7',
+      newEndsOn: 1690528980,
+      oldEndsOn: 1689954609.948,
+      reason: 'b',
+      status: 'PENDING',
+      taskId: 'PYj79ki2agB0q5JN3kUf',
+      timestamp: 1691907153.157,
+      title: 'A new title',
+    },
+    {
+      assignee: 'randhir',
+      id: 'QISvF7kAmnD9vXHwwIsG',
+      newEndsOn: 1690528980,
+      oldEndsOn: 1689954609.948,
+      reason: 'b',
+      status: 'PENDING',
+      taskId: 'PYj79ki2agB0q5JN3kUf',
+      timestamp: 1691820785.341,
+      title: 'A new title',
+    },
+    {
+      assignee: 'sunny',
+      id: 'lGQ3AjUlgNB6Jd8jXaEC',
+      newEndsOn: 1690528980,
+      oldEndsOn: 1689954609.948,
+      reason: 'test reason',
+      status: 'PENDING',
+      taskId: 'PYj79ki2agB0q5JN3kUf',
+      timestamp: 1691734400.045,
+      title: 'A title',
+    },
+  ],
+  next: '/extension-requests?order=desc&size=5&dev=true&q=status%3APENDING',
+};
 const extensionRequestsListPending = {
   message: 'Extension Requests returned successfully!',
   allExtensionRequests: [
@@ -38,7 +88,7 @@ const extensionRequestsListPending = {
       reason: 'test reason',
       status: 'PENDING',
       taskId: 'PYj79ki2agB0q5JN3kUf',
-      timestamp: 1689233034,
+      timestamp: 1691734400.045,
       title: 'A title',
     },
     {
@@ -49,7 +99,7 @@ const extensionRequestsListPending = {
       reason: 'test reason',
       status: 'PENDING',
       taskId: 'PYj79ki2agB0q5JN3kUf',
-      timestamp: 1689233034,
+      timestamp: 1691820785.341,
       title: 'A new title',
     },
     {
@@ -60,8 +110,8 @@ const extensionRequestsListPending = {
       reason: 'test reason',
       status: 'PENDING',
       taskId: 'PYj79ki2agB0q5JN3kUf',
-      timestamp: 1689233034,
-      title: 'A new title',
+      timestamp: 1691907153.157,
+      title: 'A different title 1',
     },
     {
       assignee: 'randhir',
@@ -71,11 +121,11 @@ const extensionRequestsListPending = {
       reason: 'test reason',
       status: 'PENDING',
       taskId: 'PYj79ki2agB0q5JN3kUf',
-      timestamp: 1689233034,
-      title: 'A new title',
+      timestamp: 1691993520.03,
+      title: 'A different title 2',
     },
   ],
-  next: '/extension-requests?status=PENDING&size=10&dev=true',
+  next: '/extension-requests?order=asc&size=5&dev=true&q=status%3APENDING',
 };
 
 const extensionRequestsListApproved = {
@@ -104,11 +154,11 @@ const extensionRequestsListApproved = {
       title: 'test title',
     },
   ],
-  next: '/extension-requests?status=APPROVED&size=10&dev=true',
+  next: '/extension-requests?q=status%3AAPPROVED&dev=true&size=5&order=asc',
 };
 
 const extensionRequestResponse = {
-  message: 'Extension request APPROVED succesfully',
+  message: 'Extension request APPROVED successfully',
   extensionLog: {
     type: 'extensionRequests',
     meta: {
@@ -128,4 +178,5 @@ module.exports = {
   extensionRequestsListApproved,
   extensionRequestsListPending,
   extensionRequestResponse,
+  extensionRequestsListPendingDescending,
 };

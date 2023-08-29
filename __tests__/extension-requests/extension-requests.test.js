@@ -4,6 +4,7 @@ const {
   extensionRequestsListPending,
   extensionRequestsListApproved,
   extensionRequestResponse,
+  extensionRequestsListPendingDescending,
 } = require('../../mock-data/extension-requests');
 
 const { userSunny, userRandhir } = require('../../mock-data/users');
@@ -44,7 +45,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?status=PENDING&size=10'
+        'https://api.realdevsquad.com/extension-requests?order=asc&size=5&dev=true&q=status%3APENDING'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -58,7 +59,21 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?status=APPROVED&size=10'
+        'https://api.realdevsquad.com/extension-requests?status=PENDING&size=5&order=asc'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(extensionRequestsListPending),
+        });
+      } else if (
+        url ===
+        'https://api.realdevsquad.com/extension-requests?q=status%3AAPPROVED&dev=true&size=5&order=asc'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -95,7 +110,6 @@ describe('Tests the Extension Requests Screen', () => {
     expect(title).toBeTruthy();
     expect(searchBar).toBeTruthy();
     expect(filterButton).toBeTruthy();
-
     expect(extensionRequestsElement).toBeTruthy();
   });
 
@@ -200,7 +214,7 @@ describe.skip('Tests the new Extension Requests Screen', () => {
       const url = interceptedRequest.url();
       if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?size=10&dev=true'
+        'https://api.realdevsquad.com/extension-requests?dev=true&size=5&order=asc'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -214,7 +228,7 @@ describe.skip('Tests the new Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?status=PENDING&size=10&dev=true'
+        'https://api.realdevsquad.com/extension-requests?order=asc&size=5&dev=true&q=status%3APENDING'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -228,7 +242,21 @@ describe.skip('Tests the new Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?status=ACCEPTED&size=10&dev=true'
+        'https://api.realdevsquad.com/extension-requests?order=desc&size=5&dev=true&q=status%3APENDING'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(extensionRequestsListPendingDescending),
+        });
+      } else if (
+        url ===
+        'https://api.realdevsquad.com/extension-requests?q=status%3AAPPROVED&dev=true&size=5&order=asc'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -308,11 +336,26 @@ describe.skip('Tests the new Extension Requests Screen', () => {
           },
           body: JSON.stringify(extensionRequestResponse),
         });
+      } else if (
+        url ===
+        'https://api.realdevsquad.com/extension-requests/lGQ3AjUlgNB6Jd8jXaEC'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify({}),
+        });
       } else {
         interceptedRequest.continue();
       }
     });
     await page.goto('http://localhost:8000/extension-requests/index.html');
+
     await page.waitForNetworkIdle();
   });
 
@@ -332,7 +375,6 @@ describe.skip('Tests the new Extension Requests Screen', () => {
     filterButton = await page.$('#filter-button');
     extensionCardsList = await page.$$('.extension-card');
     extensionRequestsElement = await page.$('.extension-requests-new');
-
     expect(title).toBeTruthy();
     expect(searchBar).toBeTruthy();
     expect(filterButton).toBeTruthy();
@@ -346,7 +388,7 @@ describe.skip('Tests the new Extension Requests Screen', () => {
     const firstExtensionCard = extensionCardsList[0];
 
     const titleText = await firstExtensionCard.$eval(
-      '.title-text',
+      '.card-title',
       (el) => el.textContent,
     );
     expect(titleText).toBe('A title');
@@ -419,7 +461,7 @@ describe.skip('Tests the new Extension Requests Screen', () => {
 
     for (const card of extensionCards) {
       const titleText = await card.$eval(
-        '.title-text',
+        '.card-title',
         (title) => title.textContent,
       );
 
@@ -433,7 +475,7 @@ describe.skip('Tests the new Extension Requests Screen', () => {
 
     const extensionCardsAfter = await page.$$('.extension-card');
 
-    expect(extensionCardsAfter.length).toBe(1);
+    expect(extensionCardsAfter.length).toBe(3);
   });
 
   it('Checks whether the card is not removed from display when api call is unsuccessful', async () => {
@@ -441,7 +483,7 @@ describe.skip('Tests the new Extension Requests Screen', () => {
 
     for (const card of extensionCards) {
       const titleText = await card.$eval(
-        '.title-text',
+        '.card-title',
         (title) => title.textContent,
       );
 
@@ -455,6 +497,135 @@ describe.skip('Tests the new Extension Requests Screen', () => {
 
     const extensionCardsAfter = await page.$$('.extension-card');
 
-    expect(extensionCardsAfter.length).toBe(2);
+    expect(extensionCardsAfter.length).toBe(4);
+  });
+
+  it('Checks whether the timestamp are sorted', async () => {
+    const extensionCards = await page.$$('.extension-card');
+
+    const requestDaysArray = [];
+    for (const card of extensionCards) {
+      const requestedDays = await card.$eval(
+        '.requested-day',
+        (requestDays) => requestDays.textContent,
+      );
+      requestDaysArray.push(requestedDays);
+    }
+    const sortedRequestDaysArray = [...requestDaysArray].sort().reverse();
+
+    expect(requestDaysArray).toEqual(sortedRequestDaysArray);
+  });
+
+  it('Checks whether the cards displayed in descending order when sort icon is clicked', async () => {
+    const sortButton = await page.$('.sort-button');
+
+    await sortButton.click();
+
+    const extensionCards = await page.$$('.extension-card');
+
+    const requestDaysArray = [];
+    for (const card of extensionCards) {
+      const requestedDays = await card.$eval(
+        '.requested-day',
+        (requestDays) => requestDays.textContent,
+      );
+      requestDaysArray.push(requestedDays);
+    }
+
+    const sortedRequestDaysArray = [...requestDaysArray].sort();
+
+    expect(requestDaysArray).toEqual(sortedRequestDaysArray);
+  });
+
+  test('Checks whether the card can be edited', async () => {
+    await page.click('.edit-button');
+
+    const newTitle = 'New Title Text';
+    await page.$eval('.title-text-input', (el) => (el.value = ''));
+    await page.type('.title-text-input', newTitle);
+
+    const newDate = '2023-09-19T22:20';
+    await page.evaluate((newDate) => {
+      document.querySelector('.date-input').value = newDate;
+    }, newDate);
+
+    await page.$eval('.input-text-area', (el) => (el.innerText = ''));
+    const newReason = 'Updated reason text';
+    await page.type('.input-text-area', newReason);
+
+    await page.click('.update-button');
+
+    await page.waitForTimeout(1100);
+
+    await page.waitForNetworkIdle();
+
+    const updatedTitle = await page.$eval(
+      '.card-title',
+      (el) => el.textContent,
+    );
+
+    expect(updatedTitle).toBe(newTitle);
+
+    const updatedDateValue = await page.$eval('.date-input', (el) => el.value);
+    expect(updatedDateValue).toBe(newDate);
+
+    const updatedReasonValue = await page.$eval(
+      '.input-text-area',
+      (el) => el.value,
+    );
+    expect(updatedReasonValue).toBe(newReason);
+  });
+
+  test('Checks whether the card will return to initial state if the update is cancelled', async () => {
+    await page.click('.edit-button');
+
+    const newTitle = 'New Title Text';
+    await page.type('.title-text-input', newTitle);
+
+    const newDate = '2023-09-19T22:20';
+    await page.evaluate((newDate) => {
+      document.querySelector('.date-input').value = newDate;
+    }, newDate);
+    const newReason = 'Updated reason text';
+    await page.type('.input-text-area', newReason);
+
+    await page.click('.cancel-button');
+
+    await page.waitForNetworkIdle();
+
+    const originalTitle = await page.$eval(
+      '.card-title',
+      (el) => el.textContent,
+    );
+
+    expect(originalTitle).toBe('A title');
+
+    const originalReasonValue = await page.$eval(
+      '.reason-text',
+      (el) => el.textContent,
+    );
+
+    expect(originalReasonValue).toBe('test reason');
+  });
+
+  test('Checks whether tooltip is visible on hover', async () => {
+    const element = await page.$('.tooltip-container');
+
+    await element.hover();
+
+    await page.waitForTimeout(500);
+    const isTooltipVisible = await page.evaluate(() => {
+      const tooltip = document.querySelector('.tooltip');
+      const style = window.getComputedStyle(tooltip);
+
+      return (
+        style &&
+        style.display !== 'none' &&
+        style.visibility !== 'hidden' &&
+        style.opacity !== '0'
+      );
+    });
+
+    expect(isTooltipVisible).toBe(true);
   });
 });
