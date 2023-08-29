@@ -11,7 +11,13 @@ describe('Task Requests', () => {
   let page;
 
   beforeAll(async () => {
-    browser = await puppeteer.launch();
+    browser = await puppeteer.launch({
+      headless: 'new',
+      ignoreHTTPSErrors: true,
+      args: ['--incognito', '--disable-web-security'],
+      devtools: false,
+    });
+
     page = await browser.newPage();
 
     await page.setRequestInterception(true);
