@@ -24,7 +24,44 @@ body {
 #tasksNav {
   background-color: var(--blue-color);
   padding: 10px;
-  height: 2.5rem;
+  display: flex;
+}
+
+img {
+  height: 100%;
+  width: 100%;
+}
+
+.logo {
+  height: 50px;
+  width: 50px;
+}
+
+.sign-in-btn {
+  position: absolute;
+  right: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.sign-in-btn a {
+  margin: 10px;
+  width: 180px;
+  height: 30px;
+  padding: 5px;
+  background-color: var(--blue-color);
+  color: var(--white-color);
+  cursor: pointer;
+  border: 2px solid var(--white-color);
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.sign-in-btn a img {
+  height: 15px;
+  width: 15px;
+  position: relative;
+  top: 1px;
 }
 
 #createTask {
