@@ -109,7 +109,9 @@
 }
 
 .accordion img {
-  transition: transform 500ms ease, scale 100ms ease;
+  transition:
+    transform 500ms ease,
+    scale 100ms ease;
 }
 
 .accordion:hover img {
