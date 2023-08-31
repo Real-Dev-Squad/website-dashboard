@@ -26,9 +26,8 @@ describe('Home Page', () => {
     const syncUsersStatusButton = await page.$('#sync-users-status');
     expect(syncUsersStatusButton).toBeTruthy();
 
-    const spinnerInsideSyncUsersStatus = await syncUsersStatusButton.$(
-      '.spinner',
-    );
+    const spinnerInsideSyncUsersStatus =
+      await syncUsersStatusButton.$('.spinner');
     expect(spinnerInsideSyncUsersStatus).toBeTruthy();
 
     const syncUsersStatusUpdate = await page.$('#sync-users-status-update');
@@ -53,9 +52,8 @@ describe('Home Page', () => {
     const syncUnverifiedUsersButton = await page.$('#sync-unverified-users');
     expect(syncUnverifiedUsersButton).toBeTruthy();
 
-    const spinnerInsideSyncUnverifiedUsers = await syncUnverifiedUsersButton.$(
-      '.spinner',
-    );
+    const spinnerInsideSyncUnverifiedUsers =
+      await syncUnverifiedUsersButton.$('.spinner');
     expect(spinnerInsideSyncUnverifiedUsers).toBeTruthy();
 
     const syncUnverifiedUsersUpdate = await page.$(
