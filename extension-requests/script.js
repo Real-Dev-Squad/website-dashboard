@@ -18,8 +18,14 @@ const filterModal = document.getElementsByClassName(FILTER_MODAL)[0];
 const filterButton = document.getElementById(FILTER_BUTTON);
 const applyFilterButton = document.getElementById(APPLY_FILTER_BUTTON);
 const clearButton = document.getElementById(CLEAR_BUTTON);
+const sortButton = document.querySelector(SORT_BUTTON);
+const ascIcon = document.getElementById(SORT_ASC_ICON);
+const descIcon = document.getElementById(SORT_DESC_ICON);
 const searchElement = document.getElementById(SEARCH_ELEMENT);
 const params = new URLSearchParams(window.location.search);
+const lastElementContainer = document.querySelector(LAST_ELEMENT_CONTAINER);
+let nextLink = '';
+let isDataLoading = false;
 
 let allCardsList;
 let isFiltered = false;
@@ -32,30 +38,72 @@ const state = {
   currentExtensionRequest: null,
 };
 
-const render = async () => {
-  toggleStatusCheckbox(Status.PENDING);
-  await populateExtensionRequests({ status: Status.PENDING });
+const filterStates = {
+  status: Status.PENDING,
+  order: Order.ASCENDING,
+  size: DEFAULT_PAGE_SIZE,
+  dev: params.get('dev') === 'true',
 };
 
+const updateFilterStates = (key, value) => {
+  filterStates[key] = value;
+};
+
+const render = async () => {
+  addTooltipToSortButton();
+  toggleStatusCheckbox(Status.PENDING);
+  changeFilter();
+  await populateExtensionRequests(filterStates);
+  addIntersectionObserver();
+};
+
+const addIntersectionObserver = () => {
+  if (params.get('dev') === 'true') {
+    intersectionObserver.observe(lastElementContainer);
+  }
+};
+
+const removeIntersectionObserver = () => {
+  if (params.get('dev') === 'true') {
+    intersectionObserver.unobserve(lastElementContainer);
+  }
+};
+
+const changeFilter = () => {
+  nextLink = '';
+  extensionRequestsContainer.innerHTML = '';
+};
+
+const statusChange = () => {
+  nextLink = '';
+  extensionRequestsContainer.innerHTML = '';
+  addIntersectionObserver();
+};
 const initializeAccordions = () => {
-  let acc = document.getElementsByClassName('accordion');
+  let accordionList = document.querySelectorAll('.accordion.uninitialized');
   let i;
 
-  for (i = 0; i < acc.length; i++) {
-    acc[i].addEventListener('click', function () {
+  for (i = 0; i < accordionList.length; i++) {
+    accordionList[i].classList.remove('uninitialized');
+    accordionList[i].addEventListener('click', function () {
+      handleFormPropagation(event);
       this.classList.toggle('active');
       let panel = this.nextElementSibling;
       if (panel.style.maxHeight) {
         panel.style.maxHeight = null;
       } else {
         closeAllAccordions();
-        panel.style.maxHeight = panel.scrollHeight + 'px';
+        updateAccordionHeight(panel);
       }
     });
   }
 };
+
+const updateAccordionHeight = (element) => {
+  element.style.maxHeight = element.scrollHeight + 'px';
+};
 const closeAllAccordions = () => {
-  let accordionsList = document.getElementsByClassName('accordion');
+  let accordionsList = document.querySelectorAll('.accordion.active');
   for (let i = 0; i < accordionsList.length; i++) {
     let panel = accordionsList[i].nextElementSibling;
     if (panel.style.maxHeight) {
@@ -65,11 +113,20 @@ const closeAllAccordions = () => {
   }
 };
 
-async function populateExtensionRequests(query = {}) {
+const addTooltipToSortButton = () => {
+  const sortToolTip = createElement({
+    type: 'span',
+    attributes: { class: 'tooltip sort-button-tooltip' },
+    innerText: `Oldest first`,
+  });
+  sortButton.appendChild(sortToolTip);
+};
+async function populateExtensionRequests(query = {}, newLink) {
   try {
+    isDataLoading = true;
     addLoader(container);
-    extensionRequestsContainer.innerHTML = '';
-    const extensionRequests = await getExtensionRequests(query);
+    const extensionRequests = await getExtensionRequests(query, newLink);
+    nextLink = extensionRequests.next;
     const allExtensionRequests = extensionRequests.allExtensionRequests;
 
     allCardsList = [];
@@ -109,8 +166,35 @@ async function populateExtensionRequests(query = {}) {
     errorHeading.classList.add('error-visible');
   } finally {
     removeLoader('loader');
+    isDataLoading = false;
   }
 }
+
+const intersectionObserver = new IntersectionObserver(async (entries) => {
+  if (!nextLink) {
+    return;
+  }
+  if (entries[0].isIntersecting && !isDataLoading) {
+    await populateExtensionRequests({}, nextLink);
+  }
+});
+
+function handleSuccess(element) {
+  element.classList.add('success-card');
+  setTimeout(() => element.classList.remove('success-card'), 1000);
+}
+
+function handleFailure(element) {
+  element.classList.add('failed-card');
+  setTimeout(() => element.classList.remove('failed-card'), 1000);
+}
+
+function removeCard(element) {
+  element.classList.add('success-card');
+  element.classList.add('fade-out');
+  setTimeout(() => element.remove(), 800);
+}
+
 function addCheckbox(labelText, value, groupName) {
   const group = document.getElementById(groupName);
   const label = document.createElement('label');
@@ -159,15 +243,17 @@ function getCheckedValues(groupName) {
 applyFilterButton.addEventListener('click', async () => {
   filterModal.classList.toggle('hidden');
   const checkedValuesStatus = getCheckedValues('status-filter');
-
-  await populateExtensionRequests({ status: checkedValuesStatus });
+  changeFilter();
+  updateFilterStates('status', checkedValuesStatus);
+  await populateExtensionRequests(filterStates);
 });
 
 clearButton.addEventListener('click', async function () {
   clearCheckboxes('status-filter');
   filterModal.classList.toggle('hidden');
-
-  await populateExtensionRequests();
+  changeFilter();
+  updateFilterStates('status', '');
+  await populateExtensionRequests(filterStates);
 });
 filterModal.addEventListener('click', (event) => {
   event.stopPropagation();
@@ -200,16 +286,51 @@ searchElement.addEventListener(
   debounce((event) => {
     if (!event.target.value && isFiltered) {
       isFiltered = false;
+      addIntersectionObserver();
       renderFilteredCards((c) => true);
       return;
     } else if (!event.target.value) {
       return;
     }
 
-    renderFilteredCards((card) => card.assignee.includes(event.target.value));
+    removeIntersectionObserver();
+    renderFilteredCards((card) => card?.assignee?.includes(event.target.value));
     isFiltered = true;
   }, 500),
 );
+
+sortButton.addEventListener('click', async (event) => {
+  toggleTooltipText();
+  toggleSortIcon();
+  toggleOrder();
+  changeFilter();
+  await populateExtensionRequests(filterStates);
+});
+
+const toggleTooltipText = () => {
+  const tooltip = sortButton.querySelector('.tooltip');
+  if (tooltip.textContent === OLDEST_FIRST) {
+    tooltip.textContent = NEWEST_FIRST;
+  } else {
+    tooltip.textContent = OLDEST_FIRST;
+  }
+};
+const toggleOrder = () => {
+  if (filterStates.order === Order.DESCENDING) {
+    updateFilterStates('order', Order.ASCENDING);
+  } else {
+    updateFilterStates('order', Order.DESCENDING);
+  }
+};
+const toggleSortIcon = () => {
+  if (ascIcon.style.display === 'none') {
+    descIcon.style.display = 'none';
+    ascIcon.style.display = 'block';
+  } else {
+    descIcon.style.display = 'block';
+    ascIcon.style.display = 'none';
+  }
+};
 
 const showTaskDetails = async (taskId, approved) => {
   if (!taskId) return;
@@ -388,6 +509,10 @@ filterButton.addEventListener('click', (event) => {
 populateStatus();
 render();
 
+const handleFormPropagation = async (event) => {
+  event.preventDefault();
+};
+
 async function createExtensionCard(data) {
   //Api calls
   const userDataPromise = getUserDetails(data.assignee);
@@ -423,18 +548,35 @@ async function createExtensionCard(data) {
     attributes: { class: 'extension-card' },
   });
 
+  const formContainer = createElement({
+    type: 'form',
+    attributes: { class: 'extension-card-form' },
+  });
+
   const titleText = createElement({
     type: 'span',
-    attributes: { class: 'title-text' },
+    attributes: { class: 'card-title title-text' },
     innerText: data.title,
   });
-  rootElement.appendChild(titleText);
+
+  const titleInput = createElement({
+    type: 'input',
+    attributes: {
+      class: 'title-text title-text-input hidden',
+      id: 'title',
+      name: 'title',
+      value: data.title,
+    },
+  });
+
+  formContainer.appendChild(titleInput);
+  formContainer.appendChild(titleText);
 
   const summaryContainer = createElement({
     type: 'div',
     attributes: { class: 'summary-container' },
   });
-  rootElement.appendChild(summaryContainer);
+  formContainer.appendChild(summaryContainer);
 
   const taskDetailsContainer = createElement({
     type: 'div',
@@ -446,31 +588,24 @@ async function createExtensionCard(data) {
     type: 'div',
     attributes: { class: 'details-container' },
   });
-  taskDetailsContainer.appendChild(detailsContainer);
 
-  const taskDetailsHeading = createElement({
-    type: 'span',
-    attributes: { class: 'details-heading' },
-    innerText: 'Task Details',
-  });
-  detailsContainer.appendChild(taskDetailsHeading);
-
-  const externalLink = createElement({
+  const statusSiteLink = createElement({
     type: 'a',
-    attributes: { href: `${STATUS_BASE_URL}/tasks/${data.taskId}` },
-  });
-  detailsContainer.appendChild(externalLink);
-
-  const externalLinkIcon = createElement({
-    type: 'img',
     attributes: {
-      height: '12px',
-      src: EXTERNAL_LINK_ICON,
-      alt: 'external-link-icon',
+      href: `${STATUS_BASE_URL}/tasks/${data.taskId}`,
+      class: 'external-link',
     },
+    innerText: taskData.title,
   });
-  externalLink.appendChild(externalLinkIcon);
 
+  const taskTitle = createElement({
+    type: 'span',
+    attributes: { class: 'task-title' },
+    innerText: 'Task: ',
+  });
+
+  taskTitle.appendChild(statusSiteLink);
+  taskDetailsContainer.appendChild(taskTitle);
   const detailsLine = createElement({
     type: 'span',
     attributes: { class: 'details-line' },
@@ -490,8 +625,17 @@ async function createExtensionCard(data) {
   const deadlineValue = createElement({
     type: 'span',
     innerText: `${deadlineDays}`,
+    attributes: { class: 'tooltip-container' },
   });
   deadlineContainer.appendChild(deadlineValue);
+
+  const deadlineTooltip = createElement({
+    type: 'span',
+    attributes: { class: 'tooltip' },
+    innerText: `${fullDateString(secondsToMilliSeconds(data.oldEndsOn))}`,
+  });
+
+  deadlineValue.appendChild(deadlineTooltip);
 
   const taskStatusContainer = createElement({ type: 'div' });
   taskDetailsContainer.appendChild(taskStatusContainer);
@@ -505,7 +649,7 @@ async function createExtensionCard(data) {
 
   const taskStatusValue = createElement({
     type: 'span',
-    innerText: ` ${taskData.status}`,
+    innerText: ` ${taskData?.status}`,
   });
   taskStatusContainer.appendChild(taskStatusValue);
 
@@ -534,7 +678,9 @@ async function createExtensionCard(data) {
   });
   datesDetailsContainer.appendChild(extensionDetailsLine);
 
-  const extensionForContainer = createElement({ type: 'div' });
+  const extensionForContainer = createElement({
+    type: 'div',
+  });
   datesContainer.appendChild(extensionForContainer);
 
   const extensionForText = createElement({
@@ -546,11 +692,37 @@ async function createExtensionCard(data) {
 
   const extensionForValue = createElement({
     type: 'span',
-    innerText: ` ${extensionDays}`,
+    attributes: { class: 'tooltip-container' },
+    innerText: ` +${extensionDays}`,
   });
-  extensionForContainer.appendChild(extensionForValue);
 
-  const requestedContainer = createElement({ type: 'div' });
+  const extensionToolTip = createElement({
+    type: 'span',
+    attributes: { class: 'tooltip' },
+    innerText: `New Deadline: ${fullDateString(
+      secondsToMilliSeconds(data.newEndsOn),
+    )}`,
+  });
+
+  extensionForValue.appendChild(extensionToolTip);
+
+  const extensionInput = createElement({
+    type: 'input',
+    attributes: {
+      class: 'date-input hidden',
+      type: 'datetime-local',
+      name: 'newEndsOn',
+      id: 'newEndsOn',
+      value: dateTimeString(secondsToMilliSeconds(data.newEndsOn)),
+    },
+  });
+
+  extensionForContainer.appendChild(extensionInput);
+  extensionForContainer.appendChild(extensionForValue);
+  const requestedContainer = createElement({
+    type: 'div',
+  });
+
   datesContainer.appendChild(requestedContainer);
 
   const requestedText = createElement({
@@ -562,8 +734,16 @@ async function createExtensionCard(data) {
 
   const requestedValue = createElement({
     type: 'span',
+    attributes: { class: 'requested-day tooltip-container' },
     innerText: ` ${requestedDaysAgo}`,
   });
+  const requestedToolTip = createElement({
+    type: 'span',
+    attributes: { class: 'tooltip' },
+    innerText: `${fullDateString(secondsToMilliSeconds(data.timestamp))}`,
+  });
+
+  requestedValue.appendChild(requestedToolTip);
   requestedContainer.appendChild(requestedValue);
 
   const cardAssigneeButtonContainer = createElement({
@@ -631,6 +811,27 @@ async function createExtensionCard(data) {
     });
     editButton.appendChild(editIcon);
 
+    const updateWrapper = createElement({
+      type: 'div',
+      attributes: { class: 'update-wrapper hidden' },
+    });
+
+    extensionCardButtons.appendChild(updateWrapper);
+
+    const updateButton = createElement({
+      type: 'button',
+      attributes: { class: 'update-button' },
+      innerText: 'UPDATE',
+    });
+
+    const cancelButton = createElement({
+      type: 'button',
+      attributes: { class: 'cancel-button' },
+      innerText: 'CANCEL',
+    });
+    updateWrapper.appendChild(cancelButton);
+    updateWrapper.appendChild(updateButton);
+
     const denyButton = createElement({
       type: 'button',
       attributes: { class: 'deny-button' },
@@ -658,30 +859,84 @@ async function createExtensionCard(data) {
     extensionCardButtons.appendChild(approveButton);
 
     //Event listeners
-    editButton.addEventListener('click', () => {
-      showModal('update-form');
-      state.currentExtensionRequest = data;
-      fillUpdateForm();
+    editButton.addEventListener('click', (event) => {
+      handleFormPropagation(event);
+      toggleInputs();
+
+      editButton.classList.toggle('hidden');
+      updateWrapper.classList.toggle('hidden');
+      if (!panel.style.maxHeight) {
+        accordionButton.click();
+      }
+      updateAccordionHeight(panel);
     });
 
-    approveButton.addEventListener('click', () => {
+    updateButton.addEventListener('click', (event) => {
+      toggleInputs();
+      editButton.classList.toggle('hidden');
+      updateWrapper.classList.toggle('hidden');
+    });
+
+    cancelButton.addEventListener('click', (event) => {
+      handleFormPropagation(event);
+      toggleInputs();
+      editButton.classList.toggle('hidden');
+      updateWrapper.classList.toggle('hidden');
+    });
+
+    approveButton.addEventListener('click', (event) => {
+      handleFormPropagation(event);
+      const removeSpinner = addSpinner(rootElement);
+      rootElement.classList.add('disabled');
       updateExtensionRequestStatus({
         id: data.id,
         body: { status: Status.APPROVED },
-      });
+      })
+        .then(() => removeCard(rootElement))
+        .catch(() => {
+          handleFailure(rootElement);
+        })
+        .finally(() => {
+          rootElement.classList.remove('disabled');
+          removeSpinner();
+        });
     });
 
-    denyButton.addEventListener('click', () => {
+    approveButton.addEventListener('mouseenter', (event) => {
+      approveIcon.src = CHECK_ICON_WHITE;
+    });
+    approveButton.addEventListener('mouseleave', (event) => {
+      approveIcon.src = CHECK_ICON;
+    });
+
+    denyButton.addEventListener('click', (event) => {
+      handleFormPropagation(event);
+      const removeSpinner = addSpinner(rootElement);
+      rootElement.classList.add('disabled');
       updateExtensionRequestStatus({
         id: data.id,
         body: { status: Status.DENIED },
-      });
+      })
+        .then(() => removeCard(rootElement))
+        .catch(() => {
+          handleFailure(rootElement);
+        })
+        .finally(() => {
+          rootElement.classList.remove('disabled');
+          removeSpinner();
+        });
+    });
+    denyButton.addEventListener('mouseenter', (event) => {
+      denyIcon.src = CANCEL_ICON_WHITE;
+    });
+    denyButton.addEventListener('mouseleave', (event) => {
+      denyIcon.src = CANCEL_ICON;
     });
   }
 
   const accordionButton = createElement({
     type: 'button',
-    attributes: { class: 'accordion' },
+    attributes: { class: 'accordion uninitialized' },
   });
 
   const accordionContainer = createElement({ type: 'div' });
@@ -712,7 +967,22 @@ async function createExtensionCard(data) {
   });
   reasonContainer.appendChild(reasonDetailsLine);
 
-  const reasonParagraph = createElement({ type: 'p', innerText: data.reason });
+  const reasonParagraph = createElement({
+    type: 'p',
+    attributes: { class: 'reason-text' },
+    innerText: data.reason,
+  });
+  const reasonInput = createElement({
+    type: 'textarea',
+    attributes: {
+      class: 'input-text-area hidden',
+      id: 'reason',
+      name: 'reason',
+    },
+    innerText: data.reason,
+  });
+  reasonContainer.appendChild(reasonInput);
+
   reasonContainer.appendChild(reasonParagraph);
 
   const cardFooter = createElement({ type: 'div' });
@@ -720,7 +990,65 @@ async function createExtensionCard(data) {
 
   cardFooter.appendChild(accordionContainer);
 
-  rootElement.appendChild(cardFooter);
+  formContainer.appendChild(cardFooter);
 
+  rootElement.appendChild(formContainer);
+
+  formContainer.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    let formData = formDataToObject(new FormData(e.target));
+    formData['newEndsOn'] = new Date(formData['newEndsOn']).getTime() / 1000;
+    const removeSpinner = addSpinner(rootElement);
+    rootElement.classList.add('disabled');
+    const revertDataChange = updateCardData(formData);
+    updateAccordionHeight(panel);
+    updateExtensionRequest({
+      id: data.id,
+      body: formData,
+    })
+      .then(() => {
+        handleSuccess(rootElement);
+      })
+      .catch(() => {
+        revertDataChange();
+        handleFailure(rootElement);
+      })
+      .finally(() => {
+        rootElement.classList.remove('disabled');
+        removeSpinner();
+      });
+  });
+
+  function updateCardData(formData) {
+    const previousTitle = titleText.innerText;
+    const previousReason = reasonParagraph.innerText;
+    const previousExtensionValue = extensionForValue.innerText;
+
+    titleText.innerText = formData.title;
+    reasonParagraph.innerText = formData.reason;
+    const extDays = dateDiff(
+      secondsToMilliSeconds(formData.newEndsOn),
+      secondsToMilliSeconds(data.oldEndsOn),
+    );
+    extensionForValue.innerText = ` +${extDays}`;
+
+    function revertDataChange() {
+      titleText.innerText = previousTitle;
+      reasonParagraph.innerText = previousReason;
+      extensionForValue.innerText = previousExtensionValue;
+    }
+    return revertDataChange;
+  }
+
+  function toggleInputs() {
+    titleInput.classList.toggle('hidden');
+    titleText.classList.toggle('hidden');
+
+    reasonInput.classList.toggle('hidden');
+    reasonParagraph.classList.toggle('hidden');
+
+    extensionForValue.classList.toggle('hidden');
+    extensionInput.classList.toggle('hidden');
+  }
   return rootElement;
 }

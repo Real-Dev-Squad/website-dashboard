@@ -1,5 +1,9 @@
 'use strict';
-import { CANNOT_CONTAIN_GROUP, NO_SPACES_ALLOWED } from './constants.js';
+import {
+  CANNOT_CONTAIN_GROUP,
+  DEV_FEATURE_FLAG,
+  NO_SPACES_ALLOWED,
+} from './constants.js';
 import {
   removeGroupKeywordFromDiscordRoleName,
   getDiscordGroups,
@@ -13,6 +17,8 @@ const sections = document.querySelectorAll('.manage-groups, .create-group');
 const loader = document.querySelector('.backdrop');
 const userIsNotVerifiedText = document.querySelector('.not-verified-tag');
 const userSelfData = await getUserSelf();
+const params = new URLSearchParams(window.location.search);
+const isDev = params.get(DEV_FEATURE_FLAG) === 'true';
 
 /**
  * Create DOM for "created by author" line under groupName
@@ -21,17 +27,22 @@ const userSelfData = await getUserSelf();
 const createAuthorDetailsDOM = (firstName, lastName, imageUrl) => {
   const container = document.createElement('div');
   container.classList.add('created-by--container');
-  const userAvatar = document.createElement('img');
-  userAvatar.classList.add('created-by--avatar');
-  userAvatar.src = imageUrl;
-  userAvatar.setAttribute('alt', "group's creator image");
 
-  const createdBy = document.createElement('span');
-  createdBy.classList.add('created-by');
-  createdBy.textContent = `created by ${firstName} ${lastName}`;
+  if (imageUrl) {
+    const userAvatar = document.createElement('img');
+    userAvatar.classList.add('created-by--avatar');
+    userAvatar.src = imageUrl;
+    userAvatar.setAttribute('alt', "group's creator image");
+    container.appendChild(userAvatar);
+  }
 
-  container.appendChild(userAvatar);
-  container.appendChild(createdBy);
+  if (firstName || lastName) {
+    const createdBy = document.createElement('span');
+    createdBy.classList.add('created-by');
+    createdBy.textContent = `created by ${firstName ?? ''} ${lastName ?? ''}`;
+    container.appendChild(createdBy);
+  }
+
   return container;
 };
 
@@ -52,21 +63,29 @@ const memberAddRoleBody = {
  *
  * FOR RENDERING GROUP ROLES IN 'MANAGE ROLES' TAB
  */
-const groupsData = await getDiscordGroups();
+const groupsData = await getDiscordGroups(isDev);
 const groupRoles = document.querySelector('.groups-list');
 groupsData?.forEach((item) => {
   const group = document.createElement('li');
   group.setAttribute('id', item.roleid);
   group.classList.add('group-role');
-  if (window.location.search.slice(1) === item.rolename) {
+  const formattedRoleName = removeGroupKeywordFromDiscordRoleName(
+    item.rolename,
+  );
+
+  if (params.has(formattedRoleName)) {
     group.classList.add('active-group');
   }
 
   const groupname = document.createElement('p');
   groupname.classList.add('group-name');
   groupname.setAttribute('id', `name-${item.roleid}`);
-  groupname.setAttribute('data-member-count', item.memberCount);
-  groupname.textContent = removeGroupKeywordFromDiscordRoleName(item.rolename);
+
+  if (item.memberCount !== null && item.memberCount !== undefined) {
+    groupname.setAttribute('data-member-count', item.memberCount);
+  }
+
+  groupname.textContent = formattedRoleName;
 
   const createdBy = createAuthorDetailsDOM(
     item.firstName,
@@ -114,9 +133,9 @@ groupRoles?.addEventListener('click', function (event) {
   });
   const groupListItem = event.target?.closest('li');
   if (groupListItem) {
-    const newURL = `${window.location.pathname}?${
-      groupListItem.querySelector('p').textContent
-    }`;
+    const devFeatureFlag = isDev ? '&dev=true' : '';
+    const rolename = `${groupListItem.querySelector('p').textContent}`;
+    const newURL = `${window.location.pathname}?${rolename}${devFeatureFlag}`;
     window.history.pushState({}, '', newURL);
     groupListItem.classList.add('active-group');
     memberAddRoleBody.roleid = groupListItem.id;
@@ -168,10 +187,9 @@ buttonAddRole.addEventListener('click', async function () {
         const groupNameElement = document.getElementById(
           `name-${memberAddRoleBody.roleid}`,
         );
-        const currentCount =
-          +groupNameElement.getAttribute('data-member-count');
-        if (!isNaN(currentCount)) {
-          groupNameElement.setAttribute('data-member-count', currentCount + 1);
+        const currentCount = groupNameElement.getAttribute('data-member-count');
+        if (currentCount !== null && currentCount !== undefined) {
+          groupNameElement.setAttribute('data-member-count', +currentCount + 1);
         }
         alert(res.message);
       })
