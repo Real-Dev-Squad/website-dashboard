@@ -37,16 +37,34 @@ img {
   width: 50px;
 }
 
+.nav-links {
+  display: flex;
+}
+
+.nav-links .hamburger {
+  display: none;
+}
+
+.nav-links .links {
+  margin: auto;
+}
+
+.nav-links .links a {
+  text-decoration: none;
+  color: var(--white-color);
+  padding: 20px;
+}
+
 .sign-in-btn {
-  position: absolute;
-  right: 10px;
   display: flex;
   justify-content: center;
+  order: 3;
 }
 
 .sign-in-btn a {
+  position: absolute;
+  right: 10px;
   margin: 10px;
-  width: 180px;
   height: 30px;
   padding: 5px;
   background-color: var(--blue-color);
@@ -331,4 +349,55 @@ footer {
 
 .element-display-remove {
   display: none !important;
+}
+
+@media screen and (max-width: 970px) {
+  #tasksNav {
+    justify-content: space-between;
+  }
+
+  .sign-in-btn a {
+    position: static;
+  }
+
+  .sign-in-btn span {
+    display: none;
+  }
+  .logo {
+    order: 2;
+  }
+
+  .nav-links .hamburger {
+    order: 1;
+    display: inline-block;
+    margin: auto;
+    cursor: pointer;
+  }
+
+  .nav-links .hamburger .line {
+    width: 25px;
+    margin: 5px;
+    border: 2px solid var(--white-color);
+  }
+
+  .nav-links .links {
+    display: none;
+  }
+
+  .nav-links .active {
+    position: absolute;
+    top: 80px;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    background-color: var(--white-color);
+    width: 100%;
+    padding: 10px;
+  }
+  
+  .nav-links .links a {
+    color: var(--blue-color);
+  }
+
 }
