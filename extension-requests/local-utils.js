@@ -82,7 +82,6 @@ async function updateExtensionRequest({ id, body }) {
   if (res.status < 200 || res.status > 300) {
     throw new Error('Update failed.');
   }
-  return await res.json();
 }
 
 async function updateExtensionRequestStatus({ id, body }) {
