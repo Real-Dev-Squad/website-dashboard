@@ -10,6 +10,8 @@ const syncUnverifiedUsersButton = document.getElementById(
   SYNC_UNVERIFIED_USERS,
 );
 const syncUsersStatusUpdate = document.getElementById(SYNC_USERS_STATUS_UPDATE);
+const syncIdleUsersButton = document.getElementById(SYNC_IDLE_USERS);
+const syncIdleUsersUpdate = document.getElementById(SYNC_IDLE_USERS_UPDATE);
 const repoSyncStatusUpdate = document.getElementById(SYNC_REPO_STATUS_UPDATE);
 
 const syncExternalAccountsUpdate = document.getElementById(
@@ -43,6 +45,9 @@ export async function showSuperUserOptions(...privateBtns) {
       syncUnverifiedUsersUpdate.textContent = `Last Sync: ${
         localStorage.getItem('lastSyncUnverifiedUsers') ||
         'Synced Data Not Available'
+      }`;
+      syncIdleUsersUpdate.textContent = `Last Sync: ${
+        localStorage.getItem('lastSyncIdleUsers') || 'Synced Data Not Available'
       }`;
     }
   } catch (err) {
@@ -276,7 +281,6 @@ addClickEventListener(
   syncUnverifiedUsersUpdate,
   'POST',
 );
-
 const hamburgerDiv = document.querySelector('.hamburger');
 const navLinks = document.querySelector('.links');
 let toggle = true;
@@ -290,3 +294,11 @@ hamburgerDiv.addEventListener('click', function() {
     toggle = true;
   }
 });
+
+addClickEventListener(
+  syncIdleUsersButton,
+  '/discord-actions/group-idle',
+  'lastSyncIdleUsers',
+  syncIdleUsersUpdate,
+  'PUT',
+);
