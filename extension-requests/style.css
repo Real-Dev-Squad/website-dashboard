@@ -150,7 +150,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-top: 6px;
+  padding: 2px;
+}
+
+.check-icon {
+  margin-top: 4px;
 }
 
 .approve-button:hover {

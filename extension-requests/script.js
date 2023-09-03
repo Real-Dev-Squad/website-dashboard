@@ -24,6 +24,7 @@ const descIcon = document.getElementById(SORT_DESC_ICON);
 const searchElement = document.getElementById(SEARCH_ELEMENT);
 const params = new URLSearchParams(window.location.search);
 const lastElementContainer = document.querySelector(LAST_ELEMENT_CONTAINER);
+let extensionPageVersion = 0;
 let nextLink = '';
 let isDataLoading = false;
 
@@ -122,6 +123,8 @@ const addTooltipToSortButton = () => {
   sortButton.appendChild(sortToolTip);
 };
 async function populateExtensionRequests(query = {}, newLink) {
+  extensionPageVersion++;
+  const currentVersion = extensionPageVersion;
   try {
     isDataLoading = true;
     addLoader(container);
@@ -141,14 +144,6 @@ async function populateExtensionRequests(query = {}, newLink) {
           data['htmlElement'] = extensionRequestCard;
         });
       }
-
-      const extensionRequestCardList = await Promise.all(
-        extensionRequestPromiseList,
-      );
-
-      for (let extensionRequestCard of extensionRequestCardList) {
-        extensionRequestsContainer.appendChild(extensionRequestCard);
-      }
       initializeAccordions();
     } else {
       allExtensionRequests.forEach((data) => {
@@ -165,8 +160,10 @@ async function populateExtensionRequests(query = {}, newLink) {
     errorHeading.textContent = ERROR_MESSAGE_RELOAD;
     errorHeading.classList.add('error-visible');
   } finally {
-    removeLoader('loader');
-    isDataLoading = false;
+    if (currentVersion === extensionPageVersion) {
+      removeLoader('loader');
+      isDataLoading = false;
+    }
   }
 }
 
@@ -514,17 +511,19 @@ const handleFormPropagation = async (event) => {
 };
 
 async function createExtensionCard(data) {
+  //Create card element
+  const rootElement = createElement({
+    type: 'div',
+    attributes: { class: 'extension-card' },
+  });
+  extensionRequestsContainer.appendChild(rootElement);
+
+  const removeSpinner = addSpinner(rootElement);
+  rootElement.classList.add('disabled');
   //Api calls
   const userDataPromise = getUserDetails(data.assignee);
   const taskDataPromise = getTaskDetails(data.taskId);
 
-  const [{ taskData }, userData] = await Promise.all([
-    taskDataPromise,
-    userDataPromise,
-  ]);
-
-  const userImage = userData?.picture?.url ?? DEFAULT_AVATAR;
-  const userFirstName = userData?.first_name ?? data.assignee;
   const isDeadLineCrossed = Date.now() > secondsToMilliSeconds(data.oldEndsOn);
 
   const extensionDays = dateDiff(
@@ -541,12 +540,6 @@ async function createExtensionCard(data) {
     secondsToMilliSeconds(data.timestamp),
     (s) => s + ' ago',
   );
-
-  //Create card element
-  const rootElement = createElement({
-    type: 'div',
-    attributes: { class: 'extension-card' },
-  });
 
   const formContainer = createElement({
     type: 'form',
@@ -592,10 +585,8 @@ async function createExtensionCard(data) {
   const statusSiteLink = createElement({
     type: 'a',
     attributes: {
-      href: `${STATUS_BASE_URL}/tasks/${data.taskId}`,
       class: 'external-link',
     },
-    innerText: taskData.title,
   });
 
   const taskTitle = createElement({
@@ -649,7 +640,6 @@ async function createExtensionCard(data) {
 
   const taskStatusValue = createElement({
     type: 'span',
-    innerText: ` ${taskData?.status}`,
   });
   taskStatusContainer.appendChild(taskStatusValue);
 
@@ -766,14 +756,13 @@ async function createExtensionCard(data) {
 
   const assigneeImage = createElement({
     type: 'img',
-    attributes: { src: userImage, alt: userFirstName, class: 'assignee-image' },
+    attributes: { class: 'assignee-image' },
   });
   assigneeContainer.appendChild(assigneeImage);
 
   const assigneeNameElement = createElement({
     type: 'span',
     attributes: { class: 'assignee-name' },
-    innerText: userFirstName,
   });
   assigneeContainer.appendChild(assigneeNameElement);
 
@@ -852,7 +841,7 @@ async function createExtensionCard(data) {
     });
     const approveIcon = createElement({
       type: 'img',
-      attributes: { src: CHECK_ICON, alt: 'edit-icon' },
+      attributes: { class: 'check-icon', src: CHECK_ICON, alt: 'check-icon' },
     });
     approveButton.appendChild(approveIcon);
 
@@ -1050,5 +1039,22 @@ async function createExtensionCard(data) {
     extensionForValue.classList.toggle('hidden');
     extensionInput.classList.toggle('hidden');
   }
+
+  Promise.all([taskDataPromise, userDataPromise]).then((response) => {
+    const [{ taskData }, userData] = response;
+    const userImage = userData?.picture?.url ?? DEFAULT_AVATAR;
+    let userFirstName = userData?.first_name ?? data.assignee;
+    const taskStatus = taskData?.status?.replaceAll('_', ' ');
+    userFirstName = userFirstName ?? '';
+    statusSiteLink.attributes.href = `${STATUS_BASE_URL}/tasks/${data.taskId}`;
+    statusSiteLink.innerText = taskData.title;
+    assigneeImage.src = userImage;
+    assigneeImage.alt = userFirstName;
+    assigneeNameElement.innerText = userFirstName;
+    taskStatusValue.innerText = ` ${taskStatus}`;
+    removeSpinner();
+    rootElement.classList.remove('disabled');
+  });
+
   return rootElement;
 }
