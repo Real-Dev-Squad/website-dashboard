@@ -150,6 +150,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  padding-top: 6px;
 }
 
 .approve-button:hover {
@@ -227,6 +228,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 2px;
 }
 .deny-button:hover {
   background-color: var(--secondary600);
@@ -314,7 +316,6 @@
 .title-text-input {
   border-radius: 6px;
   border: 1px solid var(--black-color);
-  height: 1.6rem;
 }
 .input-text-area {
   width: 100%;

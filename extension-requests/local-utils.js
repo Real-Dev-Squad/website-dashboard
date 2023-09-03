@@ -79,10 +79,9 @@ async function updateExtensionRequest({ id, body }) {
       'Content-type': 'application/json',
     },
   });
-  if (res.status !== 200) {
+  if (res.status < 200 || res.status > 300) {
     throw new Error('Update failed.');
   }
-  return await res.json();
 }
 
 async function updateExtensionRequestStatus({ id, body }) {
@@ -96,7 +95,7 @@ async function updateExtensionRequestStatus({ id, body }) {
     },
   });
 
-  if (res.status !== 200) {
+  if (res.status < 200 || res.status > 300) {
     throw new Error('Update failed.');
   }
 
