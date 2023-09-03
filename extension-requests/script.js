@@ -27,9 +27,7 @@ const lastElementContainer = document.querySelector(LAST_ELEMENT_CONTAINER);
 let extensionPageVersion = 0;
 let nextLink = '';
 let isDataLoading = false;
-
-let allCardsList;
-let isFiltered = false;
+let userMap = new Map();
 if (params.get('dev') === 'true') {
   extensionRequestsContainer.classList.remove('extension-requests');
   extensionRequestsContainer.classList.add('extension-requests-new');
@@ -49,11 +47,29 @@ const filterStates = {
 const updateFilterStates = (key, value) => {
   filterStates[key] = value;
 };
-
+const getUser = async (username) => {
+  if (userMap.has(username)) {
+    return userMap.get(username);
+  } else {
+    return await getUserDetails(username);
+  }
+};
+const initializeUserMap = (userList) => {
+  userList.forEach((user) => {
+    userMap.set(user.username, {
+      first_name: user.first_name,
+      picture: { url: user.picture?.url },
+      id: user.id,
+    });
+  });
+};
 const render = async () => {
   addTooltipToSortButton();
   toggleStatusCheckbox(Status.PENDING);
   changeFilter();
+  getInDiscordUserList().then((response) => {
+    initializeUserMap(response.users);
+  });
   await populateExtensionRequests(filterStates);
   addIntersectionObserver();
 };
@@ -132,17 +148,11 @@ async function populateExtensionRequests(query = {}, newLink) {
     nextLink = extensionRequests.next;
     const allExtensionRequests = extensionRequests.allExtensionRequests;
 
-    allCardsList = [];
-
     if (params.get('dev') === 'true') {
       const extensionRequestPromiseList = [];
       for (let data of allExtensionRequests) {
         const extensionRequestCardPromise = createExtensionCard(data);
         extensionRequestPromiseList.push(extensionRequestCardPromise);
-        allCardsList.push(data);
-        extensionRequestCardPromise.then((extensionRequestCard) => {
-          data['htmlElement'] = extensionRequestCard;
-        });
       }
       initializeAccordions();
     } else {
@@ -260,39 +270,17 @@ window.onclick = function () {
   filterModal.classList.add('hidden');
 };
 
-const renderFilteredCards = (predicate) => {
-  extensionRequestsContainer.innerHTML = '';
-  let isEmpty = true;
-  for (const card of allCardsList) {
-    if (predicate(card)) {
-      isEmpty = false;
-      extensionRequestsContainer.append(card.htmlElement);
-    }
-  }
-
-  if (isEmpty) {
-    errorHeading.textContent = 'No Extension Requests found!';
-    errorHeading.classList.add('error-visible');
-  } else {
-    errorHeading.innerHTML = '';
-    errorHeading.classList.remove('error-visible');
-  }
-};
 searchElement.addEventListener(
   'input',
-  debounce((event) => {
-    if (!event.target.value && isFiltered) {
-      isFiltered = false;
-      addIntersectionObserver();
-      renderFilteredCards((c) => true);
-      return;
-    } else if (!event.target.value) {
-      return;
+  debounce(async (event) => {
+    const username = event.target.value;
+    if (username) {
+      const user = await getUser(username);
+      if (!user) return;
+      updateFilterStates('assignee', user.id);
+      changeFilter();
+      await populateExtensionRequests(filterStates);
     }
-
-    removeIntersectionObserver();
-    renderFilteredCards((card) => card?.assignee?.includes(event.target.value));
-    isFiltered = true;
   }, 500),
 );
 
@@ -521,7 +509,7 @@ async function createExtensionCard(data) {
   const removeSpinner = addSpinner(rootElement);
   rootElement.classList.add('disabled');
   //Api calls
-  const userDataPromise = getUserDetails(data.assignee);
+  const userDataPromise = getUser(data.assignee);
   const taskDataPromise = getTaskDetails(data.taskId);
 
   const isDeadLineCrossed = Date.now() > secondsToMilliSeconds(data.oldEndsOn);
