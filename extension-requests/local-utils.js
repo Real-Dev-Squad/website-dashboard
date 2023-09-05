@@ -247,3 +247,12 @@ const fullDateString = (timestamp) => {
   const date = new Date(timestamp);
   return `${daysOfWeek[date.getDay()]}, ${date.toLocaleString()}`;
 };
+
+function addEmptyPageMessage(container) {
+  const emptyPageMessage = createElement({
+    type: 'p',
+    attributes: { class: 'page-message' },
+    innerText: 'No extension requests to show!',
+  });
+  container.appendChild(emptyPageMessage);
+}

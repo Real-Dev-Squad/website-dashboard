@@ -61,3 +61,7 @@ function debounce(func, delay) {
     }, delay);
   };
 }
+
+async function addDelay(milliSeconds) {
+  await new Promise((resolve) => setTimeout(resolve, milliSeconds));
+}

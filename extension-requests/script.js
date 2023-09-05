@@ -48,6 +48,7 @@ const updateFilterStates = (key, value) => {
   filterStates[key] = value;
 };
 const getUser = async (username) => {
+  username = username?.toLowerCase();
   if (userMap.has(username)) {
     return userMap.get(username);
   } else {
@@ -59,7 +60,7 @@ const getUser = async (username) => {
 };
 const initializeUserMap = (userList) => {
   userList.forEach((user) => {
-    userMap.set(user.username, {
+    userMap.set(user?.username?.toLowerCase(), {
       first_name: user.first_name,
       picture: { url: user.picture?.url },
       id: user.id,
@@ -177,6 +178,9 @@ async function populateExtensionRequests(query = {}, newLink) {
       removeLoader('loader');
       isDataLoading = false;
     }
+    if (extensionRequestsContainer.innerHTML === '') {
+      addEmptyPageMessage(extensionRequestsContainer);
+    }
   }
 }
 
@@ -199,10 +203,15 @@ function handleFailure(element) {
   setTimeout(() => element.classList.remove('failed-card'), 1000);
 }
 
-function removeCard(element) {
+async function removeCard(element) {
   element.classList.add('success-card');
+  await addDelay(800);
   element.classList.add('fade-out');
-  setTimeout(() => element.remove(), 800);
+  await addDelay(800);
+  element.remove();
+  if (extensionRequestsContainer.innerHTML === '') {
+    addEmptyPageMessage(extensionRequestsContainer);
+  }
 }
 
 function addCheckbox(labelText, value, groupName) {
@@ -286,7 +295,11 @@ searchElement.addEventListener('keypress', async (event) => {
       for (const user of userList) {
         if (user) userIdList.push(user.id);
       }
-      if (userIdList.length === 0) return;
+      if (userIdList.length === 0) {
+        searchElement.setCustomValidity('No users found!');
+        searchElement.reportValidity();
+        return;
+      }
       updateFilterStates('assignee', userIdList);
       changeFilter();
       await populateExtensionRequests(filterStates);
@@ -883,13 +896,16 @@ async function createExtensionCard(data) {
         id: data.id,
         body: { status: Status.APPROVED },
       })
-        .then(() => removeCard(rootElement))
+        .then(async () => {
+          removeSpinner();
+          await removeCard(rootElement);
+        })
         .catch(() => {
+          removeSpinner();
           handleFailure(rootElement);
         })
         .finally(() => {
           rootElement.classList.remove('disabled');
-          removeSpinner();
         });
     });
 
@@ -908,13 +924,16 @@ async function createExtensionCard(data) {
         id: data.id,
         body: { status: Status.DENIED },
       })
-        .then(() => removeCard(rootElement))
+        .then(async () => {
+          removeSpinner();
+          await removeCard(rootElement);
+        })
         .catch(() => {
+          removeSpinner();
           handleFailure(rootElement);
         })
         .finally(() => {
           rootElement.classList.remove('disabled');
-          removeSpinner();
         });
     });
     denyButton.addEventListener('mouseenter', (event) => {

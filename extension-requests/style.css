@@ -64,18 +64,10 @@
 .fade-out {
   transform: scaleY(0);
 }
-.success-card {
-  border: 1px solid var(--green-color);
-  background-color: var(--green-transparent);
-}
 
 .external-link {
   text-decoration: none;
   color: var(--medium-gray);
-}
-.failed-card {
-  border: 1px solid var(--red-color);
-  background-color: var(--red-transparent);
 }
 
 .task-title {
@@ -592,7 +584,7 @@ body {
 /* Loader Container */
 .loader-text {
   text-align: center;
-  font-size: 2rem;
+  font-size: 1.5rem;
 }
 
 .loader {
@@ -600,8 +592,8 @@ body {
 }
 
 .loader p {
-  font-weight: 800;
-  font-size: 3em;
+  font-weight: 600;
+  font-size: 2em;
 }
 
 /* Error Heading */
@@ -636,6 +628,12 @@ body {
 }
 .sort-button:hover {
   background-color: var(--medium-gray);
+}
+
+.page-message {
+  margin: auto;
+  font-weight: 800;
+  font-size: 2em;
 }
 
 .funnel-icon {
@@ -766,6 +764,18 @@ body {
 .disabled {
   opacity: 0.5;
   pointer-events: none;
+}
+
+.success-card {
+  opacity: 1;
+  border: 1px solid var(--green-color);
+  background-color: var(--green-transparent);
+}
+
+.failed-card {
+  opacity: 1;
+  border: 1px solid var(--red-color);
+  background-color: var(--red-transparent);
 }
 
 .spinner {
