@@ -63,6 +63,18 @@ describe('Home Page', () => {
     );
     expect(syncUnverifiedUsersUpdate).toBeTruthy();
   });
+  it('should display the Sync Users nicknames button', async () => {
+    const syncNicknamesButton = await page.$('#sync-nicknames');
+    expect(syncNicknamesButton).toBeTruthy();
+
+    const spinnerInsideSyncNicknamesButton = await syncNicknamesButton.$(
+      '.spinner',
+    );
+    expect(spinnerInsideSyncNicknamesButton).toBeTruthy();
+
+    const syncNicknamesUpdate = await page.$('#sync-nicknames-status-update');
+    expect(syncNicknamesUpdate).toBeTruthy();
+  });
 
   it('should display the Create Goals anchor button', async () => {
     const createGoalsButton = await page.$('#create-goal');
