@@ -5,6 +5,7 @@ const {
   extensionRequestsListApproved,
   extensionRequestResponse,
   extensionRequestsListPendingDescending,
+  extensionRequestsListUserSearch,
 } = require('../../mock-data/extension-requests');
 
 const { userSunny, userRandhir } = require('../../mock-data/users');
@@ -56,6 +57,20 @@ describe('Tests the Extension Requests Screen', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
           body: JSON.stringify(extensionRequestsListPending),
+        });
+      } else if (
+        url ===
+        'https://api.realdevsquad.com/extension-requests?assignee=jbGcfZLGYjHwxQ1Zh8ZJ&status=PENDING&size=5&order=asc'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(extensionRequestsListUserSearch),
         });
       } else if (
         url ===
@@ -117,6 +132,8 @@ describe('Tests the Extension Requests Screen', () => {
     const ele = await page.$('input[id="assignee-search"]');
     await page.type('#assignee-search', 'sunny');
     await page.waitForTimeout(600); // wait for input debounce timer
+    await page.keyboard.press('Enter');
+    await page.waitForNetworkIdle();
     const cardsList = await page.$$('.extension-request');
     expect(cardsList.length).toBe(1);
     const cardTextContent = await page.evaluate(
@@ -190,7 +207,7 @@ describe('Tests the Extension Requests Screen', () => {
   });
 });
 
-describe.skip('Tests the new Extension Requests Screen', () => {
+describe('Tests the new Extension Requests Screen', () => {
   let browser;
   let page;
   let title;
@@ -471,7 +488,7 @@ describe.skip('Tests the new Extension Requests Screen', () => {
         break;
       }
     }
-    await page.waitForTimeout(850);
+    await page.waitForTimeout(1650);
 
     const extensionCardsAfter = await page.$$('.extension-card');
 
