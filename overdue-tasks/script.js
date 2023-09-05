@@ -11,6 +11,7 @@ const modalCreateForm = document.querySelector('.extension-requests-form');
 
 //pathname
 const url = window.location.href;
+const queryParams = new URLSearchParams(window.location.search);
 
 const state = {
   task: null,
@@ -18,6 +19,13 @@ const state = {
 };
 
 const render = async () => {
+  if (!devActive()) {
+    setTimeout(() => {
+      window.history.go(-1);
+    }, 2000);
+    return;
+  }
+
   try {
     addLoader(container);
     const overdueTasks = await getCurrentOverdueTasks();
@@ -175,4 +183,10 @@ function unassignTaskTrigger() {
   failure_btn.onclick = async function () {
     hideModal();
   };
+}
+
+function devActive() {
+  let dev = queryParams.get('dev');
+  dev = JSON.parse(dev);
+  return dev;
 }
