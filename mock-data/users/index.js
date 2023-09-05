@@ -134,6 +134,61 @@ const filteredUsersData = {
   ],
 };
 
+const userRandhir = {
+  message: 'Users returned successfully!',
+  users: [
+    {
+      id: '7yzVDl8s1ORNCtH9Ps7K',
+      profileURL: 'https://profile-service-rds-randhir.herokuapp.com/',
+      website: '',
+      incompleteUserDetails: false,
+      profileStatus: 'BLOCKED',
+      last_name: 'Kumar',
+      linkedin_id: 'randhir-kumar-a4a2981b0',
+      yoe: 4,
+      instagram_id: '',
+      github_display_name: 'Randhir Kumar Singh',
+      github_id: 'heyrandhir',
+      company: 'Autoliv',
+      designation: 'Engineer',
+      twitter_id: 'randhirxp',
+      first_name: 'Randhir',
+      status: 'active',
+      username: 'randhir',
+      picture: {
+        url: 'https://res.cloudinary.com/realdevsquad/image/upload/v1673312957/profile/DtR9sK7CysOVHP17zl8N/bbtkpea622crqotnhsa3.jpg',
+        publicId: 'profile/DtR9sK7CysOVHP17zl8N/bbtkpea622crqotnhsa3',
+      },
+      roles: {
+        archived: false,
+        member: true,
+      },
+    },
+  ],
+};
+
+const userSunny = {
+  message: 'Users returned successfully!',
+  users: [
+    {
+      id: 'iODXB6gfsjaZB9p0XlBw',
+      incompleteUserDetails: false,
+      github_display_name: 'Sunny Sahsi',
+      last_name: 'Sahsi',
+      github_id: 'sahsisunny',
+      first_name: 'Sunny',
+      username: 'sunny',
+      picture: {
+        url: 'https://res.cloudinary.com/realdevsquad/image/upload/v1673312957/profile/DtR9sK7CysOVHP17zl8N/bbtkpea622crqotnhsa3.jpg',
+        publicId: 'profile/DtR9sK7CysOVHP17zl8N/bbtkpea622crqotnhsa3',
+      },
+      roles: {
+        archived: false,
+      },
+    },
+  ],
+};
+
 const user = {
   id: 'iODXB6gfsjaZB9p0XlBw',
   incompleteUserDetails: false,
@@ -146,4 +201,11 @@ const user = {
     archived: false,
   },
 };
-module.exports = { allUsersData, filteredUsersData, user };
+
+module.exports = {
+  allUsersData,
+  filteredUsersData,
+  user,
+  userSunny,
+  userRandhir,
+};
