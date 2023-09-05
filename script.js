@@ -299,7 +299,7 @@ addClickEventListener(
 );
 addClickEventListener(
   syncNicknamesButton,
-  '/users/discord/update-nicknames',
+  '/users/discord/nickname',
   'lastSyncNicknames',
   syncNicknamesStatusUpdate,
   'POST',
