@@ -325,8 +325,13 @@ function createSingleTaskCard(task) {
   const dueDate = createElement({ type: 'div', classList: ['hidden-details'] });
   const dueDateTitle = createElement({ type: 'h3' });
   dueDateTitle.appendChild(createTextNode('Due Date'));
-  const dueDateValue = createElement({ type: 'p' });
-  dueDateValue.appendChild(createTextNode(task.endsOn));
+  const dueDateValue = createElement({
+    type: 'p',
+    classList: ['due-date-value'],
+  }); // added class for testing purpose
+  dueDateValue.appendChild(
+    createTextNode(generateReadableDateFromSecondsTimeStamp(task.endsOn)),
+  );
   dueDate.append(dueDateTitle, dueDateValue);
 
   const status = createElement({ type: 'div', classList: ['hidden-details'] });
@@ -339,6 +344,11 @@ function createSingleTaskCard(task) {
   div.append(dueDate, status);
   container.append(h2, p, div);
   return container;
+}
+
+function generateReadableDateFromSecondsTimeStamp(timeStamp) {
+  //created function for readable date format
+  return new Date(timeStamp * 1000).toDateString(); // new function because we are getting the value in seconds and not milliseconds
 }
 
 function fetchPrevTasks() {
