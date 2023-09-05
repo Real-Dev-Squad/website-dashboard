@@ -51,7 +51,10 @@ const getUser = async (username) => {
   if (userMap.has(username)) {
     return userMap.get(username);
   } else {
-    return await getUserDetails(username);
+    const user = await getUserDetails(username);
+    if (user) userMap.set(username, user);
+
+    return user;
   }
 };
 const initializeUserMap = (userList) => {
@@ -269,20 +272,31 @@ filterModal.addEventListener('click', (event) => {
 window.onclick = function () {
   filterModal.classList.add('hidden');
 };
-
-searchElement.addEventListener(
-  'input',
-  debounce(async (event) => {
-    const username = event.target.value;
-    if (username) {
-      const user = await getUser(username);
-      if (!user) return;
-      updateFilterStates('assignee', user.id);
+searchElement.addEventListener('keypress', async (event) => {
+  if (event.key === 'Enter') {
+    const usernames = event.target.value.trim();
+    if (usernames) {
+      const usernameList = usernames.split(',');
+      const userPromise = [];
+      for (const username of usernameList) {
+        userPromise.push(getUser(username));
+      }
+      const userList = await Promise.all(userPromise);
+      const userIdList = [];
+      for (const user of userList) {
+        if (user) userIdList.push(user.id);
+      }
+      if (userIdList.length === 0) return;
+      updateFilterStates('assignee', userIdList);
+      changeFilter();
+      await populateExtensionRequests(filterStates);
+    } else {
+      updateFilterStates('assignee', '');
       changeFilter();
       await populateExtensionRequests(filterStates);
     }
-  }, 500),
-);
+  }
+});
 
 sortButton.addEventListener('click', async (event) => {
   toggleTooltipText();
