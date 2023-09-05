@@ -165,8 +165,6 @@ async function populateExtensionRequests(query = {}, newLink) {
           data,
           extensionRequestCardHeadings,
         );
-        data['htmlElement'] = extensionRequestCard;
-        allCardsList.push(data);
         extensionRequestsContainer.appendChild(extensionRequestCard);
       });
     }
@@ -178,7 +176,10 @@ async function populateExtensionRequests(query = {}, newLink) {
       removeLoader('loader');
       isDataLoading = false;
     }
-    if (extensionRequestsContainer.innerHTML === '') {
+    if (
+      extensionRequestsContainer.innerHTML === '' &&
+      errorHeading.textContent === ''
+    ) {
       addEmptyPageMessage(extensionRequestsContainer);
     }
   }
