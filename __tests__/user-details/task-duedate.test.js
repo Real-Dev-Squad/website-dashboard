@@ -63,9 +63,9 @@ describe('Tasks On User Management Page', () => {
       async function accessingUserData() {
         const isSuperUser = true;
         if (isSuperUser) {
-          getUserTasks();
-          getUserPrs();
-          generateAcademicTabDetails();
+          await getUserTasks();
+          await getUserPrs();
+          await generateAcademicTabDetails();
           toggleAccordionTabsVisibility();
         } else {
           lockAccordiansForNonSuperUser();
