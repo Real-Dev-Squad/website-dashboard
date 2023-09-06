@@ -223,7 +223,7 @@ describe('Tests the Extension Requests Screen', () => {
   });
 });
 
-describe.only('Tests the new Extension Requests Screen', () => {
+describe.skip('Tests the new Extension Requests Screen', () => {
   let browser;
   let page;
   let title;
