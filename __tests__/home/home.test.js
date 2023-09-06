@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-
+const superUserData = require('../../mock-data/users');
 describe('Home Page', () => {
   let browser;
   let page;
@@ -13,7 +13,41 @@ describe('Home Page', () => {
       devtools: false,
     });
     page = await browser.newPage();
-
+    await page.setRequestInterception(true);
+    page.on('request', (interceptedRequest) => {
+      const url = interceptedRequest.url();
+      if (url === `https://api.realdevsquad.com/users/self`) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(superUserData),
+        });
+      } else if (
+        url === `https://api.realdevsquad.com/users/discord/nickname`
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          ok: true,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify({
+            numberOfUsersEffected: 5,
+            message: 'Users Nicknames updated successfully',
+          }),
+        });
+      } else {
+        interceptedRequest.continue();
+      }
+    });
     await page.goto('http://localhost:8000/');
     await page.waitForNetworkIdle();
   });
@@ -75,78 +109,25 @@ describe('Home Page', () => {
     const syncNicknamesUpdate = await page.$('#sync-nicknames-status-update');
     expect(syncNicknamesUpdate).toBeTruthy();
   });
-  // it('should display the latest sync date when a super_user clicks on the Sync Users nicknames button', async () => {
-  //   // Click the Sync Users nicknames button (assuming an action to trigger the sync)
-  //   const syncNicknamesButton = await page.$('#sync-nicknames');
-  //   expect(syncNicknamesButton).toBeTruthy();
-  //   jest.spyOn(global, 'fetch').mockResolvedValue({
-  //     json: jest.fn().mockResolvedValue({ latestSyncDate: '5/9/2023, 5:04:07 pm' }),
-  //   });
-  //   await page.evaluate(() => {
-  //     document.querySelector('#sync-nicknames').click();
-  //   });
-  //   // Wait for the latest sync date to be displayed
-  //   const latestSyncDateElement = await page.waitForSelector(
-  //     '#sync-nicknames-status-update',
-  //   );
-
-  //   // Check if the latest sync date element is displayed
-  //   expect(latestSyncDateElement).toBeTruthy();
-
-  //   // Get the text content of the latest sync date element
-  //   const latestSyncDateText = await page.evaluate(
-  //     (element) => element.textContent,
-  //     latestSyncDateElement,
-  //   );
-
-  //   // Perform your assertion for the format of the latest sync date, e.g., check if it's a valid date
-  //   // You can use a regular expression or a date parsing library to validate the format
-  //   // const validDateFormatRegex = /^Last Sync: (\d{1,2}\/\d{1,2}\/\d{4}, \d{1,2}:\d{2}:\d{2} [ap]m)$/i;
-  //   // expect(validDateFormatRegex.test(latestSyncDateText)).toBe(true);
-  //   console.log(latestSyncDateText);
-
-  // });
 
   it('should display the latest sync date when a super_user clicks on the Sync Users nicknames button', async () => {
-    // Mock the fetchDataFromApi function to return a specific response
-    jest.spyOn(global, 'fetch').mockResolvedValue({
-      status: 200,
-      ok: true,
-      json: jest.fn().mockResolvedValue({
-        numberOfUsersEffected: 5,
-        message: 'Users Nicknames updated successfully',
-      }),
-      // { latestSyncDate: new Date().toLocaleString() }
-    });
-    // Click the Sync Users nicknames button (assuming an action to trigger the sync)
     await page.evaluate(() => {
       document.querySelector('#sync-nicknames').click();
     });
-  
-    // Wait for the latest sync date to be displayed
-    const latestSyncDateElement = await page.waitForSelector(
+    await page.waitForNetworkIdle();
+
+    const latestSyncStatusElement = await page.waitForSelector(
       '#sync-nicknames-status-update',
     );
 
-    // Check if the latest sync date element is displayed
-    expect(latestSyncDateElement).toBeTruthy();
+    expect(latestSyncStatusElement).toBeTruthy();
 
-    // Get the text content of the latest sync date element
-    const latestSyncDateText = await page.evaluate(
+    const latestSyncStatusText = await page.evaluate(
       (element) => element.textContent,
-      latestSyncDateElement,
+      latestSyncStatusElement,
     );
-    console.log(latestSyncDateText);
 
-    // Define a regular expression to match the expected date format
-    // const expectedDateFormatRegex =
-    //   /^Last Sync: (\d{1,2}\/\d{1,2}\/\d{4}, \d{1,2}:\d{2}:\d{2} [ap]m)$/i;
-
-    // Use the regular expression to test if the date format matches the expected format
-    // const isDateFormatValid = expectedDateFormatRegex.test(latestSyncDateText);
-
-    // Assert that the date format is valid
-    // expect(isDateFormatValid).toBe(true);
+    expect(latestSyncStatusText).not.toBe(`Last Sync: Failed`);
   });
 
   it('should display the Create Goals anchor button', async () => {
