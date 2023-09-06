@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer');
+const { superUserData } = require('../../mock-data/users');
 
 describe('Home Page', () => {
   let browser;
@@ -13,6 +14,24 @@ describe('Home Page', () => {
       devtools: false,
     });
     page = await browser.newPage();
+    await page.setRequestInterception(true);
+    page.on('request', (interceptedRequest) => {
+      const url = interceptedRequest.url();
+      if (url === 'https://api.realdevsquad.com/users/self') {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(superUserData),
+        });
+      } else {
+        interceptedRequest.continue();
+      }
+    });
 
     await page.goto('http://localhost:8000/');
     await page.waitForNetworkIdle();
@@ -47,6 +66,24 @@ describe('Home Page', () => {
       '#sync-external-accounts-update',
     );
     expect(syncExternalAccountsUpdate).toBeTruthy();
+  });
+
+  it('should call the right api endpoint when Sync External Accounts button is clicked', async () => {
+    let isRightUrlCalled = false;
+    page.on('request', (interceptedRequest) => {
+      const url = interceptedRequest.url();
+      const httpMethod = interceptedRequest.method();
+      if (
+        url === 'https://api.realdevsquad.com/external-accounts/users' &&
+        httpMethod === 'PATCH'
+      ) {
+        isRightUrlCalled = true;
+      }
+    });
+    const syncExternalAccountsButton = await page.$('#sync-external-accounts');
+    await syncExternalAccountsButton.click();
+    await page.waitForNetworkIdle();
+    expect(isRightUrlCalled).toBe(true);
   });
 
   it('should display the Sync Unverified Users button', async () => {
