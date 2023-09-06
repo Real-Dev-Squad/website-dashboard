@@ -226,5 +226,5 @@ module.exports = {
   user,
   userSunny,
   userRandhir,
-  superUserData
+  superUserData,
 };
