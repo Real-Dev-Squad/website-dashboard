@@ -330,9 +330,30 @@ function createSingleTaskCard(task) {
     classList: ['due-date-value'],
   }); // added class for testing purpose
   dueDateValue.appendChild(
-    createTextNode(generateReadableDateFromSecondsTimeStamp(task.endsOn)),
+    createTextNode(
+      generateDaysToGo(
+        generateReadableDateFromSecondsTimeStamp(task.endsOn),
+        task.status,
+      ),
+    ),
   );
   dueDate.append(dueDateTitle, dueDateValue);
+
+  //creating tooltip, gets displayed when we hover the element
+  const toolTip = createElement({ type: 'span', classList: ['task-due-date'] }); //creating a span for tooltip
+  toolTip.appendChild(
+    createTextNode(
+      `Due Date: ${generateReadableDateFromSecondsTimeStamp(task.endsOn)}`,
+    ),
+  );
+
+  dueDateValue.appendChild(toolTip); //appending it to the dueDateValue that we have create above
+  dueDateValue.addEventListener('mouseover', (event) => {
+    toolTip.style.visibility = 'visible';
+  });
+  dueDateValue.addEventListener('mouseout', (event) => {
+    toolTip.style.visibility = 'hidden';
+  });
 
   const status = createElement({ type: 'div', classList: ['hidden-details'] });
   const statusTitle = createElement({ type: 'h3' });
@@ -349,6 +370,28 @@ function createSingleTaskCard(task) {
 function generateReadableDateFromSecondsTimeStamp(timeStamp) {
   //created function for readable date format
   return new Date(timeStamp * 1000).toDateString(); // new function because we are getting the value in seconds and not milliseconds
+}
+console.log(generateReadableDateFromSecondsTimeStamp('1688445662'));
+
+function generateDaysToGo(dateStr, status) {
+  const inputDate = new Date(dateStr);
+
+  const now = new Date();
+  const offset = 330 * 60 * 1000;
+  const currentDate = new Date(now.getTime() + offset);
+  const diff = inputDate - currentDate; // Calculates the difference in milliseconds
+  if (diff <= 0 && status == 'COMPLETED') {
+    return 'Task Completed Within Deadline';
+  } else if (diff <= 0) {
+    return 'Deadline Passed'; // Due date is in the past
+  } else if (diff < 24 * 60 * 60 * 1000) {
+    return 'Less Than a Day Remaining'; // Less than a day remaining
+  } else {
+    const daysRemaining = Math.floor(diff / (24 * 60 * 60 * 1000)); // Calculate the days remaining
+    return daysRemaining === 1
+      ? '1 day remaining'
+      : daysRemaining + ' days remaining'; // Handle singular and plural for 1 day and more than 1 day
+  }
 }
 
 function fetchPrevTasks() {
