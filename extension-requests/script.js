@@ -152,6 +152,9 @@ async function populateExtensionRequests(query = {}, newLink) {
     const allExtensionRequests = extensionRequests.allExtensionRequests;
 
     if (params.get('dev') === 'true') {
+      if (currentVersion !== extensionPageVersion) {
+        return;
+      }
       for (let data of allExtensionRequests) {
         createExtensionCard(data);
       }
@@ -168,10 +171,9 @@ async function populateExtensionRequests(query = {}, newLink) {
   } catch (error) {
     addErrorElement(extensionRequestsContainer);
   } finally {
-    if (currentVersion === extensionPageVersion) {
-      removeLoader('loader');
-      isDataLoading = false;
-    }
+    if (currentVersion !== extensionPageVersion) return;
+    removeLoader('loader');
+    isDataLoading = false;
     if (extensionRequestsContainer.innerHTML === '') {
       addEmptyPageMessage(extensionRequestsContainer);
     }
