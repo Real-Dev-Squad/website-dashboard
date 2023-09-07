@@ -28,11 +28,27 @@ describe('Home Page', () => {
           },
           body: JSON.stringify(superUserData),
         });
+      } else if (
+        url === `https://api.realdevsquad.com/users/discord/nickname`
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          ok: true,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify({
+            numberOfUsersEffected: 5,
+            message: 'Users Nicknames updated successfully',
+          }),
+        });
       } else {
         interceptedRequest.continue();
       }
     });
-
     await page.goto('http://localhost:8000/');
     await page.waitForNetworkIdle();
   });
@@ -99,6 +115,38 @@ describe('Home Page', () => {
       '#sync-unverified-users-update',
     );
     expect(syncUnverifiedUsersUpdate).toBeTruthy();
+  });
+  it('should display the Sync Users nicknames button', async () => {
+    const syncNicknamesButton = await page.$('#sync-nicknames');
+    expect(syncNicknamesButton).toBeTruthy();
+
+    const spinnerInsideSyncNicknamesButton = await syncNicknamesButton.$(
+      '.spinner',
+    );
+    expect(spinnerInsideSyncNicknamesButton).toBeTruthy();
+
+    const syncNicknamesUpdate = await page.$('#sync-nicknames-status-update');
+    expect(syncNicknamesUpdate).toBeTruthy();
+  });
+
+  it('should display the latest sync date when a super_user clicks on the Sync Users nicknames button', async () => {
+    await page.evaluate(() => {
+      document.querySelector('#sync-nicknames').click();
+    });
+    await page.waitForNetworkIdle();
+
+    const latestSyncStatusElement = await page.waitForSelector(
+      '#sync-nicknames-status-update',
+    );
+
+    expect(latestSyncStatusElement).toBeTruthy();
+
+    const latestSyncStatusText = await page.evaluate(
+      (element) => element.textContent,
+      latestSyncStatusElement,
+    );
+
+    expect(latestSyncStatusText).not.toBe(`Last Sync: Failed`);
   });
 
   it('should display the Create Goals anchor button', async () => {
