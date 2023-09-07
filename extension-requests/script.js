@@ -153,10 +153,8 @@ async function populateExtensionRequests(query = {}, newLink) {
     const allExtensionRequests = extensionRequests.allExtensionRequests;
 
     if (params.get('dev') === 'true') {
-      const extensionRequestPromiseList = [];
       for (let data of allExtensionRequests) {
-        const extensionRequestCardPromise = createExtensionCard(data);
-        extensionRequestPromiseList.push(extensionRequestCardPromise);
+        createExtensionCard(data);
       }
       initializeAccordions();
     } else {
