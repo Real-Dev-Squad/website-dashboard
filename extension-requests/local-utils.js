@@ -9,30 +9,9 @@ const Order = {
   ASCENDING: 'asc',
 };
 
-const DEFAULT_PAGE_SIZE = 5;
 async function getExtensionRequests(query = {}, nextLink) {
-  const { dev } = query;
-  let finalUrl;
-  if (dev) {
-    finalUrl =
-      API_BASE_URL + (nextLink || generateExtensionRequestParams(query));
-  } else {
-    const initialURI = nextLink || '/extension-requests';
-
-    const url = new URL(API_BASE_URL + initialURI);
-
-    queryParams = ['assignee', 'status', 'taskId', 'size', 'dev', 'order'];
-    queryParams.forEach((key) => {
-      if (query[key]) {
-        if (Array.isArray(query[key])) {
-          query[key].forEach((value) => url.searchParams.append(key, value));
-        } else {
-          url.searchParams.append(key, query[key]);
-        }
-      }
-    });
-    finalUrl = url.toString();
-  }
+  let finalUrl =
+    API_BASE_URL + (nextLink || generateExtensionRequestParams(query));
 
   const res = await fetch(finalUrl, {
     credentials: 'include',

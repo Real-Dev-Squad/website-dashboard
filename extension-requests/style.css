@@ -391,157 +391,7 @@ body {
   color: var(--white);
 }
 
-.extension-requests-modal-parent {
-  display: none;
-}
-
-.extension-requests-modal-parent.visible {
-  z-index: 1;
-  position: fixed;
-  top: 0;
-  left: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-width: 100vw;
-  min-height: 100vh;
-  background-color: var(--modal-color);
-  overflow-y: scroll;
-  padding-bottom: 1rem;
-}
-
-.extension-requests-modal-parent > * {
-  display: none;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  background-color: var(--white);
-  padding: 1.25rem;
-  border-radius: 5px;
-  min-width: 250px;
-}
-
-#close-modal {
-  align-self: center;
-}
-
-/* task info */
-.extension-requests-modal-parent[show='info'] .extension-requests-info {
-  display: flex;
-}
-
-.extension-requests-info {
-  position: absolute;
-  left: 30%;
-  right: 30%;
-  height: fit-content;
-}
-
-.extension-requests-info table {
-  text-align: left;
-  margin: 10px;
-  color: var(--black);
-  border-radius: 5px;
-}
-
-.extension-requests-info button {
-  background-color: var(--button-proceed);
-  border: none;
-  color: var(--white);
-  padding: 0.5rem 1rem;
-  font-size: medium;
-  font-weight: bold;
-  border-radius: 5px;
-  margin: 10px;
-}
-
-/* task info ends here */
-
-/* update form */
-.extension-requests-modal-parent[show='update-form'] .extension-requests-form {
-  display: flex;
-}
-
-.extension-requests-form {
-  position: absolute;
-  left: 30%;
-  right: 30%;
-  height: min-content;
-  overflow-y: scroll;
-  top: 10%;
-  bottom: 10%;
-}
-
-.extension-requests-form input,
-.extension-requests-form select {
-  margin: 5px 0px 15px 0px;
-  padding: 5px;
-  width: 100%;
-  border: none;
-  border-bottom: 1px solid var(--gray);
-}
-
-.extension-requests-form input:focus {
-  outline: none;
-  border-bottom: 1px solid var(--gray);
-}
-
-.extension-requests-form button {
-  background-color: var(--button-proceed);
-  border: none;
-  color: var(--white);
-  padding: 0.5rem 1rem;
-  font-size: medium;
-  font-weight: bold;
-  border-radius: 5px;
-  margin: 10px;
-}
-
-/* update form ends here */
-
-/* status form */
-.extension-requests-modal-parent[show='status-form']
-  .extension-requests-status-form {
-  display: flex;
-}
-
-.extension-requests-status-form input,
-.extension-requests-status-form select {
-  margin: 5px 0px 15px 0px;
-  padding: 5px;
-  width: 100%;
-  border: none;
-  border-bottom: 1px solid var(--gray);
-}
-
-.extension-requests-status-form input:focus {
-  outline: none;
-  border-bottom: 1px solid var(--gray);
-}
-
-.extension-requests-status-form button {
-  background-color: var(--button-proceed);
-  border: none;
-  color: var(--white);
-  padding: 0.5rem 1rem;
-  font-size: medium;
-  font-weight: bold;
-  border-radius: 5px;
-  margin: 10px;
-}
-
-/* status form ends here */
-
 .extension-requests {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(12.5rem, 22rem));
-  grid-auto-rows: 26rem;
-  flex-wrap: wrap;
-  gap: 1.25rem;
-  justify-content: center;
-}
-
-.extension-requests-new {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -671,6 +521,31 @@ body {
 #desc-sort-icon {
   display: none;
 }
+
+.success-card {
+  opacity: 1;
+  border: 1px solid var(--green-color);
+  background-color: var(--green-transparent);
+}
+
+.failed-card {
+  opacity: 1;
+  border: 1px solid var(--red-color);
+  background-color: var(--red-transparent);
+}
+
+.spinner {
+  border: 8px solid var(--white-gray);
+  border-radius: 50%;
+  border-top: 8px solid var(--dark-blue);
+  width: 1.5rem;
+  height: 1.5rem;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+  position: absolute;
+  top: 50%;
+  right: 50%;
+}
 /* Filter modal  */
 .filter-modal {
   width: 20%;
@@ -764,31 +639,6 @@ body {
 .disabled {
   opacity: 0.5;
   pointer-events: none;
-}
-
-.success-card {
-  opacity: 1;
-  border: 1px solid var(--green-color);
-  background-color: var(--green-transparent);
-}
-
-.failed-card {
-  opacity: 1;
-  border: 1px solid var(--red-color);
-  background-color: var(--red-transparent);
-}
-
-.spinner {
-  border: 8px solid var(--white-gray);
-  border-radius: 50%;
-  border-top: 8px solid var(--dark-blue);
-  width: 1.5rem;
-  height: 1.5rem;
-  -webkit-animation: spin 2s linear infinite;
-  animation: spin 2s linear infinite;
-  position: absolute;
-  top: 50%;
-  right: 50%;
 }
 
 @-webkit-keyframes spin {
