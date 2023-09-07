@@ -3,7 +3,6 @@ const extensionRequestsContainer = document.querySelector(
   '.extension-requests',
 );
 
-const errorHeading = document.querySelector('h2#error');
 const modalParent = document.querySelector('.extension-requests-modal-parent');
 const closeModal = document.querySelectorAll('#close-modal');
 
@@ -167,17 +166,13 @@ async function populateExtensionRequests(query = {}, newLink) {
       });
     }
   } catch (error) {
-    errorHeading.textContent = ERROR_MESSAGE_RELOAD;
-    errorHeading.classList.add('error-visible');
+    addErrorElement(extensionRequestsContainer);
   } finally {
     if (currentVersion === extensionPageVersion) {
       removeLoader('loader');
       isDataLoading = false;
     }
-    if (
-      extensionRequestsContainer.innerHTML === '' &&
-      errorHeading.textContent === ''
-    ) {
+    if (extensionRequestsContainer.innerHTML === '') {
       addEmptyPageMessage(extensionRequestsContainer);
     }
   }
@@ -354,8 +349,7 @@ const showTaskDetails = async (taskId, approved) => {
       createTaskInfoModal(taskData, approved, taskInfoModelHeadings),
     );
   } catch (error) {
-    errorHeading.textContent = 'Something went wrong';
-    errorHeading.classList.add('error-visible');
+    addErrorElement(extensionRequestsContainer);
     reload();
   } finally {
     removeLoader('loader');
@@ -433,8 +427,7 @@ async function onStatusFormSubmit(e) {
     });
     reload();
   } catch (error) {
-    errorHeading.textContent = 'Something went wrong';
-    errorHeading.classList.add('error-visible');
+    addErrorElement(extensionRequestsContainer);
     reload();
   } finally {
     removeLoader('loader');
@@ -450,10 +443,7 @@ async function onUpdateFormSubmit(e) {
       id: state.currentExtensionRequest.id,
       body: formData,
     });
-    reload();
-  } catch (error) {
-    errorHeading.textContent = 'Something went wrong';
-    errorHeading.classList.add('error-visible');
+    addErrorElement(extensionRequestsContainer);
     reload();
   } finally {
     removeLoader('loader');
