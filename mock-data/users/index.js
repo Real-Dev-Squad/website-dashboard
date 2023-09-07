@@ -71,25 +71,6 @@ const allUsersData = {
   ],
 };
 
-const superUserData = {
-  id: 'V4rqL1aDecNGoa1IxiCu',
-  incompleteUserDetails: false,
-  discordId: '12345',
-  roles: {
-    archived: false,
-    super_user: true,
-  },
-  linkedin_id: 'uiram',
-  last_name: 'Raghunathan',
-  yoe: '5',
-  github_display_name: 'Sriram',
-  company_name: 'Juniper networks ',
-  github_id: '19sriram',
-  designation: 'Front end engineer',
-  twitter_id: '19sriram',
-  first_name: 'Sriram',
-  username: '19sriram',
-};
 const filteredUsersData = {
   message: 'Users returned successfully!',
   users: [
