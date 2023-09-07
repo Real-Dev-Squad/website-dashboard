@@ -235,3 +235,11 @@ function addEmptyPageMessage(container) {
   });
   container.appendChild(emptyPageMessage);
 }
+
+function addErrorElement(container) {
+  const errorHeading = createElement({
+    type: 'h2',
+    innerText: ERROR_MESSAGE_RELOAD,
+  });
+  container.appendChild(errorHeading);
+}

@@ -2,9 +2,6 @@ const container = document.querySelector('.container');
 const extensionRequestsContainer = document.querySelector(
   '.extension-requests',
 );
-
-const errorHeading = document.querySelector('h2#error');
-
 const filterModal = document.getElementsByClassName(FILTER_MODAL)[0];
 const filterButton = document.getElementById(FILTER_BUTTON);
 const applyFilterButton = document.getElementById(APPLY_FILTER_BUTTON);
@@ -133,23 +130,20 @@ async function populateExtensionRequests(query = {}, newLink) {
     const extensionRequests = await getExtensionRequests(query, newLink);
     nextLink = extensionRequests.next;
     const allExtensionRequests = extensionRequests.allExtensionRequests;
-
+    if (currentVersion !== extensionPageVersion) {
+      return;
+    }
     for (let data of allExtensionRequests) {
       createExtensionCard(data);
     }
     initializeAccordions();
   } catch (error) {
-    errorHeading.textContent = ERROR_MESSAGE_RELOAD;
-    errorHeading.classList.add('error-visible');
+    addErrorElement(extensionRequestsContainer);
   } finally {
-    if (currentVersion === extensionPageVersion) {
-      removeLoader('loader');
-      isDataLoading = false;
-    }
-    if (
-      extensionRequestsContainer.innerHTML === '' &&
-      errorHeading.textContent === ''
-    ) {
+    if (currentVersion !== extensionPageVersion) return;
+    removeLoader('loader');
+    isDataLoading = false;
+    if (extensionRequestsContainer.innerHTML === '') {
       addEmptyPageMessage(extensionRequestsContainer);
     }
   }
