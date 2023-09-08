@@ -278,10 +278,10 @@ addClickEventListener(
 );
 addClickEventListener(
   syncExternalAccountsButton,
-  '/external-accounts/users',
+  '/external-accounts/users?action=discord-users-sync',
   'lastSyncExternalAccounts',
   syncExternalAccountsUpdate,
-  'PATCH',
+  'POST',
 );
 addClickEventListener(
   syncUnverifiedUsersButton,

@@ -90,8 +90,9 @@ describe('Home Page', () => {
       const url = interceptedRequest.url();
       const httpMethod = interceptedRequest.method();
       if (
-        url === 'https://api.realdevsquad.com/external-accounts/users' &&
-        httpMethod === 'PATCH'
+        url ===
+          'https://api.realdevsquad.com/external-accounts/users?action=discord-users-sync' &&
+        httpMethod === 'POST'
       ) {
         isRightUrlCalled = true;
       }
