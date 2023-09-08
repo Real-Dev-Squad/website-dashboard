@@ -330,7 +330,6 @@ function createSingleTaskCard(task) {
     classList: ['due-date-value'],
   }); // added class for testing purpose
 
-  //nns
   const daysToGo = generateDaysToGo(
     generateReadableDateFromSecondsTimeStamp(task.endsOn),
     task.status,
@@ -394,7 +393,7 @@ function generateDaysToGo(dateStr, status) {
   } else {
     const daysRemaining = Math.floor(diff / (24 * 60 * 60 * 1000)); // Calculate the days remaining
     return daysRemaining === 1
-      ? '1 day remaining'
+      ? '1 Day remaining'
       : daysRemaining + ' Days Remaining'; // Handle singular and plural for 1 day and more than 1 day
   }
 }
