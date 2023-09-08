@@ -107,7 +107,7 @@ describe('Tasks On User Management Page', () => {
       const textContent = await element.evaluate((el) => el.textContent);
 
       await expect(textContent).toMatch(
-        /Task Completed Within Deadline|2 days remaining|Deadline Passed/,
+        /Task Completed Within Deadline|2 days remaining|Deadline Passed|Less Than a Day Remaining/,
       );
 
       await element.evaluate((el) => {

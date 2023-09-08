@@ -384,7 +384,7 @@ function generateDaysToGo(dateStr, status) {
     return 'Task Completed Within Deadline';
   } else if (diff <= 0) {
     return 'Deadline Passed'; // Due date is in the past
-  } else if (diff < 24 * 60 * 60 * 1000) {
+  } else if (diff > 0 && diff < 24 * 60 * 60 * 1000) {
     return 'Less Than a Day Remaining'; // Less than a day remaining
   } else {
     const daysRemaining = Math.floor(diff / (24 * 60 * 60 * 1000)); // Calculate the days remaining
