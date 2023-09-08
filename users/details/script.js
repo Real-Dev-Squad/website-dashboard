@@ -321,7 +321,15 @@ function createSingleTaskCard(task) {
   const h2 = createElement({ type: 'h2', classList: ['task-title'] });
   h2.appendChild(createTextNode(task?.title));
   const p = createElement({ type: 'p', classList: ['task-description'] });
-  p.appendChild(createTextNode(task?.purpose));
+
+  if (params.get('dev') === 'true') {
+    if (task?.purpose == undefined) {
+      p.appendChild(createTextNode('N/A'));
+    }
+  } else {
+    p.appendChild(createTextNode(task?.purpose));
+  }
+
   const div = createElement({ type: 'div', classList: ['task-details'] });
 
   const dueDate = createElement({ type: 'div', classList: ['hidden-details'] });
