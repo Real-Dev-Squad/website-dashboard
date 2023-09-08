@@ -9,10 +9,15 @@ const syncExternalAccountsButton = document.getElementById(
 const syncUnverifiedUsersButton = document.getElementById(
   SYNC_UNVERIFIED_USERS,
 );
+const syncNicknamesButton = document.getElementById(SYNC_NICKNAMES);
 const syncUsersStatusUpdate = document.getElementById(SYNC_USERS_STATUS_UPDATE);
 const syncIdleUsersButton = document.getElementById(SYNC_IDLE_USERS);
 const syncIdleUsersUpdate = document.getElementById(SYNC_IDLE_USERS_UPDATE);
 const repoSyncStatusUpdate = document.getElementById(SYNC_REPO_STATUS_UPDATE);
+
+const syncNicknamesStatusUpdate = document.getElementById(
+  SYNC_NICKNAMES_STATUS_UPDATE,
+);
 
 const syncExternalAccountsUpdate = document.getElementById(
   SYNC_EXTERNAL_ACCOUNTS_UPDATE,
@@ -49,6 +54,12 @@ export async function showSuperUserOptions(...privateBtns) {
       syncIdleUsersUpdate.textContent = `Last Sync: ${
         localStorage.getItem('lastSyncIdleUsers') || 'Synced Data Not Available'
       }`;
+<<<<<<< HEAD
+=======
+      syncNicknamesStatusUpdate.textContent = `Last Sync: ${
+        localStorage.getItem('lastSyncNicknames') || 'Synced Data Not Available'
+      }`;
+>>>>>>> 508f7336d34240bdf042b73bba13bf14afe08065
     }
   } catch (err) {
     console.log(err);
@@ -252,6 +263,7 @@ const repoSyncHandler = async (event) => {
 repoSyncButton.addEventListener('click', repoSyncHandler);
 
 // Attach (button,API,cookie name,div element of status,HTTP method of API
+
 addClickEventListener(
   syncUsersStatusButton,
   {
@@ -281,6 +293,7 @@ addClickEventListener(
   syncUnverifiedUsersUpdate,
   'POST',
 );
+<<<<<<< HEAD
 const hamburgerDiv = document.querySelector('.hamburger');
 const navLinks = document.querySelector('.links');
 let toggle = true;
@@ -295,6 +308,8 @@ hamburgerDiv.addEventListener('click', function() {
   }
 });
 
+=======
+>>>>>>> 508f7336d34240bdf042b73bba13bf14afe08065
 addClickEventListener(
   syncIdleUsersButton,
   '/discord-actions/group-idle',
@@ -302,3 +317,13 @@ addClickEventListener(
   syncIdleUsersUpdate,
   'PUT',
 );
+<<<<<<< HEAD
+=======
+addClickEventListener(
+  syncNicknamesButton,
+  '/users/discord/nickname',
+  'lastSyncNicknames',
+  syncNicknamesStatusUpdate,
+  'POST',
+);
+>>>>>>> 508f7336d34240bdf042b73bba13bf14afe08065
