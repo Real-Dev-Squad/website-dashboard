@@ -87,10 +87,6 @@ describe('Tasks On User Management Page', () => {
     const taskDiv = await page.$('.accordion-tasks');
     expect(taskDiv).toBeTruthy();
 
-    await page.evaluate((element) => {
-      element.style.backgroundColor = 'yellow'; // Change color to blue
-    }, taskDiv);
-
     await taskDiv.click();
 
     await page.waitForTimeout(500);
@@ -107,7 +103,7 @@ describe('Tasks On User Management Page', () => {
       const textContent = await element.evaluate((el) => el.textContent);
 
       await expect(textContent).toMatch(
-        /Task Completed Within Deadline|2 days remaining|Deadline Passed|Less Than a Day Remaining/,
+        /Task has been completed within Committed timeline|\d+ Days Remaining|Deadline Passed|Less Than a Day Remaining|1 Day Remaining/,
       );
 
       await element.evaluate((el) => {

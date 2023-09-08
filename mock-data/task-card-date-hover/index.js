@@ -4,7 +4,7 @@ const userDetailsApi = {
     {
       id: 'BMc4Bgy7FD7BOEa0NZzP',
       percentCompleted: 100,
-      endsOn: 1690437548,
+      endsOn: 1690437548, //27th july 2023
       github: {
         issue: { id: 1806764661, assignee: 'sahsisunny', status: 'open' },
       },
@@ -20,7 +20,7 @@ const userDetailsApi = {
     {
       id: 'CyGNTPGoA7Cgi3bbb3Mt',
       percentCompleted: 100,
-      endsOn: 1694232000,
+      endsOn: 1694232000, // Sept 09 2023
       isNoteworthy: true,
       createdBy: 'ankush',
       lossRate: { dinero: 200, neelam: 0 },
@@ -36,7 +36,7 @@ const userDetailsApi = {
     {
       id: 'F2A6XVGgM3IshzEd5niL',
       percentCompleted: 100,
-      endsOn: 1688445662,
+      endsOn: 1688445662, //Jul 4 2023
       isNoteworthy: false,
       createdBy: 'ankush',
       lossRate: { dinero: 100, neelam: 0 },

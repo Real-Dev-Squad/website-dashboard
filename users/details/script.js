@@ -329,14 +329,19 @@ function createSingleTaskCard(task) {
     type: 'p',
     classList: ['due-date-value'],
   }); // added class for testing purpose
-  dueDateValue.appendChild(
-    createTextNode(
-      generateDaysToGo(
-        generateReadableDateFromSecondsTimeStamp(task.endsOn),
-        task.status,
-      ),
-    ),
+
+  //nns
+  const daysToGo = generateDaysToGo(
+    generateReadableDateFromSecondsTimeStamp(task.endsOn),
+    task.status,
   );
+  if (daysToGo.includes('Less Than a Day Remaining')) {
+    // Wrap the text in a <span> with a yellow color style
+    dueDateValue.innerHTML = `<span style="color: yellow;">${daysToGo}</span>`;
+  } else {
+    dueDateValue.appendChild(createTextNode(daysToGo));
+  }
+
   dueDate.append(dueDateTitle, dueDateValue);
 
   //creating tooltip, gets displayed when we hover the element
@@ -381,7 +386,7 @@ function generateDaysToGo(dateStr, status) {
   const currentDate = new Date(now.getTime() + offset);
   const diff = inputDate - currentDate; // Calculates the difference in milliseconds
   if (diff <= 0 && status == 'COMPLETED') {
-    return 'Task Completed Within Deadline';
+    return 'Task has been completed within Committed timeline';
   } else if (diff <= 0) {
     return 'Deadline Passed'; // Due date is in the past
   } else if (diff > 0 && diff < 24 * 60 * 60 * 1000) {
@@ -390,7 +395,7 @@ function generateDaysToGo(dateStr, status) {
     const daysRemaining = Math.floor(diff / (24 * 60 * 60 * 1000)); // Calculate the days remaining
     return daysRemaining === 1
       ? '1 day remaining'
-      : daysRemaining + ' days remaining'; // Handle singular and plural for 1 day and more than 1 day
+      : daysRemaining + ' Days Remaining'; // Handle singular and plural for 1 day and more than 1 day
   }
 }
 
