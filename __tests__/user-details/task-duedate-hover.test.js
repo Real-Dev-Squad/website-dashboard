@@ -54,7 +54,7 @@ describe('Tasks On User Management Page', () => {
       }
     });
     await page.goto(
-      'http://localhost:8000/users/details/index.html?username=sunny-s',
+      'http://localhost:8000/users/details/index.html?username=sunny-s&dev=true',
     );
 
     await page.evaluate(async () => {
