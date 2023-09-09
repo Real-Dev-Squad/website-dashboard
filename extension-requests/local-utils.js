@@ -131,15 +131,18 @@ async function getUserDetails(username) {
 }
 
 async function getInDiscordUserList() {
-  const res = await fetch(`${API_BASE_URL}/users/search?role=in_discord`, {
-    credentials: 'include',
-    method: 'GET',
-    headers: {
-      'Content-type': 'application/json',
-    },
-  });
-
-  return await res.json();
+  try {
+    const res = await fetch(`${API_BASE_URL}/users/search?role=in_discord`, {
+      credentials: 'include',
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+    return await res.json();
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 function secondsToMilliSeconds(seconds) {

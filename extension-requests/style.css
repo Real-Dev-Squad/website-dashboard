@@ -323,6 +323,10 @@
   margin-left: 4px;
   border: 1px solid var(--black-color);
 }
+.reason-text {
+  white-space: normal;
+}
+
 .virtual {
   width: 100%;
 }
