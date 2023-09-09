@@ -54,12 +54,9 @@ export async function showSuperUserOptions(...privateBtns) {
       syncIdleUsersUpdate.textContent = `Last Sync: ${
         localStorage.getItem('lastSyncIdleUsers') || 'Synced Data Not Available'
       }`;
-<<<<<<< HEAD
-=======
       syncNicknamesStatusUpdate.textContent = `Last Sync: ${
         localStorage.getItem('lastSyncNicknames') || 'Synced Data Not Available'
       }`;
->>>>>>> 508f7336d34240bdf042b73bba13bf14afe08065
     }
   } catch (err) {
     console.log(err);
@@ -293,7 +290,7 @@ addClickEventListener(
   syncUnverifiedUsersUpdate,
   'POST',
 );
-<<<<<<< HEAD
+
 const hamburgerDiv = document.querySelector('.hamburger');
 const navLinks = document.querySelector('.links');
 let toggle = true;
@@ -308,8 +305,6 @@ hamburgerDiv.addEventListener('click', function() {
   }
 });
 
-=======
->>>>>>> 508f7336d34240bdf042b73bba13bf14afe08065
 addClickEventListener(
   syncIdleUsersButton,
   '/discord-actions/group-idle',
@@ -317,8 +312,6 @@ addClickEventListener(
   syncIdleUsersUpdate,
   'PUT',
 );
-<<<<<<< HEAD
-=======
 addClickEventListener(
   syncNicknamesButton,
   '/users/discord/nickname',
@@ -326,4 +319,3 @@ addClickEventListener(
   syncNicknamesStatusUpdate,
   'POST',
 );
->>>>>>> 508f7336d34240bdf042b73bba13bf14afe08065
