@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 const {
   userDetailsApi,
-} = require('../../mock-data/tasks-card-date-time-end-date-user/index'); //has user info
+} = require('../../mock-data/task-card-date-hover/index'); //has user info
 const {
   superUserDetails,
 } = require('../../mock-data/tasks-card-date-time-end-date-self/index'); // has super user info
@@ -54,7 +54,7 @@ describe('Tasks On User Management Page', () => {
       }
     });
     await page.goto(
-      'http://localhost:8000/users/details/index.html?username=sunny-s',
+      'http://localhost:8000/users/details/index.html?username=sunny-s&dev=true',
     );
 
     await page.evaluate(async () => {
@@ -87,34 +87,58 @@ describe('Tasks On User Management Page', () => {
     const taskDiv = await page.$('.accordion-tasks');
     expect(taskDiv).toBeTruthy();
 
-    await page.evaluate((element) => {
-      element.style.backgroundColor = 'yellow'; // Change color to blue
-    }, taskDiv);
-
     await taskDiv.click();
 
     await page.waitForTimeout(500);
   });
 
-  it('should select and interact with element', async () => {
-    const paragraphElement = await page.$('.due-date-value'); //// Selecting the element with the specified class for our due date value
+  it('should select and interact with text elements', async () => {
+    // Select all elements with the specified class
+    const elements = await page.$$('.due-date-value');
 
-    // Checking if the element is found
-    expect(paragraphElement).toBeTruthy();
+    // Checking if elements are found
+    expect(elements).toBeTruthy();
 
-    const textContent = await page.evaluate(
-      (element) => element.textContent,
-      paragraphElement,
-    ); // Getting the text content of the element to align with the readable format that we have
-    console.log('Text content:', textContent);
+    for (const element of elements) {
+      const textContent = await element.evaluate((el) => el.textContent);
 
-    expect(textContent).toBe('Thu Jul 27 2023'); // we are expecting the text content to be in the following format
+      await expect(textContent).toMatch(
+        /Task has been completed within Committed timeline|\d+ Days Remaining|Deadline Passed|Less Than a Day Remaining|1 Day Remaining/,
+      );
 
-    await page.evaluate((element) => {
-      element.style.backgroundColor = 'blue'; // Changing background color for pointing out
-      element.textContent = 'Correct Date format'; // Changing text content to show we got the right format
-    }, paragraphElement);
+      await element.evaluate((el) => {
+        el.style.backgroundColor = 'blue'; // Changing background color for pointing out
+      });
 
-    await page.waitForTimeout(500); // Waiting for a moment to check the changes (helpful when )
+      await page.waitForTimeout(200); //waiting for a moment to check changes(very helpful when you turn headless into false), please increase value to 2000 or above to see clear changes
+    }
+
+    await page.waitForTimeout(500); //waiting for a moment to check changes(very helpful when you turn headless into false)
+  });
+
+  it('should interact with hover elements', async () => {
+    // Select all elements with the same selector
+    const elementsSelector = '.due-date-value';
+
+    // Find and interact with each element individually
+    const elements = await page.$$(elementsSelector);
+
+    for (const element of elements) {
+      await element.hover();
+      await page.waitForSelector('.task-due-date');
+      //   const hoverContext = await page.hover('.task-due-date');
+      const tooltipText = await page.$eval(
+        '.task-due-date',
+        (tooltip) => tooltip.textContent,
+      );
+
+      await expect(tooltipText).toMatch(
+        /Due Date: Thu Jul 27 2023|Due Date: Sat Sep 09 2023|Tue Jul 04 2023/,
+      );
+
+      await page.waitForTimeout(200); //waiting for a moment to check changes(very helpful when you turn headless into false), please increase value to 2000 or above to see clear changes
+    }
+
+    await page.waitForTimeout(500); //waiting for a moment to check changes(very helpful when you turn headless into false)
   });
 });
