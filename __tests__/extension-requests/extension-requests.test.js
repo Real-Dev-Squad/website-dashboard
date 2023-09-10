@@ -37,18 +37,7 @@ describe('Tests the Extension Requests Screen', () => {
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-      if (url === 'https://api.realdevsquad.com/extension-requests') {
-        interceptedRequest.respond({
-          status: 200,
-          contentType: 'application/json',
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-          },
-          body: JSON.stringify(extensionRequestsList),
-        });
-      } else if (
+      if (
         url ===
         'https://api.realdevsquad.com/extension-requests?order=asc&size=5&q=status%3APENDING'
       ) {
@@ -61,20 +50,6 @@ describe('Tests the Extension Requests Screen', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
           body: JSON.stringify(extensionRequestsListPending),
-        });
-      } else if (
-        url ===
-        'https://api.realdevsquad.com/extension-requests?q=status%3AAPPROVED&size=5&order=asc'
-      ) {
-        interceptedRequest.respond({
-          status: 200,
-          contentType: 'application/json',
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-          },
-          body: JSON.stringify(extensionRequestsListApproved),
         });
       } else if (
         url === 'https://api.realdevsquad.com/users/search?role=in_discord'
@@ -91,34 +66,6 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?size=5&order=asc'
-      ) {
-        interceptedRequest.respond({
-          status: 200,
-          contentType: 'application/json',
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-          },
-          body: JSON.stringify(extensionRequestsList),
-        });
-      } else if (
-        url ===
-        'https://api.realdevsquad.com/extension-requests?order=asc&size=5&q=status%3APENDING'
-      ) {
-        interceptedRequest.respond({
-          status: 200,
-          contentType: 'application/json',
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-          },
-          body: JSON.stringify(extensionRequestsListPending),
-        });
-      } else if (
-        url ===
         'https://api.realdevsquad.com/extension-requests?order=desc&size=5&q=status%3APENDING'
       ) {
         interceptedRequest.respond({
@@ -132,20 +79,6 @@ describe('Tests the Extension Requests Screen', () => {
           body: JSON.stringify(extensionRequestsListPendingDescending),
         });
       } else if (
-        url ===
-        'https://api.realdevsquad.com/extension-requests?q=status%3AAPPROVED&size=5&order=asc'
-      ) {
-        interceptedRequest.respond({
-          status: 200,
-          contentType: 'application/json',
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-          },
-          body: JSON.stringify(extensionRequestsListApproved),
-        });
-      } else if (
         url === 'https://api.realdevsquad.com/users?search=sunny&size=1'
       ) {
         interceptedRequest.respond({
@@ -157,19 +90,6 @@ describe('Tests the Extension Requests Screen', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
           body: JSON.stringify(userSunny),
-        });
-      } else if (
-        url === 'https://api.realdevsquad.com/users?search=randhir&size=1'
-      ) {
-        interceptedRequest.respond({
-          status: 200,
-          contentType: 'application/json',
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-          },
-          body: JSON.stringify(userRandhir),
         });
       } else if (
         url ===
