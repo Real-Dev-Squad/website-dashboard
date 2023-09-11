@@ -15,9 +15,9 @@
 .task-container {
   overflow: scroll;
   display: none;
-  padding-top:10px;
+  padding-top: 10px;
   max-height: 85vh;
-  width:50%
+  width: 50%;
 }
 
 .task-subcontainer {
@@ -126,28 +126,28 @@ footer .info-repo {
 
 /* MEDIA QUERY */
 
-@media only screen and (max-width:900px) {
+@media only screen and (max-width: 900px) {
   .body {
     flex-direction: column-reverse;
     align-items: center;
-    padding-top:2rem;
+    padding-top: 2rem;
     gap: 3rem;
   }
-  .task-container{
-    width:70%;
+  .task-container {
+    width: 70%;
     margin-bottom: 3rem;
   }
-  .task-container-title{
+  .task-container-title {
     text-align: center;
   }
 }
-@media only screen and (max-width:600px) {
-  .task-container{
-    width:85%;
+@media only screen and (max-width: 600px) {
+  .task-container {
+    width: 85%;
   }
 }
-@media only screen and (max-width:400px) {
-  .task-container{
-    width:95%;
+@media only screen and (max-width: 400px) {
+  .task-container {
+    width: 95%;
   }
 }
