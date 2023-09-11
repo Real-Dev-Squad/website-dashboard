@@ -399,7 +399,7 @@ function populateAvailability() {
     { name: 'Ooo (Out of Office)', id: 'OOO' },
     { name: 'Idle', id: 'IDLE' },
     { name: 'Onboarding', id: 'ONBOARDING' },
-    { name: 'Onboarding>31D', id:'ONBOARDING31DAYS'},
+    { name: 'Onboarding>31D', id: 'ONBOARDING31DAYS' },
   ];
   for (let i = 0; i < availabilityArr.length; i++) {
     const { name, id } = availabilityArr[i];
@@ -582,14 +582,15 @@ async function persistUserDataBasedOnQueryParams() {
 
 async function getUsersInOnboardingFor31Days() {
   try {
-    const usersRequest = await makeApiCall(`${RDS_API_USERS}/search/?state=ONBOARDING&time=31d`);
+    const usersRequest = await makeApiCall(
+      `${RDS_API_USERS}/search/?state=ONBOARDING&time=31d`,
+    );
     const { users } = await usersRequest.json();
     return users;
   } catch (err) {
     throw new Error(`User list request failed with error: ${err}`);
   }
 }
-
 
 /*applyFilterButton.addEventListener('click', async () => {
   filterModal.classList.toggle('hidden');
@@ -620,7 +621,8 @@ applyFilterButton.addEventListener('click', async () => {
   const checkedValuesAvailability = getCheckedValues('availability-filter');
 
   // Check if the "Onboarding > 31 Days" checkbox is checked
-  const onboarding31DaysFilter = document.getElementById('ONBOARDING31DAYS').checked;
+  const onboarding31DaysFilter =
+    document.getElementById('ONBOARDING31DAYS').checked;
 
   try {
     let users;
@@ -629,8 +631,13 @@ applyFilterButton.addEventListener('click', async () => {
       users = await getUsersInOnboardingFor31Days();
     } else {
       // If the checkbox is not checked, fetch users with other filters
-      const queryParams = getFilteredUsersURL(checkedValuesSkills, checkedValuesAvailability);
-      const usersRequest = await makeApiCall(`${RDS_API_USERS}/search${queryParams}`);
+      const queryParams = getFilteredUsersURL(
+        checkedValuesSkills,
+        checkedValuesAvailability,
+      );
+      const usersRequest = await makeApiCall(
+        `${RDS_API_USERS}/search${queryParams}`,
+      );
       const { users: filteredUsers } = await usersRequest.json();
       users = filteredUsers;
     }
