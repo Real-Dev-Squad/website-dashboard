@@ -28,7 +28,8 @@ describe('Home Page', () => {
           body: JSON.stringify(superUserData),
         });
       } else if (
-        url === `https://api.realdevsquad.com/users/discord/nickname`
+        url ===
+        `https://api.realdevsquad.com/discord-actions/nicknames/sync?dev=true`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -128,6 +129,10 @@ describe('Home Page', () => {
     );
 
     expect(latestSyncStatusText).not.toBe(`Last Sync: Failed`);
+    expect(latestSyncStatusText).not.toBe(
+      `Last Sync: Synced Data Not Available`,
+    );
+    expect(latestSyncStatusText).not.toBe(`Last Sync: In progress`);
   });
 
   it('should display the Create Goals anchor button', async () => {
