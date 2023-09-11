@@ -1,3 +1,4 @@
+const params = new URLSearchParams(window.location.search);
 const userListElement = document.getElementById(USER_LIST_ELEMENT);
 const loaderElement = document.getElementById(LOADER_ELEMENT);
 const tileViewBtn = document.getElementById(TILE_VIEW_BTN);
@@ -401,9 +402,14 @@ function populateAvailability() {
     { name: 'Onboarding', id: 'ONBOARDING' },
     { name: 'Onboarding>31D', id: 'ONBOARDING31DAYS' },
   ];
+  
+  if (params.get('dev') != 'true'){
+    availabilityArr.pop()
+  }
   for (let i = 0; i < availabilityArr.length; i++) {
     const { name, id } = availabilityArr[i];
     addCheckbox(name, id, 'availability-filter');
+    
   }
 }
 
@@ -592,26 +598,6 @@ async function getUsersInOnboardingFor31Days() {
   }
 }
 
-/*applyFilterButton.addEventListener('click', async () => {
-  filterModal.classList.toggle('hidden');
-  displayLoader();
-  const checkedValuesSkills = getCheckedValues('skills-filter');
-  const checkedValuesAvailability = getCheckedValues('availability-filter');
-  const queryParams = getFilteredUsersURL(
-    checkedValuesSkills,
-    checkedValuesAvailability,
-  );
-  try {
-    const usersRequest = await makeApiCall(
-      `${RDS_API_USERS}/search${queryParams}`,
-    );
-    manipulateQueryParamsToURL(queryParams);
-    const { users } = await usersRequest.json();
-    showUserList(users);
-  } catch (err) {
-    throw new Error(`User list request failed with error: ${err}`);
-  }
-});*/
 
 // Function to apply the filter when the "Apply Filter" button is clicked
 applyFilterButton.addEventListener('click', async () => {
@@ -646,6 +632,7 @@ applyFilterButton.addEventListener('click', async () => {
       users = filteredUsers;
     }
 
+    
     manipulateQueryParamsToURL(queryParams);
     // Display the filtered user list
     showUserList(users);
