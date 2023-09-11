@@ -646,7 +646,6 @@ applyFilterButton.addEventListener('click', async () => {
       users = filteredUsers;
     }
 
-    
     manipulateQueryParamsToURL(queryParams);
     // Display the filtered user list
     showUserList(users);

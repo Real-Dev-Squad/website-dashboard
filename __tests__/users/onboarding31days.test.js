@@ -8,7 +8,7 @@ describe('Tests the "Onboarding > 31 Days" Filter', () => {
 
   beforeAll(async () => {
     browser = await puppeteer.launch({
-      headless: false, //change headless to 'new' to check the tests in browser
+      headless: 'new', //change headless to 'new' to check the tests in browser
       ignoreHTTPSErrors: true,
       args: ['--incognito', '--disable-web-security'],
       devtools: false,
@@ -47,9 +47,7 @@ describe('Tests the "Onboarding > 31 Days" Filter', () => {
         interceptedRequest.continue();
       }
     });
-    await page.goto(
-      'http://localhost:8000/users/',
-    );
+    await page.goto('http://localhost:8000/users/');
 
     await page.waitForNetworkIdle();
   });
@@ -61,23 +59,22 @@ describe('Tests the "Onboarding > 31 Days" Filter', () => {
   it('should go to filter section', async () => {
     const taskDiv = await page.$('.filter-button');
     expect(taskDiv).toBeTruthy();
-  
+
     await taskDiv.click();
-  
+
     await page.waitForTimeout(2000);
-   const elements = await page.$$('.checkbox-label');
-  
-   // Checking if elements are found
-   expect(elements).toBeTruthy();
-  
-   const checkbox = await page.$('#ONBOARDING31DAYS');
-   await checkbox.click();
-   
-   const applyfilterbutton = await page.$('.apply-filter-button')
-   expect(applyfilterbutton).toBeTruthy();
-   await applyfilterbutton.click();
-  
-   await page.waitForTimeout(5000);
-  
+    const elements = await page.$$('.checkbox-label');
+
+    // Checking if elements are found
+    expect(elements).toBeTruthy();
+
+    const checkbox = await page.$('#ONBOARDING31DAYS');
+    await checkbox.click();
+
+    const applyfilterbutton = await page.$('.apply-filter-button');
+    expect(applyfilterbutton).toBeTruthy();
+    await applyfilterbutton.click();
+
+    await page.waitForTimeout(5000);
   });
 });
