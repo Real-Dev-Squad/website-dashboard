@@ -298,11 +298,11 @@ footer {
 
 /* MEDIA QUERY */
 
-@media only screen and (max-width:600px) {
+@media only screen and (max-width: 600px) {
   .buttonSection {
     flex-direction: column;
   }
-  .action-button{
+  .action-button {
     text-align: center;
   }
 }

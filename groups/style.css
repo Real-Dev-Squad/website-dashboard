@@ -199,7 +199,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%);
-  color:var(--color-groups-tab-background);
+  color: var(--color-groups-tab-background);
 }
 
 /*
@@ -254,8 +254,8 @@ NOT VERIFIED TEXT ABOVE
     flex-direction: column-reverse;
     padding: 1.2rem;
   }
-  .manage-groups main{
-    padding:unset;
+  .manage-groups main {
+    padding: unset;
     text-align: center;
   }
 
