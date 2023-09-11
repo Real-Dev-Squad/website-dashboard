@@ -25,6 +25,8 @@ const MEMBERS_SEARCH_PLACEHOLDER = 'Search for members';
 
 // Task Constants
 const TASKS_CONTAINER_ID = 'task-container';
+const TASKS_SUBCONTAINER_CLASS_LIST = ['task-subcontainer'];
+const TASKS_CONTAINER_TITLE_CLASS_LIST = ['task-container-title'];
 const TASKS_CLASS_LIST = ['task'];
 const TASKS_CONTAINER_CLASS_LIST = ['tasks-container'];
 
