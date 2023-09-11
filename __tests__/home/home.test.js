@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
-const superUserData = require('../../mock-data/users');
+const { superUserData } = require('../../mock-data/users');
+
 describe('Home Page', () => {
   let browser;
   let page;
@@ -82,6 +83,25 @@ describe('Home Page', () => {
       '#sync-external-accounts-update',
     );
     expect(syncExternalAccountsUpdate).toBeTruthy();
+  });
+
+  it('should call the right api endpoint when Sync External Accounts button is clicked', async () => {
+    let isRightUrlCalled = false;
+    page.on('request', (interceptedRequest) => {
+      const url = interceptedRequest.url();
+      const httpMethod = interceptedRequest.method();
+      if (
+        url ===
+          'https://api.realdevsquad.com/external-accounts/users?action=discord-users-sync' &&
+        httpMethod === 'POST'
+      ) {
+        isRightUrlCalled = true;
+      }
+    });
+    const syncExternalAccountsButton = await page.$('#sync-external-accounts');
+    await syncExternalAccountsButton.click();
+    await page.waitForNetworkIdle();
+    expect(isRightUrlCalled).toBe(true);
   });
 
   it('should display the Sync Unverified Users button', async () => {
