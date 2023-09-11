@@ -620,6 +620,10 @@ applyFilterButton.addEventListener('click', async () => {
   const checkedValuesSkills = getCheckedValues('skills-filter');
   const checkedValuesAvailability = getCheckedValues('availability-filter');
 
+  const queryParams = getFilteredUsersURL(
+    checkedValuesSkills,
+    checkedValuesAvailability,
+  );
   // Check if the "Onboarding > 31 Days" checkbox is checked
   const onboarding31DaysFilter =
     document.getElementById('ONBOARDING31DAYS').checked;
@@ -642,6 +646,8 @@ applyFilterButton.addEventListener('click', async () => {
       users = filteredUsers;
     }
 
+    
+    manipulateQueryParamsToURL(queryParams);
     // Display the filtered user list
     showUserList(users);
   } catch (err) {
