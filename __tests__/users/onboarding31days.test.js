@@ -47,7 +47,7 @@ describe('Tests the "Onboarding > 31 Days" Filter', () => {
         interceptedRequest.continue();
       }
     });
-    await page.goto('http://localhost:8000/users/');
+    await page.goto('http://localhost:8000/users/?dev=true');
 
     await page.waitForNetworkIdle();
   });

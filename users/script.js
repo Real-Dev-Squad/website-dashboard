@@ -402,14 +402,13 @@ function populateAvailability() {
     { name: 'Onboarding', id: 'ONBOARDING' },
     { name: 'Onboarding>31D', id: 'ONBOARDING31DAYS' },
   ];
-  
-  if (params.get('dev') != 'true'){
-    availabilityArr.pop()
+
+  if (params.get('dev') != 'true') {
+    availabilityArr.pop();
   }
   for (let i = 0; i < availabilityArr.length; i++) {
     const { name, id } = availabilityArr[i];
     addCheckbox(name, id, 'availability-filter');
-    
   }
 }
 
@@ -598,7 +597,6 @@ async function getUsersInOnboardingFor31Days() {
   }
 }
 
-
 // Function to apply the filter when the "Apply Filter" button is clicked
 applyFilterButton.addEventListener('click', async () => {
   filterModal.classList.toggle('hidden');
@@ -632,7 +630,6 @@ applyFilterButton.addEventListener('click', async () => {
       users = filteredUsers;
     }
 
-    
     manipulateQueryParamsToURL(queryParams);
     // Display the filtered user list
     showUserList(users);
