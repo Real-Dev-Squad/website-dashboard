@@ -25,11 +25,11 @@ body {
   background-color: var(--blue-color);
   padding: 10px;
   height: 2.5rem;
+  text-align: center;
 }
 
 #createTask {
   color: var(--white-color);
-  padding-left: 50%;
   text-decoration: none;
   font-size: large;
 }
@@ -294,4 +294,15 @@ footer {
 
 .element-display-remove {
   display: none !important;
+}
+
+/* MEDIA QUERY */
+
+@media only screen and (max-width:600px) {
+  .buttonSection {
+    flex-direction: column;
+  }
+  .action-button{
+    text-align: center;
+  }
 }

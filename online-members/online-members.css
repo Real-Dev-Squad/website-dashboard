@@ -7,28 +7,31 @@
 
 .body {
   display: flex;
-  align-content: center;
+  align-content: flex-start;
   justify-content: space-evenly;
-  align-items: center;
+  padding-top: 4rem;
 }
 
 .task-container {
-  top: 5rem;
-  left: 5rem;
-  position: absolute;
   overflow: scroll;
+  display: none;
+  padding-top:10px;
   max-height: 85vh;
+  width:50%
+}
+
+.task-subcontainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .task {
-  margin: 50px;
   padding: 10px;
   border: 2px solid black;
   border-radius: 5px;
   height: max-content;
-  width: 30rem;
-  align-items: center;
-  display: flex;
+  width: 100%;
 }
 
 .members-container {
@@ -37,9 +40,6 @@
   border-radius: 5px;
   height: 80vh;
   overflow-y: scroll;
-  position: absolute;
-  top: 5rem;
-  right: 5rem;
   min-width: 260px;
 }
 
@@ -122,4 +122,32 @@ footer {
 footer .info-repo {
   font-weight: 100;
   text-align: center;
+}
+
+/* MEDIA QUERY */
+
+@media only screen and (max-width:900px) {
+  .body {
+    flex-direction: column-reverse;
+    align-items: center;
+    padding-top:2rem;
+    gap: 3rem;
+  }
+  .task-container{
+    width:70%;
+    margin-bottom: 3rem;
+  }
+  .task-container-title{
+    text-align: center;
+  }
+}
+@media only screen and (max-width:600px) {
+  .task-container{
+    width:85%;
+  }
+}
+@media only screen and (max-width:400px) {
+  .task-container{
+    width:95%;
+  }
 }
