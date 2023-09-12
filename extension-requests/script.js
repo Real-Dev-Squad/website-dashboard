@@ -3,7 +3,6 @@ const extensionRequestsContainer = document.querySelector(
   '.extension-requests',
 );
 
-const errorHeading = document.querySelector('h2#error');
 const modalParent = document.querySelector('.extension-requests-modal-parent');
 const closeModal = document.querySelectorAll('#close-modal');
 
@@ -24,11 +23,10 @@ const descIcon = document.getElementById(SORT_DESC_ICON);
 const searchElement = document.getElementById(SEARCH_ELEMENT);
 const params = new URLSearchParams(window.location.search);
 const lastElementContainer = document.querySelector(LAST_ELEMENT_CONTAINER);
+let extensionPageVersion = 0;
 let nextLink = '';
 let isDataLoading = false;
-
-let allCardsList;
-let isFiltered = false;
+let userMap = new Map();
 if (params.get('dev') === 'true') {
   extensionRequestsContainer.classList.remove('extension-requests');
   extensionRequestsContainer.classList.add('extension-requests-new');
@@ -48,11 +46,33 @@ const filterStates = {
 const updateFilterStates = (key, value) => {
   filterStates[key] = value;
 };
+const getUser = async (username) => {
+  username = username?.toLowerCase();
+  if (userMap.has(username)) {
+    return userMap.get(username);
+  } else {
+    const user = await getUserDetails(username);
+    if (user) userMap.set(username, user);
 
+    return user;
+  }
+};
+const initializeUserMap = (userList) => {
+  userList.forEach((user) => {
+    userMap.set(user?.username?.toLowerCase(), {
+      first_name: user.first_name,
+      picture: { url: user.picture?.url },
+      id: user.id,
+    });
+  });
+};
 const render = async () => {
   addTooltipToSortButton();
   toggleStatusCheckbox(Status.PENDING);
   changeFilter();
+  getInDiscordUserList().then((response) => {
+    initializeUserMap(response.users);
+  });
   await populateExtensionRequests(filterStates);
   addIntersectionObserver();
 };
@@ -122,6 +142,8 @@ const addTooltipToSortButton = () => {
   sortButton.appendChild(sortToolTip);
 };
 async function populateExtensionRequests(query = {}, newLink) {
+  extensionPageVersion++;
+  const currentVersion = extensionPageVersion;
   try {
     isDataLoading = true;
     addLoader(container);
@@ -129,25 +151,12 @@ async function populateExtensionRequests(query = {}, newLink) {
     nextLink = extensionRequests.next;
     const allExtensionRequests = extensionRequests.allExtensionRequests;
 
-    allCardsList = [];
-
     if (params.get('dev') === 'true') {
-      const extensionRequestPromiseList = [];
-      for (let data of allExtensionRequests) {
-        const extensionRequestCardPromise = createExtensionCard(data);
-        extensionRequestPromiseList.push(extensionRequestCardPromise);
-        allCardsList.push(data);
-        extensionRequestCardPromise.then((extensionRequestCard) => {
-          data['htmlElement'] = extensionRequestCard;
-        });
+      if (currentVersion !== extensionPageVersion) {
+        return;
       }
-
-      const extensionRequestCardList = await Promise.all(
-        extensionRequestPromiseList,
-      );
-
-      for (let extensionRequestCard of extensionRequestCardList) {
-        extensionRequestsContainer.appendChild(extensionRequestCard);
+      for (let data of allExtensionRequests) {
+        createExtensionCard(data);
       }
       initializeAccordions();
     } else {
@@ -156,17 +165,18 @@ async function populateExtensionRequests(query = {}, newLink) {
           data,
           extensionRequestCardHeadings,
         );
-        data['htmlElement'] = extensionRequestCard;
-        allCardsList.push(data);
         extensionRequestsContainer.appendChild(extensionRequestCard);
       });
     }
   } catch (error) {
-    errorHeading.textContent = ERROR_MESSAGE_RELOAD;
-    errorHeading.classList.add('error-visible');
+    addErrorElement(extensionRequestsContainer);
   } finally {
+    if (currentVersion !== extensionPageVersion) return;
     removeLoader('loader');
     isDataLoading = false;
+    if (extensionRequestsContainer.innerHTML === '') {
+      addEmptyPageMessage(extensionRequestsContainer);
+    }
   }
 }
 
@@ -189,10 +199,15 @@ function handleFailure(element) {
   setTimeout(() => element.classList.remove('failed-card'), 1000);
 }
 
-function removeCard(element) {
+async function removeCard(element) {
   element.classList.add('success-card');
+  await addDelay(800);
   element.classList.add('fade-out');
-  setTimeout(() => element.remove(), 800);
+  await addDelay(800);
+  element.remove();
+  if (extensionRequestsContainer.innerHTML === '') {
+    addEmptyPageMessage(extensionRequestsContainer);
+  }
 }
 
 function addCheckbox(labelText, value, groupName) {
@@ -262,42 +277,35 @@ filterModal.addEventListener('click', (event) => {
 window.onclick = function () {
   filterModal.classList.add('hidden');
 };
-
-const renderFilteredCards = (predicate) => {
-  extensionRequestsContainer.innerHTML = '';
-  let isEmpty = true;
-  for (const card of allCardsList) {
-    if (predicate(card)) {
-      isEmpty = false;
-      extensionRequestsContainer.append(card.htmlElement);
+searchElement.addEventListener('keypress', async (event) => {
+  if (event.key === 'Enter') {
+    const usernames = event.target.value.trim();
+    if (usernames) {
+      const usernameList = usernames.split(',');
+      const userPromise = [];
+      for (const username of usernameList) {
+        userPromise.push(getUser(username));
+      }
+      const userList = await Promise.all(userPromise);
+      const userIdList = [];
+      for (const user of userList) {
+        if (user) userIdList.push(user.id);
+      }
+      if (userIdList.length === 0) {
+        searchElement.setCustomValidity('No users found!');
+        searchElement.reportValidity();
+        return;
+      }
+      updateFilterStates('assignee', userIdList);
+      changeFilter();
+      await populateExtensionRequests(filterStates);
+    } else {
+      updateFilterStates('assignee', '');
+      changeFilter();
+      await populateExtensionRequests(filterStates);
     }
   }
-
-  if (isEmpty) {
-    errorHeading.textContent = 'No Extension Requests found!';
-    errorHeading.classList.add('error-visible');
-  } else {
-    errorHeading.innerHTML = '';
-    errorHeading.classList.remove('error-visible');
-  }
-};
-searchElement.addEventListener(
-  'input',
-  debounce((event) => {
-    if (!event.target.value && isFiltered) {
-      isFiltered = false;
-      addIntersectionObserver();
-      renderFilteredCards((c) => true);
-      return;
-    } else if (!event.target.value) {
-      return;
-    }
-
-    removeIntersectionObserver();
-    renderFilteredCards((card) => card?.assignee?.includes(event.target.value));
-    isFiltered = true;
-  }, 500),
-);
+});
 
 sortButton.addEventListener('click', async (event) => {
   toggleTooltipText();
@@ -343,8 +351,7 @@ const showTaskDetails = async (taskId, approved) => {
       createTaskInfoModal(taskData, approved, taskInfoModelHeadings),
     );
   } catch (error) {
-    errorHeading.textContent = 'Something went wrong';
-    errorHeading.classList.add('error-visible');
+    addErrorElement(extensionRequestsContainer);
     reload();
   } finally {
     removeLoader('loader');
@@ -422,8 +429,7 @@ async function onStatusFormSubmit(e) {
     });
     reload();
   } catch (error) {
-    errorHeading.textContent = 'Something went wrong';
-    errorHeading.classList.add('error-visible');
+    addErrorElement(extensionRequestsContainer);
     reload();
   } finally {
     removeLoader('loader');
@@ -439,10 +445,7 @@ async function onUpdateFormSubmit(e) {
       id: state.currentExtensionRequest.id,
       body: formData,
     });
-    reload();
-  } catch (error) {
-    errorHeading.textContent = 'Something went wrong';
-    errorHeading.classList.add('error-visible');
+    addErrorElement(extensionRequestsContainer);
     reload();
   } finally {
     removeLoader('loader');
@@ -514,17 +517,19 @@ const handleFormPropagation = async (event) => {
 };
 
 async function createExtensionCard(data) {
+  //Create card element
+  const rootElement = createElement({
+    type: 'div',
+    attributes: { class: 'extension-card' },
+  });
+  extensionRequestsContainer.appendChild(rootElement);
+
+  const removeSpinner = addSpinner(rootElement);
+  rootElement.classList.add('disabled');
   //Api calls
-  const userDataPromise = getUserDetails(data.assignee);
+  const userDataPromise = getUser(data.assignee);
   const taskDataPromise = getTaskDetails(data.taskId);
 
-  const [{ taskData }, userData] = await Promise.all([
-    taskDataPromise,
-    userDataPromise,
-  ]);
-
-  const userImage = userData?.picture?.url ?? DEFAULT_AVATAR;
-  const userFirstName = userData?.first_name ?? data.assignee;
   const isDeadLineCrossed = Date.now() > secondsToMilliSeconds(data.oldEndsOn);
 
   const extensionDays = dateDiff(
@@ -541,12 +546,6 @@ async function createExtensionCard(data) {
     secondsToMilliSeconds(data.timestamp),
     (s) => s + ' ago',
   );
-
-  //Create card element
-  const rootElement = createElement({
-    type: 'div',
-    attributes: { class: 'extension-card' },
-  });
 
   const formContainer = createElement({
     type: 'form',
@@ -592,10 +591,8 @@ async function createExtensionCard(data) {
   const statusSiteLink = createElement({
     type: 'a',
     attributes: {
-      href: `${STATUS_BASE_URL}/tasks/${data.taskId}`,
       class: 'external-link',
     },
-    innerText: taskData.title,
   });
 
   const taskTitle = createElement({
@@ -649,7 +646,6 @@ async function createExtensionCard(data) {
 
   const taskStatusValue = createElement({
     type: 'span',
-    innerText: ` ${taskData?.status}`,
   });
   taskStatusContainer.appendChild(taskStatusValue);
 
@@ -766,14 +762,13 @@ async function createExtensionCard(data) {
 
   const assigneeImage = createElement({
     type: 'img',
-    attributes: { src: userImage, alt: userFirstName, class: 'assignee-image' },
+    attributes: { class: 'assignee-image' },
   });
   assigneeContainer.appendChild(assigneeImage);
 
   const assigneeNameElement = createElement({
     type: 'span',
     attributes: { class: 'assignee-name' },
-    innerText: userFirstName,
   });
   assigneeContainer.appendChild(assigneeNameElement);
 
@@ -852,7 +847,7 @@ async function createExtensionCard(data) {
     });
     const approveIcon = createElement({
       type: 'img',
-      attributes: { src: CHECK_ICON, alt: 'edit-icon' },
+      attributes: { class: 'check-icon', src: CHECK_ICON, alt: 'check-icon' },
     });
     approveButton.appendChild(approveIcon);
 
@@ -892,13 +887,16 @@ async function createExtensionCard(data) {
         id: data.id,
         body: { status: Status.APPROVED },
       })
-        .then(() => removeCard(rootElement))
+        .then(async () => {
+          removeSpinner();
+          await removeCard(rootElement);
+        })
         .catch(() => {
+          removeSpinner();
           handleFailure(rootElement);
         })
         .finally(() => {
           rootElement.classList.remove('disabled');
-          removeSpinner();
         });
     });
 
@@ -917,13 +915,16 @@ async function createExtensionCard(data) {
         id: data.id,
         body: { status: Status.DENIED },
       })
-        .then(() => removeCard(rootElement))
+        .then(async () => {
+          removeSpinner();
+          await removeCard(rootElement);
+        })
         .catch(() => {
+          removeSpinner();
           handleFailure(rootElement);
         })
         .finally(() => {
           rootElement.classList.remove('disabled');
-          removeSpinner();
         });
     });
     denyButton.addEventListener('mouseenter', (event) => {
@@ -1050,5 +1051,22 @@ async function createExtensionCard(data) {
     extensionForValue.classList.toggle('hidden');
     extensionInput.classList.toggle('hidden');
   }
+
+  Promise.all([taskDataPromise, userDataPromise]).then((response) => {
+    const [{ taskData }, userData] = response;
+    const userImage = userData?.picture?.url ?? DEFAULT_AVATAR;
+    let userFirstName = userData?.first_name ?? data.assignee;
+    const taskStatus = taskData?.status?.replaceAll('_', ' ');
+    userFirstName = userFirstName ?? '';
+    statusSiteLink.attributes.href = `${STATUS_BASE_URL}/tasks/${data.taskId}`;
+    statusSiteLink.innerText = taskData.title;
+    assigneeImage.src = userImage;
+    assigneeImage.alt = userFirstName;
+    assigneeNameElement.innerText = userFirstName;
+    taskStatusValue.innerText = ` ${taskStatus}`;
+    removeSpinner();
+    rootElement.classList.remove('disabled');
+  });
+
   return rootElement;
 }

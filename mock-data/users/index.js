@@ -201,11 +201,30 @@ const user = {
     archived: false,
   },
 };
-
+const superUserData = {
+  id: 'V4rqL1aDecNGoa1IxiCu',
+  incompleteUserDetails: false,
+  discordId: '12345',
+  roles: {
+    archived: false,
+    super_user: true,
+  },
+  linkedin_id: 'kotesh',
+  last_name: 'Mudila',
+  yoe: '5',
+  github_display_name: 'kotesh Mudila',
+  company_name: 'Juniper networks ',
+  github_id: 'kotesh-arya',
+  designation: 'Front end engineer',
+  twitter_id: 'Codesh_',
+  first_name: 'Kotesh',
+  username: 'kotesh',
+};
 module.exports = {
   allUsersData,
   filteredUsersData,
   user,
   userSunny,
   userRandhir,
+  superUserData,
 };

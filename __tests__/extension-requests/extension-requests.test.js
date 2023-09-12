@@ -5,9 +5,14 @@ const {
   extensionRequestsListApproved,
   extensionRequestResponse,
   extensionRequestsListPendingDescending,
+  extensionRequestsListUserSearch,
 } = require('../../mock-data/extension-requests');
 
-const { userSunny, userRandhir } = require('../../mock-data/users');
+const {
+  userSunny,
+  userRandhir,
+  allUsersData,
+} = require('../../mock-data/users');
 const { taskDone } = require('../../mock-data/tasks/index');
 
 describe('Tests the Extension Requests Screen', () => {
@@ -59,6 +64,20 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
+        'https://api.realdevsquad.com/extension-requests?assignee=jbGcfZLGYjHwxQ1Zh8ZJ&status=PENDING&size=5&order=asc'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(extensionRequestsListUserSearch),
+        });
+      } else if (
+        url ===
         'https://api.realdevsquad.com/extension-requests?status=PENDING&size=5&order=asc'
       ) {
         interceptedRequest.respond({
@@ -84,6 +103,19 @@ describe('Tests the Extension Requests Screen', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
           body: JSON.stringify(extensionRequestsListApproved),
+        });
+      } else if (
+        url === 'https://api.realdevsquad.com/users/search?role=in_discord'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(allUsersData),
         });
       } else {
         interceptedRequest.continue();
@@ -116,7 +148,8 @@ describe('Tests the Extension Requests Screen', () => {
   it('checks the search functionality', async () => {
     const ele = await page.$('input[id="assignee-search"]');
     await page.type('#assignee-search', 'sunny');
-    await page.waitForTimeout(600); // wait for input debounce timer
+    await page.keyboard.press('Enter');
+    await page.waitForNetworkIdle();
     const cardsList = await page.$$('.extension-request');
     expect(cardsList.length).toBe(1);
     const cardTextContent = await page.evaluate(
@@ -310,6 +343,20 @@ describe.skip('Tests the new Extension Requests Screen', () => {
         });
       } else if (
         url ===
+        'https://api.realdevsquad.com/tasks/GCYGDiU0lw4fwc3qljSY/details'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(taskDone),
+        });
+      } else if (
+        url ===
         'https://api.realdevsquad.com/extension-requests/QISvF7kAmnD9vXHwwIsG/status'
       ) {
         interceptedRequest.respond({
@@ -350,6 +397,20 @@ describe.skip('Tests the new Extension Requests Screen', () => {
           },
           body: JSON.stringify({}),
         });
+      } else if (
+        url ===
+        'https://api.realdevsquad.com/extension-requests?order=asc&size=5&dev=true&q=status%3APENDING%2Cassignee%3AiODXB6gfsjaZB9p0XlBw%2BDtR9sK7CysOVHP17zl8N'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(extensionRequestsList),
+        });
       } else {
         interceptedRequest.continue();
       }
@@ -380,6 +441,25 @@ describe.skip('Tests the new Extension Requests Screen', () => {
     expect(filterButton).toBeTruthy();
     expect(extensionCardsList.length).toBe(4);
     expect(extensionRequestsElement).toBeTruthy();
+  });
+
+  it('should display cards of when multiple usernames are entered', async () => {
+    const ele = await page.$('input[id="assignee-search"]');
+    await page.type('#assignee-search', 'sunny,randhir');
+    await page.keyboard.press('Enter');
+    await page.waitForNetworkIdle();
+    const cardsList = await page.$$('.extension-card');
+    expect(cardsList.length).toBe(2);
+    const userName1 = await cardsList[0].$eval(
+      '.assignee-name',
+      (el) => el.textContent,
+    );
+    const userName2 = await cardsList[1].$eval(
+      '.assignee-name',
+      (el) => el.textContent,
+    );
+    expect(userName1.toLowerCase()).toContain('sunny');
+    expect(userName2.toLowerCase()).toContain('randhir');
   });
 
   it('Checks details of the first extension card', async () => {
@@ -471,11 +551,11 @@ describe.skip('Tests the new Extension Requests Screen', () => {
         break;
       }
     }
-    await page.waitForTimeout(850);
+    await page.waitForTimeout(1650);
 
     const extensionCardsAfter = await page.$$('.extension-card');
 
-    expect(extensionCardsAfter.length).toBe(3);
+    expect(extensionCardsAfter.length).toBe(7);
   });
 
   it('Checks whether the card is not removed from display when api call is unsuccessful', async () => {

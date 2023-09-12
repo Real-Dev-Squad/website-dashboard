@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer');
+const { superUserData } = require('../../mock-data/users');
 
 describe('Home Page', () => {
   let browser;
@@ -13,7 +14,42 @@ describe('Home Page', () => {
       devtools: false,
     });
     page = await browser.newPage();
-
+    await page.setRequestInterception(true);
+    page.on('request', (interceptedRequest) => {
+      const url = interceptedRequest.url();
+      if (url === `https://api.realdevsquad.com/users/self`) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(superUserData),
+        });
+      } else if (
+        url ===
+        `https://api.realdevsquad.com/discord-actions/nicknames/sync?dev=true`
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          ok: true,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify({
+            numberOfUsersEffected: 5,
+            message: 'Users Nicknames updated successfully',
+          }),
+        });
+      } else {
+        interceptedRequest.continue();
+      }
+    });
     await page.goto('http://localhost:8000/');
     await page.waitForNetworkIdle();
   });
@@ -49,6 +85,25 @@ describe('Home Page', () => {
     expect(syncExternalAccountsUpdate).toBeTruthy();
   });
 
+  it('should call the right api endpoint when Sync External Accounts button is clicked', async () => {
+    let isRightUrlCalled = false;
+    page.on('request', (interceptedRequest) => {
+      const url = interceptedRequest.url();
+      const httpMethod = interceptedRequest.method();
+      if (
+        url ===
+          'https://api.realdevsquad.com/external-accounts/users?action=discord-users-sync' &&
+        httpMethod === 'POST'
+      ) {
+        isRightUrlCalled = true;
+      }
+    });
+    const syncExternalAccountsButton = await page.$('#sync-external-accounts');
+    await syncExternalAccountsButton.click();
+    await page.waitForNetworkIdle();
+    expect(isRightUrlCalled).toBe(true);
+  });
+
   it('should display the Sync Unverified Users button', async () => {
     const syncUnverifiedUsersButton = await page.$('#sync-unverified-users');
     expect(syncUnverifiedUsersButton).toBeTruthy();
@@ -62,6 +117,42 @@ describe('Home Page', () => {
       '#sync-unverified-users-update',
     );
     expect(syncUnverifiedUsersUpdate).toBeTruthy();
+  });
+  it('should display the Sync Users nicknames button', async () => {
+    const syncNicknamesButton = await page.$('#sync-nicknames');
+    expect(syncNicknamesButton).toBeTruthy();
+
+    const spinnerInsideSyncNicknamesButton = await syncNicknamesButton.$(
+      '.spinner',
+    );
+    expect(spinnerInsideSyncNicknamesButton).toBeTruthy();
+
+    const syncNicknamesUpdate = await page.$('#sync-nicknames-status-update');
+    expect(syncNicknamesUpdate).toBeTruthy();
+  });
+
+  it('should display the latest sync date when a super_user clicks on the Sync Users nicknames button', async () => {
+    await page.evaluate(() => {
+      document.querySelector('#sync-nicknames').click();
+    });
+    await page.waitForNetworkIdle();
+
+    const latestSyncStatusElement = await page.waitForSelector(
+      '#sync-nicknames-status-update',
+    );
+
+    expect(latestSyncStatusElement).toBeTruthy();
+
+    const latestSyncStatusText = await page.evaluate(
+      (element) => element.textContent,
+      latestSyncStatusElement,
+    );
+
+    expect(latestSyncStatusText).not.toBe(`Last Sync: Failed`);
+    expect(latestSyncStatusText).not.toBe(
+      `Last Sync: Synced Data Not Available`,
+    );
+    expect(latestSyncStatusText).not.toBe(`Last Sync: In progress`);
   });
 
   it('should display the Create Goals anchor button', async () => {

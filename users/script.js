@@ -1,3 +1,4 @@
+const params = new URLSearchParams(window.location.search);
 const userListElement = document.getElementById(USER_LIST_ELEMENT);
 const loaderElement = document.getElementById(LOADER_ELEMENT);
 const tileViewBtn = document.getElementById(TILE_VIEW_BTN);
@@ -399,7 +400,12 @@ function populateAvailability() {
     { name: 'Ooo (Out of Office)', id: 'OOO' },
     { name: 'Idle', id: 'IDLE' },
     { name: 'Onboarding', id: 'ONBOARDING' },
+    { name: 'Onboarding>31D', id: 'ONBOARDING31DAYS' },
   ];
+
+  if (params.get('dev') != 'true') {
+    availabilityArr.pop();
+  }
   for (let i = 0; i < availabilityArr.length; i++) {
     const { name, id } = availabilityArr[i];
     addCheckbox(name, id, 'availability-filter');
@@ -579,21 +585,53 @@ async function persistUserDataBasedOnQueryParams() {
   }
 }
 
+async function getUsersInOnboardingFor31Days() {
+  try {
+    const usersRequest = await makeApiCall(
+      `${RDS_API_USERS}/search/?state=ONBOARDING&time=31d`,
+    );
+    const { users } = await usersRequest.json();
+    return users;
+  } catch (err) {
+    throw new Error(`User list request failed with error: ${err}`);
+  }
+}
+
+// Function to apply the filter when the "Apply Filter" button is clicked
 applyFilterButton.addEventListener('click', async () => {
   filterModal.classList.toggle('hidden');
   displayLoader();
   const checkedValuesSkills = getCheckedValues('skills-filter');
   const checkedValuesAvailability = getCheckedValues('availability-filter');
+
   const queryParams = getFilteredUsersURL(
     checkedValuesSkills,
     checkedValuesAvailability,
   );
+  // Check if the "Onboarding > 31 Days" checkbox is checked
+  const onboarding31DaysFilter =
+    document.getElementById('ONBOARDING31DAYS').checked;
+
   try {
-    const usersRequest = await makeApiCall(
-      `${RDS_API_USERS}/search${queryParams}`,
-    );
+    let users;
+    if (onboarding31DaysFilter) {
+      // If the checkbox is checked, fetch users from the specific API endpoint
+      users = await getUsersInOnboardingFor31Days();
+    } else {
+      // If the checkbox is not checked, fetch users with other filters
+      const queryParams = getFilteredUsersURL(
+        checkedValuesSkills,
+        checkedValuesAvailability,
+      );
+      const usersRequest = await makeApiCall(
+        `${RDS_API_USERS}/search${queryParams}`,
+      );
+      const { users: filteredUsers } = await usersRequest.json();
+      users = filteredUsers;
+    }
+
     manipulateQueryParamsToURL(queryParams);
-    const { users } = await usersRequest.json();
+    // Display the filtered user list
     showUserList(users);
   } catch (err) {
     throw new Error(`User list request failed with error: ${err}`);

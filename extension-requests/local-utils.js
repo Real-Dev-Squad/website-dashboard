@@ -130,6 +130,21 @@ async function getUserDetails(username) {
   return user?.users[0];
 }
 
+async function getInDiscordUserList() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/users/search?role=in_discord`, {
+      credentials: 'include',
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+    return await res.json();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 function secondsToMilliSeconds(seconds) {
   return seconds * 1000;
 }
@@ -235,3 +250,20 @@ const fullDateString = (timestamp) => {
   const date = new Date(timestamp);
   return `${daysOfWeek[date.getDay()]}, ${date.toLocaleString()}`;
 };
+
+function addEmptyPageMessage(container) {
+  const emptyPageMessage = createElement({
+    type: 'p',
+    attributes: { class: 'page-message' },
+    innerText: 'No extension requests to show!',
+  });
+  container.appendChild(emptyPageMessage);
+}
+
+function addErrorElement(container) {
+  const errorHeading = createElement({
+    type: 'h2',
+    innerText: ERROR_MESSAGE_RELOAD,
+  });
+  container.appendChild(errorHeading);
+}
