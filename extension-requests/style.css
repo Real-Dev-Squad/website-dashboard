@@ -81,6 +81,7 @@
   overflow: hidden;
   font-size: 0.9rem;
 }
+
 .accordion {
   background-color: transparent;
   cursor: pointer;
@@ -107,6 +108,7 @@
 .accordion:hover img {
   transform: scale(1.25);
 }
+
 .accordion.active img {
   transform: rotate(180deg);
 }
@@ -116,12 +118,14 @@
   align-items: center;
   gap: 1rem;
 }
+
 .assignee-image {
   width: 1.875rem;
   height: 1.875rem;
   color: transparent;
   border-radius: 50%;
 }
+
 .assignee-name {
   font-size: 1.3rem;
   font-weight: 500;
@@ -132,6 +136,7 @@
   overflow: hidden;
   text-transform: capitalize;
 }
+
 .approve-button {
   width: 6.25rem;
   height: 2rem;
@@ -166,6 +171,7 @@
   align-items: center;
   justify-content: center;
 }
+
 .edit-button:hover {
   background-color: var(--light-gray);
 }
@@ -201,6 +207,7 @@
   background-color: var(--secondary600);
   color: var(--white);
 }
+
 .update-wrapper {
   display: flex;
   width: auto;
@@ -226,6 +233,7 @@
   justify-content: center;
   padding: 2px;
 }
+
 .deny-button:hover {
   background-color: var(--secondary600);
 }
@@ -246,16 +254,19 @@
   display: flex;
   justify-content: space-between;
 }
+
 .assignee-text {
   font-size: 1.1rem;
   font-weight: 500;
   color: var(--medium-gray);
 }
+
 .extension-card-buttons {
   display: flex;
   gap: 0.5rem;
   margin-right: 3.5rem;
 }
+
 .details-heading {
   width: fit-content;
   flex-shrink: 0;
@@ -292,6 +303,7 @@
   gap: 1rem;
   font-size: 0.9rem;
 }
+
 .card-row-text {
   font-size: 0.9rem;
   font-weight: 500;
@@ -313,16 +325,19 @@
   border-radius: 6px;
   border: 1px solid var(--black-color);
 }
+
 .input-text-area {
   width: 100%;
   height: 5rem;
   resize: none;
 }
+
 .date-input {
   border-radius: 4px;
   margin-left: 4px;
   border: 1px solid var(--black-color);
 }
+
 .reason-text {
   white-space: normal;
 }
@@ -334,6 +349,7 @@
 .tooltip-container {
   position: relative;
 }
+
 .tooltip {
   background-color: var(--black-color);
   color: var(--white);
@@ -355,10 +371,12 @@
   width: 7rem;
   margin-left: -3.5rem;
 }
+
 .tooltip-container:hover .tooltip {
   visibility: visible;
   transition-delay: 400ms;
 }
+
 .tooltip-container:hover .sort-button-tooltip {
   visibility: visible;
   transition-delay: 200ms;
@@ -423,6 +441,7 @@ body {
   display: flex;
   justify-content: space-between;
 }
+
 .extension-request > div .more,
 .extension-request > div .update_request {
   background-color: var(--button-proceed);
@@ -473,6 +492,7 @@ body {
   height: 2.5rem;
   padding: 0.7rem;
 }
+
 .sort-button {
   background-color: var(--light-gray-color);
   border-radius: 0.4rem;
@@ -480,6 +500,7 @@ body {
   padding: 8px;
   height: 2.5rem;
 }
+
 .sort-button:hover {
   background-color: var(--medium-gray);
 }
@@ -550,6 +571,7 @@ body {
   top: 50%;
   right: 50%;
 }
+
 /* Filter modal  */
 .filter-modal {
   width: 20%;
@@ -684,6 +706,7 @@ body {
     left: 10%;
     right: 10%;
   }
+
   .search-filter {
     justify-content: center;
   }
@@ -693,16 +716,20 @@ body {
   .extension-card {
     max-width: 25rem;
   }
+
   .summary-container {
     display: flex;
     flex-direction: column;
   }
+
   .panel div {
     margin: 1.5rem;
   }
+
   .extension-card-buttons {
     margin: 0;
   }
+
   .card-assignee-button-container {
     flex-direction: column;
     gap: 0.75rem;
@@ -713,6 +740,7 @@ body {
   .container {
     padding: 1.5rem;
   }
+
   .filter-button {
     width: min-content;
   }
@@ -720,6 +748,7 @@ body {
   .update-wrapper {
     flex-direction: column;
   }
+
   .update-button {
     font-size: 10px;
   }
@@ -731,12 +760,15 @@ body {
   .panel div {
     margin: 1rem;
   }
+
   .assignee-text {
     display: none;
   }
+
   .filter-text {
     display: none;
   }
+
   .funnel-icon {
     margin: auto;
   }
@@ -746,6 +778,7 @@ body {
   .container {
     padding: 1rem;
   }
+
   .filter-modal {
     top: 12.5rem;
   }
