@@ -314,7 +314,7 @@ addClickEventListener(
 );
 addClickEventListener(
   syncNicknamesButton,
-  '/users/discord/nickname',
+  '/discord-actions/nicknames/sync?dev=true',
   'lastSyncNicknames',
   syncNicknamesStatusUpdate,
   'POST',
