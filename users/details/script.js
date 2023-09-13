@@ -1,3 +1,5 @@
+const params = new URLSearchParams(window.location.search);
+
 let userData = {};
 let userAllTasks = [];
 let userSkills = [];
@@ -319,15 +321,64 @@ function createSingleTaskCard(task) {
   const h2 = createElement({ type: 'h2', classList: ['task-title'] });
   h2.appendChild(createTextNode(task?.title));
   const p = createElement({ type: 'p', classList: ['task-description'] });
-  p.appendChild(createTextNode(task?.purpose));
+
+  if (params.get('dev') === 'true') {
+    if (task?.purpose == undefined) {
+      p.appendChild(createTextNode('N/A'));
+    }
+  } else {
+    p.appendChild(createTextNode(task?.purpose));
+  }
+
   const div = createElement({ type: 'div', classList: ['task-details'] });
 
   const dueDate = createElement({ type: 'div', classList: ['hidden-details'] });
   const dueDateTitle = createElement({ type: 'h3' });
   dueDateTitle.appendChild(createTextNode('Due Date'));
-  const dueDateValue = createElement({ type: 'p' });
-  dueDateValue.appendChild(createTextNode(task.endsOn));
+  const dueDateValue = createElement({
+    type: 'p',
+    classList: ['due-date-value'],
+  }); // added class for testing purpose
+
+  if (params.get('dev') === 'true') {
+    const daysToGo = generateDaysToGo(
+      generateReadableDateFromSecondsTimeStamp(task.endsOn),
+      task.status,
+    );
+    if (daysToGo.includes('Less Than a Day Remaining')) {
+      // Wrap the text in a <span> with a yellow color style
+      dueDateValue.innerHTML = `<span style="color: yellow;">${daysToGo}</span>`;
+    } else {
+      dueDateValue.appendChild(createTextNode(daysToGo));
+    }
+  } else {
+    dueDateValue.appendChild(
+      createTextNode(generateReadableDateFromSecondsTimeStamp(task.endsOn)),
+    );
+  }
+
   dueDate.append(dueDateTitle, dueDateValue);
+
+  if (params.get('dev') === 'true') {
+    //creating tooltip, gets displayed when we hover the element
+    const toolTip = createElement({
+      type: 'span',
+      classList: ['task-due-date'],
+    }); //creating a span for tooltip
+    toolTip.appendChild(
+      createTextNode(
+        `Due Date: ${generateReadableDateFromSecondsTimeStamp(task.endsOn)}`,
+      ),
+    );
+
+    dueDateValue.appendChild(toolTip); //appending it to the dueDateValue that we have create above
+    dueDateValue.addEventListener('mouseover', (event) => {
+      toolTip.style.visibility = 'visible';
+    });
+    dueDateValue.addEventListener('mouseout', (event) => {
+      toolTip.style.visibility = 'hidden';
+    });
+  }
 
   const status = createElement({ type: 'div', classList: ['hidden-details'] });
   const statusTitle = createElement({ type: 'h3' });
@@ -339,6 +390,32 @@ function createSingleTaskCard(task) {
   div.append(dueDate, status);
   container.append(h2, p, div);
   return container;
+}
+
+function generateReadableDateFromSecondsTimeStamp(timeStamp) {
+  //created function for readable date format
+  return new Date(timeStamp * 1000).toDateString(); // new function because we are getting the value in seconds and not milliseconds
+}
+
+function generateDaysToGo(dateStr, status) {
+  const inputDate = new Date(dateStr);
+
+  const now = new Date();
+  const offset = 330 * 60 * 1000;
+  const currentDate = new Date(now.getTime() + offset);
+  const diff = inputDate - currentDate; // Calculates the difference in milliseconds
+  if (diff <= 0 && status == 'COMPLETED') {
+    return 'Task has been completed within Committed timeline';
+  } else if (diff <= 0) {
+    return 'Deadline Passed'; // Due date is in the past
+  } else if (diff > 0 && diff < 24 * 60 * 60 * 1000) {
+    return 'Less Than a Day Remaining'; // Less than a day remaining
+  } else {
+    const daysRemaining = Math.floor(diff / (24 * 60 * 60 * 1000)); // Calculate the days remaining
+    return daysRemaining === 1
+      ? '1 Day remaining'
+      : daysRemaining + ' Days Remaining'; // Handle singular and plural for 1 day and more than 1 day
+  }
 }
 
 function fetchPrevTasks() {

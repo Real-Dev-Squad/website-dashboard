@@ -473,3 +473,19 @@ footer p a {
   max-width: 350px;
   width: 55%;
 }
+
+.task-due-date {
+  visibility: hidden; /*initial visibility*/
+  position: absolute;
+  border-radius: 0.43rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  background-color: var(--blue-color);
+  color: var(--white-color);
+}
+.task-due-date::after {
+  position: absolute;
+  color: black;
+}

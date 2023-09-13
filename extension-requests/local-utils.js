@@ -3,21 +3,38 @@ const Status = {
   PENDING: 'PENDING',
   DENIED: 'DENIED',
 };
-async function getExtensionRequests(query = {}) {
-  const url = new URL(`${API_BASE_URL}/extension-requests`);
 
-  queryParams = ['assignee', 'status', 'taskId'];
-  queryParams.forEach((key) => {
-    if (query[key]) {
-      if (Array.isArray(query[key])) {
-        query[key].forEach((value) => url.searchParams.append(key, value));
-      } else {
-        url.searchParams.append(key, query[key]);
+const Order = {
+  DESCENDING: 'desc',
+  ASCENDING: 'asc',
+};
+
+const DEFAULT_PAGE_SIZE = 5;
+async function getExtensionRequests(query = {}, nextLink) {
+  const { dev } = query;
+  let finalUrl;
+  if (dev) {
+    finalUrl =
+      API_BASE_URL + (nextLink || generateExtensionRequestParams(query));
+  } else {
+    const initialURI = nextLink || '/extension-requests';
+
+    const url = new URL(API_BASE_URL + initialURI);
+
+    queryParams = ['assignee', 'status', 'taskId', 'size', 'dev', 'order'];
+    queryParams.forEach((key) => {
+      if (query[key]) {
+        if (Array.isArray(query[key])) {
+          query[key].forEach((value) => url.searchParams.append(key, value));
+        } else {
+          url.searchParams.append(key, query[key]);
+        }
       }
-    }
-  });
+    });
+    finalUrl = url.toString();
+  }
 
-  const res = await fetch(url, {
+  const res = await fetch(finalUrl, {
     credentials: 'include',
     method: 'GET',
     headers: {
@@ -26,7 +43,32 @@ async function getExtensionRequests(query = {}) {
   });
   return await res.json();
 }
+const generateExtensionRequestParams = (nextPageParams) => {
+  const queryStringList = [];
+  const searchQueries = ['assignee', 'taskId', 'status'];
+  const urlSearchParams = new URLSearchParams();
 
+  for (const [key, value] of Object.entries(nextPageParams)) {
+    if (!value) continue;
+
+    if (searchQueries.includes(key)) {
+      let queryString;
+      if (Array.isArray(value)) {
+        queryString = key + ':' + value.join('+');
+      } else {
+        queryString = key + ':' + value;
+      }
+      queryStringList.push(queryString);
+    } else {
+      urlSearchParams.append(key, value);
+    }
+  }
+  if (queryStringList.length > 0)
+    urlSearchParams.append('q', queryStringList.join(','));
+
+  const uri = `/extension-requests?${urlSearchParams.toString()}`;
+  return uri;
+};
 async function updateExtensionRequest({ id, body }) {
   const url = `${API_BASE_URL}/extension-requests/${id}`;
   const res = await fetch(url, {
@@ -37,7 +79,9 @@ async function updateExtensionRequest({ id, body }) {
       'Content-type': 'application/json',
     },
   });
-  return await res.json();
+  if (res.status < 200 || res.status > 300) {
+    throw new Error('Update failed.');
+  }
 }
 
 async function updateExtensionRequestStatus({ id, body }) {
@@ -50,6 +94,11 @@ async function updateExtensionRequestStatus({ id, body }) {
       'Content-type': 'application/json',
     },
   });
+
+  if (res.status < 200 || res.status > 300) {
+    throw new Error('Update failed.');
+  }
+
   return await res.json();
 }
 
@@ -79,6 +128,21 @@ async function getUserDetails(username) {
   const user = await res.json();
 
   return user?.users[0];
+}
+
+async function getInDiscordUserList() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/users/search?role=in_discord`, {
+      credentials: 'include',
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+    return await res.json();
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 function secondsToMilliSeconds(seconds) {
@@ -160,4 +224,46 @@ function dateDiff(date1, date2, formatter) {
   }
 
   return formatter ? formatter(res) : res;
+}
+
+const addSpinner = (container) => {
+  const spinner = createElement({
+    type: 'div',
+    attributes: { class: 'spinner' },
+  });
+
+  container.append(spinner);
+
+  function removeSpinner() {
+    spinner.remove();
+  }
+
+  return removeSpinner;
+};
+
+const dateTimeString = (timestamp) => {
+  return new Date(timestamp).toISOString().substring(0, 16);
+};
+
+const fullDateString = (timestamp) => {
+  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const date = new Date(timestamp);
+  return `${daysOfWeek[date.getDay()]}, ${date.toLocaleString()}`;
+};
+
+function addEmptyPageMessage(container) {
+  const emptyPageMessage = createElement({
+    type: 'p',
+    attributes: { class: 'page-message' },
+    innerText: 'No extension requests to show!',
+  });
+  container.appendChild(emptyPageMessage);
+}
+
+function addErrorElement(container) {
+  const errorHeading = createElement({
+    type: 'h2',
+    innerText: ERROR_MESSAGE_RELOAD,
+  });
+  container.appendChild(errorHeading);
 }

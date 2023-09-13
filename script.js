@@ -10,8 +10,15 @@ const syncExternalAccountsButton = document.getElementById(
 const syncUnverifiedUsersButton = document.getElementById(
   SYNC_UNVERIFIED_USERS,
 );
+const syncNicknamesButton = document.getElementById(SYNC_NICKNAMES);
 const syncUsersStatusUpdate = document.getElementById(SYNC_USERS_STATUS_UPDATE);
+const syncIdleUsersButton = document.getElementById(SYNC_IDLE_USERS);
+const syncIdleUsersUpdate = document.getElementById(SYNC_IDLE_USERS_UPDATE);
 const repoSyncStatusUpdate = document.getElementById(SYNC_REPO_STATUS_UPDATE);
+
+const syncNicknamesStatusUpdate = document.getElementById(
+  SYNC_NICKNAMES_STATUS_UPDATE,
+);
 
 const syncExternalAccountsUpdate = document.getElementById(
   SYNC_EXTERNAL_ACCOUNTS_UPDATE,
@@ -44,6 +51,12 @@ export async function showSuperUserOptions(...privateBtns) {
       syncUnverifiedUsersUpdate.textContent = `Last Sync: ${
         localStorage.getItem('lastSyncUnverifiedUsers') ||
         'Synced Data Not Available'
+      }`;
+      syncIdleUsersUpdate.textContent = `Last Sync: ${
+        localStorage.getItem('lastSyncIdleUsers') || 'Synced Data Not Available'
+      }`;
+      syncNicknamesStatusUpdate.textContent = `Last Sync: ${
+        localStorage.getItem('lastSyncNicknames') || 'Synced Data Not Available'
       }`;
     }
   } catch (err) {
@@ -251,6 +264,7 @@ const repoSyncHandler = async (event) => {
 repoSyncButton.addEventListener('click', repoSyncHandler);
 
 // Attach (button,API,cookie name,div element of status,HTTP method of API
+
 addClickEventListener(
   syncUsersStatusButton,
   {
@@ -268,15 +282,29 @@ addClickEventListener(
 );
 addClickEventListener(
   syncExternalAccountsButton,
-  '/external-accounts/discord-sync',
+  '/external-accounts/users?action=discord-users-sync',
   'lastSyncExternalAccounts',
   syncExternalAccountsUpdate,
-  'PATCH',
+  'POST',
 );
 addClickEventListener(
   syncUnverifiedUsersButton,
   '/users/',
   'lastSyncUnverifiedUsers',
   syncUnverifiedUsersUpdate,
+  'POST',
+);
+addClickEventListener(
+  syncIdleUsersButton,
+  '/discord-actions/group-idle',
+  'lastSyncIdleUsers',
+  syncIdleUsersUpdate,
+  'PUT',
+);
+addClickEventListener(
+  syncNicknamesButton,
+  '/discord-actions/nicknames/sync?dev=true',
+  'lastSyncNicknames',
+  syncNicknamesStatusUpdate,
   'POST',
 );

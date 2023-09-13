@@ -100,8 +100,12 @@
 
     <div class="search-filter">
       <div id="search">
-        <input id="assignee-search" type="text" placeholder="Search Assignee" />
+        <input id="assignee-search" type="text" placeholder="Enter usernames" />
       </div>
+      <button class="sort-button tooltip-container">
+        <img id="asc-sort-icon" src="/images/sort-asc.svg" alt="sort-icon" />
+        <img id="desc-sort-icon" src="/images/sort-desc.svg" alt="sort-icon" />
+      </button>
       <button id="filter-button" class="filter-button">
         <span class="filter-text">Filters</span>
 
@@ -123,8 +127,8 @@
     </div>
     <div class="container">
       <div class="extension-requests"></div>
+      <div class="virtual"></div>
     </div>
-    <h2 id="error"></h2>
     <script src="/constants.js"></script>
     <script src="/extension-requests/constants.js"></script>
     <script src="/utils.js"></script>
