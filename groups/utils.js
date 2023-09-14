@@ -32,6 +32,17 @@ async function getUserSelf() {
     return err;
   }
 }
+async function getUserGroupRoles() {
+  const res = await fetch(`${BASE_URL}/discord-actions/roles`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: {
+      'Content-type': 'application/json',
+    },
+  });
+  return await res.json();
+}
+
 async function getDiscordGroups(isDev) {
   try {
     const devFeatureFlag = isDev ? '?dev=true' : '';
@@ -103,6 +114,7 @@ function removeGroupKeywordFromDiscordRoleName(groupName) {
 }
 
 export {
+  getUserGroupRoles,
   getMembers,
   getUserSelf,
   getDiscordGroups,

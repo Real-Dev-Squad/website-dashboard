@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer');
 const { allUsersData } = require('../../mock-data/users');
-const { discordGroups } = require('../../mock-data/groups');
+const { discordGroups, GroupRoleData } = require('../../mock-data/groups');
 
 const BASE_URL = 'https://api.realdevsquad.com';
 
@@ -14,7 +14,7 @@ describe('Discord Groups Page', () => {
 
   beforeAll(async () => {
     browser = await puppeteer.launch({
-      headless: true,
+      headless: 'new',
       ignoreHTTPSErrors: true,
       args: ['--disable-web-security'],
       devtools: false,
@@ -61,6 +61,17 @@ describe('Discord Groups Page', () => {
               'Access-Control-Allow-Headers': 'Content-Type, Authorization',
             },
             body: JSON.stringify(discordGroups),
+          });
+        } else if (url === `${BASE_URL}/discord-actions/roles`) {
+          interceptedRequest.respond({
+            status: 200,
+            contentType: 'application/json',
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+              'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            },
+            body: JSON.stringify(GroupRoleData),
           });
         } else {
           interceptedRequest.continue();
@@ -156,6 +167,33 @@ describe('Discord Groups Page', () => {
     await page.waitForNetworkIdle();
     await expect(alertMessage).toContain('Role created successfully');
   });
+
+  test('Should show add button as user not part of the group', async () => {
+    const group = await page.$('.group-role');
+    await group.click();
+
+    // Wait for the btn-add-role and click it
+    const addRoleBtn = await page.$('.btn-add-role');
+    await addRoleBtn.click();
+
+    // Now, check the text content of the button
+    const buttonText = await addRoleBtn.evaluate((node) => node.textContent);
+    expect(buttonText).toBe('Add me to this group');
+  });
+
+  test('Should show remove button as user is part of the group', async () => {
+    await page.$$eval('.group-role', (elements) => {
+      elements[1].click();
+    });
+    // Wait for the btn-add-role and click it
+    const addRoleBtn = await page.$('.btn-add-role');
+    await addRoleBtn.click();
+
+    // Now, check the text content of the button
+    const buttonText = await addRoleBtn.evaluate((node) => node.textContent);
+    expect(buttonText).toBe('Remove me from this group');
+  });
+
   test('Should display an error message if the role name contains "group"', async () => {
     createGroup = await page.$('.create-groups-tab');
     await createGroup.click();
@@ -204,7 +242,7 @@ describe('Discord Groups Page', () => {
         element.getAttribute('data-member-count'),
       );
     });
-    expect(memberCounts).toEqual(['3', '200', '0']);
+    expect(memberCounts).toEqual(['4', '200', '0']);
   });
 
   test("should show proper group creator's image", async () => {
