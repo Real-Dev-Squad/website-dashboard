@@ -400,7 +400,7 @@ function populateAvailability() {
     { name: 'Ooo (Out of Office)', id: 'OOO' },
     { name: 'Idle', id: 'IDLE' },
     { name: 'Onboarding', id: 'ONBOARDING' },
-    { name: 'Onboarding>31D', id: 'ONBOARDING31DAYS' },
+    { name: 'Onboarding > 31d', id: 'ONBOARDING31DAYS' },
   ];
 
   if (params.get('dev') != 'true') {
