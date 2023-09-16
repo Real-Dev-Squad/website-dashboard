@@ -148,7 +148,13 @@ groupRoles?.addEventListener('click', function (event) {
     groupListItem.classList.add('active-group');
     memberAddRoleBody.roleid = groupListItem.id;
     if (IsUserVerified) {
-      updateButtonState();
+      if (isDev) {
+        buttonAddRole.removeEventListener('click', addrole);
+        updateButtonState();
+      } else {
+        buttonAddRole.disabled = false;
+        buttonAddRole.addEventListener('click', addrole);
+      }
     }
   }
 });
@@ -218,12 +224,13 @@ async function addrole() {
         groupNameElement.setAttribute('data-member-count', +currentCount + 1);
       }
       alert(res.message);
+      if (isDev) {
+        // After adding the role, re-fetch the user group data to update it
+        UserGroupData = await getUserGroupRoles();
 
-      // After adding the role, re-fetch the user group data to update it
-      UserGroupData = await getUserGroupRoles();
-
-      // Update the button state with the refreshed data
-      updateButtonState();
+        // Update the button state with the refreshed data
+        updateButtonState();
+      }
     } catch (err) {
       alert(err.message);
     } finally {
