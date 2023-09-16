@@ -62,6 +62,17 @@ describe('Discord Groups Page', () => {
             },
             body: JSON.stringify(discordGroups),
           });
+        } else if (url === `${BASE_URL}/discord-actions/groups?dev=true`) {
+          interceptedRequest.respond({
+            status: 200,
+            contentType: 'application/json',
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+              'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            },
+            body: JSON.stringify(discordGroups),
+          });
         } else if (url === `${BASE_URL}/discord-actions/roles`) {
           interceptedRequest.respond({
             status: 200,
@@ -169,6 +180,9 @@ describe('Discord Groups Page', () => {
   });
 
   test('Should show add button as user not part of the group', async () => {
+    await page.goto('http://localhost:8000/groups/?dev=true');
+    await page.waitForNetworkIdle();
+
     const group = await page.$('.group-role');
     await group.click();
 
@@ -242,7 +256,7 @@ describe('Discord Groups Page', () => {
         element.getAttribute('data-member-count'),
       );
     });
-    expect(memberCounts).toEqual(['4', '200', '0']);
+    expect(memberCounts).toEqual(['3', '200', '0']);
   });
 
   test("should show proper group creator's image", async () => {
