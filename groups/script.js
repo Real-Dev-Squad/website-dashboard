@@ -244,6 +244,8 @@ async function addrole() {
  */
 async function removeRoleHandler() {
   console.log('Remove function to be added after this pr');
+
+  // TODO: REMOVE ME BUTTON FUNCTIONALITY TO BE ADDED
 }
 
 /**
