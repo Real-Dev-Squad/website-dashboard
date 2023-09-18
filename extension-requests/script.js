@@ -674,6 +674,26 @@ async function createExtensionCard(data) {
   });
   datesDetailsContainer.appendChild(extensionDetailsLine);
 
+  //Added it for displaying extension request number
+  const extensionRequestNumberContainer = createElement({ type: 'div' });
+  datesContainer.appendChild(extensionRequestNumberContainer);
+
+  const extensionRequestNumber = createElement({
+    type: 'span',
+    attributes: { class: 'card-row-text' },
+    innerText: 'Request No.:  '
+  });
+  extensionRequestNumberContainer.appendChild(extensionRequestNumber);
+  
+  //Since previous extensions does not contain requestNumber field
+  const requestNumber = (data.requestNumber !== undefined && data.requestNumber !== null) ? data.requestNumber : "1";
+
+  const extensionRequestNumberValue = createElement({
+    type: 'span',
+    innerText: `${requestNumber}`,
+  });
+  extensionRequestNumberContainer.appendChild(extensionRequestNumberValue);
+
   const extensionForContainer = createElement({
     type: 'div',
   });
