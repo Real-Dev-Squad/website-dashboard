@@ -295,8 +295,8 @@ const hamburgerDiv = document.querySelector('.hamburger');
 const navLinks = document.querySelector('.links');
 let toggle = true;
 
-hamburgerDiv.addEventListener('click', function() {
-  if(toggle) {
+hamburgerDiv.addEventListener('click', function () {
+  if (toggle) {
     navLinks.classList.add('active');
     toggle = false;
   } else {

@@ -53,8 +53,8 @@ img {
 .nav-links .hamburger {
   display: none;
   order: 1;
-    margin: auto;
-    cursor: pointer;
+  margin: auto;
+  cursor: pointer;
 }
 
 .nav-links .hamburger .line {
@@ -397,7 +397,7 @@ footer {
     position: absolute;
     display: flex;
     background-color: var(--white-color);
-}
+  }
 
   .nav-links .links a {
     color: var(--blue-color);
