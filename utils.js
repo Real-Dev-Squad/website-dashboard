@@ -29,6 +29,7 @@ function createElement({ type, attributes = {}, innerText }) {
 }
 
 function addLoader(container) {
+  removeLoader('loader');
   if (!container) return;
   const loader = createElement({
     type: 'div',
@@ -43,8 +44,9 @@ function addLoader(container) {
   container.appendChild(loader);
 }
 
-function removeLoader(classname) {
-  document.querySelector(`.${classname}`).remove();
+function removeLoader(classname = 'loader') {
+  const loader = document.querySelector(`.${classname}`);
+  if (loader) loader.remove();
 }
 
 function debounce(func, delay) {
@@ -58,4 +60,8 @@ function debounce(func, delay) {
       func(...args);
     }, delay);
   };
+}
+
+async function addDelay(milliSeconds) {
+  await new Promise((resolve) => setTimeout(resolve, milliSeconds));
 }
