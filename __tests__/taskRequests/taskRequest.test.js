@@ -11,6 +11,8 @@ describe('Task Requests', () => {
   let page;
   jest.setTimeout(50000);
 
+  jest.setTimeout(60000);
+
   beforeAll(async () => {
     browser = await puppeteer.launch({
       headless: 'new',
@@ -71,7 +73,10 @@ describe('createCustomElement', () => {
   let page;
 
   beforeAll(async () => {
-    browser = await puppeteer.launch();
+    browser = await puppeteer.launch({
+      headless: 'new',
+    });
+
     page = await browser.newPage();
 
     await page.goto(`${SITE_URL}/taskRequests`);

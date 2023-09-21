@@ -10,15 +10,19 @@ import {
   addGroupRoleToMember,
   createDiscordGroupRole,
   getUserSelf,
+  getUserGroupRoles,
 } from './utils.js';
 const groupTabs = document.querySelector('.groups-tab');
 const tabs = document.querySelectorAll('.groups-tab div');
 const sections = document.querySelectorAll('.manage-groups, .create-group');
 const loader = document.querySelector('.backdrop');
 const userIsNotVerifiedText = document.querySelector('.not-verified-tag');
-const userSelfData = await getUserSelf();
 const params = new URLSearchParams(window.location.search);
 const isDev = params.get(DEV_FEATURE_FLAG) === 'true';
+
+//User Data
+const userSelfData = await getUserSelf();
+let UserGroupData = await getUserGroupRoles();
 
 /**
  * Create DOM for "created by author" line under groupName
@@ -120,6 +124,10 @@ groupTabs.addEventListener('click', (e) => {
   });
   if (e.target.nodeName !== 'NAV') e.target?.classList?.add('active-tab');
 });
+function isRoleIdInData(data, targetRoleId) {
+  // Use the some() method to check if any element in data.groups has a matching roleId
+  return data.groups.some((group) => group.roleId === targetRoleId);
+}
 
 /**
  * FOR SELECTING A GROUP
@@ -140,11 +148,33 @@ groupRoles?.addEventListener('click', function (event) {
     groupListItem.classList.add('active-group');
     memberAddRoleBody.roleid = groupListItem.id;
     if (IsUserVerified) {
-      buttonAddRole.disabled = false;
+      if (isDev) {
+        buttonAddRole.removeEventListener('click', addrole);
+        updateButtonState();
+      } else {
+        buttonAddRole.disabled = false;
+        buttonAddRole.addEventListener('click', addrole);
+      }
     }
   }
 });
+// Function to update the button state based on user's group roles
+function updateButtonState() {
+  const isRoleIdPresent = isRoleIdInData(
+    UserGroupData,
+    memberAddRoleBody.roleid,
+  );
+  buttonAddRole.textContent = isRoleIdPresent
+    ? 'Remove me from this group'
+    : 'Add me to this group';
+  buttonAddRole.disabled = false;
 
+  isRoleIdPresent
+    ? (buttonAddRole.removeEventListener('click', addrole),
+      buttonAddRole.addEventListener('click', removeRoleHandler))
+    : (buttonAddRole.removeEventListener('click', removeRoleHandler),
+      buttonAddRole.addEventListener('click', addrole));
+}
 // const paragraphElement = null, paragraphContent = '';
 const searchInput = document.getElementById('search-groups');
 
@@ -187,25 +217,45 @@ searchInput.addEventListener('keyup', () => {
  * TO ASSIGN YOURSELF A ROLE
  */
 const buttonAddRole = document.querySelector('.btn-add-role');
-buttonAddRole.addEventListener('click', async function () {
+async function addrole() {
   if (memberAddRoleBody?.userid && memberAddRoleBody?.roleid !== '') {
     loader.classList.remove('hidden');
 
-    addGroupRoleToMember(memberAddRoleBody)
-      .then((res) => {
-        const groupNameElement = document.getElementById(
-          `name-${memberAddRoleBody.roleid}`,
-        );
-        const currentCount = groupNameElement.getAttribute('data-member-count');
-        if (currentCount !== null && currentCount !== undefined) {
-          groupNameElement.setAttribute('data-member-count', +currentCount + 1);
-        }
-        alert(res.message);
-      })
-      .catch((err) => alert(err.message))
-      .finally(() => loader.classList.add('hidden'));
+    try {
+      // Add the role to the member
+      const res = await addGroupRoleToMember(memberAddRoleBody);
+
+      const groupNameElement = document.getElementById(
+        `name-${memberAddRoleBody.roleid}`,
+      );
+      const currentCount = groupNameElement.getAttribute('data-member-count');
+      if (currentCount !== null && currentCount !== undefined) {
+        groupNameElement.setAttribute('data-member-count', +currentCount + 1);
+      }
+      alert(res.message);
+      if (isDev) {
+        // After adding the role, re-fetch the user group data to update it
+        UserGroupData = await getUserGroupRoles();
+
+        // Update the button state with the refreshed data
+        updateButtonState();
+      }
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      loader.classList.add('hidden');
+    }
   }
-});
+}
+
+/**
+ * TO REMOVE YOURSELF OF A ROLE
+ */
+async function removeRoleHandler() {
+  console.log('Remove function to be added after this pr');
+
+  // TODO: REMOVE ME BUTTON FUNCTIONALITY TO BE ADDED
+}
 
 /**
  *
