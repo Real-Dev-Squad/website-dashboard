@@ -21,7 +21,13 @@ const userIsNotVerifiedText = document.querySelector('.not-verified-tag');
 const params = new URLSearchParams(window.location.search);
 const searchValue = getSearchValueFromURL();
 const isDev = params.get(DEV_FEATURE_FLAG) === 'true';
+// const paragraphElement = null, paragraphContent = '';
 
+const searchInput = document.getElementById('search-groups');
+//Let searchInput has searchValue as it is independent to API calls mentioned below
+if (searchValue) {
+  searchInput.value = searchValue;
+}
 //User Data
 const userSelfData = await getUserSelf();
 let UserGroupData = await getUserGroupRoles();
@@ -176,12 +182,6 @@ function updateButtonState() {
       buttonAddRole.addEventListener('click', removeRoleHandler))
     : (buttonAddRole.removeEventListener('click', removeRoleHandler),
       buttonAddRole.addEventListener('click', addrole));
-}
-// const paragraphElement = null, paragraphContent = '';
-const searchInput = document.getElementById('search-groups');
-//After rendering searchInput, add it's default value from URL if exists
-if (searchValue) {
-  searchInput.value = searchValue;
 }
 
 function debounce(func, delay) {
