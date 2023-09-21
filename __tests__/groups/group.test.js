@@ -232,6 +232,21 @@ describe('Discord Groups Page', () => {
     );
   });
 
+  test('should display a message no results found if group not exists', async () => {
+    const searchInput = await page.$('#search-groups');
+
+    await searchInput.type('dummy');
+
+    await page.waitForNetworkIdle();
+
+    const noResultFoundHeading = await page.$('#no-results-message');
+    const noResultFoundHeadingText = await (
+      await noResultFoundHeading.getProperty('innerText')
+    ).jsonValue();
+
+    expect(noResultFoundHeadingText).toEqual('No results found.');
+  });
+
   test('should update the URL when a group role is clicked', async () => {
     await page.$$eval('.group-role', (elements) => {
       elements[1].click();
