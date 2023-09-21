@@ -282,7 +282,7 @@ describe('Discord Groups Page', () => {
     await manageGroup.click();
     const searchInput = await page.$('#search-groups');
     await searchInput.type('DSA');
-    await new Promise((resolve) => setTimeout(resolve, 1500)); //wait for debouncer
+    await new Promise((resolve) => setTimeout(resolve, 1000)); //wait for debouncer
     const url = await page.url();
     const searchParams = decodeURIComponent(url.split('?')[1]);
     expect(searchParams).toMatch('DSA');

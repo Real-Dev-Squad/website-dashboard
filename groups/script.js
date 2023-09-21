@@ -215,7 +215,7 @@ searchInput.addEventListener(
     });
     loader.classList.add('hidden');
     searchInput.disabled = false;
-  }, 1000),
+  }, 500), //Reduced debounce for improved user experience
 );
 
 /**
