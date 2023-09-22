@@ -17,6 +17,7 @@
   display: none;
   padding-top: 10px;
   max-height: 85vh;
+  padding: 0 1rem;
   width: 50%;
 }
 
@@ -144,10 +145,12 @@ footer .info-repo {
 @media only screen and (max-width: 600px) {
   .task-container {
     width: 85%;
+    padding: 0;
   }
 }
 @media only screen and (max-width: 400px) {
   .task-container {
     width: 95%;
+    padding: 0;
   }
 }

@@ -207,9 +207,7 @@ searchInput.addEventListener('keyup', () => {
       loader.classList.add('hidden');
     });
     const noResultsMessage = document.getElementById('no-results-message');
-    foundResults
-      ? (noResultsMessage.style.display = 'none')
-      : (noResultsMessage.style.display = 'block');
+    noResultsMessage.style.display = foundResults ? 'none' : 'block';
   }, 1000)();
 });
 
