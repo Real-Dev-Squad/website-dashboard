@@ -2,17 +2,6 @@ const container = document.querySelector('.container');
 const extensionRequestsContainer = document.querySelector(
   '.extension-requests',
 );
-
-const modalParent = document.querySelector('.extension-requests-modal-parent');
-const closeModal = document.querySelectorAll('#close-modal');
-
-//modal containers
-const modalShowInfo = document.querySelector('.extension-requests-info');
-const modalStatusForm = document.querySelector(
-  '.extension-requests-status-form',
-);
-const modalUpdateForm = document.querySelector('.extension-requests-form');
-
 const filterModal = document.getElementsByClassName(FILTER_MODAL)[0];
 const filterButton = document.getElementById(FILTER_BUTTON);
 const applyFilterButton = document.getElementById(APPLY_FILTER_BUTTON);
@@ -27,10 +16,6 @@ let extensionPageVersion = 0;
 let nextLink = '';
 let isDataLoading = false;
 let userMap = new Map();
-if (params.get('dev') === 'true') {
-  extensionRequestsContainer.classList.remove('extension-requests');
-  extensionRequestsContainer.classList.add('extension-requests-new');
-}
 
 const state = {
   currentExtensionRequest: null,
@@ -40,7 +25,6 @@ const filterStates = {
   status: Status.PENDING,
   order: Order.ASCENDING,
   size: DEFAULT_PAGE_SIZE,
-  dev: params.get('dev') === 'true',
 };
 
 const updateFilterStates = (key, value) => {
@@ -78,15 +62,11 @@ const render = async () => {
 };
 
 const addIntersectionObserver = () => {
-  if (params.get('dev') === 'true') {
-    intersectionObserver.observe(lastElementContainer);
-  }
+  intersectionObserver.observe(lastElementContainer);
 };
 
 const removeIntersectionObserver = () => {
-  if (params.get('dev') === 'true') {
-    intersectionObserver.unobserve(lastElementContainer);
-  }
+  intersectionObserver.unobserve(lastElementContainer);
 };
 
 const changeFilter = () => {
@@ -150,24 +130,13 @@ async function populateExtensionRequests(query = {}, newLink) {
     const extensionRequests = await getExtensionRequests(query, newLink);
     nextLink = extensionRequests.next;
     const allExtensionRequests = extensionRequests.allExtensionRequests;
-
-    if (params.get('dev') === 'true') {
-      if (currentVersion !== extensionPageVersion) {
-        return;
-      }
-      for (let data of allExtensionRequests) {
-        createExtensionCard(data);
-      }
-      initializeAccordions();
-    } else {
-      allExtensionRequests.forEach((data) => {
-        const extensionRequestCard = createExtensionRequestCard(
-          data,
-          extensionRequestCardHeadings,
-        );
-        extensionRequestsContainer.appendChild(extensionRequestCard);
-      });
+    if (currentVersion !== extensionPageVersion) {
+      return;
     }
+    for (let data of allExtensionRequests) {
+      createExtensionCard(data);
+    }
+    initializeAccordions();
   } catch (error) {
     addErrorElement(extensionRequestsContainer);
   } finally {
@@ -340,170 +309,6 @@ const toggleSortIcon = () => {
   }
 };
 
-const showTaskDetails = async (taskId, approved) => {
-  if (!taskId) return;
-  try {
-    modalShowInfo.innerHTML = '<h3>Task Details</h3>';
-    addLoader(modalShowInfo);
-    const taskDetails = await getTaskDetails(taskId);
-    const taskData = taskDetails.taskData;
-    modalShowInfo.append(
-      createTaskInfoModal(taskData, approved, taskInfoModelHeadings),
-    );
-  } catch (error) {
-    addErrorElement(extensionRequestsContainer);
-    reload();
-  } finally {
-    removeLoader('loader');
-  }
-};
-function createTaskInfoModal(data, approved, dataHeadings) {
-  if (!data) return;
-
-  const updateStatus = createElement({
-    type: 'button',
-    attributes: { class: 'status-form' },
-    innerText: 'Update Status',
-  });
-  const closeModal = createElement({
-    type: 'button',
-    attributes: { id: 'close-modal' },
-    innerText: 'Cancel',
-  });
-  updateStatus.addEventListener('click', () => {
-    showModal('status-form');
-    fillStatusForm();
-  });
-  closeModal.addEventListener('click', () => hideModal());
-
-  const main = createTable(dataHeadings, data);
-
-  if (!approved) main.appendChild(updateStatus);
-  main.appendChild(closeModal);
-  return main;
-}
-function createExtensionRequestCard(data, dataHeadings) {
-  if (!data) return;
-
-  const updateRequestBtn = createElement({
-    type: 'button',
-    attributes: { class: 'update_request' },
-    innerText: 'Update Request',
-  });
-  const moreInfoBtn = createElement({
-    type: 'button',
-    attributes: { class: 'more' },
-    innerText: 'More',
-  });
-  updateRequestBtn.addEventListener('click', () => {
-    showModal('update-form');
-    state.currentExtensionRequest = data;
-    fillUpdateForm();
-  });
-  moreInfoBtn.addEventListener('click', () => {
-    showModal('info');
-    showTaskDetails(data.taskId, data.status === 'APPROVED');
-    state.currentExtensionRequest = data;
-  });
-
-  const main = createTable(dataHeadings, data, 'extension-request');
-
-  const wrapperDiv = createElement({ type: 'div' });
-
-  wrapperDiv.appendChild(moreInfoBtn);
-  wrapperDiv.appendChild(updateRequestBtn);
-
-  main.appendChild(wrapperDiv);
-  return main;
-}
-
-//PATCH requests functions
-async function onStatusFormSubmit(e) {
-  e.preventDefault();
-  try {
-    addLoader(container);
-    let formData = formDataToObject(new FormData(e.target));
-    await updateExtensionRequestStatus({
-      id: state.currentExtensionRequest.id,
-      body: formData,
-    });
-    reload();
-  } catch (error) {
-    addErrorElement(extensionRequestsContainer);
-    reload();
-  } finally {
-    removeLoader('loader');
-  }
-}
-async function onUpdateFormSubmit(e) {
-  e.preventDefault();
-  try {
-    addLoader(container);
-    let formData = formDataToObject(new FormData(e.target));
-    formData['newEndsOn'] = new Date(formData['newEndsOn']).getTime() / 1000;
-    await updateExtensionRequest({
-      id: state.currentExtensionRequest.id,
-      body: formData,
-    });
-    addErrorElement(extensionRequestsContainer);
-    reload();
-  } finally {
-    removeLoader('loader');
-  }
-}
-
-modalUpdateForm.addEventListener('submit', onUpdateFormSubmit);
-modalStatusForm.addEventListener('submit', onStatusFormSubmit);
-
-modalParent.addEventListener('click', hideModal);
-closeModal.forEach((node) => node.addEventListener('click', () => hideModal()));
-
-function showModal(show = 'form') {
-  modalParent.classList.add('visible');
-  modalParent.setAttribute('show', show);
-}
-function hideModal(e) {
-  if (!e) {
-    modalParent.classList.remove('visible');
-    return;
-  }
-  e.stopPropagation();
-  if (e.target === modalParent) {
-    modalParent.classList.remove('visible');
-  }
-}
-function reload() {
-  setTimeout(() => window.history.go(0), 2000);
-}
-function fillStatusForm() {
-  modalStatusForm.querySelector('.extensionId').value =
-    state.currentExtensionRequest.id;
-  modalStatusForm.querySelector('.extensionTitle').value =
-    state.currentExtensionRequest.title;
-  modalStatusForm.querySelector('.extensionAssignee').value =
-    state.currentExtensionRequest.assignee;
-}
-function fillUpdateForm() {
-  const { newEndsOn, oldEndsOn, status, id, title, assignee, reason } =
-    state.currentExtensionRequest;
-
-  modalUpdateForm.querySelector('.extensionNewEndsOn').value = new Date(
-    newEndsOn * 1000,
-  )
-    .toISOString()
-    .replace('Z', '');
-  modalUpdateForm.querySelector('.extensionOldEndsOn').value = new Date(
-    oldEndsOn * 1000,
-  )
-    .toISOString()
-    .replace('Z', '');
-
-  modalUpdateForm.querySelector('.extensionStatus').value = status;
-  modalUpdateForm.querySelector('.extensionId').value = id;
-  modalUpdateForm.querySelector('.extensionTitle').value = title;
-  modalUpdateForm.querySelector('.extensionAssignee').value = assignee;
-  modalUpdateForm.querySelector('.extensionReason').value = reason;
-}
 filterButton.addEventListener('click', (event) => {
   event.stopPropagation();
   filterModal.classList.toggle('hidden');

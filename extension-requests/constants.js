@@ -8,6 +8,8 @@ const CANCEL_ICON_WHITE = '/images/x-icon-white.svg';
 const EDIT_ICON = '/images/edit-icon.svg';
 const ERROR_MESSAGE_RELOAD = 'Something went wrong, Please reload';
 
+const DEFAULT_PAGE_SIZE = 5;
+
 const taskInfoModelHeadings = [
   { title: 'Title' },
   { title: 'Ends On', key: 'endsOn', time: true },
