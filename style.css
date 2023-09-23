@@ -24,12 +24,84 @@ body {
 #tasksNav {
   background-color: var(--blue-color);
   padding: 10px;
-  height: 2.5rem;
+  display: flex;
+}
+
+img {
+  height: 100%;
+  width: 100%;
+}
+
+.logo {
+  height: 50px;
+  width: 50px;
+}
+
+.nav-links {
+  display: flex;
+}
+
+.nav-links .active {
+  top: 80px;
+  left: 0;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  padding: 10px;
+}
+
+.nav-links .hamburger {
+  display: none;
+  order: 1;
+  margin: auto;
+  cursor: pointer;
+}
+
+.nav-links .hamburger .line {
+  width: 25px;
+  margin: 5px;
+  border: 2px solid var(--white-color);
+}
+
+.nav-links .links {
+  margin: auto;
+}
+
+.nav-links .links a {
+  text-decoration: none;
+  color: var(--white-color);
+  padding: 20px;
+}
+
+.sign-in-btn {
+  display: flex;
+  justify-content: center;
+  order: 3;
+}
+
+.sign-in-btn a {
+  position: absolute;
+  right: 10px;
+  margin: 10px;
+  height: 30px;
+  padding: 5px;
+  background-color: var(--blue-color);
+  color: var(--white-color);
+  cursor: pointer;
+  border: 2px solid var(--white-color);
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.sign-in-btn a img {
+  height: 15px;
+  width: 15px;
+  position: relative;
+  top: 1px;
 }
 
 #createTask {
   color: var(--white-color);
-  padding-left: 50%;
   text-decoration: none;
   font-size: large;
 }
@@ -294,4 +366,50 @@ footer {
 
 .element-display-remove {
   display: none !important;
+}
+
+/* MEDIA QUERY */
+
+@media screen and (max-width: 970px) {
+  #tasksNav {
+    justify-content: space-between;
+  }
+
+  .sign-in-btn a {
+    position: static;
+  }
+
+  .sign-in-btn span {
+    display: none;
+  }
+  .logo {
+    order: 2;
+  }
+
+  .nav-links .hamburger {
+    display: inline-block;
+  }
+
+  .nav-links .links {
+    display: none;
+  }
+
+  .nav-links .active {
+    position: absolute;
+    display: flex;
+    background-color: var(--white-color);
+  }
+
+  .nav-links .links a {
+    color: var(--blue-color);
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .buttonSection {
+    flex-direction: column;
+  }
+  .action-button {
+    text-align: center;
+  }
 }

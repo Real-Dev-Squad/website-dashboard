@@ -100,8 +100,14 @@ function getMembersListContent(members, classList = []) {
 }
 
 function getTaskDataContent({ tasks, username, classList = [] }) {
-  const div = createElement({ type: 'div' });
-  const h3 = createElement({ type: 'h3' });
+  const div = createElement({
+    type: 'div',
+    classList: TASKS_SUBCONTAINER_CLASS_LIST,
+  });
+  const h3 = createElement({
+    type: 'h3',
+    classList: TASKS_CONTAINER_TITLE_CLASS_LIST,
+  });
   h3.appendChild(createTextNode(`TASKS - ${username}`));
   const fragment = new DocumentFragment();
   tasks.forEach((task) => {
@@ -165,6 +171,7 @@ function addEventListenerToMembersList() {
   const membersList = document.querySelector(`#${MEMBERS_CONTAINER_ID} > UL`);
   membersList.addEventListener('click', (event) => {
     const memberElement = event.target.closest(`.${MEMBERS_CLASS}`);
+    document.getElementById(TASKS_CONTAINER_ID).style.display = 'block';
     if (!memberElement) {
       return;
     }
