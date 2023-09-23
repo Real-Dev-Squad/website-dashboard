@@ -206,13 +206,21 @@ searchInput.addEventListener(
     window.history.pushState({}, '', newURL);
     const searchValue = searchInput.value.toUpperCase();
     const groupRoles = document.querySelectorAll('.group-role');
+    let foundResults = false;
     groupRoles.forEach((groupRole) => {
       const paragraphElement = groupRole.getElementsByTagName('p')[0];
       const paragraphContent = paragraphElement.textContent;
       const displayValue =
         paragraphContent.toUpperCase().indexOf(searchValue) > -1 ? '' : 'none';
       groupRole.style.display = displayValue;
+
+      if (displayValue === '') {
+        foundResults = true;
+      }
+      loader.classList.add('hidden');
     });
+    const noResultsMessage = document.getElementById('no-results-message');
+    noResultsMessage.style.display = foundResults ? 'none' : 'block';
     loader.classList.add('hidden');
     searchInput.disabled = false;
   }, 500), //Reduced debounce for improved user experience

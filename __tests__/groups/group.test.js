@@ -232,6 +232,21 @@ describe('Discord Groups Page', () => {
     );
   });
 
+  test('should display a message no results found if group not exists', async () => {
+    const searchInput = await page.$('#search-groups');
+
+    await searchInput.type('dummy');
+
+    await page.waitForNetworkIdle();
+
+    const noResultFoundHeading = await page.$('#no-results-message');
+    const noResultFoundHeadingText = await (
+      await noResultFoundHeading.getProperty('innerText')
+    ).jsonValue();
+
+    expect(noResultFoundHeadingText).toEqual('No results found.');
+  });
+
   test('should not have group keyword in group list', async () => {
     const renderedGroupNames = await page.$$eval('.group-name', (elements) => {
       return elements.map((element) => element.innerText);
