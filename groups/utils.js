@@ -113,6 +113,20 @@ function removeGroupKeywordFromDiscordRoleName(groupName) {
   return groupName;
 }
 
+//Function to parse only search value from URL
+function getSearchValueFromURL() {
+  const params = new URLSearchParams(window.location.search);
+
+  let searchValue = null;
+
+  for (const [key, value] of params.entries()) {
+    if (value === '') {
+      searchValue = key;
+      break;
+    }
+  }
+  return searchValue;
+}
 export {
   getUserGroupRoles,
   getMembers,
@@ -121,4 +135,5 @@ export {
   createDiscordGroupRole,
   addGroupRoleToMember,
   removeGroupKeywordFromDiscordRoleName,
+  getSearchValueFromURL,
 };
