@@ -895,14 +895,12 @@ async function createExtensionCard(data) {
 
   Promise.all([taskDataPromise, userDataPromise]).then((response) => {
     const [{ taskData }, userData] = response;
-    console.log(userData, taskData, 'data');
     const userImage = userData?.picture?.url ?? DEFAULT_AVATAR;
     let userFirstName = userData?.first_name ?? data.assignee;
     const taskStatus = taskData?.status?.replaceAll('_', ' ');
     const userId = userData.id;
     const userStatus = userStatusMap.get(userId);
     const comittedHours = userStatus?.monthlyHours?.comitted;
-    console.log(comittedHours, userStatus);
     userFirstName = userFirstName ?? '';
     statusSiteLink.attributes.href = `${STATUS_BASE_URL}/tasks/${data.taskId}`;
     statusSiteLink.innerText = taskData.title;
