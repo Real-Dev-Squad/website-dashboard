@@ -64,7 +64,6 @@ const render = async () => {
   });
   getAllUsersStatus().then((response) => {
     initializeUserStatusMap(response.allUserStatus);
-    console.log(userStatusMap, 'map');
   });
   await populateExtensionRequests(filterStates);
   addIntersectionObserver();
