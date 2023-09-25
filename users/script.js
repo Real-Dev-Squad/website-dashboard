@@ -400,7 +400,7 @@ function populateAvailability() {
     { name: 'Ooo (Out of Office)', id: 'OOO' },
     { name: 'Idle', id: 'IDLE' },
     { name: 'Onboarding', id: 'ONBOARDING' },
-    { name: 'Onboarding > 31d', id: 'ONBOARDING31DAYS' },
+    { name: 'Onboarding > 31d', id: 'onboarding>31d' },
   ];
 
   if (params.get('dev') != 'true') {
@@ -610,7 +610,7 @@ applyFilterButton.addEventListener('click', async () => {
   );
   // Check if the "Onboarding > 31 Days" checkbox is checked
   const onboarding31DaysFilter =
-    document.getElementById('ONBOARDING31DAYS').checked;
+    document.getElementById('onboarding>31d').checked;
 
   try {
     let users;
