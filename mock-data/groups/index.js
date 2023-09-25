@@ -46,4 +46,29 @@ const discordGroups = {
   ],
 };
 
-module.exports = { discordGroups };
+const GroupRoleData = {
+  message: 'User group roles Id fetched successfully!',
+  userId: '1234398439439989',
+  groups: [
+    {
+      roleId: '1103808103641780925',
+    },
+    {
+      roleId: '1151598744278667264',
+    },
+    {
+      roleId: '1151808031613521951',
+    },
+    {
+      roleId: '1122182070509244416',
+    },
+    {
+      roleId: '1151807937149419531',
+    },
+    {
+      roleId: '1151598712573939792',
+    },
+  ],
+};
+
+module.exports = { discordGroups, GroupRoleData };

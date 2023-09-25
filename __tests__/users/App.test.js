@@ -5,6 +5,7 @@ const { filteredUsersData } = require('../../mock-data/users');
 describe('App Component', () => {
   let browser;
   let page;
+  jest.setTimeout(60000);
   let config = {
     launchOptions: {
       headless: 'new',

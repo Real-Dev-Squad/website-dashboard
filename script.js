@@ -290,6 +290,21 @@ addClickEventListener(
   syncUnverifiedUsersUpdate,
   'POST',
 );
+
+const hamburgerDiv = document.querySelector('.hamburger');
+const navLinks = document.querySelector('.links');
+let toggle = true;
+
+hamburgerDiv.addEventListener('click', function () {
+  if (toggle) {
+    navLinks.classList.add('active');
+    toggle = false;
+  } else {
+    navLinks.classList.remove('active');
+    toggle = true;
+  }
+});
+
 addClickEventListener(
   syncIdleUsersButton,
   '/discord-actions/group-idle',
@@ -299,7 +314,7 @@ addClickEventListener(
 );
 addClickEventListener(
   syncNicknamesButton,
-  '/users/discord/nickname',
+  '/discord-actions/nicknames/sync?dev=true',
   'lastSyncNicknames',
   syncNicknamesStatusUpdate,
   'POST',
