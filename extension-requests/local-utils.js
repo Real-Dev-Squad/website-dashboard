@@ -123,6 +123,20 @@ async function getInDiscordUserList() {
     console.log(error);
   }
 }
+async function getAllUsersStatus() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/users/status`, {
+      credentials: 'include',
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+    return await res.json();
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 function secondsToMilliSeconds(seconds) {
   return seconds * 1000;

@@ -13,6 +13,7 @@ const {
   userRandhir,
   allUsersData,
 } = require('../../mock-data/users');
+const { usersStatus } = require('../../mock-data/users-status');
 const { taskDone } = require('../../mock-data/tasks/index');
 
 describe('Tests the Extension Requests Screen', () => {
@@ -63,6 +64,17 @@ describe('Tests the Extension Requests Screen', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
           body: JSON.stringify(allUsersData),
+        });
+      } else if (url === 'https://api.realdevsquad.com/users/status') {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(usersStatus),
         });
       } else if (
         url ===
@@ -341,7 +353,18 @@ describe('Tests the Extension Requests Screen', () => {
     );
     expect(taskAssigneeName).toBe('Sunny');
   });
+  test('Checks if the Commited Hours Card is displayed on hover', async () => {
+    const trigger = await page.$('.commited-hours-trigger');
+    await trigger.hover();
 
+    const isCardVisible = await page.evaluate(() => {
+      const hoverCard = document.querySelector('.comitted-hours');
+      const style = window.getComputedStyle(hoverCard);
+
+      return style && style.display !== 'none';
+    });
+    expect(isCardVisible).toBe(true);
+  });
   it('Checks that accordion content is hidden by default', async () => {
     const firstAccordionContent = await page.$('.extension-card .panel');
     const firstAccordionIsHidden = await firstAccordionContent.evaluate(
@@ -411,7 +434,7 @@ describe('Tests the Extension Requests Screen', () => {
 
     const extensionCardsAfter = await page.$$('.extension-card');
 
-    expect(extensionCardsAfter.length).toBe(7);
+    expect(extensionCardsAfter.length).toBe(3);
   });
 
   it('Checks whether the card is not removed from display when api call is unsuccessful', async () => {
