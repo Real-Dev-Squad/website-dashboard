@@ -441,10 +441,7 @@ async function createExtensionCard(data) {
     extensionRequestNumberContainer.appendChild(extensionRequestNumber);
 
     //Since previous extensions does not contain requestNumber field
-    const requestNumber =
-      data.requestNumber !== undefined && data.requestNumber !== null
-        ? data.requestNumber
-        : '1';
+    const requestNumber = data.requestNumber || 1;
 
     const extensionRequestNumberValue = createElement({
       type: 'span',
