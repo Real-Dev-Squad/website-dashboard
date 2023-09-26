@@ -429,27 +429,29 @@ async function createExtensionCard(data) {
   datesDetailsContainer.appendChild(extensionDetailsLine);
 
   //Added it for displaying extension request number
-  const extensionRequestNumberContainer = createElement({ type: 'div' });
-  datesContainer.appendChild(extensionRequestNumberContainer);
+  if (params.get('dev') === 'true') {
+    const extensionRequestNumberContainer = createElement({ type: 'div' });
+    datesContainer.appendChild(extensionRequestNumberContainer);
 
-  const extensionRequestNumber = createElement({
-    type: 'span',
-    attributes: { class: 'card-row-text' },
-    innerText: 'Request No.:  ',
-  });
-  extensionRequestNumberContainer.appendChild(extensionRequestNumber);
+    const extensionRequestNumber = createElement({
+      type: 'span',
+      attributes: { class: 'card-row-text' },
+      innerText: 'Request No.:  ',
+    });
+    extensionRequestNumberContainer.appendChild(extensionRequestNumber);
 
-  //Since previous extensions does not contain requestNumber field
-  const requestNumber =
-    data.requestNumber !== undefined && data.requestNumber !== null
-      ? data.requestNumber
-      : '1';
+    //Since previous extensions does not contain requestNumber field
+    const requestNumber =
+      data.requestNumber !== undefined && data.requestNumber !== null
+        ? data.requestNumber
+        : '1';
 
-  const extensionRequestNumberValue = createElement({
-    type: 'span',
-    innerText: `${requestNumber}`,
-  });
-  extensionRequestNumberContainer.appendChild(extensionRequestNumberValue);
+    const extensionRequestNumberValue = createElement({
+      type: 'span',
+      innerText: `${requestNumber}`,
+    });
+    extensionRequestNumberContainer.appendChild(extensionRequestNumberValue);
+  }
 
   const extensionForContainer = createElement({
     type: 'div',
