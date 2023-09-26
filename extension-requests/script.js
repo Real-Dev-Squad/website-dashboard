@@ -435,7 +435,7 @@ async function createExtensionCard(data) {
 
     const extensionRequestNumber = createElement({
       type: 'span',
-      attributes: { class: 'card-row-text' },
+      attributes: { class: 'card-row-text extension-request-number'},
       innerText: 'Request No.:  ',
     });
     extensionRequestNumberContainer.appendChild(extensionRequestNumber);
@@ -448,6 +448,7 @@ async function createExtensionCard(data) {
 
     const extensionRequestNumberValue = createElement({
       type: 'span',
+      attributes: { class: 'extension-request-number'},
       innerText: `${requestNumber}`,
     });
     extensionRequestNumberContainer.appendChild(extensionRequestNumberValue);

@@ -104,6 +104,7 @@ const extensionRequestsListPending = {
       oldEndsOn: 1689954609.948,
       reason: 'test reason',
       status: 'PENDING',
+      requestNumber:5,
       taskId: 'PYj79ki2agB0q5JN3kUf',
       timestamp: 1691734400.045,
       title: 'A title',
