@@ -565,31 +565,30 @@ describe('Tests the Extension Requests Screen', () => {
   });
 
   test('Checks the Request Number and request value element on Extension requests listing page', async () => {
-
     const url = 'http://localhost:8000/extension-requests/?dev=true'; // Include the dev parameter in the URL
     await page.goto(url);
-  
+
     title = await page.$('.header h1');
     searchBar = await page.$('#search');
     filterButton = await page.$('#filter-button');
     extensionCardsList = await page.$$('.extension-card');
     extensionRequestsElement = await page.$('.extension-requests');
-  
+
     expect(title).toBeTruthy();
     expect(searchBar).toBeTruthy();
     expect(filterButton).toBeTruthy();
     expect(extensionCardsList.length).toBe(4);
     expect(extensionRequestsElement).toBeTruthy();
-  
 
-    const extensionRequestNumberContainer = await page.$$('.extension-request-number');
+    const extensionRequestNumberContainer = await page.$$(
+      '.extension-request-number',
+    );
     const extensionRequestNumberText = extensionRequestNumberContainer[0];
     expect(extensionRequestNumberText).toBeTruthy();
 
-    const cardNumber1Value = await extensionRequestNumberContainer[1].evaluate(node => node.textContent);
-    expect(cardNumber1Value).toBe("5"); 
+    const cardNumber1Value = await extensionRequestNumberContainer[1].evaluate(
+      (node) => node.textContent,
+    );
+    expect(cardNumber1Value).toBe('5');
   });
-
-
-
 });
