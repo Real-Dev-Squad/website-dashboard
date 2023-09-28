@@ -521,6 +521,24 @@ filterButton.addEventListener('click', (event) => {
   }
 });
 
+function handleUserChecked(userData, isChecked) {
+  console.log(userData);
+  const userKey = userData.userId;
+
+  let savedCheckedUsers = localStorage.getItem('checkedUsers');
+  let currentCheckedUsers = savedCheckedUsers
+    ? JSON.parse(savedCheckedUsers)
+    : {};
+
+  if (isChecked) {
+    currentCheckedUsers[userKey] = true;
+  } else {
+    delete currentCheckedUsers[userKey];
+  }
+
+  localStorage.setItem('checkedUsers', JSON.stringify(currentCheckedUsers));
+}
+
 function getCheckedValues(groupName) {
   const checkboxes = document.querySelectorAll(
     `input[name="${groupName}"]:checked`,
