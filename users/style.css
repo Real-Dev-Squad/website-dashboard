@@ -103,6 +103,13 @@ ul {
   list-style: none;
 }
 
+.checkbox-wrapper {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+}
+
 li {
   border: 1.5px solid var(--black-color);
   margin: 15px;
@@ -112,6 +119,7 @@ li {
   font-size: larger;
   word-spacing: 5px;
   padding: 20px 10px;
+  position: relative;
 }
 
 li p {
