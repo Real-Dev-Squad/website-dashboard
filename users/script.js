@@ -539,6 +539,86 @@ function handleUserChecked(userData, isChecked) {
   localStorage.setItem('checkedUsers', JSON.stringify(currentCheckedUsers));
 }
 
+/**
+ *
+ * Check if group role is valid
+ */
+
+const isValidGroupRole = (rolename) => {
+  const error = {
+    valid: true,
+    message: '',
+  };
+  if (rolename.includes('group')) {
+    error.valid = false;
+    error.message = CANNOT_CONTAIN_GROUP;
+  }
+  if (rolename.split(' ').length > 1) {
+    error.valid = false;
+    error.message = NO_SPACES_ALLOWED;
+  }
+  return error;
+};
+
+async function getOrCreateGroupRole(groupName) {
+  const existingGroups = await getDiscordGroups(true);
+  console.log(existingGroups);
+  const existingGroup = existingGroups.groups.find(
+    (group) =>
+      removeGroupKeywordFromDiscordRoleName(group.rolename) === groupName,
+  );
+
+  if (existingGroup) {
+    return existingGroup.roleId;
+  } else {
+    const groupRoleBody = { rolename: groupName };
+    const response = await createDiscordGroupRole(groupRoleBody);
+    return response.roleId;
+  }
+}
+
+function addCheckedUsersToGroup(roleId) {
+  const promises = [];
+
+  for (const userId in checkedUsers) {
+    if (checkedUsers[userId] === true) {
+      const memberRoleBody = {
+        userid: userId,
+        roleid: roleId,
+      };
+      promises.push(addGroupRoleToMember(memberRoleBody));
+    }
+  }
+
+  return Promise.all(promises);
+}
+
+createGroupButton.addEventListener('click', async () => {
+  const groupName = createGroupInput.value.trim();
+
+  // Check if groupName is empty
+  if (!groupName) {
+    alert('Enter a valid Discord name.');
+    return;
+  }
+
+  if (!isValidGroupRole(groupName).valid) {
+    alert(isValidGroupRole(groupName).message);
+    return;
+  }
+
+  try {
+    const roleId = await getOrCreateGroupRole(groupName);
+    await addCheckedUsersToGroup(roleId);
+
+    alert('Added checked users to the group.');
+  } catch (error) {
+    alert(`An error occurred: ${error.message}`);
+  } finally {
+    createGroupInput.value = '';
+  }
+});
+
 function getCheckedValues(groupName) {
   const checkboxes = document.querySelectorAll(
     `input[name="${groupName}"]:checked`,
