@@ -12,10 +12,13 @@ const filterButton = document.getElementById(FILTER_BUTTON);
 const availabilityFilter = document.getElementById(AVAILABILITY_FILTER);
 const applyFilterButton = document.getElementById(APPLY_FILTER_BUTTON);
 const clearButton = document.getElementById(CLEAR_BUTTON);
+const createGroupButton = document.getElementById('create-group-button');
+const createGroupInput = document.getElementById('create-group-bar');
 
 let tileViewActive = false;
 let tableViewActive = true;
 let page = 0;
+let checkedUsers = {};
 
 const init = (
   prevBtn,
@@ -169,6 +172,24 @@ function generateUserList(
   const ulElement = document.createElement('ul');
   users.forEach((userData) => {
     const listElement = document.createElement('li');
+
+    const checkboxElement = document.createElement('input');
+    checkboxElement.type = 'checkbox';
+    checkboxElement.classList.add('user-checkbox');
+    checkboxElement.style.height = '20px';
+    checkboxElement.style.width = '20px';
+    checkboxElement.checked = checkedUsers[userData.userId] ? true : false;
+
+    const checkboxWrapper = document.createElement('div');
+    checkboxWrapper.classList.add('checkbox-wrapper');
+    checkboxWrapper.appendChild(checkboxElement);
+
+    checkboxElement.addEventListener('change', (event) => {
+      console.log(event.target);
+      handleUserChecked(userData, event.target.checked);
+      checkedUsers[userData.userId] = event.target.checked;
+    });
+
     const imgElement = document.createElement('img');
     imgElement.src = userData.picture ? userData.picture : DEFAULT_AVATAR;
     imgElement.classList.add('user-img-dimension');
@@ -177,6 +198,7 @@ function generateUserList(
       `${userData.first_name} ${userData.last_name}`,
     );
     pElement.appendChild(node);
+    listElement.appendChild(checkboxWrapper);
     listElement.appendChild(imgElement);
     listElement.appendChild(pElement);
 
@@ -185,12 +207,19 @@ function generateUserList(
       listElement.classList.remove('tile-width');
       imgElement.classList.add('remove-element');
     }
-    listElement.onclick = () => {
+    listElement.onclick = (event) => {
+      if (
+        event.target === checkboxElement ||
+        event.target === checkboxWrapper
+      ) {
+        return;
+      }
       document.getElementById('user-search').value = '';
       window.location.href = `/users/details/index.html?username=${userData.username}`;
     };
     ulElement.appendChild(listElement);
   });
+  localStorage.setItem('checkedUsers', JSON.stringify(checkedUsers));
   loaderElement.classList.add('remove-element');
   if (showPagination) {
     paginationElement.classList.remove('remove-element');
@@ -348,6 +377,7 @@ async function showUserDataList(
         (user) => user.first_name && !user.roles?.archived,
       );
       usersDataList = usersDataList.map((user) => ({
+        userId: user.id,
         username: user.username,
         first_name: user.first_name,
         last_name: user.last_name ? user.last_name : '',
@@ -465,12 +495,21 @@ window.onload = function () {
     prevBtn,
     nextBtn,
   );
+  // Load checked users from local storage
+  const savedCheckedUsers = localStorage.getItem('checkedUsers');
+  if (savedCheckedUsers) {
+    checkedUsers = JSON.parse(savedCheckedUsers);
+  }
 
   populateFilters();
   if (window.location.search) {
     persistUserDataBasedOnQueryParams();
   }
 };
+
+window.addEventListener('beforeunload', function () {
+  localStorage.clear();
+});
 
 filterButton.addEventListener('click', (event) => {
   event.stopPropagation();
