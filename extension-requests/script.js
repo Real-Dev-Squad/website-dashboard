@@ -2,17 +2,6 @@ const container = document.querySelector('.container');
 const extensionRequestsContainer = document.querySelector(
   '.extension-requests',
 );
-
-const modalParent = document.querySelector('.extension-requests-modal-parent');
-const closeModal = document.querySelectorAll('#close-modal');
-
-//modal containers
-const modalShowInfo = document.querySelector('.extension-requests-info');
-const modalStatusForm = document.querySelector(
-  '.extension-requests-status-form',
-);
-const modalUpdateForm = document.querySelector('.extension-requests-form');
-
 const filterModal = document.getElementsByClassName(FILTER_MODAL)[0];
 const filterButton = document.getElementById(FILTER_BUTTON);
 const applyFilterButton = document.getElementById(APPLY_FILTER_BUTTON);
@@ -27,11 +16,7 @@ let extensionPageVersion = 0;
 let nextLink = '';
 let isDataLoading = false;
 let userMap = new Map();
-if (params.get('dev') === 'true') {
-  extensionRequestsContainer.classList.remove('extension-requests');
-  extensionRequestsContainer.classList.add('extension-requests-new');
-}
-
+let userStatusMap = new Map();
 const state = {
   currentExtensionRequest: null,
 };
@@ -40,7 +25,6 @@ const filterStates = {
   status: Status.PENDING,
   order: Order.ASCENDING,
   size: DEFAULT_PAGE_SIZE,
-  dev: params.get('dev') === 'true',
 };
 
 const updateFilterStates = (key, value) => {
@@ -66,6 +50,11 @@ const initializeUserMap = (userList) => {
     });
   });
 };
+const initializeUserStatusMap = (userStatusList) => {
+  userStatusList.forEach((status) => {
+    userStatusMap.set(status.userId, status);
+  });
+};
 const render = async () => {
   addTooltipToSortButton();
   toggleStatusCheckbox(Status.PENDING);
@@ -73,20 +62,19 @@ const render = async () => {
   getInDiscordUserList().then((response) => {
     initializeUserMap(response.users);
   });
+  getAllUsersStatus().then((response) => {
+    initializeUserStatusMap(response.allUserStatus);
+  });
   await populateExtensionRequests(filterStates);
   addIntersectionObserver();
 };
 
 const addIntersectionObserver = () => {
-  if (params.get('dev') === 'true') {
-    intersectionObserver.observe(lastElementContainer);
-  }
+  intersectionObserver.observe(lastElementContainer);
 };
 
 const removeIntersectionObserver = () => {
-  if (params.get('dev') === 'true') {
-    intersectionObserver.unobserve(lastElementContainer);
-  }
+  intersectionObserver.unobserve(lastElementContainer);
 };
 
 const changeFilter = () => {
@@ -150,24 +138,13 @@ async function populateExtensionRequests(query = {}, newLink) {
     const extensionRequests = await getExtensionRequests(query, newLink);
     nextLink = extensionRequests.next;
     const allExtensionRequests = extensionRequests.allExtensionRequests;
-
-    if (params.get('dev') === 'true') {
-      if (currentVersion !== extensionPageVersion) {
-        return;
-      }
-      for (let data of allExtensionRequests) {
-        createExtensionCard(data);
-      }
-      initializeAccordions();
-    } else {
-      allExtensionRequests.forEach((data) => {
-        const extensionRequestCard = createExtensionRequestCard(
-          data,
-          extensionRequestCardHeadings,
-        );
-        extensionRequestsContainer.appendChild(extensionRequestCard);
-      });
+    if (currentVersion !== extensionPageVersion) {
+      return;
     }
+    for (let data of allExtensionRequests) {
+      createExtensionCard(data);
+    }
+    initializeAccordions();
   } catch (error) {
     addErrorElement(extensionRequestsContainer);
   } finally {
@@ -558,6 +535,14 @@ async function createExtensionCard(data) {
     attributes: { class: 'card-title title-text' },
     innerText: data.title,
   });
+  const commitedHoursHoverTrigger = createElement({
+    type: 'img',
+    attributes: { class: 'commited-hours-trigger', src: '/images/time.svg' },
+  });
+  const extensionCardHeaderWrapper = createElement({
+    type: 'div',
+    attributes: { class: 'extension-request-header-wrapper' },
+  });
 
   const titleInput = createElement({
     type: 'input',
@@ -568,10 +553,30 @@ async function createExtensionCard(data) {
       value: data.title,
     },
   });
-
-  formContainer.appendChild(titleInput);
-  formContainer.appendChild(titleText);
-
+  const commitedHoursHoverCard = createElement({
+    type: 'div',
+    attributes: { class: 'comitted-hours hidden' },
+  });
+  const CommitedHourslabel = createElement({
+    type: 'span',
+    attributes: { class: 'label' },
+  });
+  const CommitedHoursContent = createElement({
+    type: 'span',
+  });
+  commitedHoursHoverTrigger.addEventListener('mouseenter', () => {
+    commitedHoursHoverCard.classList.remove('hidden');
+  });
+  commitedHoursHoverTrigger.addEventListener('mouseleave', () => {
+    commitedHoursHoverCard.classList.add('hidden');
+  });
+  commitedHoursHoverCard.appendChild(CommitedHourslabel);
+  commitedHoursHoverCard.appendChild(CommitedHoursContent);
+  extensionCardHeaderWrapper.appendChild(titleInput);
+  extensionCardHeaderWrapper.appendChild(titleText);
+  extensionCardHeaderWrapper.appendChild(commitedHoursHoverTrigger);
+  extensionCardHeaderWrapper.appendChild(commitedHoursHoverCard);
+  formContainer.appendChild(extensionCardHeaderWrapper);
   const summaryContainer = createElement({
     type: 'div',
     attributes: { class: 'summary-container' },
@@ -1058,6 +1063,9 @@ async function createExtensionCard(data) {
     const userImage = userData?.picture?.url ?? DEFAULT_AVATAR;
     let userFirstName = userData?.first_name ?? data.assignee;
     const taskStatus = taskData?.status?.replaceAll('_', ' ');
+    const userId = userData.id;
+    const userStatus = userStatusMap.get(userId);
+    const comittedHours = userStatus?.monthlyHours?.comitted;
     userFirstName = userFirstName ?? '';
     statusSiteLink.attributes.href = `${STATUS_BASE_URL}/tasks/${data.taskId}`;
     statusSiteLink.innerText = taskData.title;
@@ -1065,6 +1073,8 @@ async function createExtensionCard(data) {
     assigneeImage.alt = userFirstName;
     assigneeNameElement.innerText = userFirstName;
     taskStatusValue.innerText = ` ${taskStatus}`;
+    CommitedHourslabel.innerText = 'Commited Hours: ';
+    CommitedHoursContent.innerText = `${comittedHours / 4} hrs / week`;
     removeSpinner();
     rootElement.classList.remove('disabled');
   });

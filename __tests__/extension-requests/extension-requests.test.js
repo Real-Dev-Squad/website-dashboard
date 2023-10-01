@@ -13,6 +13,7 @@ const {
   userRandhir,
   allUsersData,
 } = require('../../mock-data/users');
+const { usersStatus } = require('../../mock-data/users-status');
 const { taskDone } = require('../../mock-data/tasks/index');
 
 describe('Tests the Extension Requests Screen', () => {
@@ -37,20 +38,9 @@ describe('Tests the Extension Requests Screen', () => {
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-      if (url === 'https://api.realdevsquad.com/extension-requests') {
-        interceptedRequest.respond({
-          status: 200,
-          contentType: 'application/json',
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-          },
-          body: JSON.stringify(extensionRequestsList),
-        });
-      } else if (
+      if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?order=asc&size=5&dev=true&q=status%3APENDING'
+        'https://api.realdevsquad.com/extension-requests?order=asc&size=5&q=status%3APENDING'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -61,48 +51,6 @@ describe('Tests the Extension Requests Screen', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
           body: JSON.stringify(extensionRequestsListPending),
-        });
-      } else if (
-        url ===
-        'https://api.realdevsquad.com/extension-requests?assignee=jbGcfZLGYjHwxQ1Zh8ZJ&status=PENDING&size=5&order=asc'
-      ) {
-        interceptedRequest.respond({
-          status: 200,
-          contentType: 'application/json',
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-          },
-          body: JSON.stringify(extensionRequestsListUserSearch),
-        });
-      } else if (
-        url ===
-        'https://api.realdevsquad.com/extension-requests?status=PENDING&size=5&order=asc'
-      ) {
-        interceptedRequest.respond({
-          status: 200,
-          contentType: 'application/json',
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-          },
-          body: JSON.stringify(extensionRequestsListPending),
-        });
-      } else if (
-        url ===
-        'https://api.realdevsquad.com/extension-requests?q=status%3AAPPROVED&dev=true&size=5&order=asc'
-      ) {
-        interceptedRequest.respond({
-          status: 200,
-          contentType: 'application/json',
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-          },
-          body: JSON.stringify(extensionRequestsListApproved),
         });
       } else if (
         url === 'https://api.realdevsquad.com/users/search?role=in_discord'
@@ -117,138 +65,7 @@ describe('Tests the Extension Requests Screen', () => {
           },
           body: JSON.stringify(allUsersData),
         });
-      } else {
-        interceptedRequest.continue();
-      }
-    });
-    await page.goto('http://localhost:8000/extension-requests');
-    await page.waitForNetworkIdle();
-
-    title = await page.$('.header h1');
-    searchBar = await page.$('#search');
-    filterButton = await page.$('#filter-button');
-    extensionRequestsElement = await page.$('.extension-request');
-  });
-
-  afterEach(async () => {
-    await page.goto('http://localhost:8000/extension-requests');
-    await page.waitForNetworkIdle();
-  });
-  afterAll(async () => {
-    await browser.close();
-  });
-
-  it('Checks the UI elements on Extension requests listing page.', async () => {
-    expect(title).toBeTruthy();
-    expect(searchBar).toBeTruthy();
-    expect(filterButton).toBeTruthy();
-    expect(extensionRequestsElement).toBeTruthy();
-  });
-
-  it('checks the search functionality', async () => {
-    const ele = await page.$('input[id="assignee-search"]');
-    await page.type('#assignee-search', 'sunny');
-    await page.keyboard.press('Enter');
-    await page.waitForNetworkIdle();
-    const cardsList = await page.$$('.extension-request');
-    expect(cardsList.length).toBe(1);
-    const cardTextContent = await page.evaluate(
-      (element) => element.textContent,
-      cardsList[0],
-    );
-    expect(cardTextContent).toContain('sunny');
-  });
-
-  it('clicking on filter button should display filter modal', async () => {
-    const modal = await page.$('.filter-modal');
-    expect(await modal.evaluate((el) => el.classList.contains('hidden'))).toBe(
-      true,
-    );
-    await page.click('#filter-button');
-    expect(modal).not.toBeNull();
-    expect(await modal.evaluate((el) => el.classList.contains('hidden'))).toBe(
-      false,
-    );
-    await page.click('#filter-button');
-    expect(await modal.evaluate((el) => el.classList.contains('hidden'))).toBe(
-      true,
-    );
-  });
-
-  it('checks if PENDING is checked by default', async () => {
-    const filterButton = await page.$('#filter-button');
-    await filterButton.click();
-
-    await page.waitForSelector('.filter-modal');
-
-    const activeFilter = await page.$('input[value="PENDING"]');
-
-    const currentState = await activeFilter.getProperty('checked');
-    const isChecked = await currentState.jsonValue();
-    expect(isChecked).toBe(true);
-  });
-
-  it('Selecting filters and clicking on apply should filter extension requests list', async () => {
-    await page.click('#filter-button');
-    await page.click('input[value="PENDING"]');
-
-    await page.click('input[value="APPROVED"]');
-
-    await page.click('#apply-filter-button');
-    await page.waitForNetworkIdle();
-
-    const cardsList = await page.$$('.extension-request');
-
-    expect(cardsList).not.toBeNull();
-    expect(cardsList.length).toBeGreaterThanOrEqual(0);
-  });
-
-  it('clears the filter when the Clear button is clicked', async () => {
-    const filterButton = await page.$('#filter-button');
-    await filterButton.click();
-
-    await page.waitForSelector('.filter-modal');
-
-    const activeFilter = await page.$('input[value="APPROVED"]');
-    await activeFilter.click();
-
-    const clearButton = await page.$('.filter-modal #clear-button');
-    await clearButton.click();
-
-    await page.waitForSelector('.filter-modal', { hidden: true });
-
-    const currentState = await activeFilter.getProperty('checked');
-    const isChecked = await currentState.jsonValue();
-    expect(isChecked).toBe(false);
-  });
-});
-
-describe.skip('Tests the new Extension Requests Screen', () => {
-  let browser;
-  let page;
-  let title;
-  let searchBar;
-  let filterButton;
-  let extensionRequestsElement;
-  jest.setTimeout(60000);
-
-  beforeAll(async () => {
-    browser = await puppeteer.launch({
-      headless: 'new',
-      ignoreHTTPSErrors: true,
-      args: ['--incognito', '--disable-web-security'],
-      devtools: false,
-    });
-    page = await browser.newPage();
-
-    await page.setRequestInterception(true);
-
-    page.on('request', (interceptedRequest) => {
-      const url = interceptedRequest.url();
-      if (
-        url ===
-        'https://api.realdevsquad.com/extension-requests?dev=true&size=5&order=asc'
-      ) {
+      } else if (url === 'https://api.realdevsquad.com/users/status') {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -257,25 +74,11 @@ describe.skip('Tests the new Extension Requests Screen', () => {
             'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
-          body: JSON.stringify(extensionRequestsList),
+          body: JSON.stringify(usersStatus),
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?order=asc&size=5&dev=true&q=status%3APENDING'
-      ) {
-        interceptedRequest.respond({
-          status: 200,
-          contentType: 'application/json',
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-          },
-          body: JSON.stringify(extensionRequestsListPending),
-        });
-      } else if (
-        url ===
-        'https://api.realdevsquad.com/extension-requests?order=desc&size=5&dev=true&q=status%3APENDING'
+        'https://api.realdevsquad.com/extension-requests?order=desc&size=5&q=status%3APENDING'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -286,20 +89,6 @@ describe.skip('Tests the new Extension Requests Screen', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
           body: JSON.stringify(extensionRequestsListPendingDescending),
-        });
-      } else if (
-        url ===
-        'https://api.realdevsquad.com/extension-requests?q=status%3AAPPROVED&dev=true&size=5&order=asc'
-      ) {
-        interceptedRequest.respond({
-          status: 200,
-          contentType: 'application/json',
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-          },
-          body: JSON.stringify(extensionRequestsListApproved),
         });
       } else if (
         url === 'https://api.realdevsquad.com/users?search=sunny&size=1'
@@ -313,19 +102,6 @@ describe.skip('Tests the new Extension Requests Screen', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
           body: JSON.stringify(userSunny),
-        });
-      } else if (
-        url === 'https://api.realdevsquad.com/users?search=randhir&size=1'
-      ) {
-        interceptedRequest.respond({
-          status: 200,
-          contentType: 'application/json',
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-          },
-          body: JSON.stringify(userRandhir),
         });
       } else if (
         url ===
@@ -399,7 +175,21 @@ describe.skip('Tests the new Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?order=asc&size=5&dev=true&q=status%3APENDING%2Cassignee%3AiODXB6gfsjaZB9p0XlBw%2BDtR9sK7CysOVHP17zl8N'
+        'https://api.realdevsquad.com/extension-requests?order=asc&size=5&q=status%3APENDING%2Cassignee%3AiODXB6gfsjaZB9p0XlBw'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(extensionRequestsListUserSearch),
+        });
+      } else if (
+        url ===
+        'https://api.realdevsquad.com/extension-requests?order=asc&size=5&q=status%3APENDING%2Cassignee%3AiODXB6gfsjaZB9p0XlBw%2B7yzVDl8s1ORNCtH9Ps7K'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -415,27 +205,30 @@ describe.skip('Tests the new Extension Requests Screen', () => {
         interceptedRequest.continue();
       }
     });
-    await page.goto('http://localhost:8000/extension-requests/index.html');
+
+    await page.goto('http://localhost:8000/extension-requests');
 
     await page.waitForNetworkIdle();
+
+    title = await page.$('.header h1');
+    searchBar = await page.$('#search');
+    filterButton = await page.$('#filter-button');
+    extensionRequestsElement = await page.$('.extension-request');
   });
 
   afterEach(async () => {
-    await page.goto('http://localhost:8000/extension-requests/index.html');
-
+    await page.goto('http://localhost:8000/extension-requests');
     await page.waitForNetworkIdle();
   });
-
   afterAll(async () => {
     await browser.close();
   });
-
   it('Checks the UI elements on Extension requests listing page', async () => {
     title = await page.$('.header h1');
     searchBar = await page.$('#search');
     filterButton = await page.$('#filter-button');
     extensionCardsList = await page.$$('.extension-card');
-    extensionRequestsElement = await page.$('.extension-requests-new');
+    extensionRequestsElement = await page.$('.extension-requests');
     expect(title).toBeTruthy();
     expect(searchBar).toBeTruthy();
     expect(filterButton).toBeTruthy();
@@ -443,8 +236,83 @@ describe.skip('Tests the new Extension Requests Screen', () => {
     expect(extensionRequestsElement).toBeTruthy();
   });
 
+  it('checks the search functionality', async () => {
+    await page.type('#assignee-search', 'sunny');
+    await page.keyboard.press('Enter');
+    await page.waitForNetworkIdle();
+
+    const cardsList = await page.$$('.extension-card');
+    expect(cardsList.length).toBe(1);
+    const cardTextContent = await page.evaluate(
+      (element) => element.textContent,
+      cardsList[0],
+    );
+    expect(cardTextContent).toContain('Sunny');
+  });
+
+  it('clicking on filter button should display filter modal', async () => {
+    const modal = await page.$('.filter-modal');
+    expect(await modal.evaluate((el) => el.classList.contains('hidden'))).toBe(
+      true,
+    );
+    await page.click('#filter-button');
+    expect(modal).not.toBeNull();
+    expect(await modal.evaluate((el) => el.classList.contains('hidden'))).toBe(
+      false,
+    );
+    await page.click('#filter-button');
+    expect(await modal.evaluate((el) => el.classList.contains('hidden'))).toBe(
+      true,
+    );
+  });
+
+  it('checks if PENDING is checked by default', async () => {
+    const filterButton = await page.$('#filter-button');
+    await filterButton.click();
+
+    await page.waitForSelector('.filter-modal');
+
+    const activeFilter = await page.$('input[value="PENDING"]');
+
+    const currentState = await activeFilter.getProperty('checked');
+    const isChecked = await currentState.jsonValue();
+    expect(isChecked).toBe(true);
+  });
+
+  it('Selecting filters and clicking on apply should filter extension requests list', async () => {
+    await page.click('#filter-button');
+    await page.click('input[value="PENDING"]');
+
+    await page.click('input[value="APPROVED"]');
+
+    await page.click('#apply-filter-button');
+    await page.waitForNetworkIdle();
+
+    const cardsList = await page.$$('.extension-request');
+
+    expect(cardsList).not.toBeNull();
+    expect(cardsList.length).toBeGreaterThanOrEqual(0);
+  });
+
+  it('clears the filter when the Clear button is clicked', async () => {
+    const filterButton = await page.$('#filter-button');
+    await filterButton.click();
+
+    await page.waitForSelector('.filter-modal');
+
+    const activeFilter = await page.$('input[value="APPROVED"]');
+    await activeFilter.click();
+
+    const clearButton = await page.$('.filter-modal #clear-button');
+    await clearButton.click();
+
+    await page.waitForSelector('.filter-modal', { hidden: true });
+
+    const currentState = await activeFilter.getProperty('checked');
+    const isChecked = await currentState.jsonValue();
+    expect(isChecked).toBe(false);
+  });
   it('should display cards of when multiple usernames are entered', async () => {
-    const ele = await page.$('input[id="assignee-search"]');
     await page.type('#assignee-search', 'sunny,randhir');
     await page.keyboard.press('Enter');
     await page.waitForNetworkIdle();
@@ -485,7 +353,18 @@ describe.skip('Tests the new Extension Requests Screen', () => {
     );
     expect(taskAssigneeName).toBe('Sunny');
   });
+  test('Checks if the Commited Hours Card is displayed on hover', async () => {
+    const trigger = await page.$('.commited-hours-trigger');
+    await trigger.hover();
 
+    const isCardVisible = await page.evaluate(() => {
+      const hoverCard = document.querySelector('.comitted-hours');
+      const style = window.getComputedStyle(hoverCard);
+
+      return style && style.display !== 'none';
+    });
+    expect(isCardVisible).toBe(true);
+  });
   it('Checks that accordion content is hidden by default', async () => {
     const firstAccordionContent = await page.$('.extension-card .panel');
     const firstAccordionIsHidden = await firstAccordionContent.evaluate(
@@ -555,7 +434,7 @@ describe.skip('Tests the new Extension Requests Screen', () => {
 
     const extensionCardsAfter = await page.$$('.extension-card');
 
-    expect(extensionCardsAfter.length).toBe(7);
+    expect(extensionCardsAfter.length).toBe(3);
   });
 
   it('Checks whether the card is not removed from display when api call is unsuccessful', async () => {
@@ -586,13 +465,12 @@ describe.skip('Tests the new Extension Requests Screen', () => {
     const requestDaysArray = [];
     for (const card of extensionCards) {
       const requestedDays = await card.$eval(
-        '.requested-day',
+        '.requested-day > .tooltip',
         (requestDays) => requestDays.textContent,
       );
-      requestDaysArray.push(requestedDays);
+      requestDaysArray.push(requestedDays.slice(5));
     }
-    const sortedRequestDaysArray = [...requestDaysArray].sort().reverse();
-
+    const sortedRequestDaysArray = [...requestDaysArray].sort();
     expect(requestDaysArray).toEqual(sortedRequestDaysArray);
   });
 
@@ -606,13 +484,13 @@ describe.skip('Tests the new Extension Requests Screen', () => {
     const requestDaysArray = [];
     for (const card of extensionCards) {
       const requestedDays = await card.$eval(
-        '.requested-day',
+        '.requested-day > .tooltip',
         (requestDays) => requestDays.textContent,
       );
-      requestDaysArray.push(requestedDays);
+      requestDaysArray.push(requestedDays.slice(5));
     }
 
-    const sortedRequestDaysArray = [...requestDaysArray].sort();
+    const sortedRequestDaysArray = [...requestDaysArray].sort().reverse();
 
     expect(requestDaysArray).toEqual(sortedRequestDaysArray);
   });
