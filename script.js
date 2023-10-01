@@ -319,3 +319,85 @@ addClickEventListener(
   syncNicknamesStatusUpdate,
   'POST',
 );
+
+const DROPDOWN_OPTIONS = [
+  {
+    name: 'Home',
+    link: 'https://dashboard.realdevsquad.com/',
+  },
+  {
+    name: 'Status',
+    link: 'https://my.realdevsquad.com/',
+  },
+  {
+    name: 'Profile',
+    link: 'https://my.realdevsquad.com/profile',
+  },
+  {
+    name: 'Tasks',
+    link: 'https://my.realdevsquad.com/tasks',
+  },
+  {
+    name: 'Identity',
+    link: 'https://my.realdevsquad.com/identity',
+  },
+];
+async function handleUserSignin() {
+  try {
+    const self_user = await getSelfUser();
+    if (self_user) {
+      console.log(self_user);
+      const signInButton = document.querySelector('.sign-in-btn');
+      signInButton.style.display = 'none';
+      const dropdown = document.getElementById('dropdown');
+      const userInfo = document.querySelector('.user-info');
+      const username = document.getElementById('user-name');
+      const userImage = document.getElementById('user-img');
+
+      username.innerText = `Hello, ${self_user.first_name}!`;
+      userImage.setAttribute('src', self_user?.picture.url);
+      userInfo.classList.add('active');
+      const unorderedList = createElement({
+        type: 'ul',
+        classList: ['dropdown-list'],
+      });
+      DROPDOWN_OPTIONS.map((option) => {
+        const listElement = createElement({
+          type: 'li',
+          classList: ['dropdown-item'],
+        });
+        const anchorElement = createElement({
+          type: 'a',
+          classList: ['dropdown-link'],
+        });
+        anchorElement.href = `${option.link}`;
+        anchorElement.innerText = `${option.name}`;
+        listElement.append(anchorElement);
+        unorderedList.append(listElement);
+      });
+      const horizontalLine = createElement({
+        type: 'hr',
+        classList: ['line'],
+      });
+
+      unorderedList.append(horizontalLine);
+      const signOutElement = createElement({
+        type: 'li',
+        classList: ['dropdown-item', 'dropdown-link'],
+        id: 'signout-option',
+      });
+
+      unorderedList.append(signOutElement);
+      signOutElement.innerText = 'Sign Out';
+      dropdown.append(unorderedList);
+
+      //Evnet listener on user-info
+      userInfo.addEventListener('click', () => {
+        dropdown.classList.toggle('active');
+      });
+
+      signOutElement.addEventListener('click', signout);
+    }
+  } catch (error) {}
+}
+handleUserSignin();
