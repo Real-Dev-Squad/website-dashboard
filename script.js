@@ -13,6 +13,10 @@ const syncNicknamesButton = document.getElementById(SYNC_NICKNAMES);
 const syncUsersStatusUpdate = document.getElementById(SYNC_USERS_STATUS_UPDATE);
 const syncIdleUsersButton = document.getElementById(SYNC_IDLE_USERS);
 const syncIdleUsersUpdate = document.getElementById(SYNC_IDLE_USERS_UPDATE);
+const syncIdle7dUsersButton = document.getElementById(SYNC_IDLE_7D_USERS);
+const syncIdle7dUsersUpdate = document.getElementById(
+  SYNC_IDLE_7D_USERS_UPDATE,
+);
 const repoSyncStatusUpdate = document.getElementById(SYNC_REPO_STATUS_UPDATE);
 
 const syncNicknamesStatusUpdate = document.getElementById(
@@ -53,6 +57,10 @@ export async function showSuperUserOptions(...privateBtns) {
       }`;
       syncIdleUsersUpdate.textContent = `Last Sync: ${
         localStorage.getItem('lastSyncIdleUsers') || 'Synced Data Not Available'
+      }`;
+      syncIdle7dUsersUpdate.textContent = `Last Sync: ${
+        localStorage.getItem('lastSyncIdle7dUsers') ||
+        'Synced Data Not Available'
       }`;
       syncNicknamesStatusUpdate.textContent = `Last Sync: ${
         localStorage.getItem('lastSyncNicknames') || 'Synced Data Not Available'
@@ -318,4 +326,11 @@ addClickEventListener(
   'lastSyncNicknames',
   syncNicknamesStatusUpdate,
   'POST',
+);
+addClickEventListener(
+  syncIdle7dUsersButton,
+  '/discord-actions/group-idle-7d',
+  'lastSyncIdle7dUsers',
+  syncIdle7dUsersUpdate,
+  'PUT',
 );
