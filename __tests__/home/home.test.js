@@ -156,16 +156,18 @@ describe('Home Page', () => {
   });
 
   it('should display the Sync Idle 7d+ Users On Discord button', async () => {
-    const syncIdle7dPluUsersButton = await page.$('#sync-idle-7d+-users');
-    expect(syncIdle7dPluUsersButton).toBeTruthy();
+    const syncIdle7dPlusUsersButton = await page.$('#sync-idle-7d+-users');
+    expect(syncIdle7dPlusUsersButton).toBeTruthy();
 
-    const spinnerInsidesyncIdle7dPluUsers = await syncIdle7dPluUsersButton.$(
+    const spinnerInsidesyncIdle7dPlusUsers = await syncIdle7dPlusUsersButton.$(
       '.spinner',
     );
-    expect(spinnerInsidesyncIdle7dPluUsers).toBeTruthy();
+    expect(spinnerInsidesyncIdle7dPlusUsers).toBeTruthy();
 
-    const syncIdle7dPluUsersUpdate = await page.$('#sync-idle-7d+-users-updat');
-    expect(syncIdle7dPluUsersUpdate).toBeTruthy();
+    const syncIdle7dPlusUsersUpdate = await page.$(
+      '#sync-idle-7d+-users-updat',
+    );
+    expect(syncIdle7dPlusUsersUpdate).toBeTruthy();
   });
 
   it('should display the Create Goals anchor button', async () => {
