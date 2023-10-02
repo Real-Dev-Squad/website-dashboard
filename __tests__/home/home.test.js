@@ -155,6 +155,19 @@ describe('Home Page', () => {
     expect(latestSyncStatusText).not.toBe(`Last Sync: In progress`);
   });
 
+  it('should display the Sync Idle 7d+ Users On Discord button', async () => {
+    const syncIdle7dPluUsersButton = await page.$('#sync-idle-7d+-users');
+    expect(syncIdle7dPluUsersButton).toBeTruthy();
+
+    const spinnerInsidesyncIdle7dPluUsers = await syncIdle7dPluUsersButton.$(
+      '.spinner',
+    );
+    expect(spinnerInsidesyncIdle7dPluUsers).toBeTruthy();
+
+    const syncIdle7dPluUsersUpdate = await page.$('#sync-idle-7d+-users-updat');
+    expect(syncIdle7dPluUsersUpdate).toBeTruthy();
+  });
+
   it('should display the Create Goals anchor button', async () => {
     const createGoalsButton = await page.$('#create-goal');
     expect(createGoalsButton).toBeTruthy();
