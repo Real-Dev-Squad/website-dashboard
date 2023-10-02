@@ -116,6 +116,21 @@ describe('Discord Groups Page', () => {
         } else {
           interceptedRequest.continue();
         }
+      } else if (interceptedRequest.method() === 'DELETE') {
+        if (url === `${BASE_URL}/discord-actions/roles`) {
+          interceptedRequest.respond({
+            status: 200,
+            contentType: 'application/json',
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+              'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            },
+            body: JSON.stringify({ message: 'Role deleted successfully' }),
+          });
+        } else {
+          interceptedRequest.continue();
+        }
       } else {
         interceptedRequest.continue();
       }
@@ -206,6 +221,18 @@ describe('Discord Groups Page', () => {
     // Now, check the text content of the button
     const buttonText = await addRoleBtn.evaluate((node) => node.textContent);
     expect(buttonText).toBe('Remove me from this group');
+  });
+
+  test('Should show role deleted', async () => {
+    await page.$$eval('.group-role', (elements) => {
+      elements[1].click();
+    });
+    // Wait for the btn-add-role and click it
+    const addRoleBtn = await page.$('.btn-add-role');
+    await addRoleBtn.click();
+
+    await page.waitForNetworkIdle();
+    await expect(alertMessage).toContain('Role deleted successfully');
   });
 
   test('Should display an error message if the role name contains "group"', async () => {

@@ -8,6 +8,7 @@ import {
   removeGroupKeywordFromDiscordRoleName,
   getDiscordGroups,
   addGroupRoleToMember,
+  removeRoleFromMember,
   createDiscordGroupRole,
   getUserSelf,
   getUserGroupRoles,
@@ -264,10 +265,26 @@ async function addrole() {
 /**
  * TO REMOVE YOURSELF OF A ROLE
  */
-async function removeRoleHandler() {
-  console.log('Remove function to be added after this pr');
 
-  // TODO: REMOVE ME BUTTON FUNCTIONALITY TO BE ADDED
+async function removeRoleHandler() {
+  if (memberAddRoleBody?.userid && memberAddRoleBody?.roleid !== '') {
+    loader.classList.remove('hidden');
+
+    try {
+      // Remove the role from the member
+      const res = await removeRoleFromMember(
+        memberAddRoleBody.roleid,
+        memberAddRoleBody.userid,
+      );
+      alert(res.message);
+      UserGroupData = await getUserGroupRoles();
+      updateButtonState();
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      loader.classList.add('hidden');
+    }
+  }
 }
 
 /**
