@@ -13,9 +13,9 @@ const syncNicknamesButton = document.getElementById(SYNC_NICKNAMES);
 const syncUsersStatusUpdate = document.getElementById(SYNC_USERS_STATUS_UPDATE);
 const syncIdleUsersButton = document.getElementById(SYNC_IDLE_USERS);
 const syncIdleUsersUpdate = document.getElementById(SYNC_IDLE_USERS_UPDATE);
-const syncIdle7dUsersButton = document.getElementById(SYNC_IDLE_7D_USERS);
+const syncIdle7dUsersButton = document.getElementById(SYNC_IDLE_7D_Plus_USERS);
 const syncIdle7dUsersUpdate = document.getElementById(
-  SYNC_IDLE_7D_USERS_UPDATE,
+  SYNC_IDLE_7D_Plus_USERS_UPDATE,
 );
 const repoSyncStatusUpdate = document.getElementById(SYNC_REPO_STATUS_UPDATE);
 

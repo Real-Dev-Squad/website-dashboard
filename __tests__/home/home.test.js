@@ -8,7 +8,7 @@ describe('Home Page', () => {
 
   beforeAll(async () => {
     browser = await puppeteer.launch({
-      headless: 'new',
+      headless: false,
       ignoreHTTPSErrors: true,
       args: ['--incognito', '--disable-web-security'],
       devtools: false,
@@ -31,6 +31,38 @@ describe('Home Page', () => {
       } else if (
         url ===
         `https://api.realdevsquad.com/discord-actions/nicknames/sync?dev=true`
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          ok: true,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify({
+            message: 'All Idle 7d+ Users updated successfully.',
+            totalArchivedUsers: 1,
+            totalGroupIdle7dRolesApplied: {
+              count: 3,
+              response: [
+                { message: 'Role added successfully' },
+                { message: 'Role added successfully' },
+                { message: 'Role added successfully' },
+              ],
+            },
+            totalGroupIdle7dRolesNotApplied: { count: 0, errors: [] },
+            totalGroupIdle7dRolesNotRemoved: { count: 0, errors: [] },
+            totalGroupIdle7dRolesRemoved: { count: 0, response: [] },
+            totalIdle7dUsers: 4,
+            totalUserRoleToBeAdded: 4,
+            totalUserRoleToBeRemoved: 0,
+            totalUsersHavingNoDiscordId: 0,
+          }),
+        });
+      } else if (
+        url === `https://api.realdevsquad.com/discord-actions/group-idle-7d`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -156,18 +188,42 @@ describe('Home Page', () => {
   });
 
   it('should display the Sync Idle 7d+ Users On Discord button', async () => {
-    const syncIdle7dPlusUsersButton = await page.$('#sync-idle-7d+-users');
+    const syncIdle7dPlusUsersButton = await page.$('#sync-idle-7d-Plus-users');
     expect(syncIdle7dPlusUsersButton).toBeTruthy();
 
-    const spinnerInsidesyncIdle7dPlusUsers = await syncIdle7dPlusUsersButton.$(
+    const spinnerInsideSyncIdle7dPlusUsers = await syncIdle7dPlusUsersButton.$(
       '.spinner',
     );
-    expect(spinnerInsidesyncIdle7dPlusUsers).toBeTruthy();
+    expect(spinnerInsideSyncIdle7dPlusUsers).toBeTruthy();
 
     const syncIdle7dPlusUsersUpdate = await page.$(
-      '#sync-idle-7d+-users-updat',
+      '#sync-idle-7d-Plus-users-update',
     );
     expect(syncIdle7dPlusUsersUpdate).toBeTruthy();
+  });
+
+  it('should display the latest sync date when a super_user clicks on the Sync Idle 7d+ Users On Discord button', async () => {
+    await page.evaluate(() => {
+      document.querySelector('#sync-idle-7d-Plus-users').click();
+    });
+    await page.waitForNetworkIdle();
+
+    const latestSyncStatusElement = await page.waitForSelector(
+      '#sync-idle-7d-Plus-users-update',
+    );
+
+    expect(latestSyncStatusElement).toBeTruthy();
+
+    const latestSyncStatusText = await page.evaluate(
+      (element) => element.textContent,
+      latestSyncStatusElement,
+    );
+
+    expect(latestSyncStatusText).not.toBe(`Last Sync: Failed`);
+    expect(latestSyncStatusText).not.toBe(
+      `Last Sync: Synced Data Not Available`,
+    );
+    expect(latestSyncStatusText).not.toBe(`Last Sync: In progress`);
   });
 
   it('should display the Create Goals anchor button', async () => {
