@@ -197,6 +197,20 @@ function debounce(func, delay) {
   };
 }
 
+function showToaster(message) {
+  console.log(message);
+  const toaster = document.getElementById('toaster');
+  toaster.innerText = message;
+  toaster.classList.add('show');
+  toaster.classList.remove('hidden');
+
+  // Hide the toaster message after 3 seconds
+  setTimeout(() => {
+    toaster.classList.remove('show');
+    toaster.classList.add('hidden');
+  }, 3000);
+}
+
 searchInput.addEventListener(
   'input',
   debounce(() => {
@@ -246,13 +260,15 @@ async function addrole() {
       if (currentCount !== null && currentCount !== undefined) {
         groupNameElement.setAttribute('data-member-count', +currentCount + 1);
       }
-      alert(res.message);
       if (isDev) {
         // After adding the role, re-fetch the user group data to update it
         UserGroupData = await getUserGroupRoles();
 
         // Update the button state with the refreshed data
         updateButtonState();
+        showToaster(res.message);
+      } else {
+        alert(res.message);
       }
     } catch (err) {
       alert(err.message);
@@ -276,7 +292,7 @@ async function removeRoleHandler() {
         memberAddRoleBody.roleid,
         memberAddRoleBody.userid,
       );
-      alert(res.message);
+      showToaster(res.message);
       UserGroupData = await getUserGroupRoles();
       updateButtonState();
     } catch (err) {

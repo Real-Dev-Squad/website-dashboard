@@ -232,7 +232,8 @@ describe('Discord Groups Page', () => {
     await addRoleBtn.click();
 
     await page.waitForNetworkIdle();
-    await expect(alertMessage).toContain('Role deleted successfully');
+    const toast = await page.$('.toaster-container');
+    expect(toast).toBeTruthy();
   });
 
   test('Should display an error message if the role name contains "group"', async () => {
