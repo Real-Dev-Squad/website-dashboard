@@ -198,13 +198,11 @@ function debounce(func, delay) {
 }
 
 function showToaster(message) {
-  console.log(message);
   const toaster = document.getElementById('toaster');
   toaster.innerText = message;
   toaster.classList.add('show');
   toaster.classList.remove('hidden');
 
-  // Hide the toaster message after 3 seconds
   setTimeout(() => {
     toaster.classList.remove('show');
     toaster.classList.add('hidden');
