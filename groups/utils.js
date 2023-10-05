@@ -123,7 +123,7 @@ async function removeRoleFromMember(roleId, discordId) {
     const data = await res.json();
     return data;
   } catch (err) {
-    console.error(err)
+    console.error(err);
     throw err;
   }
 }
