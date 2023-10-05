@@ -269,7 +269,11 @@ async function addrole() {
         alert(res.message);
       }
     } catch (err) {
-      alert(err.message);
+      if (isDev) {
+        console.error(err);
+      } else {
+        alert(err.message);
+      }
     } finally {
       loader.classList.add('hidden');
     }
@@ -294,7 +298,7 @@ async function removeRoleHandler() {
       UserGroupData = await getUserGroupRoles();
       updateButtonState();
     } catch (err) {
-      alert(err.message);
+      console.error(err);
     } finally {
       loader.classList.add('hidden');
     }

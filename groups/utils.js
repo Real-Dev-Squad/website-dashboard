@@ -115,13 +115,7 @@ async function removeRoleFromMember(roleId, discordId) {
       body: JSON.stringify({ roleid: roleId, userid: discordId }),
     });
 
-    if (!res.ok) {
-      const error = await res.json();
-      throw error;
-    }
-
-    const data = await res.json();
-    return data;
+    return await res.json();
   } catch (err) {
     console.error(err);
     throw err;
