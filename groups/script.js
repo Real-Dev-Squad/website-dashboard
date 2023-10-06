@@ -8,6 +8,7 @@ import {
   removeGroupKeywordFromDiscordRoleName,
   getDiscordGroups,
   addGroupRoleToMember,
+  removeRoleFromMember,
   createDiscordGroupRole,
   getUserSelf,
   getUserGroupRoles,
@@ -196,6 +197,18 @@ function debounce(func, delay) {
   };
 }
 
+function showToaster(message) {
+  const toaster = document.getElementById('toaster');
+  toaster.innerText = message;
+  toaster.classList.add('show');
+  toaster.classList.remove('hidden');
+
+  setTimeout(() => {
+    toaster.classList.remove('show');
+    toaster.classList.add('hidden');
+  }, 3000);
+}
+
 searchInput.addEventListener(
   'input',
   debounce(() => {
@@ -245,16 +258,22 @@ async function addrole() {
       if (currentCount !== null && currentCount !== undefined) {
         groupNameElement.setAttribute('data-member-count', +currentCount + 1);
       }
-      alert(res.message);
       if (isDev) {
         // After adding the role, re-fetch the user group data to update it
         UserGroupData = await getUserGroupRoles();
 
         // Update the button state with the refreshed data
         updateButtonState();
+        showToaster(res.message);
+      } else {
+        alert(res.message);
       }
     } catch (err) {
-      alert(err.message);
+      if (isDev) {
+        showToaster(err.message);
+      } else {
+        alert(err.message);
+      }
     } finally {
       loader.classList.add('hidden');
     }
@@ -264,10 +283,26 @@ async function addrole() {
 /**
  * TO REMOVE YOURSELF OF A ROLE
  */
-async function removeRoleHandler() {
-  console.log('Remove function to be added after this pr');
 
-  // TODO: REMOVE ME BUTTON FUNCTIONALITY TO BE ADDED
+async function removeRoleHandler() {
+  if (memberAddRoleBody?.userid && memberAddRoleBody?.roleid !== '') {
+    loader.classList.remove('hidden');
+
+    try {
+      // Remove the role from the member
+      const res = await removeRoleFromMember(
+        memberAddRoleBody.roleid,
+        memberAddRoleBody.userid,
+      );
+      showToaster(res.message);
+      UserGroupData = await getUserGroupRoles();
+      updateButtonState();
+    } catch (err) {
+      showToaster(err.message);
+    } finally {
+      loader.classList.add('hidden');
+    }
+  }
 }
 
 /**
