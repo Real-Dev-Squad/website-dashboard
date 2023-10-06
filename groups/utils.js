@@ -117,7 +117,6 @@ async function removeRoleFromMember(roleId, discordId) {
 
     return await res.json();
   } catch (err) {
-    console.error(err);
     throw err;
   }
 }

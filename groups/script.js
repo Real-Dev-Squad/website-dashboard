@@ -270,7 +270,7 @@ async function addrole() {
       }
     } catch (err) {
       if (isDev) {
-        console.error(err);
+        showToaster(err.message);
       } else {
         alert(err.message);
       }
@@ -298,7 +298,7 @@ async function removeRoleHandler() {
       UserGroupData = await getUserGroupRoles();
       updateButtonState();
     } catch (err) {
-      console.error(err);
+      showToaster(err.message);
     } finally {
       loader.classList.add('hidden');
     }
