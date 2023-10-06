@@ -25,7 +25,7 @@ async function getMembersData() {
   const membersRequest = await makeApiCall(RDS_API_MEMBERS);
   if (membersRequest.status === 200) {
     membersList = await membersRequest.json();
-    membersList = membersList.members;
+    membersList = membersList.users;
     membersList = membersList.filter((member) => !member.incompleteUserDetails);
     membersList.forEach((member) => {
       memberObject[`${member.username}`] = {

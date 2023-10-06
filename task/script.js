@@ -435,11 +435,11 @@ async function fetchLevel() {
   }
 }
 
-async function fetchMembers() {
+async function fetchUsers() {
   try {
-    const response = await fetch(`${API_BASE_URL}/members`);
+    const response = await fetch(`${API_BASE_URL}/users`);
     const data = await response.json();
-    membersData = data.members;
+    membersData = data.users;
   } catch {
     return;
   }
@@ -447,7 +447,7 @@ async function fetchMembers() {
 
 fetchTags();
 fetchLevel();
-fetchMembers();
+fetchUsers();
 
 function filterMembers(searchInput) {
   clearSuggestionList();
