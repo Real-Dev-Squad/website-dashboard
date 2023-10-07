@@ -16,7 +16,7 @@ let extensionPageVersion = 0;
 let nextLink = '';
 let isDataLoading = false;
 let userMap = new Map();
-
+let userStatusMap = new Map();
 const state = {
   currentExtensionRequest: null,
 };
@@ -50,12 +50,20 @@ const initializeUserMap = (userList) => {
     });
   });
 };
+const initializeUserStatusMap = (userStatusList) => {
+  userStatusList.forEach((status) => {
+    userStatusMap.set(status.userId, status);
+  });
+};
 const render = async () => {
   addTooltipToSortButton();
   toggleStatusCheckbox(Status.PENDING);
   changeFilter();
   getInDiscordUserList().then((response) => {
     initializeUserMap(response.users);
+  });
+  getAllUsersStatus().then((response) => {
+    initializeUserStatusMap(response.allUserStatus);
   });
   await populateExtensionRequests(filterStates);
   addIntersectionObserver();
@@ -362,6 +370,14 @@ async function createExtensionCard(data) {
     attributes: { class: 'card-title title-text' },
     innerText: data.title,
   });
+  const commitedHoursHoverTrigger = createElement({
+    type: 'img',
+    attributes: { class: 'commited-hours-trigger', src: '/images/time.svg' },
+  });
+  const extensionCardHeaderWrapper = createElement({
+    type: 'div',
+    attributes: { class: 'extension-request-header-wrapper' },
+  });
 
   const titleInput = createElement({
     type: 'input',
@@ -372,10 +388,30 @@ async function createExtensionCard(data) {
       value: data.title,
     },
   });
-
-  formContainer.appendChild(titleInput);
-  formContainer.appendChild(titleText);
-
+  const commitedHoursHoverCard = createElement({
+    type: 'div',
+    attributes: { class: 'comitted-hours hidden' },
+  });
+  const CommitedHourslabel = createElement({
+    type: 'span',
+    attributes: { class: 'label' },
+  });
+  const CommitedHoursContent = createElement({
+    type: 'span',
+  });
+  commitedHoursHoverTrigger.addEventListener('mouseenter', () => {
+    commitedHoursHoverCard.classList.remove('hidden');
+  });
+  commitedHoursHoverTrigger.addEventListener('mouseleave', () => {
+    commitedHoursHoverCard.classList.add('hidden');
+  });
+  commitedHoursHoverCard.appendChild(CommitedHourslabel);
+  commitedHoursHoverCard.appendChild(CommitedHoursContent);
+  extensionCardHeaderWrapper.appendChild(titleInput);
+  extensionCardHeaderWrapper.appendChild(titleText);
+  extensionCardHeaderWrapper.appendChild(commitedHoursHoverTrigger);
+  extensionCardHeaderWrapper.appendChild(commitedHoursHoverCard);
+  formContainer.appendChild(extensionCardHeaderWrapper);
   const summaryContainer = createElement({
     type: 'div',
     attributes: { class: 'summary-container' },
@@ -862,6 +898,9 @@ async function createExtensionCard(data) {
     const userImage = userData?.picture?.url ?? DEFAULT_AVATAR;
     let userFirstName = userData?.first_name ?? data.assignee;
     const taskStatus = taskData?.status?.replaceAll('_', ' ');
+    const userId = userData.id;
+    const userStatus = userStatusMap.get(userId);
+    const comittedHours = userStatus?.monthlyHours?.comitted;
     userFirstName = userFirstName ?? '';
     statusSiteLink.attributes.href = `${STATUS_BASE_URL}/tasks/${data.taskId}`;
     statusSiteLink.innerText = taskData.title;
@@ -869,6 +908,8 @@ async function createExtensionCard(data) {
     assigneeImage.alt = userFirstName;
     assigneeNameElement.innerText = userFirstName;
     taskStatusValue.innerText = ` ${taskStatus}`;
+    CommitedHourslabel.innerText = 'Commited Hours: ';
+    CommitedHoursContent.innerText = `${comittedHours / 4} hrs / week`;
     removeSpinner();
     rootElement.classList.remove('disabled');
   });
