@@ -56,6 +56,44 @@
 }
 
 /*
+    FOR Message toaster box
+*/
+
+.toaster-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 300px;
+}
+
+.toaster-message {
+  padding: 15px;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  display: none;
+}
+
+.hidden {
+  display: none;
+}
+
+.show {
+  display: block;
+  animation: fadeOut 2s forwards;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/*
     FOR MANAGE GROUPS
 */
 
