@@ -31,7 +31,7 @@ const TASKS_CLASS_LIST = ['task'];
 const TASKS_CONTAINER_CLASS_LIST = ['tasks-container'];
 
 // RDS Api Constants
-const RDS_API_MEMBERS = API_BASE_URL + '/users';
+const RDS_API_USERS = API_BASE_URL + '/users';
 const RDS_API_TASKS_USERS = API_BASE_URL + '/tasks';
 const RDS_CLOUDINARY_CLOUD_URL = `https://res.cloudinary.com/realdevsquad/image/upload`;
 
