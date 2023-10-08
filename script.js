@@ -31,6 +31,13 @@ const syncUnverifiedUsersUpdate = document.getElementById(
 );
 const buttonSection = document.getElementById('sync-buttons');
 
+const syncOnboarding31dPlusUsersButton = document.getElementById(
+  SYNC_ONBOARDING_31D_PLUS_USERS,
+);
+const syncOnboarding31dPlusUsersUpdate = document.getElementById(
+  SYNC_ONBOARDING_31D_PLUS_USERS_UPDATE,
+);
+
 function getCurrentTimestamp() {
   return new Date().toLocaleString();
 }
@@ -64,6 +71,10 @@ export async function showSuperUserOptions(...privateBtns) {
       }`;
       syncNicknamesStatusUpdate.textContent = `Last Sync: ${
         localStorage.getItem('lastSyncNicknames') || 'Synced Data Not Available'
+      }`;
+      syncOnboarding31dPlusUsersUpdate.textContent = `Last Sync: ${
+        localStorage.getItem('lastSyncOnboarding31dPlusUsers') ||
+        'Synced Data Not Available'
       }`;
     }
   } catch (err) {
@@ -332,5 +343,13 @@ addClickEventListener(
   '/discord-actions/group-idle-7d',
   'lastSyncIdle7dUsers',
   syncIdle7dUsersUpdate,
+  'PUT',
+);
+
+addClickEventListener(
+  syncOnboarding31dPlusUsersButton,
+  '/discord-actions/group-onboarding-31d-plus',
+  'lastSyncOnboarding31dPlusUsers',
+  syncOnboarding31dPlusUsersUpdate,
   'PUT',
 );
