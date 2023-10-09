@@ -324,6 +324,13 @@ hamburgerDiv.addEventListener('click', function () {
   }
 });
 
+document.addEventListener('click', function (event) {
+  if (!navActive.contains(event.target)) {
+    navLinks.classList.remove('active');
+    toggle = true;
+  }
+});
+
 addClickEventListener(
   syncIdleUsersButton,
   '/discord-actions/group-idle',
