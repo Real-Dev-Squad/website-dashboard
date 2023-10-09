@@ -247,4 +247,55 @@ describe('Home Page', () => {
     const repoLinkStyle = await page.evaluate((el) => el.style, repoLink);
     expect(repoLinkStyle).toBeTruthy();
   });
+
+  it('Check user profile with dropdown options', async () => {
+    const DROPDOWN_OPTIONS = [
+      {
+        name: 'Home',
+        link: 'https://dashboard.realdevsquad.com/',
+      },
+      {
+        name: 'Status',
+        link: 'https://my.realdevsquad.com/',
+      },
+      {
+        name: 'Profile',
+        link: 'https://my.realdevsquad.com/profile',
+      },
+      {
+        name: 'Tasks',
+        link: 'https://my.realdevsquad.com/tasks',
+      },
+      {
+        name: 'Identity',
+        link: 'https://my.realdevsquad.com/identity',
+      },
+    ];
+
+    const userName = await page.$eval(
+      '#user-name',
+      (element) => element.textContent,
+    );
+    const userImage = await page.$eval('#user-img', (element) => element.src);
+    expect(userName).toContain(superUserData.first_name);
+    expect(userImage).toEqual(superUserData.picture.url);
+
+    const userInfoButton = await page.$('.user-info');
+    await userInfoButton.click();
+
+    const hrefs = await page.$$eval(
+      '.dropdown-list .dropdown-item a',
+      (elements) => elements.map((element) => element.getAttribute('href')),
+    );
+
+    const expectedHrefs = DROPDOWN_OPTIONS.map((option) => option.link);
+
+    expect(hrefs).toEqual(expectedHrefs);
+
+    const signoutButton = await page.$('#signout-option');
+    await signoutButton.click();
+    const signinButton = await page.$('.sign-in-btn');
+
+    expect(signinButton).toBeTruthy();
+  });
 });

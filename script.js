@@ -346,7 +346,6 @@ async function handleUserSignin() {
   try {
     const self_user = await getSelfUser();
     if (self_user) {
-      console.log(self_user);
       const signInButton = document.querySelector('.sign-in-btn');
       signInButton.style.display = 'none';
       const dropdown = document.getElementById('dropdown');
@@ -357,46 +356,59 @@ async function handleUserSignin() {
       username.innerText = `Hello, ${self_user.first_name}!`;
       userImage.setAttribute('src', self_user?.picture.url);
       userInfo.classList.add('active');
-      const unorderedList = createElement({
+      const dropdownList = createElement({
         type: 'ul',
-        classList: ['dropdown-list'],
+        attributes: {
+          class: 'dropdown-list',
+        },
       });
+
       DROPDOWN_OPTIONS.map((option) => {
         const listElement = createElement({
           type: 'li',
-          classList: ['dropdown-item'],
+          attributes: {
+            class: 'dropdown-item',
+          },
         });
         const anchorElement = createElement({
           type: 'a',
-          classList: ['dropdown-link'],
+          attributes: {
+            class: 'dropdown-link',
+          },
         });
         anchorElement.href = `${option.link}`;
         anchorElement.innerText = `${option.name}`;
         listElement.append(anchorElement);
-        unorderedList.append(listElement);
+        dropdownList.append(listElement);
       });
       const horizontalLine = createElement({
         type: 'hr',
-        classList: ['line'],
+        attributes: {
+          class: 'line',
+        },
       });
 
-      unorderedList.append(horizontalLine);
+      dropdownList.append(horizontalLine);
       const signOutElement = createElement({
         type: 'li',
-        classList: ['dropdown-item', 'dropdown-link'],
-        id: 'signout-option',
+        attributes: {
+          class: 'dropdown-item',
+          id: 'signout-option',
+        },
       });
+      signOutElement.classList.add('dropdown-link');
 
-      unorderedList.append(signOutElement);
+      dropdownList.append(signOutElement);
       signOutElement.innerText = 'Sign Out';
-      dropdown.append(unorderedList);
+      dropdown.append(dropdownList);
 
-      //Evnet listener on user-info
       userInfo.addEventListener('click', () => {
         dropdown.classList.toggle('active');
       });
 
-      signOutElement.addEventListener('click', signout);
+      signOutElement.addEventListener('click', () => {
+        signout('/auth/signout');
+      });
     }
   } catch (error) {}
 }
