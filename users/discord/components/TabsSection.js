@@ -9,7 +9,7 @@ export const TabsSection = ({ tabs, activeTab, handleTabNavigation }) => {
         'span',
         {
           data_key: `${tabItem.id}`,
-          class: `tab ${activeTab === tabItem.id ? 'active_tab' : ''}`,
+          class: `tab ${activeTab === tabItem.id ? 'active_tab_link' : ''}`,
         },
         [tabItem.display_name],
       );
