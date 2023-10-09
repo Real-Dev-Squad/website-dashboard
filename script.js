@@ -423,7 +423,11 @@ async function handleUserSignin() {
       dropdown.append(dropdownList);
 
       userInfo.addEventListener('click', () => {
-        dropdown.classList.toggle('active');
+        if (dropdown.classList.contains('active')) {
+          dropdown.classList.remove('active');
+        } else {
+          dropdown.classList.add('active');
+        }
       });
 
       signOutElement.addEventListener('click', () => {
