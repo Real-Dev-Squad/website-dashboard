@@ -69,3 +69,15 @@ function debounce(func, delay) {
 async function addDelay(milliSeconds) {
   await new Promise((resolve) => setTimeout(resolve, milliSeconds));
 }
+
+async function signout() {
+  try {
+    await fetch('https://api.realdevsquad.com/auth/signout', {
+      method: 'GET',
+      credentials: 'include',
+    });
+    location.reload();
+  } catch (error) {
+    console.error('Signout failed:', error);
+  }
+}
