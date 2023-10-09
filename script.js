@@ -383,7 +383,7 @@ async function handleUserSignin() {
         },
       });
 
-      DROPDOWN_OPTIONS.map((option) => {
+      DROPDOWN_OPTIONS.forEach((option) => {
         const listElement = createElement({
           type: 'li',
           attributes: {
