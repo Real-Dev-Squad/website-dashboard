@@ -76,6 +76,10 @@ img {
   padding: 20px;
 }
 
+.nav-links .links a:hover {
+  color: #6dc66d;
+}
+
 .sign-in-btn {
   display: flex;
   justify-content: center;
@@ -468,9 +472,11 @@ footer {
   }
 
   .nav-links .active {
+    margin-top: -0.61rem;
     position: absolute;
     display: flex;
     background-color: var(--white-color);
+    box-shadow: rgba(0, 0, 0, 0.5) 0 10px 15px;
   }
 
   .nav-links .links a {
