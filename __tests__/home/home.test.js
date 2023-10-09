@@ -437,6 +437,7 @@ describe('Home Page', () => {
     const signinButton = await page.$('.sign-in-btn');
 
     expect(signinButton).toBeTruthy();
+  });
 
   it('should display the Sync Onboarding 31d+ button', async () => {
     const syncOnboarding31dPlusUsersButton = await page.$(
