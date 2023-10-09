@@ -29,6 +29,38 @@ describe('Home Page', () => {
           body: JSON.stringify(superUserData),
         });
       } else if (
+        url === `https://api.realdevsquad.com/discord-actions/group-idle-7d`
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          ok: true,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify({
+            message: 'All Idle 7d+ Users updated successfully.',
+            totalArchivedUsers: 1,
+            totalGroupIdle7dRolesApplied: {
+              count: 3,
+              response: [
+                { message: 'Role added successfully' },
+                { message: 'Role added successfully' },
+                { message: 'Role added successfully' },
+              ],
+            },
+            totalGroupIdle7dRolesNotApplied: { count: 0, errors: [] },
+            totalGroupIdle7dRolesNotRemoved: { count: 0, errors: [] },
+            totalGroupIdle7dRolesRemoved: { count: 0, response: [] },
+            totalIdle7dUsers: 4,
+            totalUserRoleToBeAdded: 4,
+            totalUserRoleToBeRemoved: 0,
+            totalUsersHavingNoDiscordId: 0,
+          }),
+        });
+      } else if (
         url ===
         `https://api.realdevsquad.com/discord-actions/nicknames/sync?dev=true`
       ) {
@@ -44,6 +76,74 @@ describe('Home Page', () => {
           body: JSON.stringify({
             numberOfUsersEffected: 5,
             message: 'Users Nicknames updated successfully',
+          }),
+        });
+      } else if (
+        url ===
+        `https://api.realdevsquad.com/discord-actions/group-onboarding-31d-plus`
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          ok: true,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify({
+            message:
+              'All Users with 31 Days Plus Onboarding are updated successfully.',
+            totalOnboardingUsers31DaysCompleted: {
+              users: [
+                {
+                  userId: 'R4qppGmmAvJzQXI4jvuc',
+                  discordId: '799600467218923521',
+                  username: 'AnishPawaskar',
+                },
+                {
+                  userId: 'W7hqS6BJqWzNW2ejeimC',
+                  discordId: '700385688557715456',
+                  username: 'amandixit',
+                },
+              ],
+              count: 2,
+            },
+            totalUsersHavingNoDiscordId: 0,
+            totalArchivedUsers: 0,
+            usersAlreadyHavingOnboaring31DaysRole: {
+              users: [],
+              count: 0,
+            },
+            totalOnboarding31dPlusRoleApplied: {
+              count: 2,
+              response: [
+                {
+                  message: 'Role added successfully',
+                  discordId: '799600467218923521',
+                },
+                {
+                  message: 'Role added successfully',
+                  discordId: '700385688557715456',
+                },
+              ],
+            },
+            totalOnboarding31dPlusRoleNoteApplied: {
+              count: 0,
+              errors: [],
+            },
+            totalOnboarding31dPlusRoleRemoved: {
+              count: 0,
+              response: [],
+            },
+            totalOnboarding31dPlusRoleNotRemoved: {
+              count: 0,
+              errors: [],
+            },
+            errorInFetchingUserDetailsForRoleRemoval: {
+              count: 0,
+              errors: [],
+            },
           }),
         });
       } else {
@@ -155,6 +255,45 @@ describe('Home Page', () => {
     expect(latestSyncStatusText).not.toBe(`Last Sync: In progress`);
   });
 
+  it('should display the Sync Idle 7d+ Users On Discord button', async () => {
+    const syncIdle7dPlusUsersButton = await page.$('#sync-idle-7d-Plus-users');
+    expect(syncIdle7dPlusUsersButton).toBeTruthy();
+
+    const spinnerInsideSyncIdle7dPlusUsers = await syncIdle7dPlusUsersButton.$(
+      '.spinner',
+    );
+    expect(spinnerInsideSyncIdle7dPlusUsers).toBeTruthy();
+
+    const syncIdle7dPlusUsersUpdate = await page.$(
+      '#sync-idle-7d-Plus-users-update',
+    );
+    expect(syncIdle7dPlusUsersUpdate).toBeTruthy();
+  });
+
+  it('should display the latest sync date when a super_user clicks on the Sync Idle 7d+ Users On Discord button', async () => {
+    await page.evaluate(() => {
+      document.querySelector('#sync-idle-7d-Plus-users').click();
+    });
+    await page.waitForNetworkIdle();
+
+    const latestSyncStatusElement = await page.waitForSelector(
+      '#sync-idle-7d-Plus-users-update',
+    );
+
+    expect(latestSyncStatusElement).toBeTruthy();
+
+    const latestSyncStatusText = await page.evaluate(
+      (element) => element.textContent,
+      latestSyncStatusElement,
+    );
+
+    expect(latestSyncStatusText).not.toBe(`Last Sync: Failed`);
+    expect(latestSyncStatusText).not.toBe(
+      `Last Sync: Synced Data Not Available`,
+    );
+    expect(latestSyncStatusText).not.toBe(`Last Sync: In progress`);
+  });
+
   it('should display the Create Goals anchor button', async () => {
     const createGoalsButton = await page.$('#create-goal');
     expect(createGoalsButton).toBeTruthy();
@@ -248,6 +387,7 @@ describe('Home Page', () => {
     expect(repoLinkStyle).toBeTruthy();
   });
 
+
   it('Check user profile with dropdown options', async () => {
     const DROPDOWN_OPTIONS = [
       {
@@ -297,5 +437,45 @@ describe('Home Page', () => {
     const signinButton = await page.$('.sign-in-btn');
 
     expect(signinButton).toBeTruthy();
+
+  it('should display the Sync Onboarding 31d+ button', async () => {
+    const syncOnboarding31dPlusUsersButton = await page.$(
+      '#sync-onboarding-31d-plus-users',
+    );
+    expect(syncOnboarding31dPlusUsersButton).toBeTruthy();
+
+    const spinnerInsideSyncOnboarding31dPlusUsers =
+      await syncOnboarding31dPlusUsersButton.$('.spinner');
+    expect(spinnerInsideSyncOnboarding31dPlusUsers).toBeTruthy();
+
+    const syncOnboarding31dPlusUsersUpdate = await page.$(
+      '#sync-onboarding-31d-plus-users-update',
+    );
+    expect(syncOnboarding31dPlusUsersUpdate).toBeTruthy();
+  });
+
+  it('should display the latest sync date when a super_user clicks on the  Sync Onboarding 31d+ button', async () => {
+    await page.evaluate(() => {
+      document.querySelector('#sync-onboarding-31d-plus-users').click();
+    });
+    await page.waitForNetworkIdle();
+
+    const latestSyncStatusElement = await page.waitForSelector(
+      '#sync-onboarding-31d-plus-users-update',
+    );
+
+    expect(latestSyncStatusElement).toBeTruthy();
+
+    const latestSyncStatusText = await page.evaluate(
+      (element) => element.textContent,
+      latestSyncStatusElement,
+    );
+
+    expect(latestSyncStatusText).not.toBe(`Last Sync: Failed`);
+    expect(latestSyncStatusText).not.toBe(
+      `Last Sync: Synced Data Not Available`,
+    );
+    expect(latestSyncStatusText).not.toBe(`Last Sync: In progress`);
+
   });
 });
