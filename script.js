@@ -361,6 +361,7 @@ const DROPDOWN_OPTIONS = [
     link: 'https://my.realdevsquad.com/identity',
   },
 ];
+
 async function handleUserSignin() {
   try {
     const self_user = await getSelfUser();
