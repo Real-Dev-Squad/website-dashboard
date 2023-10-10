@@ -339,6 +339,7 @@ addClickEventListener(
   'POST',
 );
 
+
 const DROPDOWN_OPTIONS = [
   {
     name: 'Home',
@@ -437,6 +438,7 @@ async function handleUserSignin() {
   } catch (error) {}
 }
 handleUserSignin();
+
 
 addClickEventListener(
   syncIdle7dUsersButton,
