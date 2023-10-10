@@ -36,7 +36,7 @@ export const UserDetailsSection = ({
         createElement(
           'a',
           {
-            target: '_bllank',
+            target: '_blank',
             href: `${USER_MANAGEMENT_URL}${username}`,
           },
           [`${USER_MANAGEMENT_URL}${username}`],
