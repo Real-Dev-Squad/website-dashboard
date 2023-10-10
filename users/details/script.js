@@ -322,10 +322,8 @@ function createSingleTaskCard(task) {
   h2.appendChild(createTextNode(task?.title));
   const p = createElement({ type: 'p', classList: ['task-description'] });
 
-  if (params.get('dev') === 'true') {
-    if (task?.purpose == undefined) {
-      p.appendChild(createTextNode('N/A'));
-    }
+  if (task?.purpose == undefined) {
+    p.appendChild(createTextNode('N/A'));
   } else {
     p.appendChild(createTextNode(task?.purpose));
   }
@@ -340,45 +338,37 @@ function createSingleTaskCard(task) {
     classList: ['due-date-value'],
   }); // added class for testing purpose
 
-  if (params.get('dev') === 'true') {
-    const daysToGo = generateDaysToGo(
-      generateReadableDateFromSecondsTimeStamp(task.endsOn),
-      task.status,
-    );
-    if (daysToGo.includes('Less Than a Day Remaining')) {
-      // Wrap the text in a <span> with a yellow color style
-      dueDateValue.innerHTML = `<span style="color: yellow;">${daysToGo}</span>`;
-    } else {
-      dueDateValue.appendChild(createTextNode(daysToGo));
-    }
+  const daysToGo = generateDaysToGo(
+    generateReadableDateFromSecondsTimeStamp(task.endsOn),
+    task.status,
+  );
+  if (daysToGo.includes('Less Than a Day Remaining')) {
+    // Wrap the text in a <span> with a yellow color style
+    dueDateValue.innerHTML = `<span style="color: yellow;">${daysToGo}</span>`;
   } else {
-    dueDateValue.appendChild(
-      createTextNode(generateReadableDateFromSecondsTimeStamp(task.endsOn)),
-    );
+    dueDateValue.appendChild(createTextNode(daysToGo));
   }
 
   dueDate.append(dueDateTitle, dueDateValue);
 
-  if (params.get('dev') === 'true') {
-    //creating tooltip, gets displayed when we hover the element
-    const toolTip = createElement({
-      type: 'span',
-      classList: ['task-due-date'],
-    }); //creating a span for tooltip
-    toolTip.appendChild(
-      createTextNode(
-        `Due Date: ${generateReadableDateFromSecondsTimeStamp(task.endsOn)}`,
-      ),
-    );
+  //creating tooltip, gets displayed when we hover the element
+  const toolTip = createElement({
+    type: 'span',
+    classList: ['task-due-date'],
+  }); //creating a span for tooltip
+  toolTip.appendChild(
+    createTextNode(
+      `Due Date: ${generateReadableDateFromSecondsTimeStamp(task.endsOn)}`,
+    ),
+  );
 
-    dueDateValue.appendChild(toolTip); //appending it to the dueDateValue that we have create above
-    dueDateValue.addEventListener('mouseover', (event) => {
-      toolTip.style.visibility = 'visible';
-    });
-    dueDateValue.addEventListener('mouseout', (event) => {
-      toolTip.style.visibility = 'hidden';
-    });
-  }
+  dueDateValue.appendChild(toolTip); //appending it to the dueDateValue that we have create above
+  dueDateValue.addEventListener('mouseover', (event) => {
+    toolTip.style.visibility = 'visible';
+  });
+  dueDateValue.addEventListener('mouseout', (event) => {
+    toolTip.style.visibility = 'hidden';
+  });
 
   const status = createElement({ type: 'div', classList: ['hidden-details'] });
   const statusTitle = createElement({ type: 'h3' });
