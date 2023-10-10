@@ -431,7 +431,7 @@ async function handleUserSignin() {
       });
 
       signOutElement.addEventListener('click', () => {
-        signout('/auth/signout');
+        getSelfUser('/auth/signout');
       });
     }
   } catch (error) {}
