@@ -219,11 +219,8 @@ const superUserData = {
   twitter_id: 'Codesh_',
   first_name: 'Kotesh',
   username: 'kotesh',
-  picture: {
-    publicId: 'profile/w2XR9Gkid6Kg5xCJ5Elm/rzh3cwff7hh7srvg63mb',
-    url: 'https://res.cloudinary.com/realdevsquad/image/upload/v1692990078/profile/w2XR9Gkid6Kg5xCJ5Elm/rzh3cwff7hh7srvg63mb.png',
-  },
 };
+
 module.exports = {
   allUsersData,
   filteredUsersData,

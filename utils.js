@@ -1,19 +1,16 @@
-async function getSelfUser(endpoint = '/users/self') {
+async function getSelfUser() {
   try {
-    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const res = await fetch(`${API_BASE_URL}/users/self`, {
       method: 'GET',
       credentials: 'include',
       headers: {
         'Content-type': 'application/json',
       },
     });
-    if (endpoint === '/users/self') {
-      const self_user = await res.json();
-      if (res.status === 200) {
-        return self_user;
-      }
-    } else {
-      location.reload();
+
+    const self_user = await res.json();
+    if (res.status === 200) {
+      return self_user;
     }
   } catch (err) {}
 }
@@ -68,16 +65,4 @@ function debounce(func, delay) {
 
 async function addDelay(milliSeconds) {
   await new Promise((resolve) => setTimeout(resolve, milliSeconds));
-}
-
-async function signout() {
-  try {
-    await fetch('https://api.realdevsquad.com/auth/signout', {
-      method: 'GET',
-      credentials: 'include',
-    });
-    location.reload();
-  } catch (error) {
-    console.error('Signout failed:', error);
-  }
 }
