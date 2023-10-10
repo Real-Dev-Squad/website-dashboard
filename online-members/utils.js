@@ -19,29 +19,29 @@ async function makeApiCall(
   }
 }
 
-async function getMembersData() {
-  let membersList = null;
-  const memberObject = {};
-  const membersRequest = await makeApiCall(RDS_API_MEMBERS);
-  if (membersRequest.status === 200) {
-    membersList = await membersRequest.json();
-    membersList = membersList.users;
-    membersList = membersList.filter((member) => !member.incompleteUserDetails);
-    membersList.forEach((member) => {
-      memberObject[`${member.username}`] = {
+async function getUsersData() {
+  let usersList = null;
+  const userObject = {};
+  const usersRequest = await makeApiCall(RDS_API_USERS);
+  if (usersRequest.status === 200) {
+    usersList = await usersRequest.json();
+    usersList = usersList.users;
+    usersList = usersList.filter((user) => !user.incompleteUserDetails);
+    usersList.forEach((user) => {
+      userObject[`${user.username}`] = {
         isOnline: false,
-        ...member,
+        ...user,
       };
     });
   }
-  return memberObject;
+  return userObject;
 }
 
-async function getMemberTaskData(username) {
+async function getUserTaskData(username) {
   let taskData = null;
-  const membersRequest = await makeApiCall(rdsApiTaskDetails(username));
-  if (membersRequest.status === 200) {
-    taskData = await membersRequest.json();
+  const usersRequest = await makeApiCall(rdsApiTaskDetails(username));
+  if (usersRequest.status === 200) {
+    taskData = await usersRequest.json();
     taskData = taskData.tasks;
   }
   return taskData;
@@ -55,7 +55,7 @@ const getCloudinaryImgURL = (publicId, configs) => {
   return `${RDS_CLOUDINARY_CLOUD_URL}${imageSizeOptions}/${publicId}`;
 };
 
-function getMemberProfileImageLink(publicId) {
+function getUserProfileImageLink(publicId) {
   return publicId
     ? getCloudinaryImgURL(publicId, RDS_PROFILE_IMAGE_SIZE)
     : RDS_PROFILE_DEFAULT_IMAGE;
@@ -63,9 +63,9 @@ function getMemberProfileImageLink(publicId) {
 
 function searchFunction() {
   let divText, txtValue;
-  const input = document.getElementById('search-members');
+  const input = document.getElementById('search-users');
   const filter = input.value.toUpperCase();
-  const ul = document.getElementById(MEMBERS_LIST_ID);
+  const ul = document.getElementById(USERS_LIST_ID);
   const li = ul.getElementsByTagName('li');
   const liArray = Array.from(li);
   liArray.forEach((liItem) => {

@@ -20,7 +20,7 @@ category.addEventListener('change', async () => {
     showSubmitLoader(false);
   }
 });
-let membersData = [];
+let usersData = [];
 
 const getRemainingDays = (selectedDateInString) => {
   const selectedDate = new Date(selectedDateInString);
@@ -439,7 +439,7 @@ async function fetchUsers() {
   try {
     const response = await fetch(`${API_BASE_URL}/users`);
     const data = await response.json();
-    membersData = data.users;
+    usersData = data.users;
   } catch {
     return;
   }
@@ -449,11 +449,11 @@ fetchTags();
 fetchLevel();
 fetchUsers();
 
-function filterMembers(searchInput) {
+function filterUsers(searchInput) {
   clearSuggestionList();
   wasAssigneeSet = false;
   if (searchInput.trim() !== '') {
-    const matches = membersData.filter((task) => {
+    const matches = usersData.filter((task) => {
       if (task.username) {
         clearUserNotFound();
         return task.username.toLowerCase().includes(searchInput.toLowerCase());
@@ -533,7 +533,7 @@ function createSuggestedUserLists() {
 
 assigneeEl.addEventListener(
   'input',
-  debounce((event) => filterMembers(event.target.value), 500),
+  debounce((event) => filterUsers(event.target.value), 500),
 );
 
 assigneeEl.addEventListener('click', createSuggestedUserLists);

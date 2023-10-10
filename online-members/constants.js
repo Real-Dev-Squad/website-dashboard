@@ -1,27 +1,24 @@
 'use strict';
 
-// Members Constants
-const MEMBERS_CLASS = 'members';
-const MEMBERS_CLASS_LIST = [MEMBERS_CLASS];
-const MEMBERS_UL_CLASS_LIST = ['members-list'];
-const MEMBERS_LIST_ID = 'members-list';
-const MEMBERS_CONTAINER_CLASS_LIST = ['members-container'];
-const MEMBERS_CONTAINER_ID = 'members-container';
-const MEMBERS_ONLINE_CLASS = 'members-online';
-const MEMBERS_ONLINE_HIDDEN_CLASS = 'members-online-hidden';
-const MEMBERS_ONLINE_CLASS_LIST = [
-  MEMBERS_ONLINE_CLASS,
-  MEMBERS_ONLINE_HIDDEN_CLASS,
-];
+// Users Constants
+const USERS_CLASS = 'users';
+const USERS_CLASS_LIST = [USERS_CLASS];
+const USERS_UL_CLASS_LIST = ['users-list'];
+const USERS_LIST_ID = 'users-list';
+const USERS_CONTAINER_CLASS_LIST = ['users-container'];
+const USERS_CONTAINER_ID = 'users-container';
+const USERS_ONLINE_CLASS = 'users-online';
+const USERS_ONLINE_HIDDEN_CLASS = 'users-online-hidden';
+const USERS_ONLINE_CLASS_LIST = [USERS_ONLINE_CLASS, USERS_ONLINE_HIDDEN_CLASS];
 
-const PROFILE_NAME_CLASS = 'members-profile-and-name';
+const PROFILE_NAME_CLASS = 'users-profile-and-name';
 const PROFILE_NAME_CLASS_LIST = [PROFILE_NAME_CLASS];
 
-// Members Search Constants
-const MEMBERS_SEARCH_CLASS_LIST = ['members-search'];
-const MEMBERS_SEARCH_INPUT_CLASS_LIST = ['members-search-input'];
-const MEMBERS_SEARCH_ID = 'search-members';
-const MEMBERS_SEARCH_PLACEHOLDER = 'Search for members';
+// Users Search Constants
+const USERS_SEARCH_CLASS_LIST = ['users-search'];
+const USERS_SEARCH_INPUT_CLASS_LIST = ['users-search-input'];
+const USERS_SEARCH_ID = 'search-users';
+const USERS_SEARCH_PLACEHOLDER = 'Search for users';
 
 // Task Constants
 const TASKS_CONTAINER_ID = 'task-container';
@@ -41,7 +38,7 @@ const RDS_SSE_ONLINE_URL = 'https://online.realdevsquad.com/online-members';
 const RDS_PROFILE_IMAGE_SIZE = 'w_40,h_40';
 const RDS_PROFILE_DEFAULT_IMAGE = '';
 
-const PROFILE_IMAGE_CLASS = 'members-profile';
+const PROFILE_IMAGE_CLASS = 'users-profile';
 const PROFILE_IMAGE_CLASS_LIST = [PROFILE_IMAGE_CLASS];
 
 /* MESSAGES CONSTANTS */
