@@ -293,6 +293,7 @@ addClickEventListener(
 
 const hamburgerDiv = document.querySelector('.hamburger');
 const navLinks = document.querySelector('.links');
+let navActive = document.querySelector('.nav-links');
 let toggle = true;
 
 hamburgerDiv.addEventListener('click', function () {
