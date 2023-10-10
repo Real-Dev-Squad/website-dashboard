@@ -26,8 +26,6 @@ const DISABLED = 'disabled';
 const STATUS_BASE_URL_PROD = 'https://status.realdevsquad.com';
 const STATUS_BASE_URL_STAGING = 'https://staging-status.realdevsquad.com';
 const STATUS_BASE_URL = STATUS_BASE_URL_PROD;
-
-const dummyPicture =
-  'https://dashboard.realdevsquad.com/users/images/avatar.png';
+const dummyPicture = 'https://dashboard.realdevsquad.com/images/avatar.png';
 const USER_MANAGEMENT_URL =
   'https://dashboard.realdevsquad.com/users/details/?username=';
