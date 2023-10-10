@@ -16,6 +16,9 @@ const SYNC_NICKNAMES = 'sync-nicknames';
 const SYNC_NICKNAMES_STATUS_UPDATE = 'sync-nicknames-status-update';
 const SYNC_IDLE_7D_Plus_USERS = 'sync-idle-7d-Plus-users';
 const SYNC_IDLE_7D_Plus_USERS_UPDATE = 'sync-idle-7d-Plus-users-update';
+const SYNC_ONBOARDING_31D_PLUS_USERS = 'sync-onboarding-31d-plus-users';
+const SYNC_ONBOARDING_31D_PLUS_USERS_UPDATE =
+  'sync-onboarding-31d-plus-users-update';
 const SYNC_IN_PROGRESS = 'Last Sync: In progress';
 const SYNC_SUCCESSFUL = 'Last Sync: Successful';
 const SYNC_FAILED = 'Last Sync: Failed';
