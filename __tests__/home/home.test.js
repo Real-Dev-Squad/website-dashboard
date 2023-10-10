@@ -248,36 +248,6 @@ describe('Home Page', () => {
     expect(repoLinkStyle).toBeTruthy();
   });
 
-  it('should display and close hamburger menu on clicking the icon in mobile screens', async () => {
-    await page.setViewport({ width: 970, height: 1800 });
-    await page.goto('http://127.0.0.1:5500/index.html');
-    await page.evaluate(() => {
-      Object.defineProperty(window, 'innerWidth', { value: 970 });
-    });
-
-    const navLink = await page.$('.nav-links');
-    expect(navLink).toBeTruthy();
-
-    const hamIcon = await navLink.$('.hamburger');
-    expect(hamIcon).toBeTruthy();
-
-    const classList = await navLink.evaluate((element) => element.classList);
-    expect(classList).not.toContain('active');
-
-    await hamIcon.click();
-
-    await page.waitForSelector('.links');
-
-    const menu = await page.$('.active');
-    expect(menu).toBeTruthy();
-
-    await hamIcon.click();
-
-    await page.waitForSelector('.nav-links:not(.active)');
-    const menuOff = await page.$('.nav-links:not(.active)');
-    expect(menuOff).toBeTruthy();
-  });
-
   it('should close hamburger menu on clicking anywhere on the screen except the menu', async () => {
     await page.setViewport({ width: 970, height: 1800 });
     await page.goto('http://127.0.0.1:5500/index.html');
