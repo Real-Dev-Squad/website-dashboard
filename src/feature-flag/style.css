@@ -1,0 +1,135 @@
+* {
+  list-style: none;
+  text-decoration: none;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Open Sans', sans-serif;
+}
+
+:root {
+  --primary-color: #1d1283;
+  --bg-color: rgb(243 242 255);
+  --text-grey-color: rgb(95, 95, 95);
+  --add-btn-color: #94a0af;
+}
+
+body {
+  display: flex;
+  align-items: center;
+}
+
+.wrapper {
+  width: clamp(300px, 90%, 800px);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  font: 700 14px Roboto, sans-serif;
+  padding: 20px 10px;
+  box-shadow: 0 8px 6px -6px rgb(0 0 0 / 65%);
+  background-color: var(--bg-color);
+}
+
+.dropdown {
+  background-color: rgb(255, 255, 255);
+  color: var(--text-grey-color);
+  font: 700 14px Roboto, sans-serif;
+  width: clamp(150px, 30%, 200px);
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.add-button {
+  background-color: var(--primary-color);
+  border: 2px solid black;
+  border-radius: 4px;
+  user-select: none;
+  color: white;
+  padding: 8px;
+}
+
+.add-button:hover {
+  color: #49a82e;
+}
+
+.add-button--active {
+  color: #49a82e;
+}
+
+/* Form */
+
+.form {
+  margin: 20px 0;
+  user-select: none;
+  padding: 0 10px;
+}
+
+.field {
+  padding: 30px 0;
+}
+
+.field--row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.field--end {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.field__heading {
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.text-input__field {
+  padding: 4px;
+}
+
+.checkbox {
+  padding: 4px 0;
+  display: flex;
+  align-items: center;
+}
+
+.checkbox__tick-box {
+  margin-right: 4px;
+  height: 20px;
+  width: 20px;
+}
+.checkbox__tick-box--reversed {
+  margin-left: 20px;
+  margin-right: 0;
+}
+
+.submit-button {
+  color: var(--add-btn-color);
+  border: 2px solid var(--add-btn-color);
+  background-color: white;
+  border-radius: 6px;
+  font-weight: 900;
+  padding: 8px;
+}
+
+.submit-button:hover {
+  color: white;
+  background-color: var(--add-btn-color);
+}
+
+.submit-button__disabled {
+  color: white;
+  background-color: var(--add-btn-color);
+}
+
+@media screen and (max-width: 480px) {
+  .field--row {
+    flex-direction: column;
+    justify-content: space-between;
+  }
+}
