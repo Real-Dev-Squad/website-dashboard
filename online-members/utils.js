@@ -20,7 +20,7 @@ async function makeApiCall(
 }
 
 async function getUsersData() {
-  let usersList = null;
+  let usersList = [];
   const userObject = {};
   const usersRequest = await makeApiCall(RDS_API_USERS);
   if (usersRequest.status === 200) {
