@@ -400,11 +400,9 @@ function populateAvailability() {
     { name: 'Ooo (Out of Office)', id: 'OOO' },
     { name: 'Idle', id: 'IDLE' },
     { name: 'Onboarding', id: 'ONBOARDING' },
+    { name: 'Onboarding > 31d', id: 'ONBOARDING31DAYS' },
   ];
 
-  if (params.get('dev') === 'true') {
-    availabilityArr.push({ name: 'Onboarding > 31d', id: 'ONBOARDING31DAYS' });
-  }
   for (let i = 0; i < availabilityArr.length; i++) {
     const { name, id } = availabilityArr[i];
     addCheckbox(name, id, 'availability-filter');
@@ -596,49 +594,24 @@ applyFilterButton.addEventListener('click', async () => {
     checkedValuesAvailability,
   );
 
-  // Feature Flag Start
-  if (params.get('dev') === 'true') {
-    const onboarding31DaysFilter =
-      document.getElementById('ONBOARDING31DAYS').checked;
-    try {
-      let users;
-      if (onboarding31DaysFilter) {
-        let queryParams = getFilteredUsersURL(
-          checkedValuesSkills,
-          checkedValuesAvailability,
-        );
+  const onboarding31DaysFilter =
+    document.getElementById('ONBOARDING31DAYS').checked;
+  try {
+    let users;
+    if (onboarding31DaysFilter) {
+      let queryParams = getFilteredUsersURL(
+        checkedValuesSkills,
+        checkedValuesAvailability,
+      );
 
-        queryParams = replaceOnboarding31days(queryParams);
-        const usersRequest = await makeApiCall(
-          `${RDS_API_USERS}/search${queryParams}`,
-        );
-        const { users: filteredUsers } = await usersRequest.json();
-        users = filteredUsers;
-      } else {
-        let queryParams = getFilteredUsersURL(
-          checkedValuesSkills,
-          checkedValuesAvailability,
-        );
-        const usersRequest = await makeApiCall(
-          `${RDS_API_USERS}/search${queryParams}`,
-        );
-        const { users: filteredUsers } = await usersRequest.json();
-        users = filteredUsers;
-      }
-
-      manipulateQueryParamsToURL(queryParams);
-      // Display the filtered user list
-      showUserList(users);
-    } catch (err) {
-      throw new Error(`User list request failed with error: ${err}`);
-    }
-  }
-  // feature flag end
-  else {
-    try {
-      let users;
-
-      const queryParams = getFilteredUsersURL(
+      queryParams = replaceOnboarding31days(queryParams);
+      const usersRequest = await makeApiCall(
+        `${RDS_API_USERS}/search${queryParams}`,
+      );
+      const { users: filteredUsers } = await usersRequest.json();
+      users = filteredUsers;
+    } else {
+      let queryParams = getFilteredUsersURL(
         checkedValuesSkills,
         checkedValuesAvailability,
       );
@@ -647,13 +620,13 @@ applyFilterButton.addEventListener('click', async () => {
       );
       const { users: filteredUsers } = await usersRequest.json();
       users = filteredUsers;
-
-      manipulateQueryParamsToURL(queryParams);
-      // Display the filtered user list
-      showUserList(users);
-    } catch (err) {
-      throw new Error(`User list request failed with error: ${err}`);
     }
+
+    manipulateQueryParamsToURL(queryParams);
+    // Display the filtered user list
+    showUserList(users);
+  } catch (err) {
+    throw new Error(`User list request failed with error: ${err}`);
   }
 });
 
