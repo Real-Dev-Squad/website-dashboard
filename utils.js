@@ -1,15 +1,19 @@
-async function getSelfUser() {
+async function getSelfUser(endpoint = '/users/self') {
   try {
-    const res = await fetch(`${API_BASE_URL}/users/self`, {
+    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'GET',
       credentials: 'include',
       headers: {
         'Content-type': 'application/json',
       },
     });
-    const self_user = await res.json();
-    if (res.status === 200) {
-      return self_user;
+    if (endpoint === '/users/self') {
+      const self_user = await res.json();
+      if (res.status === 200) {
+        return self_user;
+      }
+    } else {
+      location.reload();
     }
   } catch (err) {}
 }
