@@ -374,14 +374,13 @@ footer {
 #dropdown {
   display: none;
   position: absolute;
-  width: 9.5rem;
+  width: 8rem;
   right: 1.5rem;
-  text-align: center;
-  top: 3rem;
+  top: 2.5rem;
   z-index: 100;
   flex-direction: column;
   justify-content: center;
-  padding: 0.63rem 0;
+  padding: 0.25rem 0;
   background-color: var(--white-color);
   border-radius: 0.63rem;
   font-size: 0.75rem;
@@ -406,7 +405,7 @@ footer {
   font-weight: 700;
 }
 .dropdown-item {
-  padding: 0.65rem 0;
+  padding: 0.75rem 1.75rem;
 }
 .dropdown-item:hover {
   background-color: var(--lightgray-color);
@@ -478,6 +477,9 @@ footer {
   }
   .user-info {
     position: inherit;
+  }
+  .logo {
+    display: none;
   }
 }
 
