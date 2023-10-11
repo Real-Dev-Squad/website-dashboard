@@ -339,6 +339,7 @@ addClickEventListener(
   'POST',
 );
 
+
 const DROPDOWN_OPTIONS = [
   {
     name: 'Home',
@@ -431,12 +432,13 @@ async function handleUserSignin() {
       });
 
       signOutElement.addEventListener('click', () => {
-        signout('/auth/signout');
+        getSelfUser('/auth/signout');
       });
     }
   } catch (error) {}
 }
 handleUserSignin();
+
 
 addClickEventListener(
   syncIdle7dUsersButton,
