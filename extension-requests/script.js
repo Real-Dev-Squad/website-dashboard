@@ -26,6 +26,7 @@ const filterStates = {
   order: Order.ASCENDING,
   size: DEFAULT_PAGE_SIZE,
 };
+const isDev = params.get('dev') === 'true';
 
 const updateFilterStates = (key, value) => {
   filterStates[key] = value;
@@ -726,6 +727,7 @@ async function createExtensionCard(data) {
       rootElement.classList.add('disabled');
       updateExtensionRequestStatus({
         id: data.id,
+        isDev,
         body: { status: Status.APPROVED },
       })
         .then(async () => {
@@ -754,6 +756,7 @@ async function createExtensionCard(data) {
       rootElement.classList.add('disabled');
       updateExtensionRequestStatus({
         id: data.id,
+        isDev,
         body: { status: Status.DENIED },
       })
         .then(async () => {
@@ -846,6 +849,7 @@ async function createExtensionCard(data) {
     updateAccordionHeight(panel);
     updateExtensionRequest({
       id: data.id,
+      isDev,
       body: formData,
     })
       .then(() => {
