@@ -86,4 +86,65 @@ describe('App Component', () => {
     const url = await page.url();
     expect(url).toContain('?tab=verified');
   });
+
+  it('should not display user details section initially when window width is less than 600 pixels', async () => {
+    await page.setViewport({ width: 599, height: 768 });
+
+    await page.waitForSelector('.user_details_section');
+
+    const userDetailsSection = await page.$('.user_details_section');
+    const overlay = await page.$('#overlay');
+
+    const userDetailsSectionStyle = await page.evaluate((element) => {
+      return getComputedStyle(element).display;
+    }, userDetailsSection);
+
+    const overlayStyle = await page.evaluate((element) => {
+      return getComputedStyle(element).display;
+    }, overlay);
+
+    expect(overlayStyle).toBe('none');
+    expect(userDetailsSectionStyle).toBe('none');
+  });
+
+  it('should display user details section when clicking on user_card', async () => {
+    await page.setViewport({ width: 599, height: 768 });
+
+    await page.click('.user_card');
+
+    const userDetailsSection = await page.$('.user_details_section');
+    const overlay = await page.$('#overlay');
+
+    const userDetailsSectionStyle = await page.evaluate((element) => {
+      return getComputedStyle(element).display;
+    }, userDetailsSection);
+
+    const overlayStyle = await page.evaluate((element) => {
+      return getComputedStyle(element).display;
+    }, overlay);
+
+    expect(overlayStyle).toBe('block');
+    expect(userDetailsSectionStyle).toBe('block');
+  });
+
+  it('should hide user details section when clicking on the overlay', async () => {
+    await page.setViewport({ width: 599, height: 768 });
+
+    const userDetailsSection = await page.$('.user_details_section');
+    const overlay = await page.$('#overlay');
+
+    expect(overlay).toBeDefined();
+    await page.click('#overlay', { offset: { x: 10, y: 10 } });
+
+    const userDetailsSectionStyle = await page.evaluate((element) => {
+      return getComputedStyle(element).display;
+    }, userDetailsSection);
+
+    const overlayStyle = await page.evaluate((element) => {
+      return getComputedStyle(element).display;
+    }, overlay);
+
+    expect(userDetailsSectionStyle).toBe('none');
+    expect(overlayStyle).toBe('none');
+  });
 });
