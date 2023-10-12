@@ -33,7 +33,7 @@ describe('Input box', () => {
           },
           body: JSON.stringify(levels),
         });
-      } else if (url === `${API_BASE_URL}/members`) {
+      } else if (url === `${API_BASE_URL}/users`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',

@@ -19,35 +19,35 @@ function createProfileImage(publicId = '', alt = '') {
     type: 'img',
     classList: PROFILE_IMAGE_CLASS_LIST,
   });
-  img.src = getMemberProfileImageLink(publicId);
+  img.src = getUserProfileImageLink(publicId);
   img.setAttribute('alt', alt);
   return img;
 }
 
-function createMemberNode(member) {
-  const memberDiv = createElement({
+function createUserNode(user) {
+  const userDiv = createElement({
     type: 'div',
-    classList: MEMBERS_CLASS_LIST,
+    classList: USERS_CLASS_LIST,
   });
-  memberDiv.dataset.username = member.username;
+  userDiv.dataset.username = user.username;
 
-  const memberOnlineDiv = createElement({
+  const userOnlineDiv = createElement({
     type: 'div',
-    classList: MEMBERS_ONLINE_CLASS_LIST,
+    classList: USERS_ONLINE_CLASS_LIST,
   });
 
-  const memberImage = createProfileImage(member?.picture?.publicId);
-  const usernameText = createTextNode(member.username);
+  const userImage = createProfileImage(user?.picture?.publicId);
+  const usernameText = createTextNode(user.username);
 
   const profileAndNameDiv = createElement({
     type: 'div',
     classList: PROFILE_NAME_CLASS_LIST,
   });
-  profileAndNameDiv.append(memberImage, usernameText);
+  profileAndNameDiv.append(userImage, usernameText);
 
-  memberDiv.append(profileAndNameDiv, memberOnlineDiv);
+  userDiv.append(profileAndNameDiv, userOnlineDiv);
 
-  return memberDiv;
+  return userDiv;
 }
 
 function createAnchorLinkNode(url, title) {
@@ -81,19 +81,19 @@ function createTaskNode(task) {
   return div;
 }
 
-function getMembersListContent(members, classList = []) {
+function getUsersListContent(users, classList = []) {
   const fragment = new DocumentFragment();
 
-  const membersList = Object.keys(members);
+  const usersList = Object.keys(users);
 
-  membersList.forEach((member) => {
+  usersList.forEach((user) => {
     const li = createElement({ type: 'li' });
-    li.append(createMemberNode(members[member]));
+    li.append(createUserNode(users[user]));
     fragment.append(li);
   });
 
-  const ul = createElement({ type: 'ul', classList: MEMBERS_UL_CLASS_LIST });
-  ul.id = MEMBERS_LIST_ID;
+  const ul = createElement({ type: 'ul', classList: USERS_UL_CLASS_LIST });
+  ul.id = USERS_LIST_ID;
   ul.appendChild(fragment);
 
   return ul;
@@ -137,12 +137,12 @@ function hideLoadingSpinner(selector) {
   }
 }
 
-async function generateMemberTaskData(username) {
+async function generateUserTaskData(username) {
   if (isTaskDataBeingFetched) {
     return;
   }
 
-  showLoadingSpinner(`#${TASKS_CONTAINER_ID}`);
+  showLoadingSpinner(`${TASKS_CONTAINER_ID}`);
 
   isTaskDataBeingFetched = true;
 
@@ -151,54 +151,54 @@ async function generateMemberTaskData(username) {
     tasksDiv.firstElementChild.remove();
   }
 
-  const memberTaskData = await getMemberTaskData(username);
+  const userTaskData = await getUserTaskData(username);
   isTaskDataBeingFetched = false;
   hideLoadingSpinner(`#${TASKS_CONTAINER_ID}`);
-  tasksDiv.appendChild(getTaskDataContent({ tasks: memberTaskData, username }));
+  tasksDiv.appendChild(getTaskDataContent({ tasks: userTaskData, username }));
 }
 
-async function generateMembersList() {
-  showLoadingSpinner(`#${MEMBERS_CONTAINER_ID}`);
-  members = await getMembersData();
-  hideLoadingSpinner(`#${MEMBERS_CONTAINER_ID}`);
-  const membersDiv = document.getElementById(MEMBERS_CONTAINER_ID);
+async function generateUsersList() {
+  showLoadingSpinner(`#${USERS_CONTAINER_ID}`);
+  let users = await getUsersData();
+  hideLoadingSpinner(`#${USERS_CONTAINER_ID}`);
+  const usersDiv = document.getElementById(USERS_CONTAINER_ID);
   const searchInputBox = generateSearchInputElement();
-  membersDiv.append(searchInputBox, getMembersListContent(members));
-  addEventListenerToMembersList();
+  usersDiv.append(searchInputBox, getUsersListContent(users));
+  addEventListenerToUsersList();
 }
 
-function addEventListenerToMembersList() {
-  const membersList = document.querySelector(`#${MEMBERS_CONTAINER_ID} > UL`);
-  membersList.addEventListener('click', (event) => {
-    const memberElement = event.target.closest(`.${MEMBERS_CLASS}`);
+function addEventListenerToUsersList() {
+  const usersList = document.querySelector(`#${USERS_CONTAINER_ID} > UL`);
+  usersList.addEventListener('click', (event) => {
+    const userElement = event.target.closest(`.${USERS_CLASS}`);
     document.getElementById(TASKS_CONTAINER_ID).style.display = 'block';
-    if (!memberElement) {
+    if (!userElement) {
       return;
     }
-    const username = memberElement.dataset.username;
+    const username = userElement.dataset.username;
     if (!username) {
       throw new Error('Some error occurred, please try again or contact admin');
     }
-    generateMemberTaskData(username);
+    generateUserTaskData(username);
   });
 }
 
 function generateSearchInputElement() {
   const searchInputField = createElement({
     type: 'input',
-    classList: MEMBERS_SEARCH_INPUT_CLASS_LIST,
+    classList: USERS_SEARCH_INPUT_CLASS_LIST,
   });
   searchInputField.type = 'text';
-  searchInputField.id = MEMBERS_SEARCH_ID;
+  searchInputField.id = USERS_SEARCH_ID;
   searchInputField.onkeyup = searchFunction;
-  searchInputField.placeholder = MEMBERS_SEARCH_PLACEHOLDER;
+  searchInputField.placeholder = USERS_SEARCH_PLACEHOLDER;
 
   const div = createElement({
     type: 'div',
-    classList: MEMBERS_SEARCH_CLASS_LIST,
+    classList: USERS_SEARCH_CLASS_LIST,
   });
   div.appendChild(searchInputField);
   return div;
 }
 
-generateMembersList();
+generateUsersList();
