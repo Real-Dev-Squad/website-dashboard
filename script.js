@@ -372,10 +372,11 @@ async function handleUserSignin() {
       const userInfo = document.querySelector('.user-info');
       const username = document.getElementById('user-name');
       const userImage = document.getElementById('user-img');
-
+      const tasksNav = document.getElementById('tasksNav');
       username.innerText = `Hello, ${self_user.first_name}!`;
       userImage.setAttribute('src', self_user?.picture.url);
       userInfo.classList.add('active');
+      tasksNav.style.alignItems = 'center';
       const dropdownList = createElement({
         type: 'ul',
         attributes: {
