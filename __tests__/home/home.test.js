@@ -250,7 +250,7 @@ describe('Home Page', () => {
 
   it('should close hamburger menu on clicking anywhere on the screen except the menu', async () => {
     await page.setViewport({ width: 970, height: 1800 });
-    await page.goto('http://127.0.0.1:5500/index.html');
+    await page.goto('http://localhost:8000/index.html');
     await page.evaluate(() => {
       Object.defineProperty(window, 'innerWidth', { value: 970 });
     });
