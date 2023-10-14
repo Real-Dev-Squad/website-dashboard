@@ -325,13 +325,13 @@ hamburgerDiv.addEventListener('click', function () {
   }
 });
 
-if(params.get('dev') === 'true'){
+if (params.get('dev') === 'true') {
   document.addEventListener('click', function (event) {
-      if (!navActive.contains(event.target)) {
-        navLinks.classList.remove('active');
-        toggle = true;
-      }
-  })
+    if (!navActive.contains(event.target)) {
+      navLinks.classList.remove('active');
+      toggle = true;
+    }
+  });
 }
 
 addClickEventListener(
