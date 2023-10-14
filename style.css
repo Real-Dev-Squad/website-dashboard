@@ -27,6 +27,7 @@ body {
   background-color: var(--blue-color);
   padding: 10px;
   display: flex;
+  align-items: center;
 }
 
 img {
