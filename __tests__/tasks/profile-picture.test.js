@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer');
 const API_BASE_URL = 'https://staging-api.realdevsquad.com';
-const { members } = require('../../mock-data/members');
+const { allUsersData } = require('../../mock-data/users');
 
 describe('Task Page - Assignee Profile Pic', () => {
   let browser;
@@ -20,7 +20,7 @@ describe('Task Page - Assignee Profile Pic', () => {
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
 
-      if (url === `${API_BASE_URL}/members`) {
+      if (url === `${API_BASE_URL}/users`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -29,7 +29,7 @@ describe('Task Page - Assignee Profile Pic', () => {
             'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
-          body: JSON.stringify(members),
+          body: JSON.stringify(allUsersData),
         });
       } else {
         interceptedRequest.continue();
@@ -52,7 +52,7 @@ describe('Task Page - Assignee Profile Pic', () => {
 
   it('Profile picture with url', async () => {
     const inputElement = await page.$('input#assignee');
-    const name = 'satyam';
+    const name = 'Arpit_02';
 
     //Trigger the input event manually
     for (let i = 0; i < name.length; i++) {
@@ -64,7 +64,7 @@ describe('Task Page - Assignee Profile Pic', () => {
     await page.waitForTimeout(2000);
     const imgSrc = await page.$eval('#list-items img', (img) => img.src);
     const expectedImageFilename =
-      'https://res.cloudinary.com/imgprc/image/upload/v1688145505/profile/tu4zVmwFX91e9oEuSWLg/woqilcqdbp0cudcexkem.jpg';
+      'https://res.cloudinary.com/realdevsquad/image/upload/v1679878917/profile/54vObOfoscwiIVNMSqnN/askdcanhcehukqrdugge.jpg';
     expect(imgSrc.endsWith(expectedImageFilename)).toBe(true);
   });
 
@@ -75,7 +75,7 @@ describe('Task Page - Assignee Profile Pic', () => {
     await page.keyboard.press('Backspace');
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    const name = 'sumit';
+    const name = '19sriram';
     for (let i = 0; i < name.length; i++) {
       await inputElement.type(name[i], { delay: 100 });
     }

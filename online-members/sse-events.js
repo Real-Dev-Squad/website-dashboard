@@ -5,7 +5,7 @@
 let currentOnlineList = [];
 let previousOnlineList = [];
 
-function setUpOnlineMembersEventSource(url) {
+function setUpOnlineUsersEventSource(url) {
   const eventSource = new EventSource(url, { withCredentials: true });
 
   eventSource.onopen = (e) => {
@@ -17,16 +17,16 @@ function setUpOnlineMembersEventSource(url) {
       const objectData = JSON.parse(event.data);
       currentOnlineList = objectData.users;
 
-      previousOnlineList.forEach((member) => {
-        members[member].isOnline = false;
+      previousOnlineList.forEach((user) => {
+        users[user].isOnline = false;
       });
 
-      currentOnlineList.forEach((member) => {
-        members[member].isOnline = true;
+      currentOnlineList.forEach((user) => {
+        users[user].isOnline = true;
       });
 
       previousOnlineList = currentOnlineList;
-      updateMembersOnlineStatus(currentOnlineList, members);
+      updateUsersOnlineStatus(currentOnlineList, users);
     } catch (error) {
       console.error(
         'Error occurred while processing data, please contact admin',
@@ -43,28 +43,27 @@ function setUpOnlineMembersEventSource(url) {
   return eventSource;
 }
 
-const onlineMembersEventSource =
-  setUpOnlineMembersEventSource(RDS_SSE_ONLINE_URL);
+const onlineUsersEventSource = setUpOnlineUsersEventSource(RDS_SSE_ONLINE_URL);
 
-function updateMembersOnlineStatus(onlineMembersList, members) {
+function updateUsersOnlineStatus(onlineUsersList, users) {
   let targetPositionOfOnlineMember = 0;
-  const membersUl = document.getElementById(MEMBERS_LIST_ID);
-  const memberLi = membersUl.getElementsByTagName('li');
-  // Hiding online status for all members
-  for (const member of memberLi) {
-    const memberDiv = member.getElementsByClassName(MEMBERS_CLASS)[0];
-    const memberUsername = memberDiv.dataset.username;
+  const usersUl = document.getElementById(USERS_LIST_ID);
+  const userLi = usersUl.getElementsByTagName('li');
+  // Hiding online status for all users
+  for (const user of userLi) {
+    const userDiv = user.getElementsByClassName(USERS_CLASS)[0];
+    const username = userDiv.dataset.username;
 
-    const memberOnlineStatusDiv =
-      member.getElementsByClassName(MEMBERS_ONLINE_CLASS)[0];
-    memberOnlineStatusDiv.classList.add(MEMBERS_ONLINE_HIDDEN_CLASS);
+    const userOnlineStatusDiv =
+      user.getElementsByClassName(USERS_ONLINE_CLASS)[0];
+    userOnlineStatusDiv.classList.add(USERS_ONLINE_HIDDEN_CLASS);
 
-    // Showing online status for online members
-    if (members[memberUsername].isOnline) {
-      memberOnlineStatusDiv.classList.remove(MEMBERS_ONLINE_HIDDEN_CLASS);
+    // Showing online status for online users
+    if (users[username].isOnline) {
+      userOnlineStatusDiv.classList.remove(USERS_ONLINE_HIDDEN_CLASS);
 
       // Moving online users to the top of list
-      membersUl.insertBefore(member, memberLi[targetPositionOfOnlineMember++]);
+      usersUl.insertBefore(user, userLi[targetPositionOfOnlineMember++]);
     }
   }
 }

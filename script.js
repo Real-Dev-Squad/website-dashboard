@@ -13,6 +13,10 @@ const syncNicknamesButton = document.getElementById(SYNC_NICKNAMES);
 const syncUsersStatusUpdate = document.getElementById(SYNC_USERS_STATUS_UPDATE);
 const syncIdleUsersButton = document.getElementById(SYNC_IDLE_USERS);
 const syncIdleUsersUpdate = document.getElementById(SYNC_IDLE_USERS_UPDATE);
+const syncIdle7dUsersButton = document.getElementById(SYNC_IDLE_7D_Plus_USERS);
+const syncIdle7dUsersUpdate = document.getElementById(
+  SYNC_IDLE_7D_Plus_USERS_UPDATE,
+);
 const repoSyncStatusUpdate = document.getElementById(SYNC_REPO_STATUS_UPDATE);
 
 const syncNicknamesStatusUpdate = document.getElementById(
@@ -26,6 +30,13 @@ const syncUnverifiedUsersUpdate = document.getElementById(
   SYNC_UNVERIFIED_USERS_UPDATE,
 );
 const buttonSection = document.getElementById('sync-buttons');
+
+const syncOnboarding31dPlusUsersButton = document.getElementById(
+  SYNC_ONBOARDING_31D_PLUS_USERS,
+);
+const syncOnboarding31dPlusUsersUpdate = document.getElementById(
+  SYNC_ONBOARDING_31D_PLUS_USERS_UPDATE,
+);
 
 function getCurrentTimestamp() {
   return new Date().toLocaleString();
@@ -54,8 +65,16 @@ export async function showSuperUserOptions(...privateBtns) {
       syncIdleUsersUpdate.textContent = `Last Sync: ${
         localStorage.getItem('lastSyncIdleUsers') || 'Synced Data Not Available'
       }`;
+      syncIdle7dUsersUpdate.textContent = `Last Sync: ${
+        localStorage.getItem('lastSyncIdle7dUsers') ||
+        'Synced Data Not Available'
+      }`;
       syncNicknamesStatusUpdate.textContent = `Last Sync: ${
         localStorage.getItem('lastSyncNicknames') || 'Synced Data Not Available'
+      }`;
+      syncOnboarding31dPlusUsersUpdate.textContent = `Last Sync: ${
+        localStorage.getItem('lastSyncOnboarding31dPlusUsers') ||
+        'Synced Data Not Available'
       }`;
     }
   } catch (err) {
@@ -328,4 +347,119 @@ addClickEventListener(
   'lastSyncNicknames',
   syncNicknamesStatusUpdate,
   'POST',
+);
+
+const DROPDOWN_OPTIONS = [
+  {
+    name: 'Home',
+    link: 'https://dashboard.realdevsquad.com/',
+  },
+  {
+    name: 'Status',
+    link: 'https://my.realdevsquad.com/',
+  },
+  {
+    name: 'Profile',
+    link: 'https://my.realdevsquad.com/profile',
+  },
+  {
+    name: 'Tasks',
+    link: 'https://my.realdevsquad.com/tasks',
+  },
+  {
+    name: 'Identity',
+    link: 'https://my.realdevsquad.com/identity',
+  },
+];
+
+async function handleUserSignin() {
+  try {
+    const self_user = await getSelfUser();
+    if (self_user) {
+      const signInButton = document.querySelector('.sign-in-btn');
+      signInButton.style.display = 'none';
+      const dropdown = document.getElementById('dropdown');
+      const userInfo = document.querySelector('.user-info');
+      const username = document.getElementById('user-name');
+      const userImage = document.getElementById('user-img');
+
+      username.innerText = `Hello, ${self_user.first_name}!`;
+      userImage.setAttribute('src', self_user?.picture.url);
+      userInfo.classList.add('active');
+      const dropdownList = createElement({
+        type: 'ul',
+        attributes: {
+          class: 'dropdown-list',
+        },
+      });
+
+      DROPDOWN_OPTIONS.forEach((option) => {
+        const listElement = createElement({
+          type: 'li',
+          attributes: {
+            class: 'dropdown-item',
+          },
+        });
+        const anchorElement = createElement({
+          type: 'a',
+          attributes: {
+            class: 'dropdown-link',
+          },
+        });
+        anchorElement.href = `${option.link}`;
+        anchorElement.innerText = `${option.name}`;
+        listElement.append(anchorElement);
+        dropdownList.append(listElement);
+      });
+      const horizontalLine = createElement({
+        type: 'hr',
+        attributes: {
+          class: 'line',
+        },
+      });
+
+      dropdownList.append(horizontalLine);
+      const signOutElement = createElement({
+        type: 'li',
+        attributes: {
+          class: 'dropdown-item',
+          id: 'signout-option',
+        },
+      });
+      signOutElement.classList.add('dropdown-link');
+
+      dropdownList.append(signOutElement);
+      signOutElement.innerText = 'Sign Out';
+      dropdown.append(dropdownList);
+
+      userInfo.addEventListener('click', () => {
+        if (dropdown.classList.contains('active')) {
+          dropdown.classList.remove('active');
+        } else {
+          dropdown.classList.add('active');
+        }
+      });
+
+      signOutElement.addEventListener('click', () => {
+        getSelfUser('/auth/signout');
+      });
+    }
+  } catch (error) {}
+}
+handleUserSignin();
+
+addClickEventListener(
+  syncIdle7dUsersButton,
+  '/discord-actions/group-idle-7d',
+  'lastSyncIdle7dUsers',
+  syncIdle7dUsersUpdate,
+  'PUT',
+);
+
+addClickEventListener(
+  syncOnboarding31dPlusUsersButton,
+  '/discord-actions/group-onboarding-31d-plus',
+  'lastSyncOnboarding31dPlusUsers',
+  syncOnboarding31dPlusUsersUpdate,
+  'PUT',
 );

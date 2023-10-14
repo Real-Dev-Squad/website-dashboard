@@ -104,6 +104,23 @@ async function addGroupRoleToMember(memberRoleBody) {
   }
 }
 
+async function removeRoleFromMember(roleId, discordId) {
+  try {
+    const res = await fetch(`${BASE_URL}/discord-actions/roles`, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify({ roleid: roleId, userid: discordId }),
+    });
+
+    return await res.json();
+  } catch (err) {
+    throw err;
+  }
+}
+
 function removeGroupKeywordFromDiscordRoleName(groupName) {
   if (/^group.*/.test(groupName)) {
     const splitNames = groupName.split('-');
@@ -134,6 +151,7 @@ export {
   getDiscordGroups,
   createDiscordGroupRole,
   addGroupRoleToMember,
+  removeRoleFromMember,
   removeGroupKeywordFromDiscordRoleName,
   getSearchValueFromURL,
 };
