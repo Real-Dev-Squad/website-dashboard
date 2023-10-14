@@ -38,6 +38,23 @@ const handleTabNavigation = async (e) => {
 };
 
 const handleUserSelected = (e) => {
+  const userDetailsSection = document.querySelector('.user_details_section');
+  const overlay = document.getElementById('overlay');
+
+  if (window.innerWidth < 600) {
+    overlay.style.display = 'block';
+    userDetailsSection.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+
+    overlay.addEventListener('click', (event) => {
+      if (event.target === overlay) {
+        overlay.style.display = 'none';
+        userDetailsSection.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    });
+  }
+
   const selectedUserId =
     e.target?.getAttribute('data_key') ||
     e.target.parentElement?.getAttribute('data_key');
@@ -46,7 +63,6 @@ const handleUserSelected = (e) => {
     showUser = usersData[activeTab]?.findIndex(
       (user) => user.id === selectedUserId,
     );
-    rerender(App(), window['root']);
   }
 };
 
