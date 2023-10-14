@@ -248,7 +248,7 @@ describe('Home Page', () => {
     expect(repoLinkStyle).toBeTruthy();
   });
 
- it('should close hamburger menu on clicking anywhere on the screen except the menu', async () => {
+  it('should close hamburger menu on clicking anywhere on the screen except the menu', async () => {
     await page.setViewport({ width: 970, height: 1800 });
     await page.goto('http://localhost:8000/index.html');
     await page.evaluate(() => {
@@ -269,7 +269,8 @@ describe('Home Page', () => {
     await page.waitForSelector('.nav-links:not(.active)');
     const menuOff = await page.$('.nav-links:not(.active)');
     expect(menuOff).toBeTruthy();
-   
+  });
+
   it('Check user profile with dropdown options', async () => {
     const DROPDOWN_OPTIONS = [
       {
