@@ -247,4 +247,117 @@ describe('Home Page', () => {
     const repoLinkStyle = await page.evaluate((el) => el.style, repoLink);
     expect(repoLinkStyle).toBeTruthy();
   });
+
+ it('should close hamburger menu on clicking anywhere on the screen except the menu', async () => {
+    await page.setViewport({ width: 970, height: 1800 });
+    await page.goto('http://localhost:8000/index.html');
+    await page.evaluate(() => {
+      Object.defineProperty(window, 'innerWidth', { value: 970 });
+    });
+
+    const hamIcon = await page.$('.hamburger');
+    expect(hamIcon).toBeTruthy();
+    await hamIcon.click();
+
+    await page.waitForSelector('.links');
+
+    const menu = await page.$('.active');
+    expect(menu).toBeTruthy();
+
+    await page.mouse.click(10, 10);
+
+    await page.waitForSelector('.nav-links:not(.active)');
+    const menuOff = await page.$('.nav-links:not(.active)');
+    expect(menuOff).toBeTruthy();
+   
+  it('Check user profile with dropdown options', async () => {
+    const DROPDOWN_OPTIONS = [
+      {
+        name: 'Home',
+        link: 'https://dashboard.realdevsquad.com/',
+      },
+      {
+        name: 'Status',
+        link: 'https://my.realdevsquad.com/',
+      },
+      {
+        name: 'Profile',
+        link: 'https://my.realdevsquad.com/profile',
+      },
+      {
+        name: 'Tasks',
+        link: 'https://my.realdevsquad.com/tasks',
+      },
+      {
+        name: 'Identity',
+        link: 'https://my.realdevsquad.com/identity',
+      },
+    ];
+
+    const userName = await page.$eval(
+      '#user-name',
+      (element) => element.textContent,
+    );
+    const userImage = await page.$eval('#user-img', (element) => element.src);
+    expect(userName).toContain(superUserData.first_name);
+    expect(userImage).toEqual(superUserData.picture.url);
+
+    const userInfoButton = await page.$('.user-info');
+    await userInfoButton.click();
+
+    const hrefs = await page.$$eval(
+      '.dropdown-list .dropdown-item a',
+      (elements) => elements.map((element) => element.getAttribute('href')),
+    );
+
+    const expectedHrefs = DROPDOWN_OPTIONS.map((option) => option.link);
+
+    expect(hrefs).toEqual(expectedHrefs);
+
+    const signoutButton = await page.$('#signout-option');
+    await signoutButton.click();
+    const signinButton = await page.$('.sign-in-btn');
+
+    expect(signinButton).toBeTruthy();
+  });
+
+  it('should display the Sync Onboarding 31d+ button', async () => {
+    const syncOnboarding31dPlusUsersButton = await page.$(
+      '#sync-onboarding-31d-plus-users',
+    );
+    expect(syncOnboarding31dPlusUsersButton).toBeTruthy();
+
+    const spinnerInsideSyncOnboarding31dPlusUsers =
+      await syncOnboarding31dPlusUsersButton.$('.spinner');
+    expect(spinnerInsideSyncOnboarding31dPlusUsers).toBeTruthy();
+
+    const syncOnboarding31dPlusUsersUpdate = await page.$(
+      '#sync-onboarding-31d-plus-users-update',
+    );
+    expect(syncOnboarding31dPlusUsersUpdate).toBeTruthy();
+  });
+
+  it('should display the latest sync date when a super_user clicks on the  Sync Onboarding 31d+ button', async () => {
+    await page.evaluate(() => {
+      document.querySelector('#sync-onboarding-31d-plus-users').click();
+    });
+    await page.waitForNetworkIdle();
+
+    const latestSyncStatusElement = await page.waitForSelector(
+      '#sync-onboarding-31d-plus-users-update',
+    );
+
+    expect(latestSyncStatusElement).toBeTruthy();
+
+    const latestSyncStatusText = await page.evaluate(
+      (element) => element.textContent,
+      latestSyncStatusElement,
+    );
+
+    expect(latestSyncStatusText).not.toBe(`Last Sync: Failed`);
+    expect(latestSyncStatusText).not.toBe(
+      `Last Sync: Synced Data Not Available`,
+    );
+    expect(latestSyncStatusText).not.toBe(`Last Sync: In progress`);
+  });
 });
