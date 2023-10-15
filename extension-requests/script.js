@@ -20,13 +20,16 @@ let userStatusMap = new Map();
 const state = {
   currentExtensionRequest: null,
 };
-
+let currentUserDetails;
 const filterStates = {
   status: Status.PENDING,
   order: Order.ASCENDING,
   size: DEFAULT_PAGE_SIZE,
 };
 const isDev = params.get('dev') === 'true';
+getSelfUser().then((response) => {
+  currentUserDetails = response;
+});
 
 const updateFilterStates = (key, value) => {
   filterStates[key] = value;
@@ -109,7 +112,7 @@ const initializeAccordions = () => {
 };
 
 const updateAccordionHeight = (element) => {
-  element.style.maxHeight = element.scrollHeight + 'px';
+  element.style.maxHeight = 352 + 'px';
 };
 const closeAllAccordions = () => {
   let accordionsList = document.querySelectorAll('.accordion.active');
@@ -817,6 +820,7 @@ async function createExtensionCard(data) {
     attributes: { class: 'reason-text' },
     innerText: data.reason,
   });
+
   const reasonInput = createElement({
     type: 'textarea',
     attributes: {
@@ -829,6 +833,40 @@ async function createExtensionCard(data) {
   reasonContainer.appendChild(reasonInput);
 
   reasonContainer.appendChild(reasonParagraph);
+
+  // Adding log feature under dev flag
+  if (isDev) {
+    // Div for log container
+    const logContainer = createElement({
+      type: 'div',
+      attributes: { id: `log-container-${data.id}` },
+    });
+    panel.appendChild(logContainer);
+
+    // Creating title for container
+    const logDetailsLine = createElement({
+      type: 'span',
+      attributes: { class: 'log-details-line' },
+      innerText: 'Logs',
+    });
+    logContainer.appendChild(logDetailsLine);
+
+    // Separation line
+    const logDetailsLines = createElement({
+      type: 'span',
+      attributes: { class: 'details-line' },
+    });
+    logContainer.appendChild(logDetailsLines);
+
+    // Event listener to append logs once clicked
+    downArrowIcon.addEventListener('click', function () {
+      renderLogs({
+        extensionRequestId: data.id,
+        assigneeName: assigneeNameElement.innerText,
+        createdAt: data.timestamp,
+      });
+    });
+  }
 
   const cardFooter = createElement({ type: 'div' });
   cardFooter.appendChild(cardAssigneeButtonContainer);
@@ -897,6 +935,38 @@ async function createExtensionCard(data) {
     extensionInput.classList.toggle('hidden');
   }
 
+  async function renderLogs({ extensionRequestId, assigneeName, createdAt }) {
+    const logContainer = document.getElementById(
+      `log-container-${extensionRequestId}`,
+    );
+    if (logContainer.querySelector('.log-div')) {
+      return;
+    }
+
+    let creationLog = `<div class="log-div">
+    <img class="log-img" src="/images/calendar-plus.png"></img>
+    <p class="reason-text">${assigneeName} has created this extension request on ${fullDateString(
+      secondsToMilliSeconds(createdAt),
+    )}.</p>
+    </div>`;
+
+    logContainer.innerHTML += creationLog;
+
+    const extensionLogs = await getExtensionRequestLogs({
+      extensionRequestId,
+      isDev: true,
+    });
+    if (
+      extensionLogs.logs[0]?.body?.newEndsOn &&
+      extensionLogs.logs[0]?.body?.oldEndsOn &&
+      extensionLogs.logs[1]?.body?.status === 'APPROVED'
+    ) {
+      extensionLogs.logs = extensionLogs.logs.slice(1);
+    }
+    const innerHTML = generateSentence(extensionLogs.logs);
+    logContainer.innerHTML += innerHTML;
+  }
+
   Promise.all([taskDataPromise, userDataPromise]).then((response) => {
     const [{ taskData }, userData] = response;
     const userImage = userData?.picture?.url ?? DEFAULT_AVATAR;
@@ -919,4 +989,70 @@ async function createExtensionCard(data) {
   });
 
   return rootElement;
+}
+
+function generateSentence(response) {
+  let arraySentence = [];
+  response.forEach((log) => {
+    if (log?.body?.status === 'APPROVED' || log?.body?.status === 'DENINED') {
+      const updationTime = dateDiff(
+        Date.now(),
+        secondsToMilliSeconds(log?.timestamp?._seconds),
+      );
+      arraySentence.push(`
+        <div class="log-div">
+        <img class="log-img" src="/images/${
+          log?.body?.status === 'APPROVED' ? 'approved.png' : 'denied.png'
+        }"></img>
+        <p class="reason-text">${
+          log?.meta?.userId === currentUserDetails.id
+            ? 'You'
+            : log?.meta?.name || 'Super User'
+        } ${log?.body?.status} this request ${updationTime} ago.</p>
+        </div>
+        `);
+    }
+    if (log?.body?.newEndsOn && log?.body?.oldEndsOn) {
+      arraySentence.push(`
+        <div class="log-div">
+        <img class="log-img" src="/images/edit-icon.png"></img>
+        <p class="reason-text">${
+          log?.meta?.userId === currentUserDetails.id
+            ? 'You'
+            : log?.meta?.name || 'Super User'
+        } changed the ETA from ${fullDateString(
+        secondsToMilliSeconds(log.body.oldEndsOn),
+      )} to ${fullDateString(secondsToMilliSeconds(log.body.newEndsOn))}.</p>
+        </div>
+        `);
+    }
+    if (log?.body?.newReason && log?.body?.oldReason) {
+      arraySentence.push(`
+        <div class="log-div"> 
+        <img class="log-img" src="/images/edit-icon.png"></img>
+        <p class="reason-text">${
+          log?.meta?.userId === currentUserDetails.id
+            ? 'You'
+            : log?.meta?.name || 'Super User'
+        } changed the reason from ${log.body.oldReason} to ${
+        log.body.newReason
+      }.</p>
+        </div>
+        `);
+    }
+    if (log?.body?.newTitle && log?.body?.oldTitle) {
+      arraySentence.push(`
+        <div class="log-div"> 
+        <img class="log-img" src="/images/edit-icon.png"></img>
+          <p class="reason-text">${
+            log?.meta?.userId === currentUserDetails.id
+              ? 'You'
+              : log?.meta?.name || 'Super User'
+          } changed the title from ${log.body.oldTitle} to ${log.body.newTitle}.
+          </p>
+          </div>`);
+    }
+  });
+
+  return arraySentence.reverse().join('');
 }
