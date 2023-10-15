@@ -220,6 +220,80 @@ const superUserData = {
   first_name: 'Kotesh',
   username: 'kotesh',
 };
+const superUserForAudiLogs = {
+  id: 'XBucw7nHW1wOxdWrmLVa',
+  github_created_at: 1570647377000,
+  github_display_name: 'Joy',
+  github_id: 'ardourApeX',
+  incompleteUserDetails: false,
+  username: 'joygupta',
+  company: 'Test Unity',
+  first_name: 'Joy',
+  last_name: 'Gupta',
+  picture: {
+    publicId: 'profile/AAM0MZxZXEfWKmfdYOUp/rsa1twaw1movhmmlyfsd',
+    url: '"https://res.cloudinary.com/realdevsquad/image/upload/v1693248423/profile/AAM0MZxZXEfWKmfdYOUp/rsa1twaw1movhmmlyfsd.jpg"',
+  },
+  updated_at: 1696466142976,
+  created_at: 1696466142976,
+  roles: {
+    archived: false,
+    super_user: true,
+    in_discord: true,
+  },
+};
+
+const searchedUserForAuditLogs = {
+  testunity: {
+    message: 'Users returned successfully!',
+    users: [
+      {
+        id: 'Hgbb5mFvy0nHaKCTPVcP',
+        github_created_at: 1656130298000,
+        github_display_name: null,
+        github_id: 'joytestunity',
+        incompleteUserDetails: false,
+        roles: { archived: false, in_discord: true },
+        first_name: 'JoyTest',
+        username: 'testunity',
+        last_name: 'Unty',
+        updated_at: 1697344401297,
+        created_at: 1697344401297,
+      },
+    ],
+    links: {
+      next: '/users?next=Hgbb5mFvy0nHaKCTPVcP&search=testunity&size=1',
+      prev: '/users?prev=Hgbb5mFvy0nHaKCTPVcP&search=testunity&size=1',
+    },
+  },
+  joygupta: {
+    message: 'Users returned successfully!',
+    users: [
+      {
+        id: 'XBucw7nHW1wOxdWrmLVa',
+        github_created_at: 1570647377000,
+        github_display_name: 'Joy',
+        github_id: 'ardourApeX',
+        incompleteUserDetails: false,
+        username: 'joygupta',
+        company: 'Test Unity',
+        first_name: 'Joy',
+        last_name: 'Gupta',
+        picture: {
+          publicId: 'profile/AAM0MZxZXEfWKmfdYOUp/rsa1twaw1movhmmlyfsd',
+          url: '"https://res.cloudinary.com/realdevsquad/image/upload/v1693248423/profile/AAM0MZxZXEfWKmfdYOUp/rsa1twaw1movhmmlyfsd.jpg"',
+        },
+        updated_at: 1696466142976,
+        created_at: 1696466142976,
+        roles: { archived: false, super_user: true, in_discord: true },
+      },
+    ],
+    links: {
+      next: '/users?next=XBucw7nHW1wOxdWrmLVa&search=joygupta&size=1',
+      prev: '/users?prev=XBucw7nHW1wOxdWrmLVa&search=joygupta&size=1',
+    },
+  },
+};
 module.exports = {
   allUsersData,
   filteredUsersData,
@@ -227,4 +301,6 @@ module.exports = {
   userSunny,
   userRandhir,
   superUserData,
+  superUserForAudiLogs,
+  searchedUserForAuditLogs,
 };
