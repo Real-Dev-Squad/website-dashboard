@@ -871,14 +871,23 @@ async function createExtensionCard(data) {
       return;
     }
 
-    let creationLog = `<div class="log-div">
-    <img class="log-img" src="/images/calendar-plus.png"></img>
-    <p class="reason-text">${assigneeName} has created this extension request on ${fullDateString(
-      secondsToMilliSeconds(createdAt),
-    )}.</p>
-    </div>`;
+    let creationLog = document.createElement('div');
+    creationLog.classList.add('log-div');
 
-    logContainer.innerHTML += creationLog;
+    let logImg = document.createElement('img');
+    logImg.classList.add('log-img');
+    logImg.src = '/images/calendar-plus.png';
+
+    let logText = document.createElement('p');
+    logText.classList.add('reason-text');
+    logText.innerText = `${assigneeName} has created this extension request on ${fullDateString(
+      secondsToMilliSeconds(createdAt),
+    )}.`;
+
+    creationLog.appendChild(logImg);
+    creationLog.appendChild(logText);
+
+    logContainer.appendChild(creationLog);
 
     const extensionLogs = await getExtensionRequestLogs({
       extensionRequestId,
