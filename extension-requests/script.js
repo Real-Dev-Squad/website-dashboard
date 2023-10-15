@@ -41,7 +41,6 @@ const getUser = async (username) => {
   } else {
     const user = await getUserDetails(username);
     if (user) userMap.set(username, user);
-
     return user;
   }
 };
@@ -72,20 +71,16 @@ const render = async () => {
   await populateExtensionRequests(filterStates);
   addIntersectionObserver();
 };
-
 const addIntersectionObserver = () => {
   intersectionObserver.observe(lastElementContainer);
 };
-
 const removeIntersectionObserver = () => {
   intersectionObserver.unobserve(lastElementContainer);
 };
-
 const changeFilter = () => {
   nextLink = '';
   extensionRequestsContainer.innerHTML = '';
 };
-
 const statusChange = () => {
   nextLink = '';
   extensionRequestsContainer.innerHTML = '';
@@ -94,7 +89,6 @@ const statusChange = () => {
 const initializeAccordions = () => {
   let accordionList = document.querySelectorAll('.accordion.uninitialized');
   let i;
-
   for (i = 0; i < accordionList.length; i++) {
     accordionList[i].classList.remove('uninitialized');
     accordionList[i].addEventListener('click', function () {
@@ -110,7 +104,6 @@ const initializeAccordions = () => {
     });
   }
 };
-
 const updateAccordionHeight = (element) => {
   element.style.maxHeight = 352 + 'px';
 };
@@ -124,7 +117,6 @@ const closeAllAccordions = () => {
     }
   }
 };
-
 const addTooltipToSortButton = () => {
   const sortToolTip = createElement({
     type: 'span',
@@ -160,7 +152,6 @@ async function populateExtensionRequests(query = {}, newLink) {
     }
   }
 }
-
 const intersectionObserver = new IntersectionObserver(async (entries) => {
   if (!nextLink) {
     return;
@@ -169,17 +160,14 @@ const intersectionObserver = new IntersectionObserver(async (entries) => {
     await populateExtensionRequests({}, nextLink);
   }
 });
-
 function handleSuccess(element) {
   element.classList.add('success-card');
   setTimeout(() => element.classList.remove('success-card'), 1000);
 }
-
 function handleFailure(element) {
   element.classList.add('failed-card');
   setTimeout(() => element.classList.remove('failed-card'), 1000);
 }
-
 async function removeCard(element) {
   element.classList.add('success-card');
   await addDelay(800);
@@ -190,7 +178,6 @@ async function removeCard(element) {
     addEmptyPageMessage(extensionRequestsContainer);
   }
 }
-
 function addCheckbox(labelText, value, groupName) {
   const group = document.getElementById(groupName);
   const label = document.createElement('label');
@@ -203,7 +190,6 @@ function addCheckbox(labelText, value, groupName) {
   label.appendChild(document.createElement('br'));
   group.appendChild(label);
 }
-
 function populateStatus() {
   const statusList = [
     { name: 'Approved', id: 'APPROVED' },
@@ -221,21 +207,18 @@ function toggleStatusCheckbox(statusValue) {
   );
   element.checked = !element.checked;
 }
-
 function clearCheckboxes(groupName) {
   const checkboxes = document.querySelectorAll(`input[name="${groupName}"]`);
   checkboxes.forEach((cb) => {
     cb.checked = false;
   });
 }
-
 function getCheckedValues(groupName) {
   const checkboxes = document.querySelectorAll(
     `input[name="${groupName}"]:checked`,
   );
   return Array.from(checkboxes).map((cb) => cb.value);
 }
-
 applyFilterButton.addEventListener('click', async () => {
   filterModal.classList.toggle('hidden');
   const checkedValuesStatus = getCheckedValues('status-filter');
@@ -243,7 +226,6 @@ applyFilterButton.addEventListener('click', async () => {
   updateFilterStates('status', checkedValuesStatus);
   await populateExtensionRequests(filterStates);
 });
-
 clearButton.addEventListener('click', async function () {
   clearCheckboxes('status-filter');
   filterModal.classList.toggle('hidden');
@@ -254,7 +236,6 @@ clearButton.addEventListener('click', async function () {
 filterModal.addEventListener('click', (event) => {
   event.stopPropagation();
 });
-
 window.onclick = function () {
   filterModal.classList.add('hidden');
 };
@@ -287,7 +268,6 @@ searchElement.addEventListener('keypress', async (event) => {
     }
   }
 });
-
 sortButton.addEventListener('click', async (event) => {
   toggleTooltipText();
   toggleSortIcon();
@@ -295,7 +275,6 @@ sortButton.addEventListener('click', async (event) => {
   changeFilter();
   await populateExtensionRequests(filterStates);
 });
-
 const toggleTooltipText = () => {
   const tooltip = sortButton.querySelector('.tooltip');
   if (tooltip.textContent === OLDEST_FIRST) {
@@ -325,14 +304,11 @@ filterButton.addEventListener('click', (event) => {
   event.stopPropagation();
   filterModal.classList.toggle('hidden');
 });
-
 populateStatus();
 render();
-
 const handleFormPropagation = async (event) => {
   event.preventDefault();
 };
-
 async function createExtensionCard(data) {
   //Create card element
   const rootElement = createElement({
@@ -340,15 +316,12 @@ async function createExtensionCard(data) {
     attributes: { class: 'extension-card' },
   });
   extensionRequestsContainer.appendChild(rootElement);
-
   const removeSpinner = addSpinner(rootElement);
   rootElement.classList.add('disabled');
   //Api calls
   const userDataPromise = getUser(data.assignee);
   const taskDataPromise = getTaskDetails(data.taskId);
-
   const isDeadLineCrossed = Date.now() > secondsToMilliSeconds(data.oldEndsOn);
-
   const extensionDays = dateDiff(
     secondsToMilliSeconds(data.newEndsOn),
     secondsToMilliSeconds(data.oldEndsOn),
@@ -363,12 +336,10 @@ async function createExtensionCard(data) {
     secondsToMilliSeconds(data.timestamp),
     (s) => s + ' ago',
   );
-
   const formContainer = createElement({
     type: 'form',
     attributes: { class: 'extension-card-form' },
   });
-
   const titleText = createElement({
     type: 'span',
     attributes: { class: 'card-title title-text' },
@@ -382,7 +353,6 @@ async function createExtensionCard(data) {
     type: 'div',
     attributes: { class: 'extension-request-header-wrapper' },
   });
-
   const titleInput = createElement({
     type: 'input',
     attributes: {
@@ -421,31 +391,26 @@ async function createExtensionCard(data) {
     attributes: { class: 'summary-container' },
   });
   formContainer.appendChild(summaryContainer);
-
   const taskDetailsContainer = createElement({
     type: 'div',
     attributes: { class: 'task-details-container' },
   });
   summaryContainer.appendChild(taskDetailsContainer);
-
   const detailsContainer = createElement({
     type: 'div',
     attributes: { class: 'details-container' },
   });
-
   const statusSiteLink = createElement({
     type: 'a',
     attributes: {
       class: 'external-link',
     },
   });
-
   const taskTitle = createElement({
     type: 'span',
     attributes: { class: 'task-title' },
     innerText: 'Task: ',
   });
-
   taskTitle.appendChild(statusSiteLink);
   taskDetailsContainer.appendChild(taskTitle);
   const detailsLine = createElement({
@@ -453,90 +418,98 @@ async function createExtensionCard(data) {
     attributes: { class: 'details-line' },
   });
   detailsContainer.appendChild(detailsLine);
-
   const deadlineContainer = createElement({ type: 'div' });
   taskDetailsContainer.appendChild(deadlineContainer);
-
   const deadlineText = createElement({
     type: 'span',
     attributes: { class: 'card-row-text' },
     innerText: `Deadline${isDeadLineCrossed ? ': ' : ' in: '}`,
   });
   deadlineContainer.appendChild(deadlineText);
-
   const deadlineValue = createElement({
     type: 'span',
     innerText: `${deadlineDays}`,
     attributes: { class: 'tooltip-container' },
   });
   deadlineContainer.appendChild(deadlineValue);
-
   const deadlineTooltip = createElement({
     type: 'span',
     attributes: { class: 'tooltip' },
     innerText: `${fullDateString(secondsToMilliSeconds(data.oldEndsOn))}`,
   });
-
   deadlineValue.appendChild(deadlineTooltip);
-
   const taskStatusContainer = createElement({ type: 'div' });
   taskDetailsContainer.appendChild(taskStatusContainer);
-
   const taskStatusText = createElement({
     type: 'span',
     attributes: { class: 'card-row-text' },
     innerText: 'Task status:',
   });
   taskStatusContainer.appendChild(taskStatusText);
-
   const taskStatusValue = createElement({
     type: 'span',
   });
   taskStatusContainer.appendChild(taskStatusValue);
-
   const datesContainer = createElement({
     type: 'div',
     attributes: { class: 'dates-container' },
   });
   summaryContainer.appendChild(datesContainer);
-
   const datesDetailsContainer = createElement({
     type: 'div',
     attributes: { class: 'details-container' },
   });
   datesContainer.appendChild(datesDetailsContainer);
-
   const extensionDetailsHeading = createElement({
     type: 'span',
     attributes: { class: 'details-heading' },
     innerText: 'Extension Details',
   });
   datesDetailsContainer.appendChild(extensionDetailsHeading);
-
   const extensionDetailsLine = createElement({
     type: 'span',
     attributes: { class: 'details-line' },
   });
   datesDetailsContainer.appendChild(extensionDetailsLine);
 
+  //Added it for displaying extension request number
+  if (params.get('dev') === 'true') {
+    const extensionRequestNumberContainer = createElement({ type: 'div' });
+    datesContainer.appendChild(extensionRequestNumberContainer);
+
+    const extensionRequestNumber = createElement({
+      type: 'span',
+      attributes: { class: 'card-row-text extension-request-number' },
+      innerText: 'Request No.:  ',
+    });
+    extensionRequestNumberContainer.appendChild(extensionRequestNumber);
+
+    //Since previous extensions does not contain requestNumber field
+    const requestNumber = data.requestNumber || 1;
+
+    const extensionRequestNumberValue = createElement({
+      type: 'span',
+      attributes: { class: 'extension-request-number' },
+      innerText: `${requestNumber}`,
+    });
+    extensionRequestNumberContainer.appendChild(extensionRequestNumberValue);
+  }
+
   const extensionForContainer = createElement({
     type: 'div',
   });
   datesContainer.appendChild(extensionForContainer);
-
   const extensionForText = createElement({
     type: 'span',
     attributes: { class: 'card-row-text' },
     innerText: 'Extension for:',
   });
   extensionForContainer.appendChild(extensionForText);
-
   const extensionForValue = createElement({
     type: 'span',
     attributes: { class: 'tooltip-container' },
     innerText: ` +${extensionDays}`,
   });
-
   const extensionToolTip = createElement({
     type: 'span',
     attributes: { class: 'tooltip' },
@@ -544,9 +517,7 @@ async function createExtensionCard(data) {
       secondsToMilliSeconds(data.newEndsOn),
     )}`,
   });
-
   extensionForValue.appendChild(extensionToolTip);
-
   const extensionInput = createElement({
     type: 'input',
     attributes: {
@@ -557,22 +528,18 @@ async function createExtensionCard(data) {
       value: dateTimeString(secondsToMilliSeconds(data.newEndsOn)),
     },
   });
-
   extensionForContainer.appendChild(extensionInput);
   extensionForContainer.appendChild(extensionForValue);
   const requestedContainer = createElement({
     type: 'div',
   });
-
   datesContainer.appendChild(requestedContainer);
-
   const requestedText = createElement({
     type: 'span',
     attributes: { class: 'card-row-text' },
     innerText: 'Requested:',
   });
   requestedContainer.appendChild(requestedText);
-
   const requestedValue = createElement({
     type: 'span',
     attributes: { class: 'requested-day tooltip-container' },
@@ -583,46 +550,38 @@ async function createExtensionCard(data) {
     attributes: { class: 'tooltip' },
     innerText: `${fullDateString(secondsToMilliSeconds(data.timestamp))}`,
   });
-
   requestedValue.appendChild(requestedToolTip);
   requestedContainer.appendChild(requestedValue);
-
   const cardAssigneeButtonContainer = createElement({
     type: 'div',
     attributes: { class: 'card-assignee-button-container' },
   });
-
   const assigneeContainer = createElement({
     type: 'div',
     attributes: { class: 'assignee-container' },
   });
   cardAssigneeButtonContainer.appendChild(assigneeContainer);
-
   const assigneeText = createElement({
     type: 'span',
     attributes: { class: 'assignee-text' },
     innerText: 'Assigned to',
   });
   assigneeContainer.appendChild(assigneeText);
-
   const assigneeImage = createElement({
     type: 'img',
     attributes: { class: 'assignee-image' },
   });
   assigneeContainer.appendChild(assigneeImage);
-
   const assigneeNameElement = createElement({
     type: 'span',
     attributes: { class: 'assignee-name' },
   });
   assigneeContainer.appendChild(assigneeNameElement);
-
   const extensionCardButtons = createElement({
     type: 'div',
     attributes: { class: 'extension-card-buttons' },
   });
   cardAssigneeButtonContainer.appendChild(extensionCardButtons);
-
   //Conditionally render the buttons bases on status
   if (data.status === Status.APPROVED) {
     const approveButton = createElement({
@@ -644,20 +603,16 @@ async function createExtensionCard(data) {
       attributes: { class: 'edit-button' },
     });
     extensionCardButtons.appendChild(editButton);
-
     const editIcon = createElement({
       type: 'img',
       attributes: { src: EDIT_ICON, alt: 'edit-icon' },
     });
     editButton.appendChild(editIcon);
-
     const updateWrapper = createElement({
       type: 'div',
       attributes: { class: 'update-wrapper hidden' },
     });
-
     extensionCardButtons.appendChild(updateWrapper);
-
     const updateButton = createElement({
       type: 'button',
       attributes: { class: 'update-button' },
@@ -695,14 +650,11 @@ async function createExtensionCard(data) {
       attributes: { class: 'check-icon', src: CHECK_ICON, alt: 'check-icon' },
     });
     approveButton.appendChild(approveIcon);
-
     extensionCardButtons.appendChild(approveButton);
-
     //Event listeners
     editButton.addEventListener('click', (event) => {
       handleFormPropagation(event);
       toggleInputs();
-
       editButton.classList.toggle('hidden');
       updateWrapper.classList.toggle('hidden');
       if (!panel.style.maxHeight) {
@@ -710,20 +662,17 @@ async function createExtensionCard(data) {
       }
       updateAccordionHeight(panel);
     });
-
     updateButton.addEventListener('click', (event) => {
       toggleInputs();
       editButton.classList.toggle('hidden');
       updateWrapper.classList.toggle('hidden');
     });
-
     cancelButton.addEventListener('click', (event) => {
       handleFormPropagation(event);
       toggleInputs();
       editButton.classList.toggle('hidden');
       updateWrapper.classList.toggle('hidden');
     });
-
     approveButton.addEventListener('click', (event) => {
       handleFormPropagation(event);
       const removeSpinner = addSpinner(rootElement);
@@ -745,14 +694,12 @@ async function createExtensionCard(data) {
           rootElement.classList.remove('disabled');
         });
     });
-
     approveButton.addEventListener('mouseenter', (event) => {
       approveIcon.src = CHECK_ICON_WHITE;
     });
     approveButton.addEventListener('mouseleave', (event) => {
       approveIcon.src = CHECK_ICON;
     });
-
     denyButton.addEventListener('click', (event) => {
       handleFormPropagation(event);
       const removeSpinner = addSpinner(rootElement);
@@ -781,40 +728,32 @@ async function createExtensionCard(data) {
       denyIcon.src = CANCEL_ICON;
     });
   }
-
   const accordionButton = createElement({
     type: 'button',
     attributes: { class: 'accordion uninitialized' },
   });
-
   const accordionContainer = createElement({ type: 'div' });
   accordionContainer.appendChild(accordionButton);
-
   const downArrowIcon = createElement({
     type: 'img',
     attributes: { src: DOWN_ARROW_ICON, alt: 'down-arrow' },
   });
   accordionButton.appendChild(downArrowIcon);
-
   const panel = createElement({ type: 'div', attributes: { class: 'panel' } });
   accordionContainer.appendChild(panel);
-
   const reasonContainer = createElement({ type: 'div' });
   panel.appendChild(reasonContainer);
-
   const reasonTitle = createElement({
     type: 'span',
     attributes: { class: 'panel-title' },
     innerText: 'Reason',
   });
   reasonContainer.appendChild(reasonTitle);
-
   const reasonDetailsLine = createElement({
     type: 'span',
     attributes: { class: 'details-line' },
   });
   reasonContainer.appendChild(reasonDetailsLine);
-
   const reasonParagraph = createElement({
     type: 'p',
     attributes: { class: 'reason-text' },
@@ -831,7 +770,6 @@ async function createExtensionCard(data) {
     innerText: data.reason,
   });
   reasonContainer.appendChild(reasonInput);
-
   reasonContainer.appendChild(reasonParagraph);
 
   // Adding log feature under dev flag
@@ -870,13 +808,9 @@ async function createExtensionCard(data) {
 
   const cardFooter = createElement({ type: 'div' });
   cardFooter.appendChild(cardAssigneeButtonContainer);
-
   cardFooter.appendChild(accordionContainer);
-
   formContainer.appendChild(cardFooter);
-
   rootElement.appendChild(formContainer);
-
   formContainer.addEventListener('submit', async (e) => {
     e.preventDefault();
     let formData = formDataToObject(new FormData(e.target));
@@ -902,12 +836,10 @@ async function createExtensionCard(data) {
         removeSpinner();
       });
   });
-
   function updateCardData(formData) {
     const previousTitle = titleText.innerText;
     const previousReason = reasonParagraph.innerText;
     const previousExtensionValue = extensionForValue.innerText;
-
     titleText.innerText = formData.title;
     reasonParagraph.innerText = formData.reason;
     const extDays = dateDiff(
@@ -915,7 +847,6 @@ async function createExtensionCard(data) {
       secondsToMilliSeconds(data.oldEndsOn),
     );
     extensionForValue.innerText = ` +${extDays}`;
-
     function revertDataChange() {
       titleText.innerText = previousTitle;
       reasonParagraph.innerText = previousReason;
@@ -923,14 +854,11 @@ async function createExtensionCard(data) {
     }
     return revertDataChange;
   }
-
   function toggleInputs() {
     titleInput.classList.toggle('hidden');
     titleText.classList.toggle('hidden');
-
     reasonInput.classList.toggle('hidden');
     reasonParagraph.classList.toggle('hidden');
-
     extensionForValue.classList.toggle('hidden');
     extensionInput.classList.toggle('hidden');
   }
@@ -987,7 +915,6 @@ async function createExtensionCard(data) {
     removeSpinner();
     rootElement.classList.remove('disabled');
   });
-
   return rootElement;
 }
 

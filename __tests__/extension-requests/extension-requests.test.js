@@ -743,4 +743,37 @@ describe('Tests the Extension Requests Screen', () => {
       );
     });
   });
+
+  test('Checks the Request Number and request value element on Extension requests listing page', async () => {
+    const url = 'http://localhost:8000/extension-requests/?dev=true'; // Include the dev parameter in the URL
+    await page.goto(url);
+
+    const extensionRequestNumberContainer = await page.$$(
+      '.extension-request-number',
+    );
+    const extensionRequestNumberText = extensionRequestNumberContainer[0];
+    expect(extensionRequestNumberText).toBeTruthy();
+
+    const cardNumber1Value = await extensionRequestNumberContainer[1].evaluate(
+      (node) => node.textContent,
+    );
+    expect(cardNumber1Value).toBe('5');
+  });
+
+  test('Default Request Number to 1 if requestNumber field is missing in API Response', async () => {
+    const url = 'http://localhost:8000/extension-requests/?dev=true'; // Include the dev parameter in the URL
+    await page.goto(url);
+
+    const extensionRequestNumberContainer = await page.$$(
+      '.extension-request-number',
+    );
+
+    const extensionRequestNumberText = extensionRequestNumberContainer[2];
+    expect(extensionRequestNumberText).toBeTruthy();
+
+    const cardNumber2Value = await extensionRequestNumberContainer[3].evaluate(
+      (node) => node.textContent,
+    );
+    expect(cardNumber2Value).toBe('1');
+  });
 });

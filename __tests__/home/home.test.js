@@ -29,8 +29,7 @@ describe('Home Page', () => {
           body: JSON.stringify(superUserData),
         });
       } else if (
-        url ===
-        `https://api.realdevsquad.com/discord-actions/nicknames/sync?dev=true`
+        url === `https://api.realdevsquad.com/discord-actions/group-idle-7d`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -62,7 +61,8 @@ describe('Home Page', () => {
           }),
         });
       } else if (
-        url === `https://api.realdevsquad.com/discord-actions/group-idle-7d`
+        url ===
+        `https://api.realdevsquad.com/discord-actions/nicknames/sync?dev=true`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -76,6 +76,74 @@ describe('Home Page', () => {
           body: JSON.stringify({
             numberOfUsersEffected: 5,
             message: 'Users Nicknames updated successfully',
+          }),
+        });
+      } else if (
+        url ===
+        `https://api.realdevsquad.com/discord-actions/group-onboarding-31d-plus`
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          ok: true,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify({
+            message:
+              'All Users with 31 Days Plus Onboarding are updated successfully.',
+            totalOnboardingUsers31DaysCompleted: {
+              users: [
+                {
+                  userId: 'R4qppGmmAvJzQXI4jvuc',
+                  discordId: '799600467218923521',
+                  username: 'AnishPawaskar',
+                },
+                {
+                  userId: 'W7hqS6BJqWzNW2ejeimC',
+                  discordId: '700385688557715456',
+                  username: 'amandixit',
+                },
+              ],
+              count: 2,
+            },
+            totalUsersHavingNoDiscordId: 0,
+            totalArchivedUsers: 0,
+            usersAlreadyHavingOnboaring31DaysRole: {
+              users: [],
+              count: 0,
+            },
+            totalOnboarding31dPlusRoleApplied: {
+              count: 2,
+              response: [
+                {
+                  message: 'Role added successfully',
+                  discordId: '799600467218923521',
+                },
+                {
+                  message: 'Role added successfully',
+                  discordId: '700385688557715456',
+                },
+              ],
+            },
+            totalOnboarding31dPlusRoleNoteApplied: {
+              count: 0,
+              errors: [],
+            },
+            totalOnboarding31dPlusRoleRemoved: {
+              count: 0,
+              response: [],
+            },
+            totalOnboarding31dPlusRoleNotRemoved: {
+              count: 0,
+              errors: [],
+            },
+            errorInFetchingUserDetailsForRoleRemoval: {
+              count: 0,
+              errors: [],
+            },
           }),
         });
       } else {
@@ -317,5 +385,96 @@ describe('Home Page', () => {
 
     const repoLinkStyle = await page.evaluate((el) => el.style, repoLink);
     expect(repoLinkStyle).toBeTruthy();
+  });
+
+  it('Check user profile with dropdown options', async () => {
+    const DROPDOWN_OPTIONS = [
+      {
+        name: 'Home',
+        link: 'https://dashboard.realdevsquad.com/',
+      },
+      {
+        name: 'Status',
+        link: 'https://my.realdevsquad.com/',
+      },
+      {
+        name: 'Profile',
+        link: 'https://my.realdevsquad.com/profile',
+      },
+      {
+        name: 'Tasks',
+        link: 'https://my.realdevsquad.com/tasks',
+      },
+      {
+        name: 'Identity',
+        link: 'https://my.realdevsquad.com/identity',
+      },
+    ];
+
+    const userName = await page.$eval(
+      '#user-name',
+      (element) => element.textContent,
+    );
+    const userImage = await page.$eval('#user-img', (element) => element.src);
+    expect(userName).toContain(superUserData.first_name);
+    expect(userImage).toEqual(superUserData.picture.url);
+
+    const userInfoButton = await page.$('.user-info');
+    await userInfoButton.click();
+
+    const hrefs = await page.$$eval(
+      '.dropdown-list .dropdown-item a',
+      (elements) => elements.map((element) => element.getAttribute('href')),
+    );
+
+    const expectedHrefs = DROPDOWN_OPTIONS.map((option) => option.link);
+
+    expect(hrefs).toEqual(expectedHrefs);
+
+    const signoutButton = await page.$('#signout-option');
+    await signoutButton.click();
+    const signinButton = await page.$('.sign-in-btn');
+
+    expect(signinButton).toBeTruthy();
+  });
+
+  it('should display the Sync Onboarding 31d+ button', async () => {
+    const syncOnboarding31dPlusUsersButton = await page.$(
+      '#sync-onboarding-31d-plus-users',
+    );
+    expect(syncOnboarding31dPlusUsersButton).toBeTruthy();
+
+    const spinnerInsideSyncOnboarding31dPlusUsers =
+      await syncOnboarding31dPlusUsersButton.$('.spinner');
+    expect(spinnerInsideSyncOnboarding31dPlusUsers).toBeTruthy();
+
+    const syncOnboarding31dPlusUsersUpdate = await page.$(
+      '#sync-onboarding-31d-plus-users-update',
+    );
+    expect(syncOnboarding31dPlusUsersUpdate).toBeTruthy();
+  });
+
+  it('should display the latest sync date when a super_user clicks on the  Sync Onboarding 31d+ button', async () => {
+    await page.evaluate(() => {
+      document.querySelector('#sync-onboarding-31d-plus-users').click();
+    });
+    await page.waitForNetworkIdle();
+
+    const latestSyncStatusElement = await page.waitForSelector(
+      '#sync-onboarding-31d-plus-users-update',
+    );
+
+    expect(latestSyncStatusElement).toBeTruthy();
+
+    const latestSyncStatusText = await page.evaluate(
+      (element) => element.textContent,
+      latestSyncStatusElement,
+    );
+
+    expect(latestSyncStatusText).not.toBe(`Last Sync: Failed`);
+    expect(latestSyncStatusText).not.toBe(
+      `Last Sync: Synced Data Not Available`,
+    );
+    expect(latestSyncStatusText).not.toBe(`Last Sync: In progress`);
   });
 });
