@@ -894,7 +894,7 @@ async function createExtensionCard(data) {
       isDev: true,
     });
     const innerHTML = generateSentence(extensionLogs.logs);
-    logContainer.innerHTML += innerHTML;
+    if (innerHTML) logContainer.innerHTML += innerHTML;
   }
 
   Promise.all([taskDataPromise, userDataPromise]).then((response) => {
@@ -922,13 +922,14 @@ async function createExtensionCard(data) {
 
 function generateSentence(response) {
   let arraySentence = [];
-  response.forEach((log) => {
-    if (log?.body?.status === 'APPROVED' || log?.body?.status === 'DENINED') {
-      const updationTime = dateDiff(
-        Date.now(),
-        secondsToMilliSeconds(log?.timestamp?._seconds),
-      );
-      arraySentence.push(`
+  if (response && Array.isArray(response))
+    response.forEach((log) => {
+      if (log?.body?.status === 'APPROVED' || log?.body?.status === 'DENIED') {
+        const updationTime = dateDiff(
+          Date.now(),
+          secondsToMilliSeconds(log?.timestamp?._seconds),
+        );
+        arraySentence.push(`
         <div class="log-div">
         <img class="log-img" src="/images/${
           log?.body?.status === 'APPROVED' ? 'approved.png' : 'denied.png'
@@ -940,9 +941,9 @@ function generateSentence(response) {
         } ${log?.body?.status} this request ${updationTime} ago.</p>
         </div>
         `);
-    }
-    if (log?.body?.newEndsOn && log?.body?.oldEndsOn) {
-      arraySentence.push(`
+      }
+      if (!!log?.body?.newEndsOn && !!log?.body?.oldEndsOn) {
+        arraySentence.push(`
         <div class="log-div">
         <img class="log-img" src="/images/edit-icon.png"></img>
         <p class="reason-text">${
@@ -950,13 +951,13 @@ function generateSentence(response) {
             ? 'You'
             : log?.meta?.name || 'Super User'
         } changed the ETA from ${fullDateString(
-        secondsToMilliSeconds(log.body.oldEndsOn),
-      )} to ${fullDateString(secondsToMilliSeconds(log.body.newEndsOn))}.</p>
+          secondsToMilliSeconds(log.body.oldEndsOn),
+        )} to ${fullDateString(secondsToMilliSeconds(log.body.newEndsOn))}.</p>
         </div>
         `);
-    }
-    if (log?.body?.newReason && log?.body?.oldReason) {
-      arraySentence.push(`
+      }
+      if (!!log?.body?.newReason && !!log?.body?.oldReason) {
+        arraySentence.push(`
         <div class="log-div"> 
         <img class="log-img" src="/images/edit-icon.png"></img>
         <p class="reason-text">${
@@ -964,13 +965,13 @@ function generateSentence(response) {
             ? 'You'
             : log?.meta?.name || 'Super User'
         } changed the reason from ${log.body.oldReason} to ${
-        log.body.newReason
-      }.</p>
+          log.body.newReason
+        }.</p>
         </div>
         `);
-    }
-    if (log?.body?.newTitle && log?.body?.oldTitle) {
-      arraySentence.push(`
+      }
+      if (!!log?.body?.newTitle && !!log?.body?.oldTitle) {
+        arraySentence.push(`
         <div class="log-div"> 
         <img class="log-img" src="/images/edit-icon.png"></img>
           <p class="reason-text">${
@@ -980,8 +981,8 @@ function generateSentence(response) {
           } changed the title from ${log.body.oldTitle} to ${log.body.newTitle}.
           </p>
           </div>`);
-    }
-  });
+      }
+    });
 
   return arraySentence.reverse().join('');
 }
