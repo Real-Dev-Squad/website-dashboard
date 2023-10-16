@@ -7,17 +7,6 @@ const extensionRequestLogs = {
           extensionRequestId: 'fuQs71a0Y7BX3n4rc5Ii',
           userId: 'XBucw7nHW1wOxdWrmLVa',
           taskId: '7gZ9E0XTQCEFvUynVqAw',
-          name: 'Joy Gupta',
-        },
-        type: 'extensionRequests',
-        body: { newEndsOn: 1697780640, oldEndsOn: 1697800440 },
-        timestamp: { _seconds: 1697135779, _nanoseconds: 784000000 },
-      },
-      {
-        meta: {
-          extensionRequestId: 'fuQs71a0Y7BX3n4rc5Ii',
-          userId: 'XBucw7nHW1wOxdWrmLVa',
-          taskId: '7gZ9E0XTQCEFvUynVqAw',
           username: 'joygupta',
           name: 'Joy Gupta',
         },

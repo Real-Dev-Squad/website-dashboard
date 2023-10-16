@@ -893,13 +893,6 @@ async function createExtensionCard(data) {
       extensionRequestId,
       isDev: true,
     });
-    if (
-      extensionLogs.logs[0]?.body?.newEndsOn &&
-      extensionLogs.logs[0]?.body?.oldEndsOn &&
-      extensionLogs.logs[1]?.body?.status === 'APPROVED'
-    ) {
-      extensionLogs.logs = extensionLogs.logs.slice(1);
-    }
     const innerHTML = generateSentence(extensionLogs.logs);
     logContainer.innerHTML += innerHTML;
   }
