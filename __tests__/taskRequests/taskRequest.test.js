@@ -14,7 +14,8 @@ describe('Task Requests', () => {
 
   beforeAll(async () => {
     browser = await puppeteer.launch({
-      headless: 'new',
+      headless: false,
+      slowMo: 130,
       ignoreHTTPSErrors: true,
       args: ['--incognito', '--disable-web-security'],
       devtools: false,
@@ -63,6 +64,55 @@ describe('Task Requests', () => {
       expect(taskCards).toHaveLength(1);
       expect(title).toMatch(/test title/i);
       expect(purpose).toMatch(/test purpose/i);
+    });
+    it('clicking on filter button should display filter modal', async () => {
+      await page.goto(`${SITE_URL}/taskRequests/?dev=true`);
+      await page.waitForNetworkIdle();
+      const modal = await page.$('.filter-modal');
+      expect(
+        await modal.evaluate((el) => el.classList.contains('hidden')),
+      ).toBe(true);
+      const filterHead = await page.$('.filter-head');
+      const filterContainer = await page.$('.filters-container');
+      expect(filterHead).toBeTruthy();
+      expect(filterContainer).toBeTruthy();
+      await page.click('#filter-button');
+      expect(modal).not.toBeNull();
+      expect(
+        await modal.evaluate((el) => el.classList.contains('hidden')),
+      ).toBe(false);
+      await page.mouse.click(20, 20);
+      expect(
+        await modal.evaluate((el) => el.classList.contains('hidden')),
+      ).toBe(true);
+    });
+    it('clicking on sort button should display filter modal', async () => {
+      const sortModal = await page.$('.sort-modal');
+      const assigneButton = await page.$('#ASSIGNEE_COUNT');
+      expect(
+        await sortModal.evaluate((el) => el.classList.contains('hidden')),
+      ).toBe(true);
+      const sortHead = await page.$('.sort-head');
+      const sortContainer = await page.$('.sorts-container');
+      expect(sortHead).toBeTruthy();
+      expect(sortContainer).toBeTruthy();
+      await page.click('.sort-button');
+      await page.click('#ASSIGNEE_COUNT');
+      expect(
+        await assigneButton.evaluate((el) => el.classList.contains('selected')),
+      ).toBe(true);
+      expect(sortModal).not.toBeNull();
+      expect(
+        await sortModal.evaluate((el) => el.classList.contains('hidden')),
+      ).toBe(true);
+      await page.click('.sort-button');
+      await page.click('#ASSIGNEE_COUNT');
+      expect(
+        await assigneButton.evaluate((el) => el.classList.contains('selected')),
+      ).toBe(false);
+      expect(
+        await sortModal.evaluate((el) => el.classList.contains('hidden')),
+      ).toBe(true);
     });
   });
 });
