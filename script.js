@@ -312,7 +312,6 @@ addClickEventListener(
 
 const hamburgerDiv = document.querySelector('.hamburger');
 const navLinks = document.querySelector('.links');
-let navActive = document.querySelector('.nav-links');
 let toggle = true;
 
 hamburgerDiv.addEventListener('click', function () {
@@ -324,15 +323,6 @@ hamburgerDiv.addEventListener('click', function () {
     toggle = true;
   }
 });
-
-if (params.get('dev') === 'true') {
-  document.addEventListener('click', function (event) {
-    if (!navActive.contains(event.target)) {
-      navLinks.classList.remove('active');
-      toggle = true;
-    }
-  });
-}
 
 addClickEventListener(
   syncIdleUsersButton,
