@@ -467,13 +467,42 @@ footer {
   }
 
   .nav-links .active {
+    font-family: 'Roboto', sans-serif;
+    width: 7.5rem;
+    top: 3.2rem;
+    left: 1.2rem;
+    z-index: 100;
     position: absolute;
     display: flex;
+    justify-content: center;
+    padding: 0.25rem 0;
     background-color: var(--white-color);
+    border-radius: 0.63rem;
+    min-height: 12rem;
+    overflow: hidden;
+    font-size: 0.75rem;
+    box-shadow: rgba(60, 64, 67, 0.3) 0 0.06rem 0.13rem 0,
+      rgba(60, 64, 67, 0.15) 0 0.13rem 0.38rem 0.13rem;
   }
 
   .nav-links .links a {
-    color: var(--blue-color);
+    padding: 0.75rem 1.75rem;
+    font-weight: 700;
+    color: #0d6efd;
+    cursor: pointer;
+    background-color: var(--white-color);
+    list-style-type: none;
+  }
+
+  .a,
+  ::after,
+  ::before {
+    box-sizing: border-box;
+  }
+
+  .nav-links .links a:hover {
+    background-color: var(--lightgray-color);
+    transition: background-color 0.31s ease-in-out;
   }
   .user-info {
     position: inherit;
