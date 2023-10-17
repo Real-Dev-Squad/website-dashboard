@@ -10,7 +10,7 @@ const containerFilter = document.querySelector(FILTER_CONTAINER);
 const oldContainerFilter = document.querySelector(OLD_FILTER);
 const sortButton = document.querySelector(SORT_BUTTON);
 const params = new URLSearchParams(window.location.search);
-const isDev = params.get('dev') === 'true';
+const isDev = params.get(DEV_FEATURE_FLAG) === 'true';
 const fetchedTaskRequests = [];
 
 const loader = document.querySelector('.container__body__loader');

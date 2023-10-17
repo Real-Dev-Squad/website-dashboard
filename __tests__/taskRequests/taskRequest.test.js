@@ -14,8 +14,7 @@ describe('Task Requests', () => {
 
   beforeAll(async () => {
     browser = await puppeteer.launch({
-      headless: false,
-      slowMo: 130,
+      headless: 'new',
       ignoreHTTPSErrors: true,
       args: ['--incognito', '--disable-web-security'],
       devtools: false,
@@ -86,7 +85,7 @@ describe('Task Requests', () => {
         await modal.evaluate((el) => el.classList.contains('hidden')),
       ).toBe(true);
     });
-    it('clicking on sort button should display filter modal', async () => {
+    it('clicking on sort button should display sort modal', async () => {
       const sortModal = await page.$('.sort-modal');
       const assigneButton = await page.$('#ASSIGNEE_COUNT');
       expect(
