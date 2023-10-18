@@ -201,7 +201,25 @@ button {
   background-color: var(--blue-color);
   border-color: transparent;
 }
-
+/* Task Requests */
+#task-requests-link {
+  color: var(--black-color);
+  font-weight: 500;
+  font-size: larger;
+  background-color: var(--white-color);
+  border: 2px solid var(--black-color);
+  border-radius: 5px;
+  padding: 10px 3.12rem;
+  cursor: pointer;
+  transition: all 0.5s ease;
+  width: max-content;
+  text-decoration: none;
+}
+#task-requests-link:hover {
+  color: var(--white-color);
+  background-color: var(--blue-color);
+  border-color: transparent;
+}
 /* Online-members */
 .online-members-link {
   color: var(--black-color);
