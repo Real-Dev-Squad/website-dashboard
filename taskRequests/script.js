@@ -152,9 +152,9 @@ function addSortByIcon(name, id, groupName, iconPathAsc, iconPathDesc) {
 
 function sortModalButtons() {
   const assigneeAsc = document.getElementById(ASSIGNEE_COUNT);
-  const assigneeDesc = document.getElementById(ASSIGNEE_Desc);
+  const assigneeDesc = document.getElementById(ASSIGNEE_DESC);
   const createTimeAsc = document.getElementById(CREATED_TIME);
-  const createTimeDesc = document.getElementById(CREATED_TIME_Desc);
+  const createTimeDesc = document.getElementById(CREATED_TIME_DESC);
 
   const sortModalButtons = [
     assigneeAsc,

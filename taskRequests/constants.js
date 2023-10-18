@@ -13,9 +13,9 @@ const OLD_FILTER = '.container__filters';
 const FILTER_CONTAINER = '.sort-filters';
 const SORT_MODAL = 'sort-modal';
 const ASSIGNEE_COUNT = 'ASSIGNEE_COUNT';
-const ASSIGNEE_Desc = 'ASSIGNEE_COUNT-desc';
+const ASSIGNEE_DESC = 'ASSIGNEE_COUNT-desc';
 const CREATED_TIME = 'CREATED_TIME';
-const CREATED_TIME_Desc = 'CREATED_TIME-desc';
+const CREATED_TIME_DESC = 'CREATED_TIME-desc';
 
 const MessageStatus = {
   SUCCESS: 'SUCCESS',
