@@ -84,15 +84,12 @@ describe('Home Page', () => {
     );
     expect(syncExternalAccountsUpdate).toBeTruthy();
   });
+  it('should display the task requests button', async () => {
+    const taskRequestsButton = await page.$('#task-requests-link');
+    expect(taskRequestsButton).toBeTruthy();
+  });
   it('should go to the task requests page', async () => {
     await page.goto('http://localhost:8000/?dev=true');
-    const taskRequestsButton = await page.$('#task-requests-link');
-    await taskRequestsButton.click();
-    await page.waitForNetworkIdle();
-    const newUrl = page.url();
-    expect(newUrl).toContain('/taskRequests');
-  });
-  it('should open the task requests page', async () => {
     const taskRequestsButton = await page.$('#task-requests-link');
     await taskRequestsButton.click();
     await page.waitForNetworkIdle();
