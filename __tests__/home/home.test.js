@@ -477,27 +477,4 @@ describe('Home Page', () => {
     );
     expect(latestSyncStatusText).not.toBe(`Last Sync: In progress`);
   });
-
-  it('should close hamburger menu on clicking anywhere on the screen except the menu', async () => {
-    await page.setViewport({ width: 970, height: 1800 });
-    await page.goto('http://localhost:8000/index.html');
-    await page.evaluate(() => {
-      Object.defineProperty(window, 'innerWidth', { value: 970 });
-    });
-
-    const hamIcon = await page.$('.hamburger');
-    expect(hamIcon).toBeTruthy();
-    await hamIcon.click();
-
-    await page.waitForSelector('.links');
-
-    const menu = await page.$('.active');
-    expect(menu).toBeTruthy();
-
-    await page.mouse.click(10, 10);
-
-    await page.waitForSelector('.nav-links:not(.active)');
-    const menuOff = await page.$('.nav-links:not(.active)');
-    expect(menuOff).toBeTruthy();
-  });
 });

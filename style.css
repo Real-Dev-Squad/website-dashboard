@@ -12,7 +12,6 @@
   --failure-color: #f44336;
   --lightblue-color: #0d6efd;
   --lightgray-color: #d7d6d6;
-  --link-color: #4d4dff;
 }
 
 body {
@@ -505,7 +504,6 @@ footer {
     background-color: var(--lightgray-color);
     transition: background-color 0.31s ease-in-out;
   }
-
   .user-info {
     position: inherit;
   }
