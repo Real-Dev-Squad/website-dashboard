@@ -169,14 +169,10 @@ function sortModalButtons() {
 
   function selectButton(button) {
     if (selectedButton === button) {
-      console.log('same');
-      // Clicked on the same button again, deselect it
       selectedButton.classList.remove('selected');
       selectedButton = null;
       toggleSortModal();
     } else {
-      console.log('diff');
-      // Clicked on a different button, update selection
       if (selectedButton) {
         selectedButton.classList.remove('selected');
       }
