@@ -50,7 +50,49 @@ const taskVerified = {
   },
 };
 
+const auditLogTasks = {
+  '7gZ9E0XTQCEFvUynVqAw': {
+    message: 'task returned successfully',
+    taskData: {
+      percentCompleted: 20,
+      endsOn: 1697800440,
+      isNoteworthy: false,
+      createdBy: 'joygupta',
+      lossRate: { dinero: 100, neelam: 0 },
+      assignee: 'joygupta',
+      title: 'First Task',
+      type: 'feature',
+      priority: 'HIGH',
+      completionAward: { dinero: 1000, neelam: 0 },
+      startedOn: 1695452396.039,
+      status: 'IN_PROGRESS',
+      assigneeId: 'XBucw7nHW1wOxdWrmLVa',
+      dependsOn: [],
+    },
+  },
+  mZB0akqPUa1GQQdrgsx7: {
+    message: 'task returned successfully',
+    taskData: {
+      percentCompleted: 0,
+      endsOn: 1697480760,
+      isNoteworthy: false,
+      createdBy: 'joygupta',
+      lossRate: { dinero: 100, neelam: 0 },
+      assignee: 'testunity',
+      title: 'Task for new user',
+      type: 'feature',
+      priority: 'HIGH',
+      completionAward: { dinero: 1000, neelam: 0 },
+      startedOn: 1695831976.165,
+      status: 'ASSIGNED',
+      assigneeId: 'Hgbb5mFvy0nHaKCTPVcP',
+      dependsOn: [],
+    },
+  },
+};
+
 module.exports = {
   taskDone,
   taskVerified,
+  auditLogTasks,
 };
