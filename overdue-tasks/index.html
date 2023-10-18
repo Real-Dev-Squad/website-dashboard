@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Overdue Tasks</title>
+  </head>
+
+  <body>
+    <div state="" class="overdue-tasks-modal-parent">
+      <div class="overdue-tasks-prompt">
+        <h2>Prompt Heading</h2>
+        <button class="prompt_success">Continue</button>
+        <button class="prompt_failure">Cancel</button>
+      </div>
+      <form class="extension-requests-form">
+        <h3>Create Extension Request</h3>
+        <label for="title">Title</label>
+        <input
+          required
+          type="text"
+          id="title"
+          name="title"
+          class="extensionTitle"
+        />
+        <label for="reason">Reason</label>
+        <input
+          required
+          type="text"
+          id="reason"
+          name="reason"
+          class="extensionReason"
+        />
+        <label for="newEndsOn">New Ends On</label>
+        <input
+          required
+          type="datetime-local"
+          id="newEndsOn"
+          name="newEndsOn"
+          class="extensionNewEndsOn"
+        />
+        <label for="oldEndsOn">Old Ends On</label>
+        <input
+          required
+          type="datetime-local"
+          id="oldEndsOn"
+          class="extensionOldEndsOn"
+          name="oldEndsOn"
+          readonly
+        />
+        <label for="status">Status</label>
+        <input
+          required
+          type="text"
+          id="status"
+          class="extensionStatus"
+          name="status"
+          readonly
+        />
+        <label for="Task Id">Task Id</label>
+        <input
+          required
+          type="text"
+          id="Task Id"
+          class="extensionId"
+          readonly
+          name="taskId"
+        />
+        <label for="assignee">Assignee</label>
+        <input
+          required
+          type="text"
+          id="assignee"
+          class="extensionAssignee"
+          readonly
+          name="assignee"
+        />
+        <button type="submit">Submit</button>
+        <button id="close-modal" type="button">Cancel</button>
+      </form>
+    </div>
+    <header class="header">
+      <h1>Overdue Tasks</h1>
+    </header>
+    <div class="container">
+      <div class="overdue-tasks"></div>
+    </div>
+    <h2 id="error"></h2>
+    <script src="/constants.js"></script>
+    <script src="constants.js"></script>
+    <script src="/utils.js"></script>
+    <script src="local-utils.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

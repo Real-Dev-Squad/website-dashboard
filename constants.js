@@ -3,6 +3,7 @@ const REPO_SYNC_API_URL =
   'https://staging-sync.staging-realdevsquad-com.workers.dev';
 const USER_MANAGEMENT_LINK = 'user-management-link';
 const EXTENSION_REQUESTS_LINK = 'extension-requests-link';
+const OVERDUE_TASKS_LINK = 'overdue-tasks-link';
 const SYNC_USERS_STATUS = 'sync-users-status';
 const SYNC_IDLE_USERS = 'sync-idle-users';
 const SYNC_EXTERNAL_ACCOUNTS = 'sync-external-accounts';

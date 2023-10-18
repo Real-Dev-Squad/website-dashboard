@@ -1,0 +1,254 @@
+:root {
+  --dark-blue: #1b1378;
+  --light-aqua: #d4f9f2;
+  --scandal: #e5fcf5;
+  --white: #ffffff;
+  --black-transparent: #000000a8;
+  --black: #181717;
+  --light-gray: #d9d9d9;
+  --razzmatazz: #df0057;
+  --gray: #808080;
+  --button-proceed: #008000;
+  --modal-color: #00000048;
+  --red: rgb(255, 40, 40);
+}
+
+*,
+::after,
+::before {
+  box-sizing: border-box;
+}
+
+button {
+  cursor: pointer;
+}
+
+.bold {
+  font-weight: bolder;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  user-select: none;
+  max-width: 100vw;
+}
+
+.container {
+  width: 100%;
+  text-align: center;
+  padding: 10px;
+}
+
+.header {
+  background-color: var(--dark-blue);
+  text-align: center;
+  color: var(--white);
+}
+
+.overdue-tasks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  flex-wrap: wrap;
+}
+
+.overdue-task-container {
+  text-align: left;
+  border: 2px solid var(--black-transparent);
+  padding: 1.25rem;
+  margin: 10px;
+  color: var(--black);
+  border-radius: 5px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.overdue-task-container tbody {
+  flex-basis: 100%;
+}
+
+.overdue-task-container tr th {
+  width: 50%;
+}
+
+.overdue-task-container .create-extension-btn,
+.overdue-task-container .unassign-task-btn {
+  background-color: var(--button-proceed);
+  border: none;
+  color: var(--white);
+  padding: 0.5rem 1rem;
+  font-size: medium;
+  font-weight: bold;
+  border-radius: 5px;
+  margin: 10px 10px 0px 0px;
+}
+
+/* Loader Container */
+.loader-text {
+  text-align: center;
+  font-size: 2rem;
+}
+.loader {
+  margin: auto auto;
+}
+
+.loader p {
+  font-weight: 800;
+  font-size: 3em;
+}
+
+/* Error Heading */
+.error {
+  display: none;
+}
+.error-visible {
+  display: block;
+}
+
+/* modal */
+.overdue-tasks-modal-parent {
+  display: none;
+}
+
+.overdue-tasks-modal-parent.visible {
+  z-index: 1;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 100vw;
+  min-height: 100vh;
+  background-color: var(--modal-color);
+  overflow-y: scroll;
+  padding-bottom: 1rem;
+}
+
+.overdue-tasks-modal-parent[state='prompt'] .overdue-tasks-prompt {
+  display: flex;
+}
+
+.overdue-tasks-modal-parent .overdue-tasks-prompt {
+  position: fixed;
+  top: 40%;
+  bottom: 40%;
+  width: 30%;
+  background-color: var(--white);
+  padding: 1.25rem;
+  border-radius: 5px;
+  display: none;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  height: min-content;
+}
+
+.overdue-tasks-prompt > h2 {
+  flex-basis: 100%;
+  text-align: center;
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+.overdue-tasks-prompt > h2 > i {
+  font-weight: normal;
+  font-size: 80%;
+}
+
+.overdue-tasks-prompt .prompt_success {
+  background-color: var(--button-proceed);
+  border: none;
+  color: var(--white);
+  padding: 0.5rem 1rem;
+  font-size: medium;
+  font-weight: bold;
+  border-radius: 5px;
+  margin: 10px 10px 0px 0px;
+}
+
+.overdue-tasks-prompt .prompt_failure {
+  background-color: var(--red);
+  border: none;
+  color: var(--white);
+  padding: 0.5rem 1rem;
+  font-size: medium;
+  font-weight: bold;
+  border-radius: 5px;
+  margin: 10px 10px 0px 0px;
+}
+
+/* create extension form */
+/* update form */
+.overdue-tasks-modal-parent[state='form'] .extension-requests-form {
+  display: flex;
+}
+
+.extension-requests-form {
+  position: absolute;
+  left: 30%;
+  right: 30%;
+  overflow-y: scroll;
+  top: 5%;
+  bottom: 5%;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: var(--white);
+  padding: 1.25rem;
+  padding-top: 2rem;
+  border-radius: 5px;
+}
+
+.extension-requests-form input,
+.extension-requests-form select {
+  margin: 5px 0px 15px 0px;
+  padding: 5px;
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--gray);
+}
+.extension-requests-form input:focus {
+  outline: none;
+  border-bottom: 1px solid var(--gray);
+}
+.extension-requests-form button {
+  background-color: var(--button-proceed);
+  border: none;
+  color: var(--white);
+  padding: 0.5rem 1rem;
+  font-size: medium;
+  font-weight: bold;
+  border-radius: 5px;
+  margin: 10px;
+}
+
+#close-modal {
+  background-color: var(--red);
+}
+
+@media screen and (max-width: 900px) {
+  .overdue-tasks-modal-parent .extension-requests-form {
+    left: 20%;
+    right: 20%;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .overdue-tasks {
+    grid-template-columns: 1fr;
+  }
+
+  .overdue-tasks-modal-parent .overdue-tasks-prompt {
+    width: 75%;
+  }
+  .overdue-tasks-modal-parent .extension-requests-form {
+    left: 10%;
+    right: 10%;
+  }
+}

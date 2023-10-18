@@ -205,6 +205,26 @@ button {
   border-color: transparent;
 }
 
+/* Overdue Tasks */
+#overdue-tasks-link {
+  color: black;
+  font-weight: 500;
+  font-size: larger;
+  background-color: var(--white-color);
+  border: 2px solid var(--black-color);
+  border-radius: 5px;
+  padding: 10px 50px;
+  cursor: pointer;
+  transition: all 0.5s ease;
+  width: max-content;
+  text-decoration: none;
+}
+#overdue-tasks-link:hover {
+  color: var(--white-color);
+  background-color: var(--blue-color);
+  border-color: transparent;
+}
+
 /* Online-members */
 .online-members-link {
   color: var(--black-color);

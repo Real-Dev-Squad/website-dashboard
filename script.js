@@ -1,6 +1,7 @@
 const userManagementLink = document.getElementById(USER_MANAGEMENT_LINK);
 const discordUserLink = document.getElementById('discord-user-link');
 const extensionRequestsLink = document.getElementById(EXTENSION_REQUESTS_LINK);
+const overdueTasksLink = document.getElementById(OVERDUE_TASKS_LINK);
 const syncUsersStatusButton = document.getElementById(SYNC_USERS_STATUS);
 const UpdatedstatusMessage = 'All repos uptodate';
 const syncExternalAccountsButton = document.getElementById(
@@ -91,6 +92,7 @@ export async function showSuperUserOptions(...privateBtns) {
 showSuperUserOptions(
   userManagementLink,
   extensionRequestsLink,
+  overdueTasksLink,
   discordUserLink,
 );
 
@@ -103,6 +105,8 @@ if (params.get('dev') === 'true') {
   createGoalButton.classList.remove('element-display-remove');
   repoSyncDiv.classList.remove('element-display-remove');
 }
+
+// showUserManagementButton();
 
 function addClickEventListener(
   button,
