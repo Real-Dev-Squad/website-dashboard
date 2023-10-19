@@ -139,6 +139,7 @@ body {
   align-items: center;
   justify-content: space-between;
   margin-top: 6px;
+  padding: 4px;
   border: 1px solid var(--light-gray-color);
   box-shadow: 0 0 10px var(--black-transparent);
   border-radius: 0.31rem;
