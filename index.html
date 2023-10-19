@@ -37,9 +37,16 @@
         <a
           href="https://github.com/login/oauth/authorize?client_id=23c78f66ab7964e5ef97"
           >Sign In <span>With GitHub</span>
-          <img src="images/github.png" alt="" />
+          <img src="images/github.png" class="user-avatar" />
         </a>
       </div>
+      <div class="user-info">
+        <span id="user-name"></span>
+        <span>
+          <img id="user-img" src="" alt="" />
+        </span>
+      </div>
+      <div id="dropdown"></div>
     </nav>
 
     <section id="sync-buttons" class="element-display-remove">
@@ -76,11 +83,27 @@
       </div>
 
       <div class="button-container">
+        <button class="action-button" id="sync-idle-7d-Plus-users">
+          <span class="spinner"></span>
+          Sync Idle 7d+ Users On Discord
+        </button>
+        <div class="status" id="sync-idle-7d-Plus-users-update"></div>
+      </div>
+
+      <div class="button-container">
         <button class="action-button" id="sync-nicknames">
           <span class="spinner"></span>
           Sync Users Nicknames
         </button>
         <div class="status" id="sync-nicknames-status-update"></div>
+      </div>
+
+      <div class="button-container">
+        <button class="action-button" id="sync-onboarding-31d-plus-users">
+          <span class="spinner"></span>
+          Sync Onboarding 31d+ Users
+        </button>
+        <div class="status" id="sync-onboarding-31d-plus-users-update"></div>
       </div>
     </section>
 

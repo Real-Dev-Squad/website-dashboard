@@ -56,7 +56,7 @@ describe('Tests the "Onboarding > 31 Days" Filter', () => {
     await browser.close();
   });
 
-  it('should go to filter section', async () => {
+  it('should gives results for Onboarding > 31 SELECTED', async () => {
     const taskDiv = await page.$('.filter-button');
     expect(taskDiv).toBeTruthy();
 
@@ -75,6 +75,69 @@ describe('Tests the "Onboarding > 31 Days" Filter', () => {
     expect(applyfilterbutton).toBeTruthy();
     await applyfilterbutton.click();
 
-    await page.waitForTimeout(5000);
+    await page.waitForTimeout(500);
+  });
+  it('should gives results for ACTIVE SELECTED', async () => {
+    const taskDiv = await page.$('.filter-button');
+    expect(taskDiv).toBeTruthy();
+
+    await taskDiv.click();
+
+    // await page.waitForTimeout(2000);  enable to see the tests in actions
+    const elements = await page.$$('.checkbox-label');
+
+    const clear = await page.$('#clear-button');
+    await clear.click();
+
+    // await page.waitForTimeout(2000);     enable to see the tests in actions
+
+    const taskDiv2 = await page.$('.filter-button');
+    await taskDiv2.click();
+    expect(taskDiv2).toBeTruthy();
+    // await page.waitForTimeout(2000); enable to see the tests in actions
+    expect(elements).toBeTruthy();
+
+    const checkbox = await page.$('#ACTIVE');
+    await checkbox.click();
+
+    const applyfilterbutton = await page.$('.apply-filter-button');
+    expect(applyfilterbutton).toBeTruthy();
+    await applyfilterbutton.click();
+
+    await page.waitForTimeout(500);
+  });
+
+  it('should gives results for both ACTIVE & Onboarding > 31 SELECTED', async () => {
+    const taskDiv = await page.$('.filter-button');
+    expect(taskDiv).toBeTruthy();
+
+    await taskDiv.click();
+
+    // await page.waitForTimeout(2000);  enable to see the tests in actions
+    const elements = await page.$$('.checkbox-label');
+
+    // Checking if elements are found
+    expect(elements).toBeTruthy();
+
+    const clear = await page.$('#clear-button');
+    await clear.click();
+
+    // await page.waitForTimeout(2000);   enable to see the tests in actions
+
+    const taskDiv2 = await page.$('.filter-button');
+    await taskDiv2.click();
+    expect(taskDiv2).toBeTruthy();
+    // await page.waitForTimeout(2000);  enable to see the tests in actions
+    const checkbox = await page.$('#ONBOARDING31DAYS');
+    await checkbox.click();
+    // await page.waitForTimeout(2000);  enable to see the tests in actions
+    const checkbox2 = await page.$('#ACTIVE');
+    await checkbox2.click();
+    // await page.waitForTimeout(2000);   enable to see the tests in actions
+    const applyfilterbutton = await page.$('.apply-filter-button');
+    expect(applyfilterbutton).toBeTruthy();
+    await applyfilterbutton.click();
+
+    await page.waitForTimeout(500);
   });
 });
