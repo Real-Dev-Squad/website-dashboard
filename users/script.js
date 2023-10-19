@@ -403,9 +403,6 @@ function populateAvailability() {
     { name: 'Onboarding > 31d', id: 'ONBOARDING31DAYS' },
   ];
 
-  if (params.get('dev') != 'true') {
-    availabilityArr.pop();
-  }
   for (let i = 0; i < availabilityArr.length; i++) {
     const { name, id } = availabilityArr[i];
     addCheckbox(name, id, 'availability-filter');
@@ -585,18 +582,6 @@ async function persistUserDataBasedOnQueryParams() {
   }
 }
 
-async function getUsersInOnboardingFor31Days() {
-  try {
-    const usersRequest = await makeApiCall(
-      `${RDS_API_USERS}/search/?state=ONBOARDING&time=31d`,
-    );
-    const { users } = await usersRequest.json();
-    return users;
-  } catch (err) {
-    throw new Error(`User list request failed with error: ${err}`);
-  }
-}
-
 // Function to apply the filter when the "Apply Filter" button is clicked
 applyFilterButton.addEventListener('click', async () => {
   filterModal.classList.toggle('hidden');
@@ -608,18 +593,25 @@ applyFilterButton.addEventListener('click', async () => {
     checkedValuesSkills,
     checkedValuesAvailability,
   );
-  // Check if the "Onboarding > 31 Days" checkbox is checked
+
   const onboarding31DaysFilter =
     document.getElementById('ONBOARDING31DAYS').checked;
-
   try {
     let users;
     if (onboarding31DaysFilter) {
-      // If the checkbox is checked, fetch users from the specific API endpoint
-      users = await getUsersInOnboardingFor31Days();
+      let queryParams = getFilteredUsersURL(
+        checkedValuesSkills,
+        checkedValuesAvailability,
+      );
+
+      queryParams = replaceOnboarding31days(queryParams);
+      const usersRequest = await makeApiCall(
+        `${RDS_API_USERS}/search${queryParams}`,
+      );
+      const { users: filteredUsers } = await usersRequest.json();
+      users = filteredUsers;
     } else {
-      // If the checkbox is not checked, fetch users with other filters
-      const queryParams = getFilteredUsersURL(
+      let queryParams = getFilteredUsersURL(
         checkedValuesSkills,
         checkedValuesAvailability,
       );
@@ -637,6 +629,25 @@ applyFilterButton.addEventListener('click', async () => {
     throw new Error(`User list request failed with error: ${err}`);
   }
 });
+
+function replaceOnboarding31days(queryParams) {
+  if (queryParams.includes('&state=ONBOARDING31DAYS')) {
+    // Replace "&state=ONBOARDING31DAYS" with "&state=ONBOARDING&time=31d"
+    queryParams = queryParams.replace(
+      '&state=ONBOARDING31DAYS',
+      '&state=ONBOARDING&time=31d',
+    );
+    return queryParams;
+  }
+  if (queryParams.includes('?state=ONBOARDING31DAYS')) {
+    // Replace "&state=ONBOARDING31DAYS" with "&state=ONBOARDING&time=31d"
+    queryParams = queryParams.replace(
+      '?state=ONBOARDING31DAYS',
+      '?state=ONBOARDING&time=31d',
+    );
+    return queryParams;
+  }
+}
 
 function clearCheckboxes(name) {
   const checkboxes = document.querySelectorAll(`input[name="${name}"]`);

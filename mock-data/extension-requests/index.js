@@ -104,6 +104,7 @@ const extensionRequestsListPending = {
       oldEndsOn: 1689954609.948,
       reason: 'test reason',
       status: 'PENDING',
+      requestNumber: 5,
       taskId: 'PYj79ki2agB0q5JN3kUf',
       timestamp: 1691734400.045,
       title: 'A title',
@@ -189,6 +190,33 @@ const extensionRequestResponse = {
     id: '6tqDEKck3JDYbMM6d4nz',
   },
 };
+const extensionRequestListForAuditLogs = {
+  message: 'Extension Requests returned successfully!',
+  allExtensionRequests: [
+    {
+      reason: 'ER 1 SU',
+      newEndsOn: 1697780640,
+      oldEndsOn: 1697006880,
+      title: 'ER 1 Title SU',
+      taskId: '7gZ9E0XTQCEFvUynVqAw',
+      status: 'APPROVED',
+      id: 'fuQs71a0Y7BX3n4rc5Ii',
+      timestamp: 1697042685,
+      assignee: 'joygupta',
+    },
+    {
+      reason: 'Checking Backward',
+      newEndsOn: 1697843100,
+      oldEndsOn: 1697480760,
+      title: 'Backward Compatibility',
+      taskId: 'mZB0akqPUa1GQQdrgsx7',
+      status: 'DENIED',
+      id: 'lw7dRB0I3a6ivsFR5Izs',
+      timestamp: 1697344531,
+      assignee: 'testunity',
+    },
+  ],
+};
 
 module.exports = {
   extensionRequestsList,
@@ -197,4 +225,5 @@ module.exports = {
   extensionRequestResponse,
   extensionRequestsListPendingDescending,
   extensionRequestsListUserSearch,
+  extensionRequestListForAuditLogs,
 };

@@ -116,6 +116,21 @@ describe('Discord Groups Page', () => {
         } else {
           interceptedRequest.continue();
         }
+      } else if (interceptedRequest.method() === 'DELETE') {
+        if (url === `${BASE_URL}/discord-actions/roles`) {
+          interceptedRequest.respond({
+            status: 200,
+            contentType: 'application/json',
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+              'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            },
+            body: JSON.stringify({ message: 'Role deleted successfully' }),
+          });
+        } else {
+          interceptedRequest.continue();
+        }
       } else {
         interceptedRequest.continue();
       }
@@ -208,6 +223,19 @@ describe('Discord Groups Page', () => {
     expect(buttonText).toBe('Remove me from this group');
   });
 
+  test('Should show role deleted', async () => {
+    await page.$$eval('.group-role', (elements) => {
+      elements[1].click();
+    });
+    // Wait for the btn-add-role and click it
+    const addRoleBtn = await page.$('.btn-add-role');
+    await addRoleBtn.click();
+
+    await page.waitForNetworkIdle();
+    const toast = await page.$('.toaster-container');
+    expect(toast).toBeTruthy();
+  });
+
   test('Should display an error message if the role name contains "group"', async () => {
     createGroup = await page.$('.create-groups-tab');
     await createGroup.click();
@@ -245,15 +273,6 @@ describe('Discord Groups Page', () => {
     ).jsonValue();
 
     expect(noResultFoundHeadingText).toEqual('No results found.');
-  });
-
-  test('should update the URL when a group role is clicked', async () => {
-    await page.$$eval('.group-role', (elements) => {
-      elements[1].click();
-    });
-    const url = await page.url();
-    const searchParams = decodeURIComponent(url.split('?')[1]);
-    expect(searchParams).toMatch('DSA');
   });
 
   test('should not have group keyword in group list', async () => {
@@ -299,5 +318,38 @@ describe('Discord Groups Page', () => {
       (group) => `created by ${group.firstName} ${group.lastName}`,
     );
     expect(expectedCreatedByLines).toEqual(createdByLines);
+  });
+
+  test('should update the URL when input field has changed', async () => {
+    manageGroup = await page.$('.manage-groups-tab');
+    await manageGroup.click();
+    const searchInput = await page.$('#search-groups');
+    await searchInput.type('DSA');
+    await new Promise((resolve) => setTimeout(resolve, 1000)); //wait for debouncer
+    const url = await page.url();
+    const searchParams = decodeURIComponent(url.split('?')[1]);
+    expect(searchParams).toMatch('DSA');
+  });
+
+  test('should update input field and filter group list with search value in URL', async () => {
+    await page.goto('http://localhost:8000/groups/?dev=true&DSA');
+    manageGroup = await page.$('.manage-groups-tab');
+    await manageGroup.click();
+    const searchInput = await page.$('#search-groups');
+    const inputValue = await page.evaluate(
+      (element) => element.value,
+      searchInput,
+    );
+    expect(inputValue).toMatch('DSA');
+
+    const filteredGroupNames = await page.$$eval('.group-role', (elements) => {
+      return elements
+        .map((element) => element.querySelector('.group-name').textContent)
+        .filter((name) => name.includes('DSA'));
+    });
+
+    expect(filteredGroupNames).toEqual(
+      expect.arrayContaining(['DSA', 'DSA-Coding-Group']),
+    );
   });
 });

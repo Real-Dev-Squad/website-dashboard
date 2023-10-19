@@ -6,14 +6,21 @@ const {
   extensionRequestResponse,
   extensionRequestsListPendingDescending,
   extensionRequestsListUserSearch,
+  extensionRequestListForAuditLogs,
 } = require('../../mock-data/extension-requests');
-
+const {
+  extensionRequestLogs,
+  extensionRequestLogsInSentence,
+} = require('../../mock-data/logs');
 const {
   userSunny,
   userRandhir,
   allUsersData,
+  superUserForAudiLogs,
+  searchedUserForAuditLogs,
 } = require('../../mock-data/users');
-const { taskDone } = require('../../mock-data/tasks/index');
+const { usersStatus } = require('../../mock-data/users-status');
+const { taskDone, auditLogTasks } = require('../../mock-data/tasks/index');
 
 describe('Tests the Extension Requests Screen', () => {
   let browser;
@@ -63,6 +70,17 @@ describe('Tests the Extension Requests Screen', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
           body: JSON.stringify(allUsersData),
+        });
+      } else if (url === 'https://api.realdevsquad.com/users/status') {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(usersStatus),
         });
       } else if (
         url ===
@@ -188,6 +206,113 @@ describe('Tests the Extension Requests Screen', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
           body: JSON.stringify(extensionRequestsList),
+        });
+      } else if (
+        url ===
+        'https://api.realdevsquad.com/tasks/mZB0akqPUa1GQQdrgsx7/details'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(auditLogTasks['mZB0akqPUa1GQQdrgsx7']),
+        });
+      } else if (
+        url ===
+        'https://api.realdevsquad.com/tasks/7gZ9E0XTQCEFvUynVqAw/details'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(auditLogTasks['7gZ9E0XTQCEFvUynVqAw']),
+        });
+      } else if (
+        url === 'https://api.realdevsquad.com/users?search=testunity&size=1'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(searchedUserForAuditLogs['testunity']),
+        });
+      } else if (
+        url === 'https://api.realdevsquad.com/users?search=joygupta&size=1'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(searchedUserForAuditLogs['joygupta']),
+        });
+      } else if (
+        url ===
+        'https://api.realdevsquad.com/extension-requests?order=asc&size=5&q=status%3AAPPROVED%2BPENDING%2BDENIED'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(extensionRequestListForAuditLogs),
+        });
+      } else if (url === 'https://api.realdevsquad.com/users/self') {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(superUserForAudiLogs),
+        });
+      } else if (
+        url ===
+        'https://api.realdevsquad.com/logs/extensionRequests/?meta.extensionRequestId=fuQs71a0Y7BX3n4rc5Ii&dev=true'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(extensionRequestLogs['fuQs71a0Y7BX3n4rc5Ii']),
+        });
+      } else if (
+        url ===
+        'https://api.realdevsquad.com/logs/extensionRequests/?meta.extensionRequestId=lw7dRB0I3a6ivsFR5Izs&dev=true'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(extensionRequestLogs['lw7dRB0I3a6ivsFR5Izs']),
         });
       } else {
         interceptedRequest.continue();
@@ -341,7 +466,18 @@ describe('Tests the Extension Requests Screen', () => {
     );
     expect(taskAssigneeName).toBe('Sunny');
   });
+  test('Checks if the Commited Hours Card is displayed on hover', async () => {
+    const trigger = await page.$('.commited-hours-trigger');
+    await trigger.hover();
 
+    const isCardVisible = await page.evaluate(() => {
+      const hoverCard = document.querySelector('.comitted-hours');
+      const style = window.getComputedStyle(hoverCard);
+
+      return style && style.display !== 'none';
+    });
+    expect(isCardVisible).toBe(true);
+  });
   it('Checks that accordion content is hidden by default', async () => {
     const firstAccordionContent = await page.$('.extension-card .panel');
     const firstAccordionIsHidden = await firstAccordionContent.evaluate(
@@ -411,7 +547,7 @@ describe('Tests the Extension Requests Screen', () => {
 
     const extensionCardsAfter = await page.$$('.extension-card');
 
-    expect(extensionCardsAfter.length).toBe(7);
+    expect(extensionCardsAfter.length).toBe(3);
   });
 
   it('Checks whether the card is not removed from display when api call is unsuccessful', async () => {
@@ -562,5 +698,84 @@ describe('Tests the Extension Requests Screen', () => {
     });
 
     expect(isTooltipVisible).toBe(true);
+  });
+  it('Validating audit logs for extension request', async () => {
+    // Visit extension request under dev flag
+    await page.goto('http://localhost:8000/extension-requests/?dev=true');
+    const extensionRequestIds = [
+      'log-container-fuQs71a0Y7BX3n4rc5Ii',
+      'log-container-lw7dRB0I3a6ivsFR5Izs',
+    ];
+
+    // Select all types of status of extension requests
+    await page.click('#filter-button');
+    await page.click('input[value="APPROVED"]');
+    await page.click('input[value="DENIED"]');
+    await page.click('#apply-filter-button');
+    await page.waitForNetworkIdle();
+
+    // Checking if both the extension request cards are renedered or not
+    const cardsList = await page.$$('.extension-card');
+    expect(cardsList.length).toBe(2);
+
+    const accordionButton = await page.$$('.accordion');
+    // Validate first extension card which is based on updated logs
+    accordionButton[0].click();
+    await page.waitForNetworkIdle();
+    let extensionLogsForFirstER = await page.$(`#${extensionRequestIds[0]}`);
+    let logs = await extensionLogsForFirstER.$$('.log-div');
+    expect(Array.from(logs).length).toBe(6);
+    // Array.from(logs).forEach(async (log) => {
+    //   const innerText = await log.evaluate((element) => element.innerText);
+    //   expect(extensionRequestLogsInSentence[extensionRequestIds[0]]).toContain(
+    //     innerText,
+    //   );
+    // });
+
+    // Validating if it is backward compatible or not
+    accordionButton[1].click();
+    await page.waitForNetworkIdle();
+    extensionLogsForFirstER = await page.$(`#${extensionRequestIds[1]}`);
+    logs = await extensionLogsForFirstER.$$('.log-div');
+    expect(Array.from(logs).length).toBe(1);
+    // Array.from(logs).forEach(async (log) => {
+    //   const innerText = await log.evaluate((element) => element.innerText);
+    //   expect(extensionRequestLogsInSentence[extensionRequestIds[1]]).toContain(
+    //     innerText,
+    //   );
+    // });
+  });
+
+  test('Checks the Request Number and request value element on Extension requests listing page', async () => {
+    const url = 'http://localhost:8000/extension-requests/?dev=true'; // Include the dev parameter in the URL
+    await page.goto(url);
+
+    const extensionRequestNumberContainer = await page.$$(
+      '.extension-request-number',
+    );
+    const extensionRequestNumberText = extensionRequestNumberContainer[0];
+    expect(extensionRequestNumberText).toBeTruthy();
+
+    const cardNumber1Value = await extensionRequestNumberContainer[1].evaluate(
+      (node) => node.textContent,
+    );
+    expect(cardNumber1Value).toBe('5');
+  });
+
+  test('Default Request Number to 1 if requestNumber field is missing in API Response', async () => {
+    const url = 'http://localhost:8000/extension-requests/?dev=true'; // Include the dev parameter in the URL
+    await page.goto(url);
+
+    const extensionRequestNumberContainer = await page.$$(
+      '.extension-request-number',
+    );
+
+    const extensionRequestNumberText = extensionRequestNumberContainer[2];
+    expect(extensionRequestNumberText).toBeTruthy();
+
+    const cardNumber2Value = await extensionRequestNumberContainer[3].evaluate(
+      (node) => node.textContent,
+    );
+    expect(cardNumber2Value).toBe('1');
   });
 });

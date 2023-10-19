@@ -8,9 +8,11 @@ import {
   removeGroupKeywordFromDiscordRoleName,
   getDiscordGroups,
   addGroupRoleToMember,
+  removeRoleFromMember,
   createDiscordGroupRole,
   getUserSelf,
   getUserGroupRoles,
+  getSearchValueFromURL,
 } from './utils.js';
 const groupTabs = document.querySelector('.groups-tab');
 const tabs = document.querySelectorAll('.groups-tab div');
@@ -18,8 +20,15 @@ const sections = document.querySelectorAll('.manage-groups, .create-group');
 const loader = document.querySelector('.backdrop');
 const userIsNotVerifiedText = document.querySelector('.not-verified-tag');
 const params = new URLSearchParams(window.location.search);
+const searchValue = getSearchValueFromURL();
 const isDev = params.get(DEV_FEATURE_FLAG) === 'true';
+// const paragraphElement = null, paragraphContent = '';
 
+const searchInput = document.getElementById('search-groups');
+//Let searchInput has searchValue as it is independent to API calls mentioned below
+if (searchValue) {
+  searchInput.value = searchValue;
+}
 //User Data
 const userSelfData = await getUserSelf();
 let UserGroupData = await getUserGroupRoles();
@@ -77,8 +86,13 @@ groupsData?.forEach((item) => {
     item.rolename,
   );
 
-  if (params.has(formattedRoleName)) {
-    group.classList.add('active-group');
+  //If searchValue present, filter out the list
+  if (searchValue) {
+    group.style.display = formattedRoleName
+      .toUpperCase()
+      .includes(searchValue.toUpperCase())
+      ? ''
+      : 'none';
   }
 
   const groupname = document.createElement('p');
@@ -136,15 +150,10 @@ const pathname = window.location.pathname;
 const groupRolesList = document.querySelectorAll('.group-role');
 groupRoles?.addEventListener('click', function (event) {
   groupRolesList.forEach((groupItem) => {
-    window.history.pushState({}, '', pathname);
     groupItem.classList?.remove('active-group');
   });
   const groupListItem = event.target?.closest('li');
   if (groupListItem) {
-    const devFeatureFlag = isDev ? '&dev=true' : '';
-    const rolename = `${groupListItem.querySelector('p').textContent}`;
-    const newURL = `${window.location.pathname}?${rolename}${devFeatureFlag}`;
-    window.history.pushState({}, '', newURL);
     groupListItem.classList.add('active-group');
     memberAddRoleBody.roleid = groupListItem.id;
     if (IsUserVerified) {
@@ -175,22 +184,39 @@ function updateButtonState() {
     : (buttonAddRole.removeEventListener('click', removeRoleHandler),
       buttonAddRole.addEventListener('click', addrole));
 }
-// const paragraphElement = null, paragraphContent = '';
-const searchInput = document.getElementById('search-groups');
 
 function debounce(func, delay) {
   let timeoutId;
   return function (...args) {
-    timeoutId = setTimeout(() => {
+    if (timeoutId) {
       clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
       func.apply(this, args);
     }, delay);
   };
 }
 
-searchInput.addEventListener('keyup', () => {
-  loader.classList.remove('hidden');
+function showToaster(message) {
+  const toaster = document.getElementById('toaster');
+  toaster.innerText = message;
+  toaster.classList.add('show');
+  toaster.classList.remove('hidden');
+
+  setTimeout(() => {
+    toaster.classList.remove('show');
+    toaster.classList.add('hidden');
+  }, 3000);
+}
+
+searchInput.addEventListener(
+  'input',
   debounce(() => {
+    loader.classList.remove('hidden');
+    searchInput.disabled = true; //Disable user input when loader is active
+    const devFeatureFlag = isDev ? '&dev=true' : '';
+    const newURL = `${window.location.pathname}?${searchInput.value}${devFeatureFlag}`;
+    window.history.pushState({}, '', newURL);
     const searchValue = searchInput.value.toUpperCase();
     const groupRoles = document.querySelectorAll('.group-role');
     let foundResults = false;
@@ -208,8 +234,10 @@ searchInput.addEventListener('keyup', () => {
     });
     const noResultsMessage = document.getElementById('no-results-message');
     noResultsMessage.style.display = foundResults ? 'none' : 'block';
-  }, 1000)();
-});
+    loader.classList.add('hidden');
+    searchInput.disabled = false;
+  }, 500), //Reduced debounce for improved user experience
+);
 
 /**
  * TO ASSIGN YOURSELF A ROLE
@@ -230,16 +258,22 @@ async function addrole() {
       if (currentCount !== null && currentCount !== undefined) {
         groupNameElement.setAttribute('data-member-count', +currentCount + 1);
       }
-      alert(res.message);
       if (isDev) {
         // After adding the role, re-fetch the user group data to update it
         UserGroupData = await getUserGroupRoles();
 
         // Update the button state with the refreshed data
         updateButtonState();
+        showToaster(res.message);
+      } else {
+        alert(res.message);
       }
     } catch (err) {
-      alert(err.message);
+      if (isDev) {
+        showToaster(err.message);
+      } else {
+        alert(err.message);
+      }
     } finally {
       loader.classList.add('hidden');
     }
@@ -249,10 +283,26 @@ async function addrole() {
 /**
  * TO REMOVE YOURSELF OF A ROLE
  */
-async function removeRoleHandler() {
-  console.log('Remove function to be added after this pr');
 
-  // TODO: REMOVE ME BUTTON FUNCTIONALITY TO BE ADDED
+async function removeRoleHandler() {
+  if (memberAddRoleBody?.userid && memberAddRoleBody?.roleid !== '') {
+    loader.classList.remove('hidden');
+
+    try {
+      // Remove the role from the member
+      const res = await removeRoleFromMember(
+        memberAddRoleBody.roleid,
+        memberAddRoleBody.userid,
+      );
+      showToaster(res.message);
+      UserGroupData = await getUserGroupRoles();
+      updateButtonState();
+    } catch (err) {
+      showToaster(err.message);
+    } finally {
+      loader.classList.add('hidden');
+    }
+  }
 }
 
 /**
