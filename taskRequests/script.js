@@ -113,18 +113,9 @@ backDrop.addEventListener('click', () => {
   backDrop.style.display = 'none';
 });
 
-filterModal.addEventListener('click', (event) => {
-  event.stopPropagation();
-});
-
-sortModal.addEventListener('click', (event) => {
-  event.stopPropagation();
-});
-
 filterButton.addEventListener('click', (event) => {
   filterModal.classList.toggle('hidden');
   backDrop.style.display = 'flex';
-  event.stopPropagation();
 });
 
 function addCheckbox(labelText, value, groupName) {
