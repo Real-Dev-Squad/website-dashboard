@@ -16,6 +16,7 @@ const ASSIGNEE_COUNT = 'ASSIGNEE_COUNT';
 const ASSIGNEE_DESC = 'ASSIGNEE_COUNT-desc';
 const CREATED_TIME = 'CREATED_TIME';
 const CREATED_TIME_DESC = 'CREATED_TIME-desc';
+const BACKDROP = '.backdrop';
 
 const MessageStatus = {
   SUCCESS: 'SUCCESS',

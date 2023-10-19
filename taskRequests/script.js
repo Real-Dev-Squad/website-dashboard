@@ -9,6 +9,7 @@ const sortModal = document.getElementsByClassName(SORT_MODAL)[0];
 const containerFilter = document.querySelector(FILTER_CONTAINER);
 const oldContainerFilter = document.querySelector(OLD_FILTER);
 const sortButton = document.querySelector(SORT_BUTTON);
+const backDrop = document.querySelector(BACKDROP);
 const params = new URLSearchParams(window.location.search);
 const isDev = params.get(DEV_FEATURE_FLAG) === 'true';
 const fetchedTaskRequests = [];
@@ -102,13 +103,15 @@ if (isDev) {
 sortButton.addEventListener('click', async (event) => {
   event.stopPropagation();
   sortModal.classList.toggle('hidden');
+  backDrop.style.display = 'flex';
   sortModalButtons();
 });
 
-window.onclick = function () {
+backDrop.addEventListener('click', () => {
   sortModal.classList.add('hidden');
   filterModal.classList.add('hidden');
-};
+  backDrop.style.display = 'none';
+});
 
 filterModal.addEventListener('click', (event) => {
   event.stopPropagation();
@@ -119,8 +122,9 @@ sortModal.addEventListener('click', (event) => {
 });
 
 filterButton.addEventListener('click', (event) => {
-  event.stopPropagation();
   filterModal.classList.toggle('hidden');
+  backDrop.style.display = 'flex';
+  event.stopPropagation();
 });
 
 function addCheckbox(labelText, value, groupName) {
@@ -165,6 +169,7 @@ function sortModalButtons() {
   let selectedButton = null;
   function toggleSortModal() {
     sortModal.classList.toggle('hidden');
+    backDrop.style.display = 'none';
   }
 
   function selectButton(button) {
@@ -229,14 +234,9 @@ function populateStatus() {
     { name: 'Creation', id: 'PENDING' },
   ];
 
-  for (let i = 0; i < statusList.length; i++) {
-    const { name, id } = statusList[i];
-    addCheckbox(name, id, 'status-filter');
-  }
-  for (let i = 0; i < requestList.length; i++) {
-    const { name, id } = requestList[i];
-    addCheckbox(name, id, 'status-request');
-  }
+  statusList.map(({ name, id }) => addCheckbox(name, id, 'status-filter'));
+
+  requestList.map(({ name, id }) => addCheckbox(name, id, 'status-request'));
 
   const sortByList = [
     {
@@ -253,11 +253,11 @@ function populateStatus() {
     },
   ];
 
-  for (let i = 0; i < sortByList.length; i++) {
-    const { name, id, iconPathAsc, iconPathDesc } = sortByList[i];
-    addSortByIcon(name, id, 'sort_by-filter', iconPathAsc, iconPathDesc);
-  }
+  sortByList.map(({ name, id, iconPathAsc, iconPathDesc }) =>
+    addSortByIcon(name, id, 'sort_by-filter', iconPathAsc, iconPathDesc),
+  );
 }
+
 populateStatus();
 
 function createTaskRequestCard({ id, task, requestors, status }) {
