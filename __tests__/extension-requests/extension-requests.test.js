@@ -530,7 +530,7 @@ describe('Tests the Extension Requests Screen', () => {
 
   it('Checks that the card is removed from display when api call is successful', async () => {
     const extensionCards = await page.$$('.extension-card');
-    await page.setViewport({ width: 1200, height:600 });
+    await page.setViewport({ width: 1200, height: 600 });
 
     for (const card of extensionCards) {
       const titleText = await card.$eval(
