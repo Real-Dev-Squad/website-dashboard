@@ -25,7 +25,10 @@ describe('Task Requests', () => {
     await page.setRequestInterception(true);
 
     page.on('request', (request) => {
-      if (request.url() === `${API_BASE_URL}/taskRequests`) {
+      if (
+        request.url() === `${API_BASE_URL}/taskRequests` ||
+        request.url() === `${API_BASE_URL}/taskRequests?dev=true`
+      ) {
         request.respond({
           status: 200,
           contentType: 'application/json',

@@ -17,7 +17,6 @@ const fetchedTaskRequests = [];
 const loader = document.querySelector('.container__body__loader');
 const startLoading = () => loader.classList.remove('hidden');
 const stopLoading = () => loader.classList.add('hidden');
-const params = new URLSearchParams(window.location.search);
 async function getTaskRequests() {
   const endpoint = `/taskRequests${
     params.get('dev') === 'true' ? '?dev=true' : ''
@@ -95,7 +94,6 @@ function openTaskDetails(id) {
   url.searchParams.append('id', id);
   window.location.href = url;
 }
-
 
 if (isDev) {
   containerFilter.style.display = 'flex';
