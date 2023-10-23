@@ -18,6 +18,9 @@ const syncIdle7dUsersUpdate = document.getElementById(
   SYNC_IDLE_7D_Plus_USERS_UPDATE,
 );
 const repoSyncStatusUpdate = document.getElementById(SYNC_REPO_STATUS_UPDATE);
+const params = new URLSearchParams(window.location.search);
+const taskRequestsLink =
+  params.get('dev') === 'true' && document.getElementById(TASK_REQUESTS_LINK);
 
 const syncNicknamesStatusUpdate = document.getElementById(
   SYNC_NICKNAMES_STATUS_UPDATE,
@@ -46,9 +49,9 @@ export async function showSuperUserOptions(...privateBtns) {
   try {
     const isSuperUser = await checkUserIsSuperUser();
     if (isSuperUser) {
-      privateBtns.forEach((btn) =>
-        btn.classList.remove('element-display-remove'),
-      );
+      privateBtns.forEach((btn) => {
+        if (btn) btn.classList.remove('element-display-remove');
+      });
       buttonSection.classList.remove('element-display-remove');
       syncUsersStatusUpdate.textContent = `Last Sync: ${
         localStorage.getItem('lastSyncUsersStatus') ||
@@ -92,13 +95,13 @@ showSuperUserOptions(
   userManagementLink,
   extensionRequestsLink,
   discordUserLink,
+  taskRequestsLink,
 );
 
 const createGoalButton = document.getElementById('create-goal');
 const repoSyncDiv = document.getElementById('sync-repo-div');
 const repoSyncButton = document.getElementById('repo-sync-button');
 const toast = document.getElementById('toast');
-const params = new URLSearchParams(window.location.search);
 if (params.get('dev') === 'true') {
   createGoalButton.classList.remove('element-display-remove');
   repoSyncDiv.classList.remove('element-display-remove');

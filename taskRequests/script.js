@@ -17,11 +17,13 @@ const fetchedTaskRequests = [];
 const loader = document.querySelector('.container__body__loader');
 const startLoading = () => loader.classList.remove('hidden');
 const stopLoading = () => loader.classList.add('hidden');
-
 async function getTaskRequests() {
+  const endpoint = `/taskRequests${
+    params.get('dev') === 'true' ? '?dev=true' : ''
+  }`;
   startLoading();
   try {
-    const res = await fetch(`${API_BASE_URL}/taskRequests`, {
+    const res = await fetch(API_BASE_URL + endpoint, {
       credentials: 'include',
     });
 
@@ -75,7 +77,7 @@ function getAvatar(user) {
   }
   return createCustomElement({
     tagName: 'span',
-    textContent: user.user.first_name[0],
+    textContent: user?.user?.first_name[0] || '?',
   });
 }
 function getRemainingCount(requestors) {
@@ -251,7 +253,7 @@ function populateStatus() {
 
 populateStatus();
 
-function createTaskRequestCard({ id, task, requestors, status }) {
+function createTaskRequestCard({ id, task, requestors, status, taskTitle }) {
   const card = createCustomElement({
     tagName: 'div',
     class: 'taskRequest__card',
@@ -264,7 +266,7 @@ function createTaskRequestCard({ id, task, requestors, status }) {
           createCustomElement({
             tagName: 'h3',
             class: 'taskRequest__card__header__title',
-            textContent: task.title,
+            textContent: task?.title || taskTitle,
           }),
           createCustomElement({
             tagName: 'div',
@@ -282,7 +284,7 @@ function createTaskRequestCard({ id, task, requestors, status }) {
         child: [
           createCustomElement({
             tagName: 'p',
-            textContent: task.purpose,
+            textContent: task?.purpose,
           }),
         ],
       }),
@@ -303,7 +305,7 @@ function createTaskRequestCard({ id, task, requestors, status }) {
                   return createCustomElement({
                     tagName: 'div',
                     class: 'taskRequest__card__footer__requestor__avatar',
-                    title: requestor.user.first_name,
+                    title: requestor?.user?.first_name,
                     child: [getAvatar(requestor)],
                   });
                 }

@@ -1,5 +1,11 @@
 :root {
   font-family: 'Inter', sans-serif;
+  --color-success: rgba(20, 102, 75, 0.6);
+  --color-gray-light: #eee;
+  --color-gray: #666;
+  --color-green: green;
+  --color-warn: rgba(199, 129, 18, 0.4);
+  --color-warn-background: #fcf1e0;
 }
 
 body {
@@ -85,7 +91,14 @@ body {
   background: #fcf1e0;
   color: #c78112;
 }
-
+.taskRequest__status__chip--pending {
+  background: var(--color-warn-background);
+  color: var(--color-warn);
+}
+.taskRequest__status__chip--tag {
+  background: var(--color-gray-light);
+  color: var(--color-gray);
+}
 .task__skeleton__title {
   height: 1.25rem;
   max-width: 45ch;
