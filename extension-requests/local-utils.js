@@ -8,7 +8,21 @@ const Order = {
   DESCENDING: 'desc',
   ASCENDING: 'asc',
 };
-
+async function getSelfUser() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/users/self`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+    const self_user = await res.json();
+    if (res.status === 200) {
+      return self_user;
+    }
+  } catch (err) {}
+}
 async function getExtensionRequests(query = {}, nextLink) {
   let finalUrl =
     API_BASE_URL + (nextLink || generateExtensionRequestParams(query));
@@ -48,8 +62,10 @@ const generateExtensionRequestParams = (nextPageParams) => {
   const uri = `/extension-requests?${urlSearchParams.toString()}`;
   return uri;
 };
-async function updateExtensionRequest({ id, body }) {
-  const url = `${API_BASE_URL}/extension-requests/${id}`;
+async function updateExtensionRequest({ id, body, isDev = false }) {
+  const url = `${API_BASE_URL}/extension-requests/${id}${
+    isDev ? `?dev=true` : ''
+  }`;
   const res = await fetch(url, {
     credentials: 'include',
     method: 'PATCH',
@@ -63,8 +79,10 @@ async function updateExtensionRequest({ id, body }) {
   }
 }
 
-async function updateExtensionRequestStatus({ id, body }) {
-  const url = `${API_BASE_URL}/extension-requests/${id}/status`;
+async function updateExtensionRequestStatus({ id, body, isDev = false }) {
+  const url = `${API_BASE_URL}/extension-requests/${id}/status${
+    isDev ? `?dev=true` : ''
+  }`;
   const res = await fetch(url, {
     credentials: 'include',
     method: 'PATCH',
@@ -259,4 +277,23 @@ function addErrorElement(container) {
     innerText: ERROR_MESSAGE_RELOAD,
   });
   container.appendChild(errorHeading);
+}
+
+async function getExtensionRequestLogs({ extensionRequestId, isDev = false }) {
+  const url = `${API_BASE_URL}/logs/extensionRequests/?meta.extensionRequestId=${extensionRequestId}${
+    isDev ? `&dev=true` : ''
+  }`;
+  const res = await fetch(url, {
+    credentials: 'include',
+    method: 'GET',
+    headers: {
+      'Content-type': 'application/json',
+    },
+  });
+
+  if (res.status < 200 || res.status > 300) {
+    throw new Error('Update failed.');
+  }
+
+  return await res.json();
 }

@@ -283,7 +283,7 @@
 .panel {
   background-color: var(--white-gray);
   max-height: 0;
-  overflow: hidden;
+  overflow-y: scroll;
   transition: max-height 0.5s ease-out;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
@@ -339,6 +339,18 @@
 
 .reason-text {
   white-space: normal;
+}
+.log-div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0px;
+  margin: 10px !important;
+  padding: 0px !important;
+}
+.log-img {
+  width: 20px;
+  height: 20px;
 }
 
 .virtual {

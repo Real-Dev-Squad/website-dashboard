@@ -150,14 +150,15 @@ describe('Home Page', () => {
         interceptedRequest.continue();
       }
     });
-    await page.goto('http://localhost:8000/');
-    await page.waitForNetworkIdle();
   });
 
   afterAll(async () => {
     await browser.close();
   });
-
+  beforeEach(async () => {
+    await page.goto('http://localhost:8000/');
+    await page.waitForNetworkIdle();
+  });
   it('should display the Sync Users Status button', async () => {
     const syncUsersStatusButton = await page.$('#sync-users-status');
     expect(syncUsersStatusButton).toBeTruthy();
@@ -184,7 +185,22 @@ describe('Home Page', () => {
     );
     expect(syncExternalAccountsUpdate).toBeTruthy();
   });
+  it('should display the task requests button', async () => {
+    await page.goto('http://localhost:8000/?dev=true');
+    await page.waitForNetworkIdle();
+    const taskRequestsButton = await page.$('#task-requests-link');
+    expect(taskRequestsButton).toBeTruthy();
+  });
+  it('should go to the task requests page', async () => {
+    await page.goto('http://localhost:8000/?dev=true');
+    await page.waitForNetworkIdle();
 
+    const taskRequestsButton = await page.$('#task-requests-link');
+    await taskRequestsButton.click();
+    await page.waitForNetworkIdle();
+    const newUrl = page.url();
+    expect(newUrl).toContain('/taskRequests');
+  });
   it('should call the right api endpoint when Sync External Accounts button is clicked', async () => {
     let isRightUrlCalled = false;
     page.on('request', (interceptedRequest) => {
@@ -476,5 +492,28 @@ describe('Home Page', () => {
       `Last Sync: Synced Data Not Available`,
     );
     expect(latestSyncStatusText).not.toBe(`Last Sync: In progress`);
+  });
+
+  it('should close hamburger menu on clicking anywhere on the screen except the menu', async () => {
+    await page.setViewport({ width: 970, height: 1800 });
+    await page.goto('http://localhost:8000/index.html');
+    await page.evaluate(() => {
+      Object.defineProperty(window, 'innerWidth', { value: 970 });
+    });
+
+    const hamIcon = await page.$('.hamburger');
+    expect(hamIcon).toBeTruthy();
+    await hamIcon.click();
+
+    await page.waitForSelector('.links');
+
+    const menu = await page.$('.active');
+    expect(menu).toBeTruthy();
+
+    await page.mouse.click(10, 10);
+
+    await page.waitForSelector('.nav-links:not(.active)');
+    const menuOff = await page.$('.nav-links:not(.active)');
+    expect(menuOff).toBeTruthy();
   });
 });

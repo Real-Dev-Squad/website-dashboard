@@ -27,7 +27,7 @@ function renderTaskRequestDetails(taskRequest) {
         createCustomElement({
           tagName: 'span',
           class: 'taskRequest__title__subtitle',
-          textContent: `#${taskRequest.id}`,
+          textContent: `#${taskRequest?.id}`,
         }),
       ],
     }),
@@ -38,10 +38,25 @@ function renderTaskRequestDetails(taskRequest) {
       child: [
         createCustomElement({
           tagName: 'span',
-          textContent: taskRequest.status,
+          textContent: taskRequest?.status,
           class: [
             'taskRequest__status__chip',
-            `taskRequest__status__chip--${taskRequest.status.toLowerCase()}`,
+            `taskRequest__status__chip--${taskRequest?.status?.toLowerCase()}`,
+          ],
+        }),
+      ],
+    }),
+    createCustomElement({
+      tagName: 'p',
+      textContent: 'Request Type: ',
+      class: 'taskRequest__status',
+      child: [
+        createCustomElement({
+          tagName: 'span',
+          textContent: taskRequest?.requestType || 'ASSIGNMENT',
+          class: [
+            'taskRequest__status__chip',
+            `taskRequest__status__chip--tag`,
           ],
         }),
       ],
@@ -49,7 +64,8 @@ function renderTaskRequestDetails(taskRequest) {
   );
 }
 
-async function renderTaskDetails(taskId) {
+async function renderTaskDetails(taskRequest) {
+  const { taskId, taskTitle } = taskRequest;
   try {
     const res = await fetch(`${API_BASE_URL}/tasks/${taskId}/details`);
     taskSkeleton.classList.add('hidden');
@@ -61,7 +77,7 @@ async function renderTaskDetails(taskId) {
       createCustomElement({
         tagName: 'h2',
         class: 'task__title',
-        textContent: taskData?.title || 'N/A',
+        textContent: taskData?.title || taskTitle || 'N/A',
       }),
       createCustomElement({
         tagName: 'p',
@@ -73,7 +89,7 @@ async function renderTaskDetails(taskId) {
                 tagName: 'span',
                 class: [
                   'task__type__chip',
-                  `task__type__chip--${taskData.type}`,
+                  `task__type__chip--${taskData?.type}`,
                 ],
                 textContent: taskData?.type,
               })
@@ -94,7 +110,7 @@ async function renderTaskDetails(taskId) {
         child: [
           createCustomElement({
             tagName: 'a',
-            href: `https://members.realdevsquad.com/${taskData.createdBy}`,
+            href: `https://members.realdevsquad.com/${taskData?.createdBy}`,
             textContent: taskData?.createdBy || 'N/A',
           }),
         ],
@@ -111,18 +127,18 @@ async function renderTaskDetails(taskId) {
 }
 
 function getAvatar(user) {
-  if (user.user?.picture?.url) {
+  if (user?.user?.picture?.url) {
     return createCustomElement({
       tagName: 'img',
-      src: user.user.picture.url,
-      alt: user.user.first_name,
-      title: user.user.first_name,
+      src: user?.user?.picture?.url,
+      alt: user?.user?.first_name,
+      title: user?.user?.first_name,
     });
   }
   return createCustomElement({
     tagName: 'span',
-    title: user.user.first_name,
-    textContent: user.user.first_name[0],
+    title: user?.user?.first_name,
+    textContent: user?.user?.first_name[0],
   });
 }
 
@@ -143,7 +159,7 @@ async function approveTaskRequest(userId) {
     if (res.ok) {
       taskRequest = await fetchTaskRequest();
       requestorsContainer.innerHTML = '';
-      renderRequestors(taskRequest.requestors);
+      renderRequestors(taskRequest?.requestors);
     }
   } catch (e) {
     console.error(e);
@@ -151,8 +167,8 @@ async function approveTaskRequest(userId) {
 }
 
 function getActionButton(requestor) {
-  if (taskRequest.status === taskRequestStatus.APPROVED) {
-    if (taskRequest?.approvedTo === requestor.user.id) {
+  if (taskRequest?.status === taskRequestStatus.APPROVED) {
+    if (taskRequest?.approvedTo === requestor?.user?.id) {
       return createCustomElement({
         tagName: 'p',
         textContent: 'Approved',
@@ -167,7 +183,7 @@ function getActionButton(requestor) {
     textContent: 'Approve',
     class: 'requestors__conatainer__list__button',
     eventListeners: [
-      { event: 'click', func: () => approveTaskRequest(requestor.user.id) },
+      { event: 'click', func: () => approveTaskRequest(requestor.user?.id) },
     ],
   });
 }
@@ -200,7 +216,7 @@ async function renderRequestors(requestors) {
               }),
               createCustomElement({
                 tagName: 'p',
-                textContent: requestor.user.first_name,
+                textContent: requestor.user?.first_name,
               }),
             ],
           }),
@@ -228,8 +244,8 @@ const renderTaskRequest = async () => {
     taskRequestSkeleton.classList.add('hidden');
 
     renderTaskRequestDetails(taskRequest);
-    renderTaskDetails(taskRequest.taskId);
-    renderRequestors(taskRequest.requestors);
+    renderTaskDetails(taskRequest);
+    renderRequestors(taskRequest?.requestors);
   } catch (e) {
     console.error(e);
   }
