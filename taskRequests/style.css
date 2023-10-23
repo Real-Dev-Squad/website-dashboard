@@ -308,6 +308,9 @@ body {
 .taskRequest__card__header__status--waiting {
   background-color: var(--color-warn);
 }
+.taskRequest__card__header__status--pending {
+  background-color: var(--color-warn);
+}
 .taskRequest__card__body p {
   font-size: 0.875rem;
   line-height: 1.25rem;
