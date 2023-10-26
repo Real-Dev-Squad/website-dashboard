@@ -797,7 +797,7 @@ async function createExtensionCard(data) {
     logContainer.appendChild(logDetailsLines);
 
     // Event listener to append logs once clicked
-    downArrowIcon.addEventListener('click', function () {
+    accordionContainer.addEventListener('click', function () {
       renderLogs({
         extensionRequestId: data.id,
         assigneeName: assigneeNameElement.innerText,
