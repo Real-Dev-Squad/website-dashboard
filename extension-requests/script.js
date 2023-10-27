@@ -673,10 +673,22 @@ async function createExtensionCard(data) {
       editButton.classList.toggle('hidden');
       updateWrapper.classList.toggle('hidden');
     });
+    const payloadForLog = {
+      body: {},
+      meta: {
+        extensionRequestId: data.id,
+        name: `${currentUserDetails.first_name} ${currentUserDetails?.last_name}`,
+        userId: currentUserDetails.id,
+      },
+      timestamp: {
+        _seconds: Date.now() / 1000,
+      },
+    };
     approveButton.addEventListener('click', (event) => {
       handleFormPropagation(event);
       const removeSpinner = addSpinner(rootElement);
       rootElement.classList.add('disabled');
+      payloadForLog.body.status = Status.APPROVED;
       updateExtensionRequestStatus({
         id: data.id,
         isDev,
@@ -684,6 +696,7 @@ async function createExtensionCard(data) {
       })
         .then(async () => {
           removeSpinner();
+          appendLogs(payloadForLog, data.id);
           await removeCard(rootElement);
         })
         .catch(() => {
@@ -704,6 +717,7 @@ async function createExtensionCard(data) {
       handleFormPropagation(event);
       const removeSpinner = addSpinner(rootElement);
       rootElement.classList.add('disabled');
+      payloadForLog.body.status = Status.DENIED;
       updateExtensionRequestStatus({
         id: data.id,
         isDev,
@@ -712,6 +726,7 @@ async function createExtensionCard(data) {
         .then(async () => {
           removeSpinner();
           await removeCard(rootElement);
+          appendLogs(payloadForLog, data.id);
         })
         .catch(() => {
           removeSpinner();
@@ -805,7 +820,6 @@ async function createExtensionCard(data) {
       });
     });
   }
-
   const cardFooter = createElement({ type: 'div' });
   cardFooter.appendChild(cardAssigneeButtonContainer);
   cardFooter.appendChild(accordionContainer);
@@ -819,6 +833,30 @@ async function createExtensionCard(data) {
     rootElement.classList.add('disabled');
     const revertDataChange = updateCardData(formData);
     updateAccordionHeight(panel);
+    const payloadForLog = {
+      body: {
+        ...(formData?.newEndsOn !== data.newEndsOn && {
+          newEndsOn: formData.newEndsOn,
+          oldEndsOn: data.newEndsOn,
+        }),
+        ...(formData?.reason !== data.reason && {
+          newReason: formData.reason,
+          oldReason: data.reason,
+        }),
+        ...(formData?.title !== data.title && {
+          newTitle: formData.title,
+          oldTitle: data.title,
+        }),
+      },
+      meta: {
+        extensionRequestId: data.id,
+        name: `${currentUserDetails.first_name} ${currentUserDetails?.last_name}`,
+        userId: currentUserDetails.id,
+      },
+      timestamp: {
+        _seconds: Date.now() / 1000,
+      },
+    };
     updateExtensionRequest({
       id: data.id,
       isDev,
@@ -826,6 +864,7 @@ async function createExtensionCard(data) {
     })
       .then(() => {
         handleSuccess(rootElement);
+        appendLogs(payloadForLog, data.id);
       })
       .catch(() => {
         revertDataChange();
@@ -867,7 +906,8 @@ async function createExtensionCard(data) {
     const logContainer = document.getElementById(
       `log-container-${extensionRequestId}`,
     );
-    if (logContainer.querySelector('.log-div')) {
+
+    if (logContainer.querySelector('.log-div')?.innerHTML) {
       return;
     }
 
@@ -985,4 +1025,18 @@ function generateSentence(response) {
     });
 
   return arraySentence.reverse().join('');
+}
+function appendLogs(payload, extensionRequestId) {
+  const logContainer = document.getElementById(
+    `log-container-${extensionRequestId}`,
+  );
+
+  // If logs has been previously rendered then only append logs
+  if (
+    payload?.body?.status &&
+    logContainer.querySelector('.log-div')?.innerHTML
+  ) {
+    const innerHTML = generateSentence([payload]);
+    if (innerHTML) logContainer.innerHTML += innerHTML;
+  }
 }
