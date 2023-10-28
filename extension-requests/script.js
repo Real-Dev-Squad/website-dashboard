@@ -669,6 +669,12 @@ async function createExtensionCard(data) {
       updateWrapper.classList.toggle('hidden');
     });
     cancelButton.addEventListener('click', (event) => {
+      // Resetting input fields
+      titleInput.value = data.title;
+      reasonInput.value = data.reason;
+      extensionInput.value = dateTimeString(
+        secondsToMilliSeconds(data.newEndsOn),
+      );
       handleFormPropagation(event);
       toggleInputs();
       editButton.classList.toggle('hidden');
@@ -827,6 +833,9 @@ async function createExtensionCard(data) {
       body: formData,
     })
       .then(() => {
+        data.reason = formData.reason;
+        data.tile = formData.title;
+        data.newEndsOn = data.newEndsOn;
         handleSuccess(rootElement);
       })
       .catch(() => {
