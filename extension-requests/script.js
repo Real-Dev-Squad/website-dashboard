@@ -106,6 +106,7 @@ const initializeAccordions = () => {
 };
 const updateAccordionHeight = (element) => {
   element.style.maxHeight = 352 + 'px';
+  if (element.offsetHeight <= 352) element.style.overflow = 'hidden';
 };
 const closeAllAccordions = () => {
   let accordionsList = document.querySelectorAll('.accordion.active');
@@ -802,6 +803,7 @@ async function createExtensionCard(data) {
         extensionRequestId: data.id,
         assigneeName: assigneeNameElement.innerText,
         createdAt: data.timestamp,
+        panel,
       });
     });
   }
@@ -863,11 +865,20 @@ async function createExtensionCard(data) {
     extensionInput.classList.toggle('hidden');
   }
 
-  async function renderLogs({ extensionRequestId, assigneeName, createdAt }) {
+  async function renderLogs({
+    extensionRequestId,
+    assigneeName,
+    createdAt,
+    panel,
+  }) {
     const logContainer = document.getElementById(
       `log-container-${extensionRequestId}`,
     );
-    if (logContainer.querySelector('.log-div')) {
+    const currentLogs = logContainer.querySelectorAll('.log-div');
+    if (currentLogs.length > 1) {
+      panel.style.overflowY = 'scroll';
+    }
+    if (currentLogs?.length > 0) {
       return;
     }
 
@@ -894,7 +905,10 @@ async function createExtensionCard(data) {
       isDev: true,
     });
     const innerHTML = generateSentence(extensionLogs.logs);
-    if (innerHTML) logContainer.innerHTML += innerHTML;
+    if (innerHTML) {
+      logContainer.innerHTML += innerHTML;
+      panel.style.overflowY = 'scroll';
+    }
   }
 
   Promise.all([taskDataPromise, userDataPromise]).then((response) => {

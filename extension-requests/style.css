@@ -342,6 +342,8 @@
 
 .reason-text {
   white-space: normal;
+  word-wrap: break-word;
+  max-width: 98%;
 }
 .log-div {
   display: flex;
@@ -830,4 +832,19 @@ body {
   .filter-modal {
     top: 12.5rem;
   }
+}
+.panel::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 7px;
+  opacity: 0;
+}
+
+.panel::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+.panel:hover::-webkit-scrollbar {
+  opacity: 1;
 }
