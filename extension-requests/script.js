@@ -982,7 +982,9 @@ async function createExtensionCard(data) {
     assigneeNameElement.innerText = userFirstName;
     taskStatusValue.innerText = ` ${taskStatus}`;
     CommitedHourslabel.innerText = 'Commited Hours: ';
-    CommitedHoursContent.innerText = `${comittedHours / 4} hrs / week`;
+    CommitedHoursContent.innerText = `${
+      comittedHours ? comittedHours / 4 : 'NA'
+    } hrs / week`;
     removeSpinner();
     if (isDev) renderExtensionCreatedLog();
     rootElement.classList.remove('disabled');
