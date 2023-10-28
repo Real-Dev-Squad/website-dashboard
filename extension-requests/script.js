@@ -526,6 +526,7 @@ async function createExtensionCard(data) {
       type: 'datetime-local',
       name: 'newEndsOn',
       id: 'newEndsOn',
+      oninput: 'this.blur()',
       value: dateTimeString(secondsToMilliSeconds(data.newEndsOn)),
     },
   });
@@ -703,7 +704,9 @@ async function createExtensionCard(data) {
       })
         .then(async () => {
           removeSpinner();
-          appendLogs(payloadForLog, data.id);
+          if (isDev) {
+            appendLogs(payloadForLog, data.id);
+          }
           await removeCard(rootElement);
         })
         .catch(() => {
@@ -725,7 +728,6 @@ async function createExtensionCard(data) {
       const removeSpinner = addSpinner(rootElement);
       rootElement.classList.add('disabled');
       payloadForLog.body.status = Status.DENIED;
-      appendLogs(payloadForLog, data.id);
       updateExtensionRequestStatus({
         id: data.id,
         isDev,
@@ -734,7 +736,9 @@ async function createExtensionCard(data) {
         .then(async () => {
           removeSpinner();
           await removeCard(rootElement);
-          appendLogs(payloadForLog, data.id);
+          if (isDev) {
+            appendLogs(payloadForLog, data.id);
+          }
         })
         .catch(() => {
           removeSpinner();
@@ -892,7 +896,9 @@ async function createExtensionCard(data) {
         data.tile = formData.title;
         data.newEndsOn = data.newEndsOn;
         handleSuccess(rootElement);
-        appendLogs(payloadForLog, data.id);
+        if (isDev) {
+          appendLogs(payloadForLog, data.id);
+        }
       })
       .catch(() => {
         revertDataChange();
