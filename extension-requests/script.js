@@ -725,6 +725,7 @@ async function createExtensionCard(data) {
       const removeSpinner = addSpinner(rootElement);
       rootElement.classList.add('disabled');
       payloadForLog.body.status = Status.DENIED;
+      appendLogs(payloadForLog, data.id);
       updateExtensionRequestStatus({
         id: data.id,
         isDev,
@@ -794,6 +795,28 @@ async function createExtensionCard(data) {
   reasonContainer.appendChild(reasonInput);
   reasonContainer.appendChild(reasonParagraph);
 
+  const renderExtensionCreatedLog = () => {
+    const logContainer = document.getElementById(`log-container-${data.id}`);
+    let creationLog = document.createElement('div');
+
+    creationLog.classList.add('log-div');
+
+    let logImg = document.createElement('img');
+    logImg.classList.add('log-img');
+    logImg.src = '/images/calendar-plus.png';
+
+    let logText = document.createElement('p');
+    logText.classList.add('reason-text');
+    logText.innerText = `${
+      assigneeNameElement.innerText
+    } has created this extension request on ${fullDateString(
+      secondsToMilliSeconds(data.timestamp),
+    )}.`;
+
+    creationLog.appendChild(logImg);
+    creationLog.appendChild(logText);
+    logContainer.appendChild(creationLog);
+  };
   // Adding log feature under dev flag
   if (isDev) {
     // Div for log container
@@ -818,14 +841,8 @@ async function createExtensionCard(data) {
     });
     logContainer.appendChild(logDetailsLines);
 
-    // Event listener to append logs once clicked
     accordionContainer.addEventListener('click', function () {
-      renderLogs({
-        extensionRequestId: data.id,
-        assigneeName: assigneeNameElement.innerText,
-        createdAt: data.timestamp,
-        panel,
-      });
+      renderLogs(data.id);
     });
   }
   const cardFooter = createElement({ type: 'div' });
@@ -913,48 +930,32 @@ async function createExtensionCard(data) {
     extensionInput.classList.toggle('hidden');
   }
 
-  async function renderLogs({
-    extensionRequestId,
-    assigneeName,
-    createdAt,
-    panel,
-  }) {
+  async function renderLogs(extensionRequestId) {
     const logContainer = document.getElementById(
       `log-container-${extensionRequestId}`,
     );
-    const currentLogs = logContainer.querySelectorAll('.log-div');
-    if (currentLogs.length > 1) {
+    if (logContainer.querySelector('.server-log')?.innerHTML) {
       panel.style.overflowY = 'scroll';
-    }
-    if (currentLogs?.length > 0) {
       return;
     }
-
-    let creationLog = document.createElement('div');
-    creationLog.classList.add('log-div');
-
-    let logImg = document.createElement('img');
-    logImg.classList.add('log-img');
-    logImg.src = '/images/calendar-plus.png';
-
-    let logText = document.createElement('p');
-    logText.classList.add('reason-text');
-    logText.innerText = `${assigneeName} has created this extension request on ${fullDateString(
-      secondsToMilliSeconds(createdAt),
-    )}.`;
-
-    creationLog.appendChild(logImg);
-    creationLog.appendChild(logText);
-
-    logContainer.appendChild(creationLog);
-
     const extensionLogs = await getExtensionRequestLogs({
       extensionRequestId,
       isDev: true,
     });
-    const innerHTML = generateSentence(extensionLogs.logs);
+    const innerHTML = generateSentence(extensionLogs.logs, 'server-log');
     if (innerHTML) {
-      logContainer.innerHTML += innerHTML;
+      const isLocalLogPresent = logContainer.querySelectorAll('.local-log');
+      if (isLocalLogPresent) {
+        const tempDiv = document.createElement('div');
+        tempDiv.classList.add('invisible-div');
+        tempDiv.innerHTML = innerHTML;
+
+        // Insert all the html before the first local-log
+        const localLogElement = logContainer.querySelector('.local-log');
+        logContainer.insertBefore(tempDiv, localLogElement);
+      } else {
+        logContainer.innerHTML += innerHTML;
+      }
       panel.style.overflowY = 'scroll';
     }
   }
@@ -977,12 +978,13 @@ async function createExtensionCard(data) {
     CommitedHourslabel.innerText = 'Commited Hours: ';
     CommitedHoursContent.innerText = `${comittedHours / 4} hrs / week`;
     removeSpinner();
+    if (isDev) renderExtensionCreatedLog();
     rootElement.classList.remove('disabled');
   });
   return rootElement;
 }
 
-function generateSentence(response) {
+function generateSentence(response, parentClassName) {
   let arraySentence = [];
   if (response && Array.isArray(response))
     response.forEach((log) => {
@@ -992,7 +994,7 @@ function generateSentence(response) {
           secondsToMilliSeconds(log?.timestamp?._seconds),
         );
         arraySentence.push(`
-        <div class="log-div">
+        <div class="log-div ${parentClassName}">
         <img class="log-img" src="/images/${
           log?.body?.status === 'APPROVED' ? 'approved.png' : 'denied.png'
         }"></img>
@@ -1006,7 +1008,7 @@ function generateSentence(response) {
       }
       if (!!log?.body?.newEndsOn && !!log?.body?.oldEndsOn) {
         arraySentence.push(`
-        <div class="log-div">
+        <div class="log-div ${parentClassName}">
         <img class="log-img" src="/images/edit-icon.png"></img>
         <p class="reason-text">${
           log?.meta?.userId === currentUserDetails.id
@@ -1020,7 +1022,7 @@ function generateSentence(response) {
       }
       if (!!log?.body?.newReason && !!log?.body?.oldReason) {
         arraySentence.push(`
-        <div class="log-div"> 
+        <div class="log-div ${parentClassName}"> 
         <img class="log-img" src="/images/edit-icon.png"></img>
         <p class="reason-text">${
           log?.meta?.userId === currentUserDetails.id
@@ -1034,7 +1036,7 @@ function generateSentence(response) {
       }
       if (!!log?.body?.newTitle && !!log?.body?.oldTitle) {
         arraySentence.push(`
-        <div class="log-div"> 
+        <div class="log-div ${parentClassName}"> 
         <img class="log-img" src="/images/edit-icon.png"></img>
           <p class="reason-text">${
             log?.meta?.userId === currentUserDetails.id
@@ -1056,9 +1058,10 @@ function appendLogs(payload, extensionRequestId) {
   // If logs has been previously rendered then only append logs
   if (
     payload?.body?.status &&
-    logContainer.querySelector('.log-div')?.innerHTML
+    !logContainer.querySelector('.server-log')?.innerHTML
   ) {
-    const innerHTML = generateSentence([payload]);
-    if (innerHTML) logContainer.innerHTML += innerHTML;
+    return;
   }
+  const innerHTML = generateSentence([payload], 'local-log');
+  if (innerHTML) logContainer.innerHTML += innerHTML;
 }

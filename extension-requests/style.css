@@ -652,6 +652,10 @@ body {
   margin: 0.31rem 0.62rem;
   cursor: pointer;
 }
+.invisible-div {
+  margin: 0 !important;
+  padding: 0 !important;
+}
 
 .filters:hover {
   background-color: var(--light-gray-color);
