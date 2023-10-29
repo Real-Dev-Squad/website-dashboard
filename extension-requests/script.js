@@ -12,6 +12,7 @@ const descIcon = document.getElementById(SORT_DESC_ICON);
 const searchElement = document.getElementById(SEARCH_ELEMENT);
 const params = new URLSearchParams(window.location.search);
 const lastElementContainer = document.querySelector(LAST_ELEMENT_CONTAINER);
+const renderLogRecord = {};
 let extensionPageVersion = 0;
 let nextLink = '';
 let isDataLoading = false;
@@ -311,6 +312,7 @@ const handleFormPropagation = async (event) => {
   event.preventDefault();
 };
 async function createExtensionCard(data) {
+  renderLogRecord[data.id] = [];
   //Create card element
   const rootElement = createElement({
     type: 'div',
@@ -948,7 +950,11 @@ async function createExtensionCard(data) {
       extensionRequestId,
       isDev: true,
     });
-    const innerHTML = generateSentence(extensionLogs.logs, 'server-log');
+    const innerHTML = generateSentence(
+      extensionLogs.logs,
+      'server-log',
+      extensionRequestId,
+    );
     if (innerHTML) {
       const isLocalLogPresent = logContainer.querySelectorAll('.local-log');
       if (isLocalLogPresent) {
@@ -990,86 +996,147 @@ async function createExtensionCard(data) {
     rootElement.classList.remove('disabled');
   });
   return rootElement;
+
+  function appendLogs(payload, extensionRequestId) {
+    const logContainer = document.getElementById(
+      `log-container-${extensionRequestId}`,
+    );
+
+    // If logs has been previously rendered then only append logs
+    if (
+      payload?.body?.status &&
+      !logContainer.querySelector('.server-log')?.innerHTML
+    ) {
+      return;
+    }
+    const innerHTML = generateSentence(
+      [payload],
+      'local-log',
+      extensionRequestId,
+    );
+    if (innerHTML) {
+      panel.style.overflowY = 'scroll';
+      logContainer.innerHTML += innerHTML;
+    }
+  }
 }
 
-function generateSentence(response, parentClassName) {
+function generateSentence(response, parentClassName, id) {
   let arraySentence = [];
+  let sentence = '';
   if (response && Array.isArray(response))
     response.forEach((log) => {
       if (log?.body?.status === 'APPROVED' || log?.body?.status === 'DENIED') {
-        const updationTime = dateDiff(
-          Date.now(),
-          secondsToMilliSeconds(log?.timestamp?._seconds),
+        sentence = checkIfPreviouslyRendered(
+          id,
+          'REVIEW',
+          log,
+          parentClassName,
         );
-        arraySentence.push(`
-        <div class="log-div ${parentClassName}">
-        <img class="log-img" src="/images/${
-          log?.body?.status === 'APPROVED' ? 'approved.png' : 'denied.png'
-        }"></img>
-        <p class="reason-text">${
-          log?.meta?.userId === currentUserDetails.id
-            ? 'You'
-            : log?.meta?.name || 'Super User'
-        } ${log?.body?.status} this request ${updationTime} ago.</p>
-        </div>
-        `);
+        sentence && arraySentence.push(sentence);
       }
       if (!!log?.body?.newEndsOn && !!log?.body?.oldEndsOn) {
-        arraySentence.push(`
-        <div class="log-div ${parentClassName}">
-        <img class="log-img" src="/images/edit-icon.png"></img>
-        <p class="reason-text">${
-          log?.meta?.userId === currentUserDetails.id
-            ? 'You'
-            : log?.meta?.name || 'Super User'
-        } changed the ETA from ${fullDateString(
-          secondsToMilliSeconds(log.body.oldEndsOn),
-        )} to ${fullDateString(secondsToMilliSeconds(log.body.newEndsOn))}.</p>
-        </div>
-        `);
+        sentence = checkIfPreviouslyRendered(id, 'ETA', log, parentClassName);
+        sentence && arraySentence.push(sentence);
       }
       if (!!log?.body?.newReason && !!log?.body?.oldReason) {
-        arraySentence.push(`
-        <div class="log-div ${parentClassName}"> 
-        <img class="log-img" src="/images/edit-icon.png"></img>
-        <p class="reason-text">${
-          log?.meta?.userId === currentUserDetails.id
-            ? 'You'
-            : log?.meta?.name || 'Super User'
-        } changed the reason from ${log.body.oldReason} to ${
-          log.body.newReason
-        }.</p>
-        </div>
-        `);
+        sentence = checkIfPreviouslyRendered(
+          id,
+          'REASON',
+          log,
+          parentClassName,
+        );
+        sentence && arraySentence.push(sentence);
       }
       if (!!log?.body?.newTitle && !!log?.body?.oldTitle) {
-        arraySentence.push(`
-        <div class="log-div ${parentClassName}"> 
-        <img class="log-img" src="/images/edit-icon.png"></img>
-          <p class="reason-text">${
-            log?.meta?.userId === currentUserDetails.id
-              ? 'You'
-              : log?.meta?.name || 'Super User'
-          } changed the title from ${log.body.oldTitle} to ${log.body.newTitle}.
-          </p>
-          </div>`);
+        sentence = checkIfPreviouslyRendered(id, 'TITLE', log, parentClassName);
+        sentence && arraySentence.push(sentence);
       }
     });
 
   return arraySentence.reverse().join('');
 }
-function appendLogs(payload, extensionRequestId) {
-  const logContainer = document.getElementById(
-    `log-container-${extensionRequestId}`,
-  );
 
-  // If logs has been previously rendered then only append logs
-  if (
-    payload?.body?.status &&
-    !logContainer.querySelector('.server-log')?.innerHTML
-  ) {
-    return;
+function checkIfPreviouslyRendered(id, logType, log, parentClassName) {
+  const alreadyRenderdLogs = renderLogRecord[id] || [];
+  let sentence = '';
+  let text = '';
+  switch (logType) {
+    case 'REVIEW': {
+      const updationTime = dateDiff(
+        Date.now(),
+        secondsToMilliSeconds(log?.timestamp?._seconds),
+      );
+      text = `${
+        log?.meta?.userId === currentUserDetails.id
+          ? 'You'
+          : log?.meta?.name || 'Super User'
+      } ${log.body.status} this request ${updationTime} ago.`;
+
+      sentence = `
+      <div class="log-div ${parentClassName}">
+        <img class="log-img" src="/images/${
+          log?.body?.status === 'APPROVED' ? 'approved.png' : 'denied.png'
+        }">
+        </img>
+        <p class="reason-text">${text}</p>
+      </div>
+      `;
+      break;
+    }
+    case 'ETA': {
+      text = `${
+        log?.meta?.userId === currentUserDetails.id
+          ? 'You'
+          : log?.meta?.name || 'Super User'
+      } changed the ETA from ${fullDateString(
+        secondsToMilliSeconds(log.body.oldEndsOn),
+      )} to ${fullDateString(secondsToMilliSeconds(log.body.newEndsOn))}.`;
+      sentence = `
+      <div class="log-div ${parentClassName}">
+        <img class="log-img" src="/images/edit-icon.png"></img>
+        <p class="reason-text">
+        ${text}
+        </p>
+      </div>
+      `;
+      break;
+    }
+    case 'REASON': {
+      text = `${
+        log?.meta?.userId === currentUserDetails.id
+          ? 'You'
+          : log?.meta?.name || 'Super User'
+      } changed the reason from ${log.body.oldReason} to ${
+        log.body.newReason
+      }.`;
+      sentence = `
+      <div class="log-div ${parentClassName}"> 
+        <img class="log-img" src="/images/edit-icon.png"></img>
+        <p class="reason-text">${text}</p>
+      </div>
+      `;
+      break;
+    }
+
+    case 'TITLE': {
+      text = `${
+        log?.meta?.userId === currentUserDetails.id
+          ? 'You'
+          : log?.meta?.name || 'Super User'
+      } changed the title from ${log.body.oldTitle} to ${log.body.newTitle}.`;
+      sentence = `
+      <div class="log-div ${parentClassName}"> 
+        <img class="log-img" src="/images/edit-icon.png"></img>
+        <p class="reason-text">
+        ${text}
+        </p>
+      </div>`;
+    }
   }
-  const innerHTML = generateSentence([payload], 'local-log');
-  if (innerHTML) logContainer.innerHTML += innerHTML;
+  if (alreadyRenderdLogs.includes(text)) {
+    return '';
+  }
+  alreadyRenderdLogs.push(text);
+  return sentence;
 }
