@@ -252,9 +252,21 @@ const addSpinner = (container) => {
   return removeSpinner;
 };
 
-const dateTimeString = (timestamp) => {
-  return new Date(timestamp).toISOString().substring(0, 16);
-};
+/**
+  Generates a formatted date-time string from milliseconds.*
+  @param {number} milliseconds - The number of milliseconds since January 1, 1970 00:00:00 UTC.
+  @returns {string} The formatted date-time string in the format 'YYYY-MM-DDTHH:mm'.
+  
+*/
+function dateTimeString(milliseconds) {
+  const date = new Date(milliseconds);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+    2,
+    '0',
+  )}-${String(date.getDate()).padStart(2, '0')}T${String(
+    date.getHours(),
+  ).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+}
 
 const fullDateString = (timestamp) => {
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];

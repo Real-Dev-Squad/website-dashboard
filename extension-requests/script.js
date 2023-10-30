@@ -12,6 +12,7 @@ const descIcon = document.getElementById(SORT_DESC_ICON);
 const searchElement = document.getElementById(SEARCH_ELEMENT);
 const params = new URLSearchParams(window.location.search);
 const lastElementContainer = document.querySelector(LAST_ELEMENT_CONTAINER);
+const renderLogRecord = {};
 let extensionPageVersion = 0;
 let nextLink = '';
 let isDataLoading = false;
@@ -106,6 +107,7 @@ const initializeAccordions = () => {
 };
 const updateAccordionHeight = (element) => {
   element.style.maxHeight = 352 + 'px';
+  if (element.offsetHeight <= 352) element.style.overflow = 'hidden';
 };
 const closeAllAccordions = () => {
   let accordionsList = document.querySelectorAll('.accordion.active');
@@ -310,6 +312,7 @@ const handleFormPropagation = async (event) => {
   event.preventDefault();
 };
 async function createExtensionCard(data) {
+  renderLogRecord[data.id] = [];
   //Create card element
   const rootElement = createElement({
     type: 'div',
@@ -525,6 +528,7 @@ async function createExtensionCard(data) {
       type: 'datetime-local',
       name: 'newEndsOn',
       id: 'newEndsOn',
+      oninput: 'this.blur()',
       value: dateTimeString(secondsToMilliSeconds(data.newEndsOn)),
     },
   });
@@ -668,15 +672,34 @@ async function createExtensionCard(data) {
       updateWrapper.classList.toggle('hidden');
     });
     cancelButton.addEventListener('click', (event) => {
+      // Resetting input fields
+      titleInput.value = data.title;
+      reasonInput.value = data.reason;
+      extensionInput.value = dateTimeString(
+        secondsToMilliSeconds(data.newEndsOn),
+      );
       handleFormPropagation(event);
       toggleInputs();
       editButton.classList.toggle('hidden');
       updateWrapper.classList.toggle('hidden');
     });
+    const payloadForLog = {
+      body: {},
+      meta: {},
+      timestamp: {
+        _seconds: Date.now() / 1000,
+      },
+    };
     approveButton.addEventListener('click', (event) => {
       handleFormPropagation(event);
       const removeSpinner = addSpinner(rootElement);
       rootElement.classList.add('disabled');
+      payloadForLog.body.status = Status.APPROVED;
+      payloadForLog.meta = {
+        extensionRequestId: data.id,
+        name: `${currentUserDetails?.first_name} ${currentUserDetails?.last_name}`,
+        userId: currentUserDetails?.id,
+      };
       updateExtensionRequestStatus({
         id: data.id,
         isDev,
@@ -684,6 +707,9 @@ async function createExtensionCard(data) {
       })
         .then(async () => {
           removeSpinner();
+          if (isDev) {
+            appendLogs(payloadForLog, data.id);
+          }
           await removeCard(rootElement);
         })
         .catch(() => {
@@ -704,6 +730,12 @@ async function createExtensionCard(data) {
       handleFormPropagation(event);
       const removeSpinner = addSpinner(rootElement);
       rootElement.classList.add('disabled');
+      payloadForLog.body.status = Status.DENIED;
+      payloadForLog.meta = {
+        extensionRequestId: data.id,
+        name: `${currentUserDetails?.first_name} ${currentUserDetails?.last_name}`,
+        userId: currentUserDetails?.id,
+      };
       updateExtensionRequestStatus({
         id: data.id,
         isDev,
@@ -712,6 +744,9 @@ async function createExtensionCard(data) {
         .then(async () => {
           removeSpinner();
           await removeCard(rootElement);
+          if (isDev) {
+            appendLogs(payloadForLog, data.id);
+          }
         })
         .catch(() => {
           removeSpinner();
@@ -772,6 +807,28 @@ async function createExtensionCard(data) {
   reasonContainer.appendChild(reasonInput);
   reasonContainer.appendChild(reasonParagraph);
 
+  const renderExtensionCreatedLog = () => {
+    const logContainer = document.getElementById(`log-container-${data.id}`);
+    let creationLog = document.createElement('div');
+
+    creationLog.classList.add('log-div');
+
+    let logImg = document.createElement('img');
+    logImg.classList.add('log-img');
+    logImg.src = '/images/calendar-plus.png';
+
+    let logText = document.createElement('p');
+    logText.classList.add('reason-text');
+    logText.innerText = `${
+      assigneeNameElement.innerText
+    } has created this extension request on ${fullDateString(
+      secondsToMilliSeconds(data.timestamp),
+    )}.`;
+
+    creationLog.appendChild(logImg);
+    creationLog.appendChild(logText);
+    logContainer.appendChild(creationLog);
+  };
   // Adding log feature under dev flag
   if (isDev) {
     // Div for log container
@@ -796,16 +853,10 @@ async function createExtensionCard(data) {
     });
     logContainer.appendChild(logDetailsLines);
 
-    // Event listener to append logs once clicked
     accordionContainer.addEventListener('click', function () {
-      renderLogs({
-        extensionRequestId: data.id,
-        assigneeName: assigneeNameElement.innerText,
-        createdAt: data.timestamp,
-      });
+      renderLogs(data.id);
     });
   }
-
   const cardFooter = createElement({ type: 'div' });
   cardFooter.appendChild(cardAssigneeButtonContainer);
   cardFooter.appendChild(accordionContainer);
@@ -819,13 +870,43 @@ async function createExtensionCard(data) {
     rootElement.classList.add('disabled');
     const revertDataChange = updateCardData(formData);
     updateAccordionHeight(panel);
+    const payloadForLog = {
+      body: {
+        ...(formData?.newEndsOn !== data.newEndsOn && {
+          newEndsOn: formData.newEndsOn,
+          oldEndsOn: data.newEndsOn,
+        }),
+        ...(formData?.reason !== data.reason && {
+          newReason: formData.reason,
+          oldReason: data.reason,
+        }),
+        ...(formData?.title !== data.title && {
+          newTitle: formData.title,
+          oldTitle: data.title,
+        }),
+      },
+      meta: {
+        extensionRequestId: data.id,
+        name: `${currentUserDetails?.first_name} ${currentUserDetails?.last_name}`,
+        userId: currentUserDetails?.id,
+      },
+      timestamp: {
+        _seconds: Date.now() / 1000,
+      },
+    };
     updateExtensionRequest({
       id: data.id,
       isDev,
       body: formData,
     })
       .then(() => {
+        data.reason = formData.reason;
+        data.tile = formData.title;
+        data.newEndsOn = data.newEndsOn;
         handleSuccess(rootElement);
+        if (isDev) {
+          appendLogs(payloadForLog, data.id);
+        }
       })
       .catch(() => {
         revertDataChange();
@@ -863,38 +944,38 @@ async function createExtensionCard(data) {
     extensionInput.classList.toggle('hidden');
   }
 
-  async function renderLogs({ extensionRequestId, assigneeName, createdAt }) {
+  async function renderLogs(extensionRequestId) {
     const logContainer = document.getElementById(
       `log-container-${extensionRequestId}`,
     );
-    if (logContainer.querySelector('.log-div')) {
+    if (logContainer.querySelector('.server-log')?.innerHTML) {
+      panel.style.overflowY = 'scroll';
       return;
     }
-
-    let creationLog = document.createElement('div');
-    creationLog.classList.add('log-div');
-
-    let logImg = document.createElement('img');
-    logImg.classList.add('log-img');
-    logImg.src = '/images/calendar-plus.png';
-
-    let logText = document.createElement('p');
-    logText.classList.add('reason-text');
-    logText.innerText = `${assigneeName} has created this extension request on ${fullDateString(
-      secondsToMilliSeconds(createdAt),
-    )}.`;
-
-    creationLog.appendChild(logImg);
-    creationLog.appendChild(logText);
-
-    logContainer.appendChild(creationLog);
-
     const extensionLogs = await getExtensionRequestLogs({
       extensionRequestId,
       isDev: true,
     });
-    const innerHTML = generateSentence(extensionLogs.logs);
-    if (innerHTML) logContainer.innerHTML += innerHTML;
+    const innerHTML = generateSentence(
+      extensionLogs.logs,
+      'server-log',
+      extensionRequestId,
+    );
+    if (innerHTML) {
+      const isLocalLogPresent = logContainer.querySelectorAll('.local-log');
+      if (isLocalLogPresent) {
+        const tempDiv = document.createElement('div');
+        tempDiv.classList.add('invisible-div');
+        tempDiv.innerHTML = innerHTML;
+
+        // Insert all the html before the first local-log
+        const localLogElement = logContainer.querySelector('.local-log');
+        logContainer.insertBefore(tempDiv, localLogElement);
+      } else {
+        logContainer.innerHTML += innerHTML;
+      }
+      panel.style.overflowY = 'scroll';
+    }
   }
 
   Promise.all([taskDataPromise, userDataPromise]).then((response) => {
@@ -913,76 +994,145 @@ async function createExtensionCard(data) {
     assigneeNameElement.innerText = userFirstName;
     taskStatusValue.innerText = ` ${taskStatus}`;
     CommitedHourslabel.innerText = 'Commited Hours: ';
-    CommitedHoursContent.innerText = `${comittedHours / 4} hrs / week`;
+    CommitedHoursContent.innerText = `${
+      comittedHours ? comittedHours / 4 : 'NA'
+    } hrs / week`;
     removeSpinner();
+    if (isDev) renderExtensionCreatedLog();
     rootElement.classList.remove('disabled');
   });
   return rootElement;
+
+  function appendLogs(payload, extensionRequestId) {
+    const logContainer = document.getElementById(
+      `log-container-${extensionRequestId}`,
+    );
+
+    // If logs has been previously rendered then only append logs
+    if (
+      payload?.body?.status &&
+      !logContainer.querySelector('.server-log')?.innerHTML
+    ) {
+      return;
+    }
+    const innerHTML = generateSentence(
+      [payload],
+      'local-log',
+      extensionRequestId,
+    );
+    if (innerHTML) {
+      panel.style.overflowY = 'scroll';
+      logContainer.innerHTML += innerHTML;
+    }
+  }
 }
 
-function generateSentence(response) {
+function generateSentence(response, parentClassName, id) {
   let arraySentence = [];
+  let sentence = '';
   if (response && Array.isArray(response))
     response.forEach((log) => {
       if (log?.body?.status === 'APPROVED' || log?.body?.status === 'DENIED') {
-        const updationTime = dateDiff(
-          Date.now(),
-          secondsToMilliSeconds(log?.timestamp?._seconds),
+        sentence = checkIfPreviouslyRendered(
+          id,
+          'REVIEW',
+          log,
+          parentClassName,
         );
-        arraySentence.push(`
-        <div class="log-div">
-        <img class="log-img" src="/images/${
-          log?.body?.status === 'APPROVED' ? 'approved.png' : 'denied.png'
-        }"></img>
-        <p class="reason-text">${
-          log?.meta?.userId === currentUserDetails.id
-            ? 'You'
-            : log?.meta?.name || 'Super User'
-        } ${log?.body?.status} this request ${updationTime} ago.</p>
-        </div>
-        `);
+        sentence && arraySentence.push(sentence);
       }
       if (!!log?.body?.newEndsOn && !!log?.body?.oldEndsOn) {
-        arraySentence.push(`
-        <div class="log-div">
-        <img class="log-img" src="/images/edit-icon.png"></img>
-        <p class="reason-text">${
-          log?.meta?.userId === currentUserDetails.id
-            ? 'You'
-            : log?.meta?.name || 'Super User'
-        } changed the ETA from ${fullDateString(
-          secondsToMilliSeconds(log.body.oldEndsOn),
-        )} to ${fullDateString(secondsToMilliSeconds(log.body.newEndsOn))}.</p>
-        </div>
-        `);
+        sentence = checkIfPreviouslyRendered(id, 'ETA', log, parentClassName);
+        sentence && arraySentence.push(sentence);
       }
       if (!!log?.body?.newReason && !!log?.body?.oldReason) {
-        arraySentence.push(`
-        <div class="log-div"> 
-        <img class="log-img" src="/images/edit-icon.png"></img>
-        <p class="reason-text">${
-          log?.meta?.userId === currentUserDetails.id
-            ? 'You'
-            : log?.meta?.name || 'Super User'
-        } changed the reason from ${log.body.oldReason} to ${
-          log.body.newReason
-        }.</p>
-        </div>
-        `);
+        sentence = checkIfPreviouslyRendered(
+          id,
+          'REASON',
+          log,
+          parentClassName,
+        );
+        sentence && arraySentence.push(sentence);
       }
       if (!!log?.body?.newTitle && !!log?.body?.oldTitle) {
-        arraySentence.push(`
-        <div class="log-div"> 
-        <img class="log-img" src="/images/edit-icon.png"></img>
-          <p class="reason-text">${
-            log?.meta?.userId === currentUserDetails.id
-              ? 'You'
-              : log?.meta?.name || 'Super User'
-          } changed the title from ${log.body.oldTitle} to ${log.body.newTitle}.
-          </p>
-          </div>`);
+        sentence = checkIfPreviouslyRendered(id, 'TITLE', log, parentClassName);
+        sentence && arraySentence.push(sentence);
       }
     });
 
   return arraySentence.reverse().join('');
+}
+
+function checkIfPreviouslyRendered(id, logType, log, parentClassName) {
+  const alreadyRenderdLogs = renderLogRecord[id] || [];
+  let sentence = '';
+  let text = '';
+  let name = 'You';
+  if (parentClassName === 'server-log') {
+    name = `${
+      log?.meta?.userId === currentUserDetails?.id
+        ? 'You'
+        : log?.meta?.name || 'Super User'
+    }`;
+  }
+  switch (logType) {
+    case 'REVIEW': {
+      const updationTime = dateDiff(
+        Date.now(),
+        secondsToMilliSeconds(log?.timestamp?._seconds),
+      );
+      text = `${name} ${log.body.status} this request ${updationTime} ago.`;
+
+      sentence = `
+      <div class="log-div ${parentClassName}">
+        <img class="log-img" src="/images/${
+          log?.body?.status === 'APPROVED' ? 'approved.png' : 'denied.png'
+        }">
+        </img>
+        <p class="reason-text">${text}</p>
+      </div>
+      `;
+      break;
+    }
+    case 'ETA': {
+      text = `${name} changed the ETA from ${fullDateString(
+        secondsToMilliSeconds(log.body.oldEndsOn),
+      )} to ${fullDateString(secondsToMilliSeconds(log.body.newEndsOn))}.`;
+      sentence = `
+      <div class="log-div ${parentClassName}">
+        <img class="log-img" src="/images/edit-icon.png"></img>
+        <p class="reason-text">
+        ${text}
+        </p>
+      </div>
+      `;
+      break;
+    }
+    case 'REASON': {
+      text = `${name} changed the reason from ${log.body.oldReason} to ${log.body.newReason}.`;
+      sentence = `
+      <div class="log-div ${parentClassName}"> 
+        <img class="log-img" src="/images/edit-icon.png"></img>
+        <p class="reason-text">${text}</p>
+      </div>
+      `;
+      break;
+    }
+
+    case 'TITLE': {
+      text = `${name} changed the title from ${log.body.oldTitle} to ${log.body.newTitle}.`;
+      sentence = `
+      <div class="log-div ${parentClassName}"> 
+        <img class="log-img" src="/images/edit-icon.png"></img>
+        <p class="reason-text">
+        ${text}
+        </p>
+      </div>`;
+    }
+  }
+  if (alreadyRenderdLogs.includes(text)) {
+    return '';
+  }
+  alreadyRenderdLogs.push(text);
+  return sentence;
 }
