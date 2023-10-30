@@ -685,11 +685,7 @@ async function createExtensionCard(data) {
     });
     const payloadForLog = {
       body: {},
-      meta: {
-        extensionRequestId: data.id,
-        name: `${currentUserDetails.first_name} ${currentUserDetails?.last_name}`,
-        userId: currentUserDetails.id,
-      },
+      meta: {},
       timestamp: {
         _seconds: Date.now() / 1000,
       },
@@ -699,6 +695,11 @@ async function createExtensionCard(data) {
       const removeSpinner = addSpinner(rootElement);
       rootElement.classList.add('disabled');
       payloadForLog.body.status = Status.APPROVED;
+      payloadForLog.meta = {
+        extensionRequestId: data.id,
+        name: `${currentUserDetails?.first_name} ${currentUserDetails?.last_name}`,
+        userId: currentUserDetails?.id,
+      };
       updateExtensionRequestStatus({
         id: data.id,
         isDev,
@@ -730,6 +731,11 @@ async function createExtensionCard(data) {
       const removeSpinner = addSpinner(rootElement);
       rootElement.classList.add('disabled');
       payloadForLog.body.status = Status.DENIED;
+      payloadForLog.meta = {
+        extensionRequestId: data.id,
+        name: `${currentUserDetails?.first_name} ${currentUserDetails?.last_name}`,
+        userId: currentUserDetails?.id,
+      };
       updateExtensionRequestStatus({
         id: data.id,
         isDev,
@@ -881,8 +887,8 @@ async function createExtensionCard(data) {
       },
       meta: {
         extensionRequestId: data.id,
-        name: `${currentUserDetails.first_name} ${currentUserDetails?.last_name}`,
-        userId: currentUserDetails.id,
+        name: `${currentUserDetails?.first_name} ${currentUserDetails?.last_name}`,
+        userId: currentUserDetails?.id,
       },
       timestamp: {
         _seconds: Date.now() / 1000,
@@ -1061,17 +1067,21 @@ function checkIfPreviouslyRendered(id, logType, log, parentClassName) {
   const alreadyRenderdLogs = renderLogRecord[id] || [];
   let sentence = '';
   let text = '';
+  let name = 'You';
+  if (parentClassName === 'server-log') {
+    name = `${
+      log?.meta?.userId === currentUserDetails?.id
+        ? 'You'
+        : log?.meta?.name || 'Super User'
+    }`;
+  }
   switch (logType) {
     case 'REVIEW': {
       const updationTime = dateDiff(
         Date.now(),
         secondsToMilliSeconds(log?.timestamp?._seconds),
       );
-      text = `${
-        log?.meta?.userId === currentUserDetails.id
-          ? 'You'
-          : log?.meta?.name || 'Super User'
-      } ${log.body.status} this request ${updationTime} ago.`;
+      text = `${name} ${log.body.status} this request ${updationTime} ago.`;
 
       sentence = `
       <div class="log-div ${parentClassName}">
@@ -1085,11 +1095,7 @@ function checkIfPreviouslyRendered(id, logType, log, parentClassName) {
       break;
     }
     case 'ETA': {
-      text = `${
-        log?.meta?.userId === currentUserDetails.id
-          ? 'You'
-          : log?.meta?.name || 'Super User'
-      } changed the ETA from ${fullDateString(
+      text = `${name} changed the ETA from ${fullDateString(
         secondsToMilliSeconds(log.body.oldEndsOn),
       )} to ${fullDateString(secondsToMilliSeconds(log.body.newEndsOn))}.`;
       sentence = `
@@ -1103,13 +1109,7 @@ function checkIfPreviouslyRendered(id, logType, log, parentClassName) {
       break;
     }
     case 'REASON': {
-      text = `${
-        log?.meta?.userId === currentUserDetails.id
-          ? 'You'
-          : log?.meta?.name || 'Super User'
-      } changed the reason from ${log.body.oldReason} to ${
-        log.body.newReason
-      }.`;
+      text = `${name} changed the reason from ${log.body.oldReason} to ${log.body.newReason}.`;
       sentence = `
       <div class="log-div ${parentClassName}"> 
         <img class="log-img" src="/images/edit-icon.png"></img>
@@ -1120,11 +1120,7 @@ function checkIfPreviouslyRendered(id, logType, log, parentClassName) {
     }
 
     case 'TITLE': {
-      text = `${
-        log?.meta?.userId === currentUserDetails.id
-          ? 'You'
-          : log?.meta?.name || 'Super User'
-      } changed the title from ${log.body.oldTitle} to ${log.body.newTitle}.`;
+      text = `${name} changed the title from ${log.body.oldTitle} to ${log.body.newTitle}.`;
       sentence = `
       <div class="log-div ${parentClassName}"> 
         <img class="log-img" src="/images/edit-icon.png"></img>

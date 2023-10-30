@@ -252,6 +252,12 @@ const addSpinner = (container) => {
   return removeSpinner;
 };
 
+/**
+  Generates a formatted date-time string from milliseconds.*
+  @param {number} milliseconds - The number of milliseconds since January 1, 1970 00:00:00 UTC.
+  @returns {string} The formatted date-time string in the format 'YYYY-MM-DDTHH:mm'.
+  
+*/
 function dateTimeString(milliseconds) {
   const date = new Date(milliseconds);
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
