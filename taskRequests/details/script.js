@@ -10,6 +10,7 @@ const requestorSkeleton = document.querySelector(
 
 const taskRequestContainer = document.getElementById('task-request-details');
 const taskContainer = document.getElementById('task-details');
+const toast = document.getElementById('toast_task_details');
 const requestorsContainer = document.getElementById('requestors-details');
 
 const taskRequestId = new URLSearchParams(window.location.search).get('id');
@@ -70,6 +71,7 @@ async function renderTaskDetails(taskRequest) {
     const res = await fetch(`${API_BASE_URL}/tasks/${taskId}/details`);
     taskSkeleton.classList.add('hidden');
     const data = await res.json();
+    let taskReqAssigneeName = await getAssigneeName();
 
     const { taskData } = data ?? {};
 
@@ -117,10 +119,11 @@ async function renderTaskDetails(taskRequest) {
       }),
       createCustomElement({
         tagName: 'p',
-        class: 'task__purpose',
-        textContent: taskData?.purpose || 'N/A',
+        class: 'task__createdBy',
+        textContent: `Purpose : ${taskData?.purpose ?? 'N/A'}`,
       }),
     );
+    renderAssignedTo(taskReqAssigneeName);
   } catch (e) {
     console.error(e);
   }
@@ -133,6 +136,7 @@ function getAvatar(user) {
       src: user?.user?.picture?.url,
       alt: user?.user?.first_name,
       title: user?.user?.first_name,
+      className: 'circular-image',
     });
   }
   return createCustomElement({
@@ -157,11 +161,21 @@ async function approveTaskRequest(userId) {
     });
 
     if (res.ok) {
+      showToast('Task Approved Successfully', 'success');
       taskRequest = await fetchTaskRequest();
       requestorsContainer.innerHTML = '';
       renderRequestors(taskRequest?.requestors);
+    } else {
+      showToast(
+        'The requested operation could not be completed. Please try again later.',
+        'failure',
+      );
     }
   } catch (e) {
+    showToast(
+      'The requested operation could not be completed. Please try again later.',
+      'failure',
+    );
     console.error(e);
   }
 }
@@ -250,5 +264,58 @@ const renderTaskRequest = async () => {
     console.error(e);
   }
 };
+
+function showToast(message, type) {
+  toast.innerHTML = `<div class="message">${message}</div>`;
+  toast.classList.remove('hidden');
+
+  if (type === 'success') {
+    toast.classList.add('success');
+    toast.classList.remove('failure');
+  } else if (type === 'failure') {
+    toast.classList.add('failure');
+    toast.classList.remove('success');
+  }
+
+  setTimeout(() => {
+    toast.classList.add('hidden');
+    toast.innerHTML = '';
+  }, 5000);
+}
+
+async function getAssigneeName() {
+  let userName = '';
+  let res;
+  if (taskRequest.approvedTo) {
+    try {
+      res = await fetch(
+        `${API_BASE_URL}/users/userId/${taskRequest.approvedTo}`,
+      );
+    } catch (error) {
+      console.error(error);
+    }
+    if (res.ok) {
+      const userData = await res.json();
+      userName = userData.user.first_name;
+    }
+  }
+  return userName;
+}
+
+async function renderAssignedTo(userName) {
+  const assignedToText = 'Assigned To: ';
+  const linkOrText = userName.length
+    ? `<a href="https://members.realdevsquad.com/${userName}">${userName}</a>`
+    : 'N/A';
+
+  taskContainer.append(
+    createCustomElement({
+      tagName: 'p',
+      class: 'task__createdBy',
+      id: 'task__createdBy',
+      innerHTML: assignedToText + linkOrText,
+    }),
+  );
+}
 
 renderTaskRequest();
