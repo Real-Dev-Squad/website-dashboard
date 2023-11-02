@@ -316,3 +316,47 @@ body {
     max-width: 40%;
   }
 }
+
+.requestor_details_modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  right: 0;
+}
+
+.requestor_details_modal_content {
+  background-color: #f4f4f4;
+  margin: 10% auto;
+  padding: 2rem;
+  border: 1px solid #888;
+  width: 25%;
+  text-align: center;
+  right: 10%;
+}
+
+.requestor_details_modal_close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.requestor_details_modal_close:hover {
+  color: #000;
+}
+
+.requestor_details_modal_textarea {
+  width: 80%;
+  min-width: 50%;
+  max-width: 100%;
+}
+
+.requestor_details_modal_heading {
+  color: #1d1283;
+}

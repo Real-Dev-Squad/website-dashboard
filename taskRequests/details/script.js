@@ -214,30 +214,37 @@ async function renderRequestors(requestors) {
 
   requestorSkeleton.classList.add('hidden');
 
-  data.forEach((requestor) => {
-    requestorsContainer.append(
-      createCustomElement({
-        tagName: 'li',
-        child: [
-          createCustomElement({
-            tagName: 'div',
-            class: 'requestors__container__list__userDetails',
-            child: [
-              createCustomElement({
-                tagName: 'div',
-                class: 'requestors__container__list__userDetails__avatar',
-                child: [getAvatar(requestor)],
-              }),
-              createCustomElement({
-                tagName: 'p',
-                textContent: requestor.user?.first_name,
-              }),
-            ],
-          }),
-          getActionButton(requestor),
-        ],
-      }),
+  data.forEach((requestor, index) => {
+    const userDetailsDiv = createCustomElement({
+      tagName: 'li',
+      child: [
+        createCustomElement({
+          tagName: 'div',
+          class: 'requestors__container__list__userDetails',
+          child: [
+            createCustomElement({
+              tagName: 'div',
+              class: 'requestors__container__list__userDetails__avatar',
+              child: [getAvatar(requestor)],
+            }),
+            createCustomElement({
+              tagName: 'p',
+              textContent: requestor.user?.first_name,
+            }),
+          ],
+        }),
+        getActionButton(requestor),
+      ],
+    });
+    const avatarDiv = userDetailsDiv.querySelector(
+      '.requestors__container__list__userDetails__avatar',
     );
+    const firstNameParagraph = userDetailsDiv.querySelector('p');
+    avatarDiv.addEventListener('click', () => populateModalContent(index));
+    firstNameParagraph.addEventListener('click', () =>
+      populateModalContent(index),
+    );
+    requestorsContainer.append(userDetailsDiv);
   });
 }
 
@@ -316,6 +323,75 @@ async function renderAssignedTo(userName) {
       innerHTML: assignedToText + linkOrText,
     }),
   );
+}
+
+const modal = document.getElementById('requestor_details_modal');
+const openModalBtn = document.getElementById('requestor_details_modal_open');
+const closeModal = document.getElementById('requestor_details_modal_close');
+
+closeModal.addEventListener('click', function () {
+  modal.style.display = 'none';
+});
+
+window.addEventListener('click', function (event) {
+  if (event.target == modal) {
+    modal.style.display = 'none';
+  }
+});
+
+function getHumanReadableDate(timeStamp) {
+  const date = new Date(timeStamp * 1000);
+
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+
+  const formattedDate = `${day}-${month}-${year}`;
+  return formattedDate;
+}
+
+function populateModalContent(index) {
+  const modal = document.getElementById('requestor_details_modal');
+  const userData = taskRequest.users[index];
+
+  const modalContent = modal.querySelector('.requestor_details_modal_info');
+
+  const proposedStartDateText = document.createElement('p');
+  proposedStartDateText.innerHTML = '<strong>Proposed Start Date:</strong>';
+
+  const proposedStartDateValue = document.createElement('p');
+  proposedStartDateValue.textContent = getHumanReadableDate(
+    userData.proposedStartDate,
+  );
+
+  const proposedDeadlineText = document.createElement('p');
+  proposedDeadlineText.innerHTML = '<strong>Proposed Deadline:</strong>';
+
+  const proposedDeadlineValue = document.createElement('p');
+  proposedDeadlineValue.textContent = getHumanReadableDate(
+    userData.proposedDeadline,
+  );
+
+  const descriptionText = document.createElement('p');
+  descriptionText.innerHTML = '<strong>Description:</strong>';
+
+  const descriptionValue = document.createElement('p');
+  descriptionValue.textContent = userData.description;
+
+  const header = document.createElement('h2');
+  header.className = 'requestor_details_modal_heading';
+  header.textContent = 'Requestor Details';
+
+  modalContent.innerHTML = '';
+
+  modalContent.appendChild(header);
+  modalContent.appendChild(proposedStartDateText);
+  modalContent.appendChild(proposedStartDateValue);
+  modalContent.appendChild(proposedDeadlineText);
+  modalContent.appendChild(proposedDeadlineValue);
+  modalContent.appendChild(descriptionText);
+  modalContent.appendChild(descriptionValue);
+  modal.style.display = 'block';
 }
 
 renderTaskRequest();
