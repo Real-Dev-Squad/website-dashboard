@@ -340,6 +340,9 @@ window.addEventListener('click', function (event) {
 });
 
 function getHumanReadableDate(timeStamp) {
+  if (typeof timeStamp !== 'number') {
+    return 'N/A';
+  }
   const date = new Date(timeStamp * 1000);
 
   const year = date.getFullYear();
@@ -357,28 +360,53 @@ function populateModalContent(index) {
   const modalContent = modal.querySelector('.requestor_details_modal_info');
 
   const proposedStartDateText = document.createElement('p');
+  proposedStartDateText.setAttribute(
+    'data-modal-start-date-text',
+    'proposed-start-date-text',
+  );
   proposedStartDateText.innerHTML = '<strong>Proposed Start Date:</strong>';
 
   const proposedStartDateValue = document.createElement('p');
+  proposedStartDateValue.setAttribute(
+    'data-modal-start-date-value',
+    'proposed-start-date-value',
+  );
   proposedStartDateValue.textContent = getHumanReadableDate(
     userData.proposedStartDate,
   );
 
   const proposedDeadlineText = document.createElement('p');
+  proposedDeadlineText.setAttribute(
+    'data-modal-end-date-text',
+    'proposed-end-date-text',
+  );
   proposedDeadlineText.innerHTML = '<strong>Proposed Deadline:</strong>';
 
   const proposedDeadlineValue = document.createElement('p');
+  proposedDeadlineValue.setAttribute(
+    'data-modal-end-date-value',
+    'proposed-end-date-value',
+  );
   proposedDeadlineValue.textContent = getHumanReadableDate(
     userData.proposedDeadline,
   );
 
   const descriptionText = document.createElement('p');
+  descriptionText.setAttribute(
+    'data-modal-description-text',
+    'proposed-description-text',
+  );
   descriptionText.innerHTML = '<strong>Description:</strong>';
 
   const descriptionValue = document.createElement('p');
+  descriptionValue.setAttribute(
+    'data-modal-description-value',
+    'proposed-description-value',
+  );
   descriptionValue.textContent = userData.description;
 
   const header = document.createElement('h2');
+  header.setAttribute('data-modal-header', 'requestor-details-header');
   header.className = 'requestor_details_modal_heading';
   header.textContent = 'Requestor Details';
 
