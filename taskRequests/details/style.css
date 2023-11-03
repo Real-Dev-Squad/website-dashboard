@@ -360,3 +360,9 @@ body {
 .requestor_details_modal_heading {
   color: #1d1283;
 }
+
+.requestors__container__list__userDetails__avatar,
+.requestors__container__list__userDetails__avatar:hover,
+p:hover {
+  cursor: pointer;
+}
