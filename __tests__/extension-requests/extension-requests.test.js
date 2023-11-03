@@ -561,8 +561,8 @@ describe('Tests the Extension Requests Screen', () => {
 
     const extensionCardsAfter = await page.$$('.extension-card');
 
-    expect(extensionCardsAfter.length).toBe(3) ||
-      expect(extensionCardsAfter.length).toBe(7);
+    const cardCount = extensionCardsAfter.length;
+    expect(cardCount === 3 || cardCount === 7).toBe(true);
   });
 
   it('Checks whether the card is not removed from display when api call is unsuccessful', async () => {
