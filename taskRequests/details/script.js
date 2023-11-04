@@ -15,7 +15,8 @@ const requestorsContainer = document.getElementById('requestors-details');
 
 const taskRequestId = new URLSearchParams(window.location.search).get('id');
 history.pushState({}, '', window.location.href);
-
+const errorMessage =
+  'The requested operation could not be completed. Please try again later.';
 let taskId;
 
 function renderTaskRequestDetails(taskRequest) {
@@ -166,16 +167,10 @@ async function approveTaskRequest(userId) {
       requestorsContainer.innerHTML = '';
       renderRequestors(taskRequest?.requestors);
     } else {
-      showToast(
-        'The requested operation could not be completed. Please try again later.',
-        'failure',
-      );
+      showToast(errorMessage, 'failure');
     }
   } catch (e) {
-    showToast(
-      'The requested operation could not be completed. Please try again later.',
-      'failure',
-    );
+    showToast(errorMessage, 'failure');
     console.error(e);
   }
 }
