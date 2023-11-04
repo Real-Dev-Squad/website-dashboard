@@ -354,6 +354,14 @@ function getHumanReadableDate(timeStamp) {
 }
 
 function populateModalContent(index) {
+  if (
+    !Array.isArray(taskRequest.users) ||
+    index < 0 ||
+    index >= taskRequest.users.length
+  ) {
+    showToast('No Data Available for this requestor', 'failure');
+    return;
+  }
   const modal = document.getElementById('requestor_details_modal');
   const userData = taskRequest.users[index];
 
