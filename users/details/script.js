@@ -324,7 +324,7 @@ function onScrollHandler(container) {
 }
 
 function generateUserTaskList(userTasks) {
-  // if (isDev !== true) document.querySelector('.user-tasks').innerHTML = '';
+  if (isDev !== true) document.querySelector('.user-tasks').innerHTML = '';
 
   if (!userTasks.length) {
     const errorEl = createElement({ type: 'p', classList: ['error'] });

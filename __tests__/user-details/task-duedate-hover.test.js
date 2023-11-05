@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer');
 const {
   userDetailsApi,
+  usersTasksInDev,
 } = require('../../mock-data/task-card-date-hover/index'); //has user info
 const {
   superUserDetails,
@@ -48,6 +49,62 @@ describe('Tasks On User Management Page', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
           body: JSON.stringify(superUserDetails), // Y contains the json of a superuser in the server which will grant us the access to view the page without locks
+        });
+      } else if (
+        url ===
+        ' https://api.realdevsquad.com/tasks/?size=3&dev=true&assignee=ajeyakrishna'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(usersTasksInDev['initial']), // Y contains the json of a superuser in the server which will grant us the access to view the page without locks
+        });
+      } else if (
+        url ===
+        'https://api.realdevsquad.com/tasks?dev=true&assignee=ajeyakrishna&size=3&next=vvTPGHAs9w36oY1UnV8r'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(usersTasksInDev['vvTPGHAs9w36oY1UnV8r']), // Y contains the json of a superuser in the server which will grant us the access to view the page without locks
+        });
+      } else if (
+        url ===
+        'https://api.realdevsquad.com/tasks?dev=true&assignee=ajeyakrishna&size=3&next=i1LQOKkGhhpOxE6yEo3A'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(usersTasksInDev['i1LQOKkGhhpOxE6yEo3A']), // Y contains the json of a superuser in the server which will grant us the access to view the page without locks
+        });
+      } else if (
+        url ===
+        'https://api.realdevsquad.com/tasks?dev=true&assignee=ajeyakrishna&size=3&next=OhNeSTj5J72PhrA4mtrr'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(usersTasksInDev['OhNeSTj5J72PhrA4mtrr']), // Y contains the json of a superuser in the server which will grant us the access to view the page without locks
         });
       } else {
         interceptedRequest.continue();
@@ -121,5 +178,81 @@ describe('Tasks On User Management Page', () => {
     }
 
     await page.waitForTimeout(500); //waiting for a moment to check changes(very helpful when you turn headless into false)
+  });
+  it('tasks should not have scroll bar in y direction when rendered without dev mode', async () => {
+    await page.goto(
+      'http://localhost:8000/users/details/index.html?username=ajeyakrishna',
+    );
+    await page.waitForNetworkIdle();
+    const taskDiv = await page.$$('.accordion-tasks');
+    expect(taskDiv).toBeTruthy();
+    await taskDiv[0].click();
+
+    const userTasksDevDiv = await page.$('.user-tasks');
+    const scrollHeight = await page.evaluate(
+      (element) => element.scrollHeight,
+      userTasksDevDiv,
+    );
+    const clientHeight = await page.evaluate(
+      (element) => element.clientHeight,
+      userTasksDevDiv,
+    );
+    expect(scrollHeight > clientHeight).toBe(false);
+  });
+
+  it('tasks should have scroll bar in y direction when rendered in dev mode', async () => {
+    await page.goto(
+      'http://localhost:8000/users/details/index.html?username=ajeyakrishna&dev=true',
+    );
+    await page.waitForNetworkIdle();
+    const taskDiv = await page.$$('.accordion-tasks');
+    expect(taskDiv).toBeTruthy();
+    await taskDiv[0].click();
+
+    const userTasksDevDiv = await page.$('.user-tasks-dev');
+    const scrollHeight = await page.evaluate(
+      (element) => element.scrollHeight,
+      userTasksDevDiv,
+    );
+    const clientHeight = await page.evaluate(
+      (element) => element.clientHeight,
+      userTasksDevDiv,
+    );
+    expect(scrollHeight > clientHeight).toBe(true);
+  });
+  it('Scroll of task should work in dev mode', async () => {
+    await page.goto(
+      'http://localhost:8000/users/details/index.html?username=ajeyakrishna&dev=true',
+    );
+    await page.waitForNetworkIdle();
+    const taskDiv = await page.$$('.accordion-tasks');
+    expect(taskDiv).toBeTruthy();
+    await taskDiv[0].click();
+
+    const userTasksDevDiv = await page.$('.user-tasks-dev');
+    expect(userTasksDevDiv).toBeTruthy();
+
+    await page.evaluate((element) => {
+      element.scrollTop = element.scrollHeight;
+    }, userTasksDevDiv);
+    await page.waitForNetworkIdle();
+
+    await page.evaluate((element) => {
+      element.scrollTop = element.scrollHeight;
+    }, userTasksDevDiv);
+    await page.waitForNetworkIdle();
+
+    await page.evaluate((element) => {
+      element.scrollTop = element.scrollHeight;
+    }, userTasksDevDiv);
+    await page.waitForNetworkIdle();
+
+    await page.evaluate((element) => {
+      element.scrollTop = element.scrollHeight;
+    }, userTasksDevDiv);
+    await page.waitForNetworkIdle();
+
+    let renderedTasks = await userTasksDevDiv.$$('.user-task');
+    expect(Array.from(renderedTasks).length).toBe(12);
   });
 });
