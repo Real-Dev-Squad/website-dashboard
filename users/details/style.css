@@ -228,6 +228,10 @@ li {
   flex-direction: column;
   gap: 2rem;
 }
+.user-tasks-dev {
+  height: 400px;
+  overflow-y: scroll;
+}
 
 .task-details {
   margin-top: 1rem;
