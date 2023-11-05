@@ -34,7 +34,9 @@ describe('Tests the User Management User Listing Screen', () => {
     );
     await page.waitForNetworkIdle();
     await page.click('.requestors__container__list__userDetails');
-    await page.waitForSelector('#requestor_details_modal', { visible: true });
+    await page.waitForSelector('#requestor_details_modal_content', {
+      visible: true,
+    });
   });
 
   afterAll(async () => {
