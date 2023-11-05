@@ -10,7 +10,7 @@ async function getSelfUser(endpoint = '/users/self') {
     if (endpoint === '/users/self') {
       const self_user = await res.json();
       if (res.status === 200) {
-        return self_user;
+        return self_user?.user || self_user;
       }
     } else {
       location.reload();

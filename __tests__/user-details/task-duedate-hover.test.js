@@ -57,25 +57,6 @@ describe('Tasks On User Management Page', () => {
       'http://localhost:8000/users/details/index.html?username=sunny-s',
     );
 
-    await page.evaluate(async () => {
-      // We write the function with superUser as true
-
-      async function accessingUserData() {
-        const isSuperUser = true;
-        if (isSuperUser) {
-          await getUserTasks();
-          await getUserPrs();
-          await generateAcademicTabDetails();
-          toggleAccordionTabsVisibility();
-        } else {
-          lockAccordiansForNonSuperUser();
-        }
-      }
-
-      // Calling the function
-      await accessingUserData();
-    });
-
     await page.waitForNetworkIdle();
   });
 
