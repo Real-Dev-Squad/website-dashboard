@@ -320,17 +320,17 @@ async function renderAssignedTo(userName) {
   );
 }
 
-const modal = document.getElementById('requestor_details_modal');
 const openModalBtn = document.getElementById('requestor_details_modal_open');
 const closeModal = document.getElementById('requestor_details_modal_close');
 
 closeModal.addEventListener('click', function () {
-  modal.style.display = 'none';
+  overlay.style.display = 'none';
 });
 
-window.addEventListener('click', function (event) {
-  if (event.target == modal) {
-    modal.style.display = 'none';
+const overlay = document.getElementById('overlay');
+overlay.addEventListener('click', function (event) {
+  if (event.target == overlay) {
+    overlay.style.display = 'none';
   }
 });
 
@@ -343,7 +343,7 @@ function populateModalContent(index) {
     showToast('No Data Available for this requestor', 'failure');
     return;
   }
-  const modal = document.getElementById('requestor_details_modal');
+  const modal = document.getElementById('requestor_details_modal_content');
   const userData = taskRequest.users[index];
 
   const modalContent = modal.querySelector('.requestor_details_modal_info');
@@ -408,7 +408,7 @@ function populateModalContent(index) {
   modalContent.appendChild(proposedDeadlineValue);
   modalContent.appendChild(descriptionText);
   modalContent.appendChild(descriptionValue);
-  modal.style.display = 'block';
+  overlay.style.display = 'block';
 }
 
 renderTaskRequest();

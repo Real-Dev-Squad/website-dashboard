@@ -326,18 +326,6 @@ body {
   }
 }
 
-.requestor_details_modal {
-  display: none;
-  position: fixed;
-  z-index: var(--z-index-modal);
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--color-black-shade-70percent);
-  right: 0;
-}
-
 .requestor_details_modal_content {
   background-color: var(--color-light-gray);
   margin: 10% auto;
@@ -346,6 +334,7 @@ body {
   width: 25%;
   text-align: center;
   right: 10%;
+  border-radius: 1rem;
 }
 
 .requestor_details_modal_close {
@@ -374,4 +363,15 @@ body {
 .requestors__container__list__userDetails__avatar:hover,
 p:hover {
   cursor: pointer;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  /* z-index: 1; */
 }
