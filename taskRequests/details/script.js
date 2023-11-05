@@ -323,14 +323,14 @@ async function renderAssignedTo(userName) {
 const openModalBtn = document.getElementById('requestor_details_modal_open');
 const closeModal = document.getElementById('requestor_details_modal_close');
 
-closeModal.addEventListener('click', function () {
-  overlay.style.display = 'none';
-});
+const modalOverlay = document.getElementById('overlay');
 
-const overlay = document.getElementById('overlay');
-overlay.addEventListener('click', function (event) {
-  if (event.target == overlay) {
-    overlay.style.display = 'none';
+closeModal.addEventListener('click', function () {
+  modalOverlay.style.display = 'none';
+});
+modalOverlay.addEventListener('click', function (event) {
+  if (event.target == modalOverlay) {
+    modalOverlay.style.display = 'none';
   }
 });
 
@@ -408,7 +408,7 @@ function populateModalContent(index) {
   modalContent.appendChild(proposedDeadlineValue);
   modalContent.appendChild(descriptionText);
   modalContent.appendChild(descriptionValue);
-  overlay.style.display = 'block';
+  modalOverlay.style.display = 'block';
 }
 
 renderTaskRequest();
