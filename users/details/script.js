@@ -358,6 +358,11 @@ function generateUserTaskList(userTasks) {
 
 function createSingleTaskCard(task) {
   const container = createElement({ type: 'div', classList: ['user-task'] });
+  if (isDev === true) {
+    const innerHTMl = generateCardUIInDev(task);
+    container.innerHTML = innerHTMl;
+    return container;
+  }
   const h2 = createElement({ type: 'h2', classList: ['task-title'] });
   h2.appendChild(createTextNode(task?.title));
   const p = createElement({ type: 'p', classList: ['task-description'] });
