@@ -43,19 +43,15 @@ async function getUserGroupRoles() {
   return await res.json();
 }
 
-async function getDiscordGroups(isDev) {
+async function getDiscordGroups() {
   try {
-    const devFeatureFlag = isDev ? '?dev=true' : '';
-    const res = await fetch(
-      `${BASE_URL}/discord-actions/groups${devFeatureFlag}`,
-      {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'Content-type': 'application/json',
-        },
+    const res = await fetch(`${BASE_URL}/discord-actions/groups`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json',
       },
-    );
+    });
 
     const { groups } = await res.json();
     return groups;
