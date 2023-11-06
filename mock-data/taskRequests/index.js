@@ -56,8 +56,8 @@ const individualTaskReqDetail = {
     approvedTo: 'SooJK37gzjIZfFNH0tlL',
     users: [
       {
-        proposedStartDate: 1698684354,
-        proposedDeadline: 1699142400,
+        proposedStartDate: 1698684354000,
+        proposedDeadline: 1699142400000,
         description: 'code change 3 days , testing - 2 days. total - 5 days',
         userId: 'SooJK37gzjIZfFNH0tlL',
         status: 'APPROVED',
