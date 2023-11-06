@@ -17,6 +17,7 @@
     <script src="/helpers/loadENV.js"></script>
     <script src="/taskRequests/util.js"></script>
     <script src="/taskRequests/constants.js"></script>
+    <script src="/utils/time/index.js"></script>
     <script src="/taskRequests/details/script.js" defer></script>
   </head>
   <body>
@@ -65,7 +66,31 @@
             <li class="skeleton"></li>
             <li class="skeleton"></li>
           </ul>
+          <!-- <div class="reject__container">
+            <button
+              id="reject-button"
+              class="requestors__container__reject__button"
+            >
+              Reject
+            </button>
+          </div> -->
         </div>
+      </div>
+    </div>
+    <div id="toast_task_details" class="hidden">
+      <div class="message"></div>
+    </div>
+    <div id="overlay" class="overlay">
+      <div
+        id="requestor_details_modal_content"
+        class="requestor_details_modal_content"
+      >
+        <span
+          class="requestor_details_modal_close"
+          id="requestor_details_modal_close"
+          >&times;</span
+        >
+        <div class="requestor_details_modal_info"></div>
       </div>
     </div>
   </body>
