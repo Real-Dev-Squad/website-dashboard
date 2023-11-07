@@ -62,7 +62,7 @@ describe('Tasks On User Management Page', () => {
             'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
-          body: JSON.stringify(usersTasksInDev['initial']), // Y contains the json of a superuser in the server which will grant us the access to view the page without locks
+          body: JSON.stringify(usersTasksInDev['initial']),
         });
       } else if (
         url ===
@@ -76,7 +76,7 @@ describe('Tasks On User Management Page', () => {
             'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
-          body: JSON.stringify(usersTasksInDev['vvTPGHAs9w36oY1UnV8r']), // Y contains the json of a superuser in the server which will grant us the access to view the page without locks
+          body: JSON.stringify(usersTasksInDev['vvTPGHAs9w36oY1UnV8r']),
         });
       } else if (
         url ===
@@ -90,7 +90,7 @@ describe('Tasks On User Management Page', () => {
             'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
-          body: JSON.stringify(usersTasksInDev['i1LQOKkGhhpOxE6yEo3A']), // Y contains the json of a superuser in the server which will grant us the access to view the page without locks
+          body: JSON.stringify(usersTasksInDev['i1LQOKkGhhpOxE6yEo3A']),
         });
       } else if (
         url ===
@@ -104,7 +104,7 @@ describe('Tasks On User Management Page', () => {
             'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
-          body: JSON.stringify(usersTasksInDev['OhNeSTj5J72PhrA4mtrr']), // Y contains the json of a superuser in the server which will grant us the access to view the page without locks
+          body: JSON.stringify(usersTasksInDev['OhNeSTj5J72PhrA4mtrr']),
         });
       } else {
         interceptedRequest.continue();
