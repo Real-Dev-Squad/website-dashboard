@@ -11,6 +11,7 @@ let userStatusData = {};
 let currentPageIndex = 1;
 let taskPerPage = 3;
 let prsPerPage = 3;
+let isTaskAccordionOpen = false;
 let totalPrsPages = 0;
 let totalPages = Math.ceil(userAllTasks.length / taskPerPage);
 const username = new URLSearchParams(window.location.search).get('username');
@@ -191,6 +192,16 @@ function toggleAccordionTabsVisibility() {
     .querySelectorAll('.visible-content');
   accordionTabs.forEach((tab) => {
     tab.addEventListener('click', () => {
+      if (tab.innerText === 'Tasks' && isDev) {
+        isTaskAccordionOpen = !isTaskAccordionOpen;
+        if (isTaskAccordionOpen) {
+          tab.classList.add('sticky-header');
+          document.addEventListener('scroll', onScrollHandler);
+        } else {
+          tab.classList.remove('sticky-header');
+          document.removeEventListener('scroll', onScrollHandler);
+        }
+      }
       const hiddenContent = tab.nextElementSibling;
       const arrowIcon = tab.querySelector('img');
       if (hiddenContent) {
@@ -242,7 +253,6 @@ function generateTasksTabDetails() {
     type: 'div',
     classList: isDev ? ['user-tasks', 'user-tasks-dev'] : ['user-tasks'],
   });
-  tasks.addEventListener('scroll', () => onScrollHandler(tasks));
   div.append(tasks);
   if (!isDev) {
     const pagination = createElement({
@@ -298,7 +308,6 @@ async function getUserTasks() {
       isTaskFetching = false;
     }
   } catch (err) {
-    console.log({ err });
     const div = createElement({
       type: 'div',
       classList: ['hidden-content', 'hide'],
@@ -318,9 +327,11 @@ function getTasksToFetch(userTasks, currentIndex) {
     (_, index) => index >= startIndex && index < endIndex,
   );
 }
-function onScrollHandler(container) {
-  if (container.scrollTop + container.clientHeight >= container.scrollHeight)
+function onScrollHandler() {
+  const accordionTasks = document.getElementsByClassName('accordion-tasks');
+  if (isTaskAccordionOpen && isBottomBorderInView(accordionTasks[0])) {
     getUserTasks();
+  }
 }
 
 function generateUserTaskList(userTasks) {
@@ -1135,7 +1146,6 @@ function lockAccordiansForNonSuperUser() {
 }
 
 async function accessingUserData() {
-  console.log('control is here');
   const isSuperUser = await checkUserIsSuperUser();
   if (isSuperUser) {
     getUserTasks();

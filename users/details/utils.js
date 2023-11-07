@@ -119,6 +119,15 @@ const handleProgressColor = (percentCompleted, startedOn, endsOn) => {
 
   return 'yellow';
 };
+/**
+ * Verify if element's border bottom is in the view or not
+ * @param {HTML element} element - UI Element
+ * @returns {boolean}
+ */
+function isBottomBorderInView(element) {
+  const rect = element.getBoundingClientRect();
+  return rect.bottom <= window.innerHeight;
+}
 
 /**
  * Calculates the percentage of days remaining between two dates.
@@ -151,7 +160,7 @@ const generateCardUIInDev = (task) => {
   <div class="task ${isTaskRed ? 'task-red' : ''}">
     <div class="row">
       <div class="task-title">
-        <a>${task?.title}</a>
+        <a data-test-tile = ${task?.title} >${task?.title}</a>
       </div>
       <div class="progress-content">
         <progress class=${progressBarClassname} id="file" value="${
@@ -165,27 +174,27 @@ const generateCardUIInDev = (task) => {
         <p class="div-heading">Estimated Completion</p>
         <p class="div-detail">${deadlineDays || 'N/A'}</p>
       </div>
-      <div class="detail-block">
+      <div class="detail-block status">
         <p class="div-heading">Status</p>
         <p class="div-detail">${task.status || 'N/A'}</p>
       </div>
     </div>
     <div class="row">
-      <div class="detail-block eta">
+      <div class="detail-block startedOn">
         <p class="div-heading">Started On</p>
         <p class="div-detail">${startedOnDays || 'N/A'}</p>
       </div>
-      <div class="detail-block">
+      <div class="detail-block priority">
         <p class="div-heading">Priority</p>
         <p class="div-detail">${task?.priority || 'N/A'}</p>
       </div>
     </div>
     <div class="row">
-      <div class="detail-block eta">
+      <div class="detail-block createdBy">
         <p class="div-heading">Created By</p>
         <p class="div-detail">${task?.createdBy || 'N/A'}</p>
       </div>
-      <div class="detail-block">
+      <div class="detail-block type">
         <p class="div-heading">Type</p>
         <p class="div-detail">${task?.type || 'N/A'}</p>
       </div>

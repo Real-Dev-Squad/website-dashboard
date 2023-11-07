@@ -234,10 +234,6 @@ li {
   flex-direction: column;
   gap: 2rem;
 }
-.user-tasks-dev {
-  height: 400px;
-  overflow-y: scroll;
-}
 
 .task-details {
   margin-top: 1rem;
@@ -499,7 +495,11 @@ footer p a {
   position: absolute;
   color: black;
 }
-
+.sticky-header {
+  position: sticky;
+  top: 0;
+  background-color: white;
+}
 .task {
   border: 2px solid var(--border-color);
   padding: 1rem;
@@ -514,8 +514,12 @@ footer p a {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
+  gap: 17px;
 }
 
+#task-loader {
+  text-align: center;
+}
 .task-title {
   max-width: 27rem;
 }
