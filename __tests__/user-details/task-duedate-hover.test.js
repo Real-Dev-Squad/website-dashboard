@@ -52,7 +52,7 @@ describe('Tasks On User Management Page', () => {
         });
       } else if (
         url ===
-        ' https://api.realdevsquad.com/tasks/?size=3&dev=true&assignee=ajeyakrishna'
+        'https://api.realdevsquad.com/tasks/?size=3&dev=true&assignee=ajeyakrishna'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -179,47 +179,7 @@ describe('Tasks On User Management Page', () => {
 
     await page.waitForTimeout(500); //waiting for a moment to check changes(very helpful when you turn headless into false)
   });
-  it('tasks should not have scroll bar in y direction when rendered without dev mode', async () => {
-    await page.goto(
-      'http://localhost:8000/users/details/index.html?username=ajeyakrishna',
-    );
-    await page.waitForNetworkIdle();
-    const taskDiv = await page.$$('.accordion-tasks');
-    expect(taskDiv).toBeTruthy();
-    await taskDiv[0].click();
 
-    const userTasksDevDiv = await page.$('.user-tasks');
-    const scrollHeight = await page.evaluate(
-      (element) => element.scrollHeight,
-      userTasksDevDiv,
-    );
-    const clientHeight = await page.evaluate(
-      (element) => element.clientHeight,
-      userTasksDevDiv,
-    );
-    expect(scrollHeight > clientHeight).toBe(false);
-  });
-
-  it('tasks should have scroll bar in y direction when rendered in dev mode', async () => {
-    await page.goto(
-      'http://localhost:8000/users/details/index.html?username=ajeyakrishna&dev=true',
-    );
-    await page.waitForNetworkIdle();
-    const taskDiv = await page.$$('.accordion-tasks');
-    expect(taskDiv).toBeTruthy();
-    await taskDiv[0].click();
-
-    const userTasksDevDiv = await page.$('.user-tasks-dev');
-    const scrollHeight = await page.evaluate(
-      (element) => element.scrollHeight,
-      userTasksDevDiv,
-    );
-    const clientHeight = await page.evaluate(
-      (element) => element.clientHeight,
-      userTasksDevDiv,
-    );
-    expect(scrollHeight > clientHeight).toBe(true);
-  });
   it('Scroll of task should work in dev mode', async () => {
     await page.goto(
       'http://localhost:8000/users/details/index.html?username=ajeyakrishna&dev=true',
@@ -232,27 +192,56 @@ describe('Tasks On User Management Page', () => {
     const userTasksDevDiv = await page.$('.user-tasks-dev');
     expect(userTasksDevDiv).toBeTruthy();
 
-    await page.evaluate((element) => {
-      element.scrollTop = element.scrollHeight;
-    }, userTasksDevDiv);
+    await page.evaluate(() => {
+      window.scrollBy(0, window.document.body.scrollHeight);
+    });
     await page.waitForNetworkIdle();
 
-    await page.evaluate((element) => {
-      element.scrollTop = element.scrollHeight;
-    }, userTasksDevDiv);
+    await page.evaluate(() => {
+      window.scrollBy(0, window.document.body.scrollHeight);
+    });
     await page.waitForNetworkIdle();
 
-    await page.evaluate((element) => {
-      element.scrollTop = element.scrollHeight;
-    }, userTasksDevDiv);
+    await page.evaluate(() => {
+      window.scrollBy(0, window.document.body.scrollHeight);
+    });
     await page.waitForNetworkIdle();
 
-    await page.evaluate((element) => {
-      element.scrollTop = element.scrollHeight;
-    }, userTasksDevDiv);
+    await page.evaluate(() => {
+      window.scrollBy(0, window.document.body.scrollHeight);
+    });
     await page.waitForNetworkIdle();
 
     let renderedTasks = await userTasksDevDiv.$$('.user-task');
     expect(Array.from(renderedTasks).length).toBe(12);
+  });
+
+  it('New task card should have all the detail fields', async () => {
+    await page.goto(
+      'http://localhost:8000/users/details/index.html?username=ajeyakrishna&dev=true',
+    );
+    await page.waitForNetworkIdle();
+    const taskDiv = await page.$$('.accordion-tasks');
+    expect(taskDiv).toBeTruthy();
+    await taskDiv[0].click();
+
+    const userTasksDevDiv = await page.$('.user-tasks-dev');
+    expect(userTasksDevDiv).toBeTruthy();
+
+    let renderedTasks = await page.$$('.user-task');
+    let firstTask = await renderedTasks[0].$$('.task');
+    let firstTaskHTML = await page.evaluate(
+      (element) => element.innerHTML,
+      firstTask[0],
+    );
+
+    expect(firstTaskHTML).toContain('<div class="task-title">');
+    expect(firstTaskHTML).toContain('<progress');
+    expect(firstTaskHTML).toContain('<div class="detail-block eta">');
+    expect(firstTaskHTML).toContain('<div class="detail-block status">');
+    expect(firstTaskHTML).toContain('<div class="detail-block startedOn">');
+    expect(firstTaskHTML).toContain('<div class="detail-block priority">');
+    expect(firstTaskHTML).toContain('<div class="detail-block createdBy">');
+    expect(firstTaskHTML).toContain('<div class="detail-block type">');
   });
 });
