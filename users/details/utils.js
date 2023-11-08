@@ -130,12 +130,18 @@ const generateCardUIInDev = (task) => {
       <div class="task-title">
         <a data-test-tile = ${task?.title} >${task?.title}</a>
       </div>
-      <div class="progress-content">
-        <progress class=${progressBarClassname} id="file" value="${
-    task?.percentCompleted
-  }" max="100"> ${task?.percentCompleted} </progress>
-        <div>${task?.percentCompleted ?? 'N/A'}%</div>
-      </div>
+    ${
+      !noProgressbarStatuses.includes(task.status)
+        ? `<div class="progress-content">
+            <progress class=${
+              task?.percentCompleted > 0 ? progressBarClassname : ''
+            } id="file" value="${task?.percentCompleted}" max="100"> ${
+            task?.percentCompleted
+          } </progress>
+            <div>${task?.percentCompleted ?? 'N/A'}%</div>
+          </div>`
+        : ''
+    }
     </div>
     <div class="row">
       <div class="detail-block eta">
