@@ -236,12 +236,63 @@ describe('Tasks On User Management Page', () => {
     );
 
     expect(firstTaskHTML).toContain('<div class="task-title">');
-    expect(firstTaskHTML).toContain('<progress');
+    expect(firstTaskHTML).not.toContain('<progress');
     expect(firstTaskHTML).toContain('<div class="detail-block eta">');
     expect(firstTaskHTML).toContain('<div class="detail-block status">');
     expect(firstTaskHTML).toContain('<div class="detail-block startedOn">');
     expect(firstTaskHTML).toContain('<div class="detail-block priority">');
     expect(firstTaskHTML).toContain('<div class="detail-block createdBy">');
     expect(firstTaskHTML).toContain('<div class="detail-block type">');
+
+    let secondTask = await renderedTasks[1].$$('.task');
+    let secondTaskHTML = await page.evaluate(
+      (element) => element.innerHTML,
+      secondTask[0],
+    );
+
+    expect(secondTaskHTML).toContain('<div class="task-title">');
+    expect(secondTaskHTML).not.toContain('<progress');
+    expect(secondTaskHTML).toContain('<div class="detail-block eta">');
+    expect(secondTaskHTML).toContain('<div class="detail-block status">');
+    expect(secondTaskHTML).toContain('<div class="detail-block startedOn">');
+    expect(secondTaskHTML).toContain('<div class="detail-block priority">');
+    expect(secondTaskHTML).toContain('<div class="detail-block createdBy">');
+    expect(secondTaskHTML).toContain('<div class="detail-block type">');
+
+    let thirdTask = await renderedTasks[2].$$('.task');
+    let thirdTaskHTML = await page.evaluate(
+      (element) => element.innerHTML,
+      thirdTask[0],
+    );
+
+    expect(thirdTaskHTML).toContain('<div class="task-title">');
+    expect(thirdTaskHTML).not.toContain('<progress');
+    expect(thirdTaskHTML).toContain('<div class="detail-block eta">');
+    expect(thirdTaskHTML).toContain('<div class="detail-block status">');
+    expect(thirdTaskHTML).toContain('<div class="detail-block startedOn">');
+    expect(thirdTaskHTML).toContain('<div class="detail-block priority">');
+    expect(thirdTaskHTML).toContain('<div class="detail-block createdBy">');
+    expect(thirdTaskHTML).toContain('<div class="detail-block type">');
+
+    await page.evaluate(() => {
+      window.scrollBy(0, window.document.body.scrollHeight);
+    });
+    await page.waitForNetworkIdle();
+
+    renderedTasks = await page.$$('.user-task');
+    let fourthTask = await renderedTasks[3].$$('.task');
+    let fourthTaskHTML = await page.evaluate(
+      (element) => element.innerHTML,
+      fourthTask[0],
+    );
+
+    expect(fourthTaskHTML).toContain('<div class="task-title">');
+    expect(fourthTaskHTML).toContain('<progress class="green"');
+    expect(fourthTaskHTML).toContain('<div class="detail-block eta">');
+    expect(fourthTaskHTML).toContain('<div class="detail-block status">');
+    expect(fourthTaskHTML).toContain('<div class="detail-block startedOn">');
+    expect(fourthTaskHTML).toContain('<div class="detail-block priority">');
+    expect(fourthTaskHTML).toContain('<div class="detail-block createdBy">');
+    expect(fourthTaskHTML).toContain('<div class="detail-block type">');
   });
 });

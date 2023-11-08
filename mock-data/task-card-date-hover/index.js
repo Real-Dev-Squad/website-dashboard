@@ -35,7 +35,7 @@ const userDetailsApi = {
     },
     {
       id: 'F2A6XVGgM3IshzEd5niL',
-      percentCompleted: 100,
+      percentCompleted: 30,
       endsOn: 1688445662, //Jul 4 2023
       isNoteworthy: false,
       createdBy: 'ankush',
@@ -90,7 +90,7 @@ const usersTasksInDev = {
         title: 'Cache new response iff successful',
         type: 'feature',
         priority: 'TBD',
-        status: 'VERIFIED',
+        status: 'DONE',
         assigneeId: '36AGeYsrIZQcPYWlFb1a',
         dependsOn: [],
       },
