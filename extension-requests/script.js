@@ -96,8 +96,8 @@ const initializeAccordions = () => {
       handleFormPropagation(event);
       this.classList.toggle('active');
       let panel = this.nextElementSibling;
-      if (panel.style.maxHeight) {
-        panel.style.maxHeight = null;
+      if (panel.style.display) {
+        panel.style.display = null;
       } else {
         closeAllAccordions();
         updateAccordionHeight(panel);
@@ -106,16 +106,15 @@ const initializeAccordions = () => {
   }
 };
 const updateAccordionHeight = (element) => {
-  element.style.maxHeight = 352 + 'px';
-  if (element.offsetHeight <= 352) element.style.overflow = 'hidden';
+  element.style.display = 'block';
 };
 const closeAllAccordions = () => {
   let accordionsList = document.querySelectorAll('.accordion.active');
   for (let i = 0; i < accordionsList.length; i++) {
     let panel = accordionsList[i].nextElementSibling;
-    if (panel.style.maxHeight) {
-      accordionsList[i].classList.remove('active');
-      panel.style.maxHeight = null;
+    if (panel.style.display) {
+      accordionsList[i]?.classList.remove('active');
+      panel.style.display = null;
     }
   }
 };
@@ -375,12 +374,15 @@ async function createExtensionCard(data) {
   });
   const CommitedHoursContent = createElement({
     type: 'span',
+    attributes: { class: 'label-content' },
   });
   commitedHoursHoverTrigger.addEventListener('mouseenter', () => {
     commitedHoursHoverCard.classList.remove('hidden');
   });
   commitedHoursHoverTrigger.addEventListener('mouseleave', () => {
-    commitedHoursHoverCard.classList.add('hidden');
+    setTimeout(() => {
+      commitedHoursHoverCard.classList.add('hidden');
+    }, 700);
   });
   commitedHoursHoverCard.appendChild(CommitedHourslabel);
   commitedHoursHoverCard.appendChild(CommitedHoursContent);
@@ -983,7 +985,7 @@ async function createExtensionCard(data) {
     const userImage = userData?.picture?.url ?? DEFAULT_AVATAR;
     let userFirstName = userData?.first_name ?? data.assignee;
     const taskStatus = taskData?.status?.replaceAll('_', ' ');
-    const userId = userData.id;
+    const userId = userData?.id;
     const userStatus = userStatusMap.get(userId);
     const comittedHours = userStatus?.monthlyHours?.comitted;
     userFirstName = userFirstName ?? '';
@@ -993,10 +995,14 @@ async function createExtensionCard(data) {
     assigneeImage.alt = userFirstName;
     assigneeNameElement.innerText = userFirstName;
     taskStatusValue.innerText = ` ${taskStatus}`;
-    CommitedHourslabel.innerText = 'Commited Hours: ';
-    CommitedHoursContent.innerText = `${
-      comittedHours ? comittedHours / 4 : 'NA'
-    } hrs / week`;
+    CommitedHourslabel.innerText = 'Commited Hours:';
+    if (comittedHours) {
+      CommitedHoursContent.innerText = `${comittedHours / 4} hrs / week`;
+    } else {
+      CommitedHoursContent.innerText = 'Missing';
+      CommitedHoursContent.classList.add('label-content-missing');
+    }
+
     removeSpinner();
     if (isDev) renderExtensionCreatedLog();
     rootElement.classList.remove('disabled');
