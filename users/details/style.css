@@ -565,19 +565,18 @@ progress {
 .eta {
   flex-wrap: wrap;
 }
-.red {
+
+progress.red::-webkit-progress-value {
   background-color: var(--red);
-  border: 1px solid red;
 }
-.green {
+
+progress.green::-webkit-progress-value {
   background-color: var(--green);
-  border: 1px solid green;
 }
-.orange {
+
+progress.orange::-webkit-progress-value {
   background-color: var(--orange);
-  border: 1px solid orange;
 }
-.yellow {
-  color: var(--yellow);
-  border: 1px solid yellow;
+progress.yellow::-webkit-progress-value {
+  background-color: var(--yellow);
 }
