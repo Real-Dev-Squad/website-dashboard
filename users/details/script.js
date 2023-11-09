@@ -2,15 +2,20 @@ const params = new URLSearchParams(window.location.search);
 
 let userData = {};
 let userAllTasks = [];
+let taskSearchQuery;
+let allTasksFetched = false;
+let isTaskFetching = false;
 let userSkills = [];
 let userAllPrs = [];
 let userStatusData = {};
 let currentPageIndex = 1;
 let taskPerPage = 3;
 let prsPerPage = 3;
+let isTaskAccordionOpen = false;
 let totalPrsPages = 0;
 let totalPages = Math.ceil(userAllTasks.length / taskPerPage);
 const username = new URLSearchParams(window.location.search).get('username');
+const isDev = params.get('dev') === 'true';
 
 function createElement({ type, classList = [] }) {
   const element = document.createElement(type);
@@ -187,6 +192,16 @@ function toggleAccordionTabsVisibility() {
     .querySelectorAll('.visible-content');
   accordionTabs.forEach((tab) => {
     tab.addEventListener('click', () => {
+      if (tab.innerText === 'Tasks' && isDev) {
+        isTaskAccordionOpen = !isTaskAccordionOpen;
+        if (isTaskAccordionOpen) {
+          tab.classList.add('sticky-header');
+          document.addEventListener('scroll', onScrollHandler);
+        } else {
+          tab.classList.remove('sticky-header');
+          document.removeEventListener('scroll', onScrollHandler);
+        }
+      }
       const hiddenContent = tab.nextElementSibling;
       const arrowIcon = tab.querySelector('img');
       if (hiddenContent) {
@@ -233,38 +248,64 @@ function generateTasksTabDetails() {
     type: 'div',
     classList: ['hidden-content', 'hide'],
   });
-  const tasks = createElement({ type: 'div', classList: ['user-tasks'] });
-  const pagination = createElement({ type: 'div', classList: ['pagination'] });
-  const prevBtn = createElement({
-    type: 'button',
-    classList: ['pagination-prev-page'],
-  });
-  prevBtn.appendChild(createTextNode('Prev'));
-  prevBtn.addEventListener('click', fetchPrevTasks);
-  const nextBtn = createElement({
-    type: 'button',
-    classList: ['pagination-next-page'],
-  });
-  nextBtn.appendChild(createTextNode('Next'));
-  nextBtn.addEventListener('click', fetchNextTasks);
 
-  pagination.append(prevBtn, nextBtn);
-  div.append(tasks, pagination);
+  const tasks = createElement({
+    type: 'div',
+    classList: isDev ? ['user-tasks', 'user-tasks-dev'] : ['user-tasks'],
+  });
+  div.append(tasks);
+  if (!isDev) {
+    const pagination = createElement({
+      type: 'div',
+      classList: ['pagination'],
+    });
+    const prevBtn = createElement({
+      type: 'button',
+      classList: ['pagination-prev-page'],
+    });
+    prevBtn.appendChild(createTextNode('Prev'));
+    prevBtn.addEventListener('click', fetchPrevTasks);
+    const nextBtn = createElement({
+      type: 'button',
+      classList: ['pagination-next-page'],
+    });
+    nextBtn.appendChild(createTextNode('Next'));
+    nextBtn.addEventListener('click', fetchNextTasks);
+
+    pagination.append(prevBtn, nextBtn);
+    div.append(tasks, pagination);
+  }
+
   document.querySelector('.accordion-tasks').appendChild(div);
 }
 
 async function getUserTasks() {
   try {
-    const res = await makeApiCall(`${API_BASE_URL}/tasks/${username}`);
-    if (res.status === 200) {
-      const data = await res.json();
-      userAllTasks = data.tasks;
-      totalPages = Math.ceil(userAllTasks.length / taskPerPage);
-      const tasks = getTasksToFetch(userAllTasks, currentPageIndex);
-      generateTasksTabDetails();
-      generateUserTaskList(tasks);
-      getUserSkills();
-      getUserAvailabilityStatus();
+    taskSearchQuery = isDev
+      ? taskSearchQuery || `/tasks/?size=3&dev=true&assignee=${username}`
+      : `/tasks/${username}`;
+
+    //Flag to avoid multiple API calls with same payload
+    if (!(isDev && isTaskFetching) && !allTasksFetched) {
+      isTaskFetching = true;
+      const res = await makeApiCall(`${API_BASE_URL}${taskSearchQuery}`);
+      if (res.status === 200) {
+        const data = await res.json();
+        generateTasksTabDetails();
+        if (isDev) {
+          taskSearchQuery = data.next;
+          if (data.next === '') {
+            allTasksFetched = true;
+          }
+          generateUserTaskList(data.tasks);
+        } else {
+          userAllTasks = data.tasks;
+          totalPages = Math.ceil(userAllTasks.length / taskPerPage);
+          const tasks = getTasksToFetch(userAllTasks, currentPageIndex);
+          generateUserTaskList(tasks);
+        }
+      }
+      isTaskFetching = false;
     }
   } catch (err) {
     const div = createElement({
@@ -275,6 +316,7 @@ async function getUserTasks() {
     errorEl.appendChild(createTextNode('Something Went Wrong!'));
     div.appendChild(errorEl);
     document.querySelector('.accordion-tasks').appendChild(div);
+    isTaskFetching = false;
   }
 }
 
@@ -285,9 +327,16 @@ function getTasksToFetch(userTasks, currentIndex) {
     (_, index) => index >= startIndex && index < endIndex,
   );
 }
+function onScrollHandler() {
+  const accordionTasks = document.getElementsByClassName('accordion-tasks');
+  if (isTaskAccordionOpen && isBottomBorderInView(accordionTasks[0])) {
+    getUserTasks();
+  }
+}
 
 function generateUserTaskList(userTasks) {
-  document.querySelector('.user-tasks').innerHTML = '';
+  if (isDev !== true) document.querySelector('.user-tasks').innerHTML = '';
+
   if (!userTasks.length) {
     const errorEl = createElement({ type: 'p', classList: ['error'] });
     errorEl.appendChild(createTextNode('No Data Found'));
@@ -302,22 +351,29 @@ function generateUserTaskList(userTasks) {
       document.querySelector('.user-tasks').appendChild(taskCard);
     });
 
-    if (currentPageIndex === 1) {
-      document.querySelector('.pagination-prev-page').disabled = true;
-    } else {
-      document.querySelector('.pagination-prev-page').disabled = false;
-    }
+    if (!isDev) {
+      if (currentPageIndex === 1) {
+        document.querySelector('.pagination-prev-page').disabled = true;
+      } else {
+        document.querySelector('.pagination-prev-page').disabled = false;
+      }
 
-    if (currentPageIndex === totalPages) {
-      document.querySelector('.pagination-next-page').disabled = true;
-    } else {
-      document.querySelector('.pagination-next-page').disabled = false;
+      if (currentPageIndex === totalPages) {
+        document.querySelector('.pagination-next-page').disabled = true;
+      } else {
+        document.querySelector('.pagination-next-page').disabled = false;
+      }
     }
   }
 }
 
 function createSingleTaskCard(task) {
-  const container = createElement({ type: 'div', classList: ['user-taks'] });
+  const container = createElement({ type: 'div', classList: ['user-task'] });
+  if (isDev === true) {
+    const innerHTMl = generateCardUIInDev(task);
+    container.innerHTML = innerHTMl;
+    return container;
+  }
   const h2 = createElement({ type: 'h2', classList: ['task-title'] });
   h2.appendChild(createTextNode(task?.title));
   const p = createElement({ type: 'p', classList: ['task-description'] });
@@ -416,8 +472,10 @@ function fetchPrevTasks() {
   }
 }
 
-function fetchNextTasks() {
-  if (currentPageIndex < totalPages) {
+async function fetchNextTasks() {
+  if (isDev) {
+    await getUserTasks();
+  } else if (currentPageIndex < totalPages) {
     currentPageIndex++;
     const tasks = getTasksToFetch(userAllTasks, currentPageIndex);
     generateUserTaskList(tasks);
@@ -895,10 +953,12 @@ function generateUserPrsList(userPrs) {
       const prsCard = createSinglePrCard(pr);
       document.querySelector('.user-pr').appendChild(prsCard);
     });
-    document.querySelector('.pagination-next-page').disabled =
-      currentPageIndex === totalPrsPages;
-    document.querySelector('.pagination-prev-page').disabled =
-      currentPageIndex === 1;
+    if (!isDev) {
+      document.querySelector('.pagination-next-page').disabled =
+        currentPageIndex === totalPrsPages;
+      document.querySelector('.pagination-prev-page').disabled =
+        currentPageIndex === 1;
+    }
   }
 }
 
@@ -1090,6 +1150,8 @@ async function accessingUserData() {
   if (isSuperUser) {
     getUserTasks();
     getUserPrs();
+    getUserSkills();
+    getUserAvailabilityStatus();
     generateAcademicTabDetails();
     toggleAccordionTabsVisibility();
   } else {

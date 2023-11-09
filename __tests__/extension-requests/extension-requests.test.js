@@ -511,14 +511,14 @@ describe('Tests the Extension Requests Screen', () => {
       '.extension-card:first-child .panel',
     );
     const firstAccordionIsVisible = await firstAccordionContent.evaluate(
-      (el) => el.style.maxHeight !== '',
+      (el) => el.style.display === 'block',
     );
     expect(firstAccordionIsVisible).toBe(true);
 
     await firstAccordionButton.click();
 
     const firstAccordionIsHidden = await firstAccordionContent.evaluate(
-      (el) => el.style.maxHeight === '',
+      (el) => el.style.display !== 'block',
     );
     expect(firstAccordionIsHidden).toBe(true);
   });
