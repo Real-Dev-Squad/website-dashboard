@@ -205,38 +205,6 @@ function formDataToObject(formData) {
   return result;
 }
 
-function dateDiff(date1, date2, formatter) {
-  if (date2 > date1) {
-    return dateDiff(date2, date1, formatter);
-  }
-
-  const timeDifference = new Date(date1).getTime() - new Date(date2).getTime();
-
-  const seconds = Math.floor(timeDifference / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
-  const months = Math.floor(days / 30);
-  const years = Math.floor(days / 365);
-
-  let res;
-  if (seconds < 60) {
-    res = `${seconds} ${seconds === 1 ? 'second' : 'seconds'}`;
-  } else if (minutes < 60) {
-    res = `${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`;
-  } else if (hours < 24) {
-    res = `${hours} ${hours === 1 ? 'hour' : 'hours'}`;
-  } else if (days < 30) {
-    res = `${days} ${days === 1 ? 'day' : 'days'}`;
-  } else if (months < 12) {
-    res = `${months} ${months === 1 ? 'month' : 'months'}`;
-  } else {
-    res = `${years} ${years === 1 ? 'year' : 'years'}`;
-  }
-
-  return formatter ? formatter(res) : res;
-}
-
 const addSpinner = (container) => {
   const spinner = createElement({
     type: 'div',

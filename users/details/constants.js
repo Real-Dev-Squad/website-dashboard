@@ -20,3 +20,4 @@ const iconMapper = {
 
 const MESSAGE_NOT_FOUND = 'Not Found';
 const MESSAGE_YEARS_OF_EXPERIENCE = 'Years of Experience';
+const noProgressbarStatuses = ['COMPLETED', 'DONE', 'VERIFIED'];
