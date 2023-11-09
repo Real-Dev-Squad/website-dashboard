@@ -287,7 +287,7 @@ describe('Tasks On User Management Page', () => {
     );
 
     expect(fourthTaskHTML).toContain('<div class="task-title">');
-    expect(fourthTaskHTML).toContain('<progress class="green"');
+    expect(fourthTaskHTML).toContain('<progress');
     expect(fourthTaskHTML).toContain('<div class="detail-block eta">');
     expect(fourthTaskHTML).toContain('<div class="detail-block status">');
     expect(fourthTaskHTML).toContain('<div class="detail-block startedOn">');

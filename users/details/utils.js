@@ -150,7 +150,7 @@ const generateCardUIInDev = (task) => {
       </div>
       <div class="detail-block status">
         <p class="div-heading">Status</p>
-        <p class="div-detail">${task.status || 'N/A'}</p>
+        <p class="div-detail">${READABLE_STATUS[task.status] || 'N/A'}</p>
       </div>
     </div>
     <div class="row">
