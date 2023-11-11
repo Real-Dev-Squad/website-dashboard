@@ -192,8 +192,14 @@ function toggleAccordionTabsVisibility() {
     .querySelectorAll('.visible-content');
   accordionTabs.forEach((tab) => {
     tab.addEventListener('click', () => {
+      const hiddenContent = tab.nextElementSibling;
+      const arrowIcon = tab.querySelector('img');
+      if (hiddenContent) {
+        arrowIcon.classList.toggle('open');
+        hiddenContent.classList.toggle('hide');
+      }
       if (tab.innerText === 'Tasks' && isDev) {
-        isTaskAccordionOpen = !isTaskAccordionOpen;
+        isTaskAccordionOpen = !isTaskAccordionOpen && hiddenContent;
         if (isTaskAccordionOpen) {
           tab.classList.add('sticky-header');
           document.addEventListener('scroll', onScrollHandler);
@@ -201,12 +207,6 @@ function toggleAccordionTabsVisibility() {
           tab.classList.remove('sticky-header');
           document.removeEventListener('scroll', onScrollHandler);
         }
-      }
-      const hiddenContent = tab.nextElementSibling;
-      const arrowIcon = tab.querySelector('img');
-      if (hiddenContent) {
-        arrowIcon.classList.toggle('open');
-        hiddenContent.classList.toggle('hide');
       }
     });
   });
