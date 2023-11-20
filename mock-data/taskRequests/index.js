@@ -24,6 +24,29 @@ const fetchedTaskRequests = [
         first_name: 'Test first_name',
       },
     ],
+    requestors: [
+      {
+        userExists: true,
+        user: {
+          id: 'V4rqL1aDecNGoa1IxiCu',
+          incompleteUserDetails: false,
+          discordId: '12345',
+          roles: {
+            archived: false,
+          },
+          linkedin_id: 'uiram',
+          last_name: 'Raghunathan',
+          yoe: '5',
+          github_display_name: 'Sriram',
+          company_name: 'Juniper networks ',
+          github_id: '19sriram',
+          designation: 'Front end engineer',
+          twitter_id: '19sriram',
+          first_name: 'Sriram',
+          username: '19sriram',
+        },
+      },
+    ],
   },
 ];
 
@@ -34,11 +57,13 @@ const individualTaskReqDetail = {
     lastModifiedAt: 1698837978463,
     requestType: 'ASSIGNMENT',
     createdBy: 'randhir',
+    requestors: ['SooJK37gzjIZfFNH0tlL'],
     lastModifiedBy: 'randhir',
     taskTitle: 'sample golang task s402',
     externalIssueUrl:
       'https://api.github.com/repos/Real-Dev-Squad/website-backend/issues/1310',
     taskId: '44SwDPe1r6AgoOtWq8EN',
+    approvedTo: 'SooJK37gzjIZfFNH0tlL',
     users: [
       {
         proposedStartDate: 1698684354000,
