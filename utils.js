@@ -100,3 +100,27 @@ function dateDiff(date1, date2, formatter) {
 
   return formatter ? formatter(res) : res;
 }
+
+const generateRqlQuery = (filterQueries, sortQueries) => {
+  let queryString = '';
+  if (filterQueries) {
+    Object.entries(filterQueries).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        queryString += value
+          .map((valueElement) => key + ':' + valueElement)
+          .join(' ');
+      } else {
+        queryString += key + ':' + value;
+      }
+      queryString += ' ';
+    });
+  }
+
+  if (sortQueries) {
+    Object.entries(sortQueries).forEach(([key, value]) => {
+      queryString += 'sort:' + key + '-' + value;
+    });
+  }
+
+  return queryString.trim();
+};

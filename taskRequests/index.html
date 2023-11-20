@@ -17,6 +17,7 @@
     <script src="/helpers/loadENV.js"></script>
     <script src="/taskRequests/constants.js"></script>
     <script src="/taskRequests/util.js"></script>
+    <script src="/utils.js"></script>
     <script src="/taskRequests/script.js" defer></script>
   </head>
 
@@ -33,63 +34,53 @@
       </div>
     </div>
     <div class="container">
-      <h1 class="container__title">Task Request</h1>
-      <div class="container__body">
-        <div class="container__body__loader hidden">Loading...</div>
-        <div class="sort-filters">
-          <button class="sort-button">
-            <img
-              id="asc-sort-icon"
-              src="/taskRequests/assets/sort-menu.svg"
-              alt="sort-icon"
-            />
-          </button>
-          <div class="backdrop"></div>
-          <div class="sort-modal hidden">
-            <div class="sort-head">
-              <h3>Sort By</h3>
-            </div>
-            <div class="sorts-container">
-              <form class="modal-form" id="sort_by-filter"></form>
-            </div>
+      <div class="sort-filters">
+        <button class="sort-button">
+          <img
+            id="asc-sort-icon"
+            src="/taskRequests/assets/sort-menu.svg"
+            alt="sort-icon"
+          />
+        </button>
+        <div class="backdrop"></div>
+        <div class="sort-modal hidden">
+          <div class="sort-head">
+            <h3>Sort By</h3>
           </div>
-          <button id="filter-button" class="filter-button">
-            <span class="filter-text">Filters</span>
+          <div class="sorts-container">
+            <form class="modal-form" id="sort_by-filter"></form>
+          </div>
+        </div>
+        <button id="filter-button" class="filter-button">
+          <span class="filter-text">Filters</span>
 
-            <img
-              class="funnel-icon"
-              src="/taskRequests/assets/funnel.svg"
-              alt="funnel icon"
-            />
-          </button>
-          <div class="filter-modal hidden">
-            <div class="filter-head">
-              <h3>Filters</h3>
-              <button id="clear-button" class="clear-btn">Clear</button>
-            </div>
-            <div class="filters-container">
-              <h2>Status</h2>
-              <form class="modal-form" id="status-filter"></form>
-              <h2>Request type</h2>
-              <form class="modal-form" id="status-request"></form>
-            </div>
-            <button id="apply-filter-button" class="apply-filter-button">
-              Apply Filter
-            </button>
+          <img
+            class="funnel-icon"
+            src="/taskRequests/assets/funnel.svg"
+            alt="funnel icon"
+          />
+        </button>
+        <div class="filter-modal hidden">
+          <div class="filter-head">
+            <h3>Filters</h3>
+            <button id="clear-button" class="clear-btn">Clear</button>
           </div>
+          <div class="filters-container">
+            <h2>Status</h2>
+            <form class="modal-form" id="status-filter"></form>
+            <h2>Request type</h2>
+            <form class="modal-form" id="request-type-filter"></form>
+          </div>
+          <button id="apply-filter-button" class="apply-filter-button">
+            Apply Filter
+          </button>
         </div>
-        <div class="container__filters hidden">
-          <select
-            id="status"
-            defaultValue=""
-            class="container__filters__status"
-          >
-            <option value="">All</option>
-            <option value="WAITING">Waiting</option>
-            <option value="APPROVED">Approved</option>
-          </select>
-        </div>
+      </div>
+      <div class="container__body">
         <div id="task-request-container" class="taskRequest"></div>
+        <div class="container__body__loader hidden">Loading...</div>
+
+        <div class="virtual"></div>
       </div>
     </div>
   </body>

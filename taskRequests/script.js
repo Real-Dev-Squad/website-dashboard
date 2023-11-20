@@ -1,36 +1,47 @@
 const API_BASE_URL = window.API_BASE_URL;
 const taskRequestContainer = document.getElementById('task-request-container');
 const containerBody = document.querySelector('.container__body');
-const filterContainer = document.querySelector('.container__filters');
 const filterModal = document.getElementsByClassName(FILTER_MODAL)[0];
 const applyFilterButton = document.getElementById(APPLY_FILTER_BUTTON);
+const clearButton = document.getElementById(CLEAR_BUTTON);
 const filterButton = document.getElementById(FILTER_BUTTON);
 const sortModal = document.getElementsByClassName(SORT_MODAL)[0];
 const containerFilter = document.querySelector(FILTER_CONTAINER);
-const oldContainerFilter = document.querySelector(OLD_FILTER);
+const lastElementContainer = document.querySelector(LAST_ELEMENT_CONTAINER);
 const sortButton = document.querySelector(SORT_BUTTON);
 const backDrop = document.querySelector(BACKDROP);
 const params = new URLSearchParams(window.location.search);
 const isDev = params.get(DEV_FEATURE_FLAG) === 'true';
-const fetchedTaskRequests = [];
-
 const loader = document.querySelector('.container__body__loader');
 const startLoading = () => loader.classList.remove('hidden');
 const stopLoading = () => loader.classList.add('hidden');
-async function getTaskRequests() {
-  const endpoint = `/taskRequests${
-    params.get('dev') === 'true' ? '?dev=true' : ''
-  }`;
-  startLoading();
+let pageVersion = 0;
+let nextLink = '';
+let isDataLoading = false;
+let selectedSortButton = null;
+
+const filterStates = {
+  dev: true,
+  status: Status.PENDING,
+  order: CREATED_TIME,
+  size: DEFAULT_PAGE_SIZE,
+};
+
+const updateFilterStates = (key, value) => {
+  filterStates[key] = value;
+};
+
+async function getTaskRequests(query = {}, nextLink) {
+  let finalUrl =
+    API_BASE_URL + (nextLink || '/taskRequests' + getQueryParamsString(query));
   try {
-    const res = await fetch(API_BASE_URL + endpoint, {
+    const res = await fetch(finalUrl, {
       credentials: 'include',
     });
 
     if (res.ok) {
       const data = await res.json();
-      fetchedTaskRequests.push(...data.data);
-      return;
+      return data;
     }
 
     if (res.status === 401) {
@@ -51,8 +62,6 @@ async function getTaskRequests() {
     showMessage('ERROR', ErrorMessages.SERVER_ERROR);
   } catch (e) {
     console.error(e);
-  } finally {
-    stopLoading();
   }
 }
 
@@ -64,20 +73,20 @@ function showMessage(type, message) {
   }
   p.classList.add(...classes);
   p.textContent = message;
-  containerBody.innerHTML = '';
-  containerBody.appendChild(p);
+  taskRequestContainer.innerHTML = '';
+  taskRequestContainer.appendChild(p);
 }
 
 function getAvatar(user) {
-  if (user.user?.picture?.url) {
+  if (user?.picture?.url) {
     return createCustomElement({
       tagName: 'img',
-      src: user.user?.picture?.url,
+      src: user?.picture?.url,
     });
   }
   return createCustomElement({
     tagName: 'span',
-    textContent: user?.user?.first_name[0] || '?',
+    textContent: user?.first_name?.[0] || '?',
   });
 }
 function getRemainingCount(requestors) {
@@ -94,19 +103,15 @@ function openTaskDetails(id) {
   url.searchParams.append('id', id);
   window.location.href = url;
 }
+const changeFilter = () => {
+  nextLink = '';
+  taskRequestContainer.innerHTML = '';
+};
 
-if (isDev) {
-  containerFilter.style.display = 'flex';
-  oldContainerFilter.style.display = 'none';
-} else {
-  containerFilter.style.display = 'none';
-  oldContainerFilter.style.display = 'flex';
-}
 sortButton.addEventListener('click', async (event) => {
   event.stopPropagation();
   sortModal.classList.toggle('hidden');
   backDrop.style.display = 'flex';
-  sortModalButtons();
 });
 
 backDrop.addEventListener('click', () => {
@@ -115,9 +120,49 @@ backDrop.addEventListener('click', () => {
   backDrop.style.display = 'none';
 });
 
+function toggleStatusCheckbox(statusValue) {
+  const element = document.querySelector(
+    `#status-filter input[value=${statusValue}]`,
+  );
+  element.checked = !element.checked;
+}
+function clearCheckboxes(groupName) {
+  const checkboxes = document.querySelectorAll(`input[name="${groupName}"]`);
+  checkboxes.forEach((cb) => {
+    cb.checked = false;
+  });
+}
+function getCheckedValues(groupName) {
+  const checkboxes = document.querySelectorAll(
+    `input[name="${groupName}"]:checked`,
+  );
+  return Array.from(checkboxes).map((cb) => cb.value.toLowerCase());
+}
+
 filterButton.addEventListener('click', (event) => {
   filterModal.classList.toggle('hidden');
   backDrop.style.display = 'flex';
+});
+
+applyFilterButton.addEventListener('click', async () => {
+  filterModal.classList.toggle('hidden');
+  const checkedValuesStatus = getCheckedValues('status-filter');
+  const checkedValuesRequestType = getCheckedValues('request-type-filter');
+  changeFilter();
+  if (checkedValuesStatus) {
+    updateFilterStates('status', checkedValuesStatus);
+  }
+  if (checkedValuesRequestType) {
+    updateFilterStates('requestType', checkedValuesRequestType);
+  }
+  await renderTaskRequestCards(filterStates);
+});
+clearButton.addEventListener('click', async function () {
+  clearCheckboxes('status-filter');
+  filterModal.classList.toggle('hidden');
+  changeFilter();
+  updateFilterStates('status', '');
+  await renderTaskRequestCards(filterStates);
 });
 
 function addCheckbox(labelText, value, groupName) {
@@ -132,19 +177,11 @@ function addCheckbox(labelText, value, groupName) {
   label.appendChild(document.createElement('br'));
   group.appendChild(label);
 }
-function addSortByIcon(name, id, groupName, iconPathAsc, iconPathDesc) {
+function addSortByIcon(name, id, groupName, order) {
   const group = document.getElementById(groupName);
 
-  const containerAsc = createSortContainer(id, name, iconPathAsc, 'asc');
+  const containerAsc = createSortContainer(id, name, order);
   group.appendChild(containerAsc);
-
-  const containerDesc = createSortContainer(
-    id + '-desc',
-    name,
-    iconPathDesc,
-    'desc',
-  );
-  group.appendChild(containerDesc);
 }
 
 function sortModalButtons() {
@@ -159,56 +196,53 @@ function sortModalButtons() {
     createTimeAsc,
     createTimeDesc,
   ];
-  let selectedButton = null;
+
   function toggleSortModal() {
     sortModal.classList.toggle('hidden');
     backDrop.style.display = 'none';
   }
 
   function selectButton(button) {
-    if (selectedButton === button) {
-      selectedButton.classList.remove('selected');
-      selectedButton = null;
+    if (selectedSortButton === button) {
+      selectedSortButton.classList.remove('selected');
+      selectedSortButton = null;
       toggleSortModal();
     } else {
-      if (selectedButton) {
-        selectedButton.classList.remove('selected');
+      if (selectedSortButton) {
+        selectedSortButton.classList.remove('selected');
       }
-      selectedButton = button;
-      selectedButton.classList.add('selected');
+      selectedSortButton = button;
+      selectedSortButton.classList.add('selected');
       toggleSortModal();
     }
   }
 
   sortModalButtons.forEach((button) => {
     if (button) {
-      if (!button.hasEventListener) {
-        button.hasEventListener = true;
-        button.addEventListener('click', () => {
-          selectButton(button);
-        });
-      }
+      button.addEventListener('click', async () => {
+        selectButton(button);
+        changeFilter();
+        updateFilterStates('order', button.id);
+        await renderTaskRequestCards(filterStates);
+      });
     }
   });
+  selectButton(createTimeAsc);
+  toggleSortModal();
 }
 
-function createSortContainer(id, name, iconPath, sortOrder) {
+function createSortContainer(id, name, sortOrder) {
   const container = document.createElement('div');
   container.classList.add('sort-container', sortOrder);
 
   container.id = id;
 
   const nameSpan = document.createElement('span');
+  nameSpan.classList.add('sort__button__text');
   nameSpan.textContent = name;
   const label = document.createElement('label');
   label.appendChild(nameSpan);
 
-  const icon = document.createElement('img');
-  icon.src = iconPath;
-  icon.alt = name + ' ' + sortOrder + ' icon';
-  icon.classList.add('sort-icon', sortOrder);
-
-  label.appendChild(icon);
   label.classList.add('sort-label');
 
   container.appendChild(label);
@@ -223,37 +257,49 @@ function populateStatus() {
     { name: 'Denied', id: 'DENIED' },
   ];
   const requestList = [
-    { name: 'Assignment', id: 'APPROVED' },
-    { name: 'Creation', id: 'PENDING' },
+    { name: 'Assignment', id: 'assignment' },
+    { name: 'Creation', id: 'creation' },
   ];
 
   statusList.map(({ name, id }) => addCheckbox(name, id, 'status-filter'));
 
-  requestList.map(({ name, id }) => addCheckbox(name, id, 'status-request'));
+  requestList.map(({ name, id }) =>
+    addCheckbox(name, id, 'request-type-filter'),
+  );
 
   const sortByList = [
     {
-      name: 'Assignee Count',
-      id: 'ASSIGNEE_COUNT',
-      iconPathAsc: '/taskRequests/assets/sort-up.svg',
-      iconPathDesc: '/taskRequests/assets/sort-down.svg',
+      name: 'Least Requested',
+      id: 'REQUESTORS_COUNT_ASC',
+      order: 'asc',
     },
     {
-      name: 'Created Time',
-      id: 'CREATED_TIME',
-      iconPathAsc: '/taskRequests/assets/sort-up.svg',
-      iconPathDesc: '/taskRequests/assets/sort-down.svg',
+      name: 'Most Requested',
+      id: 'REQUESTORS_COUNT_DESC',
+      order: 'desc',
+    },
+    {
+      name: 'Newest First',
+      id: 'CREATED_TIME_DESC',
+      order: 'desc',
+    },
+    {
+      name: 'Oldest First',
+      id: 'CREATED_TIME_ASC',
+      order: 'asc',
     },
   ];
 
-  sortByList.map(({ name, id, iconPathAsc, iconPathDesc }) =>
-    addSortByIcon(name, id, 'sort_by-filter', iconPathAsc, iconPathDesc),
+  sortByList.forEach(({ name, id, order }) =>
+    addSortByIcon(name, id, 'sort_by-filter', order),
   );
 }
 
 populateStatus();
+sortModalButtons();
 
-function createTaskRequestCard({ id, task, requestors, status, taskTitle }) {
+function createTaskRequestCard(taskRequest) {
+  let { id, task, status, taskTitle, users } = taskRequest;
   const card = createCustomElement({
     tagName: 'div',
     class: 'taskRequest__card',
@@ -300,17 +346,17 @@ function createTaskRequestCard({ id, task, requestors, status, taskTitle }) {
             tagName: 'div',
             class: 'taskRequest__card__footer__requestor',
             child: [
-              ...requestors.map((requestor, index) => {
+              ...users.map((user, index) => {
                 if (index < 3) {
                   return createCustomElement({
                     tagName: 'div',
                     class: 'taskRequest__card__footer__requestor__avatar',
-                    title: requestor?.user?.first_name,
-                    child: [getAvatar(requestor)],
+                    title: user?.first_name,
+                    child: [getAvatar(user)],
                   });
                 }
               }),
-              getRemainingCount(requestors) || '',
+              getRemainingCount(users) || '',
             ],
           }),
         ],
@@ -320,16 +366,55 @@ function createTaskRequestCard({ id, task, requestors, status, taskTitle }) {
   return card;
 }
 
-function renderTaskRequestCards(taskRequests) {
-  if (taskRequests.length > 0) {
-    filterContainer.classList.remove('hidden');
-    taskRequests.forEach((taskRequest) => {
+const intersectionObserver = new IntersectionObserver(async (entries) => {
+  if (!nextLink) {
+    return;
+  }
+  if (entries[0].isIntersecting && !isDataLoading) {
+    await renderTaskRequestCards({}, nextLink);
+  }
+});
+
+const addIntersectionObserver = () => {
+  intersectionObserver.observe(lastElementContainer);
+};
+const removeIntersectionObserver = () => {
+  intersectionObserver.unobserve(lastElementContainer);
+};
+
+async function renderTaskRequestCards(queries = {}, newLink = '') {
+  pageVersion++;
+  const currentVersion = pageVersion;
+  try {
+    isDataLoading = true;
+    startLoading();
+    const taskRequestResponse = await getTaskRequests(queries, newLink);
+    const taskRequestsList = taskRequestResponse.data;
+    nextLink = taskRequestResponse.next;
+    if (currentVersion !== pageVersion) {
+      return;
+    }
+    taskRequestsList.forEach((taskRequest) => {
       taskRequestContainer.appendChild(createTaskRequestCard(taskRequest));
     });
+  } catch (error) {
+    console.error(error);
+    showMessage('ERROR', ErrorMessages.SERVER_ERROR);
+  } finally {
+    if (currentVersion !== pageVersion) return;
+    stopLoading();
+    isDataLoading = false;
+    if (taskRequestContainer.innerHTML === '') {
+      showMessage('INFO', 'No task requests found!');
+    }
   }
 }
 
-(async () => {
-  await getTaskRequests();
-  renderTaskRequestCards(fetchedTaskRequests);
-})();
+async function render() {
+  toggleStatusCheckbox(Status.PENDING.toUpperCase());
+
+  await renderTaskRequestCards(filterStates);
+  addIntersectionObserver();
+}
+
+render();

@@ -14,27 +14,14 @@ const fetchedTaskRequests = [
       priority: 'HIGH',
       status: 'ASSIGNED',
     },
-    requestors: [
+    users: [
       {
-        userExists: true,
-        user: {
-          id: 'V4rqL1aDecNGoa1IxiCu',
-          incompleteUserDetails: false,
-          discordId: '12345',
-          roles: {
-            archived: false,
-          },
-          linkedin_id: 'uiram',
-          last_name: 'Raghunathan',
-          yoe: '5',
-          github_display_name: 'Sriram',
-          company_name: 'Juniper networks ',
-          github_id: '19sriram',
-          designation: 'Front end engineer',
-          twitter_id: '19sriram',
-          first_name: 'Sriram',
-          username: '19sriram',
-        },
+        proposedStartDate: 1700304616479,
+        proposedDeadline: 1700909416479,
+        userId: 'eChYAP0kUwLo4wQ1gqMV',
+        status: 'PENDING',
+        username: 'ajeyak',
+        first_name: 'Test first_name',
       },
     ],
   },
@@ -47,23 +34,21 @@ const individualTaskReqDetail = {
     lastModifiedAt: 1698837978463,
     requestType: 'ASSIGNMENT',
     createdBy: 'randhir',
-    requestors: ['SooJK37gzjIZfFNH0tlL'],
     lastModifiedBy: 'randhir',
     taskTitle: 'sample golang task s402',
     externalIssueUrl:
       'https://api.github.com/repos/Real-Dev-Squad/website-backend/issues/1310',
     taskId: '44SwDPe1r6AgoOtWq8EN',
-    approvedTo: 'SooJK37gzjIZfFNH0tlL',
     users: [
       {
         proposedStartDate: 1698684354000,
         proposedDeadline: 1699142400000,
         description: 'code change 3 days , testing - 2 days. total - 5 days',
         userId: 'SooJK37gzjIZfFNH0tlL',
-        status: 'APPROVED',
+        status: 'PENDING',
       },
     ],
-    status: 'APPROVED',
+    status: 'PENDING',
     id: 'dM5wwD9QsiTzi7eG7Oq5',
     url: 'http://localhost:3000/taskRequests/dM5wwD9QsiTzi7eG7Oq5',
   },
@@ -142,6 +127,14 @@ const urlMappings = {
     userInformation,
   'https://staging-api.realdevsquad.com/users/userId/SooJK37gzjIZfFNH0tlL':
     userInformation,
+  'https://staging-api.realdevsquad.com/taskRequests?action=approve':
+    fetchedTaskRequests,
+  'https://api.realdevsquad.com/taskRequests?action=approve':
+    fetchedTaskRequests,
+  'https://staging-api.realdevsquad.com/taskRequests?action=reject':
+    fetchedTaskRequests,
+  'https://api.realdevsquad.com/taskRequests?action=reject':
+    fetchedTaskRequests,
 };
 
 module.exports = {
