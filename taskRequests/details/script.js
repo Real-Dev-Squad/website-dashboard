@@ -3,6 +3,7 @@ const API_BASE_URL = window.API_BASE_URL;
 let taskRequest;
 
 const taskRequestSkeleton = document.querySelector('.taskRequest__skeleton');
+const container = document.querySelector('.container');
 const taskSkeleton = document.querySelector('.task__skeleton');
 const requestorSkeleton = document.querySelector(
   '.requestors__container__list__skeleton',
@@ -12,7 +13,7 @@ const taskRequestContainer = document.getElementById('task-request-details');
 const taskContainer = document.getElementById('task-details');
 const toast = document.getElementById('toast_task_details');
 const requestorsContainer = document.getElementById('requestors-details');
-
+const rejectButton = document.getElementById('reject-button');
 const taskRequestId = new URLSearchParams(window.location.search).get('id');
 history.pushState({}, '', window.location.href);
 const errorMessage =
@@ -41,6 +42,7 @@ function renderTaskRequestDetails(taskRequest) {
         createCustomElement({
           tagName: 'span',
           textContent: taskRequest?.status,
+          id: 'taskRequest__status_text',
           class: [
             'taskRequest__status__chip',
             `taskRequest__status__chip--${taskRequest?.status?.toLowerCase()}`,
@@ -64,6 +66,16 @@ function renderTaskRequestDetails(taskRequest) {
       ],
     }),
   );
+}
+
+function updateStatus(status) {
+  const statusText = document.getElementById('taskRequest__status_text');
+  statusText.classList = [];
+  statusText.classList.add('taskRequest__status__chip');
+  statusText.classList.add(
+    `taskRequest__status__chip--${status?.toLowerCase()}`,
+  );
+  statusText.textContent = status;
 }
 
 async function renderTaskDetails(taskRequest) {
@@ -147,9 +159,12 @@ function getAvatar(user) {
   });
 }
 
-async function approveTaskRequest(userId) {
+async function updateTaskRequest(action, userId) {
+  const removeSpinner = addSpinner(container);
+  container.classList.add('container-disabled');
   try {
-    const res = await fetch(`${API_BASE_URL}/taskRequests/approve`, {
+    const queryParams = new URLSearchParams({ action: action });
+    const res = await fetch(`${API_BASE_URL}/taskRequests?${queryParams}`, {
       credentials: 'include',
       method: 'PATCH',
       body: JSON.stringify({
@@ -162,22 +177,28 @@ async function approveTaskRequest(userId) {
     });
 
     if (res.ok) {
-      showToast('Task Approved Successfully', 'success');
+      showToast('Task updated Successfully', 'success');
       taskRequest = await fetchTaskRequest();
       requestorsContainer.innerHTML = '';
-      renderRequestors(taskRequest?.requestors);
+      updateStatus(taskRequest.status);
+      renderRequestors(taskRequest);
+      renderRejectButton(taskRequest);
+      return res;
     } else {
       showToast(errorMessage, 'failure');
     }
   } catch (e) {
     showToast(errorMessage, 'failure');
     console.error(e);
+  } finally {
+    removeSpinner();
+    container.classList.remove('container-disabled');
   }
 }
 
 function getActionButton(requestor) {
   if (taskRequest?.status === taskRequestStatus.APPROVED) {
-    if (taskRequest?.approvedTo === requestor?.user?.id) {
+    if (taskRequest.approvedTo === requestor?.user?.id) {
       return createCustomElement({
         tagName: 'p',
         textContent: 'Approved',
@@ -192,17 +213,22 @@ function getActionButton(requestor) {
     textContent: 'Approve',
     class: 'requestors__conatainer__list__button',
     eventListeners: [
-      { event: 'click', func: () => approveTaskRequest(requestor.user?.id) },
+      {
+        event: 'click',
+        func: () =>
+          updateTaskRequest(TaskRequestAction.APPROVE, requestor.user?.id),
+      },
     ],
   });
 }
 
-async function renderRequestors(requestors) {
+async function renderRequestors(taskRequest) {
+  const requestors = taskRequest?.users;
   requestorSkeleton.classList.remove('hidden');
   const data = await Promise.all(
     requestors.map((requestor) => {
-      return fetch(`${API_BASE_URL}/users/userId/${requestor}`).then((res) =>
-        res.json(),
+      return fetch(`${API_BASE_URL}/users/userId/${requestor.userId}`).then(
+        (res) => res.json(),
       );
     }),
   );
@@ -223,21 +249,34 @@ async function renderRequestors(requestors) {
               child: [getAvatar(requestor)],
             }),
             createCustomElement({
-              tagName: 'p',
-              textContent: requestor.user?.first_name,
+              tagName: 'div',
+              class: 'requestors__container__list__userDetails__info',
+              child: [
+                createCustomElement({
+                  tagName: 'p',
+                  class: 'info__name',
+                  textContent: requestor.user?.first_name,
+                }),
+                createCustomElement({
+                  tagName: 'a',
+                  textContent: 'details>',
+                  class: 'info__more',
+                  eventListeners: [
+                    {
+                      event: 'click',
+                      func: () => populateModalContent(index),
+                    },
+                  ],
+                }),
+              ],
             }),
           ],
         }),
-        getActionButton(requestor),
+        taskRequest.status !== 'DENIED' ? getActionButton(requestor) : '',
       ],
     });
     const avatarDiv = userDetailsDiv.querySelector(
       '.requestors__container__list__userDetails__avatar',
-    );
-    const firstNameParagraph = userDetailsDiv.querySelector('p');
-    avatarDiv.addEventListener('click', () => populateModalContent(index));
-    firstNameParagraph.addEventListener('click', () =>
-      populateModalContent(index),
     );
     requestorsContainer.append(userDetailsDiv);
   });
@@ -249,19 +288,34 @@ async function fetchTaskRequest() {
   });
 
   const { data } = await res.json();
+  const approvedTo = data.users
+    .filter((user) => user.status === 'APPROVED')
+    ?.map((user) => user.userId)?.[0];
+  data.approvedTo = approvedTo;
   return data;
 }
+const renderRejectButton = (taskRequest) => {
+  if (taskRequest?.status !== 'PENDING') {
+    rejectButton.disabled = true;
+  }
 
+  rejectButton.addEventListener('click', async () => {
+    const res = await updateTaskRequest(TaskRequestAction.REJECT);
+    if (res?.ok) {
+      rejectButton.disabled = true;
+    }
+  });
+};
 const renderTaskRequest = async () => {
   taskRequestSkeleton.classList.remove('hidden');
   taskContainer.classList.remove('hidden');
   try {
     taskRequest = await fetchTaskRequest();
     taskRequestSkeleton.classList.add('hidden');
-
+    renderRejectButton(taskRequest);
     renderTaskRequestDetails(taskRequest);
     renderTaskDetails(taskRequest);
-    renderRequestors(taskRequest?.requestors);
+    renderRequestors(taskRequest);
   } catch (e) {
     console.error(e);
   }
