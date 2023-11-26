@@ -13,6 +13,7 @@
     <script src="/users/constants.js" defer></script>
     <script src="/users/utils.js" defer></script>
     <script type="module" src="/users/script.js" defer></script>
+    <script type="module" src="/groups/utils.js" defer></script>
   </head>
 
   <body>
@@ -71,6 +72,19 @@
       <div id="pagination" class="remove-element">
         <button class="pagination-btn" id="prevButton">&laquo; Previous</button>
         <button class="pagination-btn" id="nextButton">Next &raquo;</button>
+      </div>
+      <div id="create-group-container" class="hide">
+        <span class="group-tag">@group-</span>
+        <input
+          type="text"
+          id="create-group-bar"
+          placeholder="create group role"
+        />
+        <button id="create-group-button">Create Group</button>
+        <br />
+        <label for="new-group" class="label-for-new-group">
+          Create Group Role (Role name should not contain 'group')
+        </label>
       </div>
     </section>
     <footer>

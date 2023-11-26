@@ -20,3 +20,4 @@ const AVAILABILITY_FILTER = 'filter-by-avaviability';
 const APPLY_FILTER_BUTTON = 'apply-filter-button';
 const CLEAR_BUTTON = 'clear-button';
 const STATUS_LIST = ['ooo', 'active', 'idle'];
+const CREATE_GROUP_CONTAINER = 'create-group-container';

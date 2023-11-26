@@ -12,10 +12,13 @@ const filterButton = document.getElementById(FILTER_BUTTON);
 const availabilityFilter = document.getElementById(AVAILABILITY_FILTER);
 const applyFilterButton = document.getElementById(APPLY_FILTER_BUTTON);
 const clearButton = document.getElementById(CLEAR_BUTTON);
+const createGroupButton = document.getElementById('create-group-button');
+const createGroupInput = document.getElementById('create-group-bar');
 
 let tileViewActive = false;
 let tableViewActive = true;
 let page = 0;
+let checkedUsers = {};
 
 const init = (
   prevBtn,
@@ -169,6 +172,24 @@ function generateUserList(
   const ulElement = document.createElement('ul');
   users.forEach((userData) => {
     const listElement = document.createElement('li');
+
+    const checkboxElement = document.createElement('input');
+    checkboxElement.type = 'checkbox';
+    checkboxElement.classList.add('user-checkbox');
+    checkboxElement.style.height = '20px';
+    checkboxElement.style.width = '20px';
+    checkboxElement.checked = checkedUsers[userData.userId] ? true : false;
+
+    const checkboxWrapper = document.createElement('div');
+    checkboxWrapper.classList.add('checkbox-wrapper');
+    checkboxWrapper.appendChild(checkboxElement);
+
+    checkboxElement.addEventListener('change', (event) => {
+      console.log(event.target);
+      handleUserChecked(userData, event.target.checked);
+      checkedUsers[userData.userId] = event.target.checked;
+    });
+
     const imgElement = document.createElement('img');
     imgElement.src = userData.picture ? userData.picture : DEFAULT_AVATAR;
     imgElement.classList.add('user-img-dimension');
@@ -177,6 +198,7 @@ function generateUserList(
       `${userData.first_name} ${userData.last_name}`,
     );
     pElement.appendChild(node);
+    listElement.appendChild(checkboxWrapper);
     listElement.appendChild(imgElement);
     listElement.appendChild(pElement);
 
@@ -185,12 +207,19 @@ function generateUserList(
       listElement.classList.remove('tile-width');
       imgElement.classList.add('remove-element');
     }
-    listElement.onclick = () => {
+    listElement.onclick = (event) => {
+      if (
+        event.target === checkboxElement ||
+        event.target === checkboxWrapper
+      ) {
+        return;
+      }
       document.getElementById('user-search').value = '';
       window.location.href = `/users/details/index.html?username=${userData.username}`;
     };
     ulElement.appendChild(listElement);
   });
+  localStorage.setItem('checkedUsers', JSON.stringify(checkedUsers));
   loaderElement.classList.add('remove-element');
   if (showPagination) {
     paginationElement.classList.remove('remove-element');
@@ -348,6 +377,7 @@ async function showUserDataList(
         (user) => user.first_name && !user.roles?.archived,
       );
       usersDataList = usersDataList.map((user) => ({
+        userId: user.id,
         username: user.username,
         first_name: user.first_name,
         last_name: user.last_name ? user.last_name : '',
@@ -462,12 +492,21 @@ window.onload = function () {
     prevBtn,
     nextBtn,
   );
+  // Load checked users from local storage
+  const savedCheckedUsers = localStorage.getItem('checkedUsers');
+  if (savedCheckedUsers) {
+    checkedUsers = JSON.parse(savedCheckedUsers);
+  }
 
   populateFilters();
   if (window.location.search) {
     persistUserDataBasedOnQueryParams();
   }
 };
+
+window.addEventListener('beforeunload', function () {
+  localStorage.clear();
+});
 
 filterButton.addEventListener('click', (event) => {
   event.stopPropagation();
@@ -476,6 +515,104 @@ filterButton.addEventListener('click', (event) => {
   if (window.location.search) {
     const checkboxes = document.querySelectorAll('.checkbox');
     selectFiltersBasedOnQueryParams(checkboxes);
+  }
+});
+
+function handleUserChecked(userData, isChecked) {
+  console.log(userData);
+  const userKey = userData.userId;
+
+  let savedCheckedUsers = localStorage.getItem('checkedUsers');
+  let currentCheckedUsers = savedCheckedUsers
+    ? JSON.parse(savedCheckedUsers)
+    : {};
+
+  if (isChecked) {
+    currentCheckedUsers[userKey] = true;
+  } else {
+    delete currentCheckedUsers[userKey];
+  }
+
+  localStorage.setItem('checkedUsers', JSON.stringify(currentCheckedUsers));
+}
+
+/**
+ *
+ * Check if group role is valid
+ */
+
+const isValidGroupRole = (rolename) => {
+  const error = {
+    valid: true,
+    message: '',
+  };
+  if (rolename.includes('group')) {
+    error.valid = false;
+    error.message = CANNOT_CONTAIN_GROUP;
+  }
+  if (rolename.split(' ').length > 1) {
+    error.valid = false;
+    error.message = NO_SPACES_ALLOWED;
+  }
+  return error;
+};
+
+async function getOrCreateGroupRole(groupName) {
+  const existingGroups = await getDiscordGroups(true);
+  console.log(existingGroups);
+  const existingGroup = existingGroups.groups.find(
+    (group) =>
+      removeGroupKeywordFromDiscordRoleName(group.rolename) === groupName,
+  );
+
+  if (existingGroup) {
+    return existingGroup.roleId;
+  } else {
+    const groupRoleBody = { rolename: groupName };
+    const response = await createDiscordGroupRole(groupRoleBody);
+    return response.roleId;
+  }
+}
+
+function addCheckedUsersToGroup(roleId) {
+  const promises = [];
+
+  for (const userId in checkedUsers) {
+    if (checkedUsers[userId] === true) {
+      const memberRoleBody = {
+        userid: userId,
+        roleid: roleId,
+      };
+      promises.push(addGroupRoleToMember(memberRoleBody));
+    }
+  }
+
+  return Promise.all(promises);
+}
+
+createGroupButton.addEventListener('click', async () => {
+  const groupName = createGroupInput.value.trim();
+
+  // Check if groupName is empty
+  if (!groupName) {
+    alert('Enter a valid Discord name.');
+    return;
+  }
+
+  if (!isValidGroupRole(groupName).valid) {
+    alert(isValidGroupRole(groupName).message);
+    return;
+  }
+
+  try {
+    const roleId = await getOrCreateGroupRole(groupName);
+    await addCheckedUsersToGroup(roleId);
+
+    alert('Added checked users to the group.');
+  } catch (error) {
+    alert(`An error occurred: ${error.message}`);
+  } finally {
+    createGroupInput.value = '';
   }
 });
 
@@ -692,3 +829,11 @@ export {
   formatUsersData,
   showUserDataList,
 };
+
+import {
+  removeGroupKeywordFromDiscordRoleName,
+  getDiscordGroups,
+  addGroupRoleToMember,
+  createDiscordGroupRole,
+  getUserSelf,
+} from '../groups/utils.js';
