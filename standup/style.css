@@ -132,12 +132,12 @@ body {
 .dates {
   position: sticky;
   top: 0;
-  padding: 1rem;
+  padding: 0.75rem;
   background-color: var(--blue-color);
   color: var(--white-color);
   z-index: 10;
   border: 1px solid var(--black-color);
-  min-width: 6rem;
+  min-width: 7.25rem;
 }
 
 .status {

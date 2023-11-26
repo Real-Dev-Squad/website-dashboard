@@ -6,6 +6,13 @@
   --color-warn: rgba(199, 129, 18, 0.4);
   --color-gray-light: #eee;
   --color-gray: #666;
+  --red-color: red;
+  --light-gray-color: lightgray;
+  --dark-gray-color: rgb(199, 195, 195);
+  --blue-hover-color: #11085c;
+  --black-color: black;
+  --blue-color: #1d1283;
+  --white: #ffffff;
   --color-text-light: rgba(0, 0, 0, 0.6);
   --elevation-1: 0 1px 3px 1px rgba(0, 0, 0, 0.1),
     0 1px 2px 0 rgba(0, 0, 0, 0.1);
@@ -50,7 +57,7 @@ body {
 }
 .container__filters {
   margin: 1rem 0;
-  display: flex;
+  display: none;
   gap: 0.5rem;
 }
 .container__filters__status {
@@ -65,6 +72,184 @@ body {
   font-weight: 400;
   font-size: 2rem;
   line-height: 2.5rem;
+}
+
+.sort-filters {
+  justify-content: end;
+  align-items: center;
+  width: 100%;
+  padding: 1.5rem;
+  gap: 1rem;
+}
+
+.funnel-icon {
+  width: 1.2rem;
+  height: 1.5rem;
+  margin-left: 0.5rem;
+}
+
+.filter-button:hover {
+  background-color: var(--blue-hover-color);
+}
+.filter-button {
+  background-color: var(--blue-color);
+  color: var(--white);
+  border: none;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 9rem;
+  height: 2.5rem;
+  padding: 0.7rem;
+}
+
+.sort-button {
+  display: flex;
+  background-color: var(--light-gray-color);
+  border-radius: 0.4rem;
+  border: 2.5px solid var(--black-color);
+  padding: 12px;
+  height: 2.5rem;
+}
+
+.sort-button:hover {
+  background-color: var(--medium-gray);
+}
+
+.sort-modal {
+  width: 20%;
+  min-width: 15rem;
+  border: 1px solid var(--light-gray-color);
+  box-shadow: 0 0 10px var(--black-transparent);
+  border-radius: 0.31rem;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  z-index: 2;
+  position: absolute;
+  top: 10.25rem;
+  right: 1rem;
+  background-color: var(--white);
+}
+
+.sort-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+  padding: 4px;
+  border: 1px solid var(--light-gray-color);
+  box-shadow: 0 0 10px var(--black-transparent);
+  border-radius: 0.31rem;
+  cursor: pointer;
+}
+.selected {
+  background-color: var(--dark-gray-color);
+}
+.sort-container:hover {
+  background-color: var(--color-gray-light);
+}
+
+.sort-label {
+  display: contents;
+}
+
+/* Filter modal  */
+.filter-modal {
+  width: 20%;
+  min-width: 15rem;
+  border: 1px solid var(--light-gray-color);
+  box-shadow: 0 0 10px var(--black-transparent);
+  border-radius: 0.31rem;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  z-index: 1;
+  position: absolute;
+  top: 10.25rem;
+  right: 1rem;
+  background-color: var(--white);
+}
+
+.filter-head,
+.sort-head {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+
+.filters-container,
+.sorts-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.modal-form {
+  text-align: initial;
+  padding: 0.5rem;
+  width: 80%;
+}
+
+.checkbox-label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.clear-btn {
+  background-color: var(--white);
+  border: 1px solid var(--light-gray-color);
+  border-radius: 0.31rem;
+  padding: 0.31rem 0.62rem;
+  cursor: pointer;
+}
+
+.clear-btn:hover {
+  background-color: var(--red-color);
+  color: var(--white);
+}
+
+.filters {
+  width: 100%;
+  padding: 0.62rem;
+  border: 1px solid var(--light-gray-color);
+  border-radius: 0.31rem;
+  margin: 0.31rem 0.62rem;
+  cursor: pointer;
+}
+
+.filters:hover {
+  background-color: var(--light-gray-color);
+  border: 1px solid var(--black-color);
+}
+
+.apply-filter-button {
+  border: 1px solid var(--light-gray-color);
+  border-radius: 0.31rem;
+  padding: 0.62rem;
+  cursor: pointer;
+  width: 100%;
+  background-color: var(--blue-color);
+  color: var(--white);
+}
+
+.apply-filter-button:hover {
+  background-color: var(--blue-hover-color);
+}
+
+/* Filter modal end */
+
+.backdrop {
+  display: none;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .taskRequest {
@@ -123,6 +308,9 @@ body {
 .taskRequest__card__header__status--waiting {
   background-color: var(--color-warn);
 }
+.taskRequest__card__header__status--pending {
+  background-color: var(--color-warn);
+}
 .taskRequest__card__body p {
   font-size: 0.875rem;
   line-height: 1.25rem;
@@ -162,6 +350,33 @@ body {
   color: var(--color-gray);
 }
 
+@media screen and (max-width: 440px) {
+  .container {
+    padding: 1.5rem;
+  }
+
+  .filter-button {
+    width: min-content;
+  }
+
+  .filter-text {
+    display: none;
+  }
+
+  .funnel-icon {
+    margin: auto;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .filter-modal {
+    top: 12.5rem;
+  }
+}
 @media (max-width: 1439px) {
   .taskRequest {
     grid-template-columns: repeat(3, 1fr);

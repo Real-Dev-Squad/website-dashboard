@@ -134,11 +134,23 @@ function createTableHeaderElement() {
         classList: ['dates'],
         scope: 'row',
       });
-      dateCellElement.textContent = `${getDayOfWeek(
-        date,
-      )} ${date.getDate()} ${date.toLocaleString('default', {
-        month: 'long',
-      })} ${date.getFullYear()}`;
+
+      const dayOfWeekElement = document.createElement('div');
+      dayOfWeekElement.textContent = getDayOfWeek(date);
+
+      const dateElement = document.createElement('div');
+      dateElement.textContent =
+        date.getDate() +
+        ' ' +
+        date.toLocaleString('default', { month: 'long' });
+
+      const yearElement = document.createElement('div');
+      yearElement.textContent = date.getFullYear();
+
+      dateCellElement.appendChild(dayOfWeekElement);
+      dateCellElement.appendChild(dateElement);
+      dateCellElement.appendChild(yearElement);
+
       headerRowElement.appendChild(dateCellElement);
     }
   }

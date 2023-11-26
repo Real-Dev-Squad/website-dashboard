@@ -11,6 +11,12 @@ html {
   --blue-color: #1d1283;
   --white-color: white;
   --black-color: black;
+  --red-background: #ffebee;
+  --border-color: #d9d9d9;
+  --green: #008000;
+  --orange: #ffa500;
+  --red: #ff0000;
+  --yellow: #ecef08;
   --light-gray-color: lightgray;
   --button-active-color: #a8a8a8;
   --loader-gray-color: #f3f3f3;
@@ -488,4 +494,89 @@ footer p a {
 .task-due-date::after {
   position: absolute;
   color: black;
+}
+.sticky-header {
+  position: sticky;
+  top: 0;
+  background-color: white;
+}
+.task {
+  border: 2px solid var(--border-color);
+  padding: 1rem;
+  border-radius: 10px;
+}
+.task-red {
+  background-color: var(--red-background);
+  border: 2px solid red;
+}
+.row {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 17px;
+}
+
+#task-loader {
+  text-align: center;
+}
+.task-title {
+  max-width: 27rem;
+}
+.task-title a {
+  text-decoration: none;
+  font-size: 1.6rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  font-weight: 500;
+  color: var(--blue-color);
+  max-width: 24rem;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.progress-content {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+progress {
+  height: 8px;
+  border-radius: 30px;
+  border: 1px solid;
+}
+
+.detail-block {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.div-heading {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #aeaeae;
+}
+.detail {
+  padding-left: 0.5rem;
+}
+.eta {
+  flex-wrap: wrap;
+}
+
+progress.red::-webkit-progress-value {
+  background-color: var(--red);
+}
+
+progress.green::-webkit-progress-value {
+  background-color: var(--green);
+}
+
+progress.orange::-webkit-progress-value {
+  background-color: var(--orange);
+}
+progress.yellow::-webkit-progress-value {
+  background-color: var(--yellow);
 }

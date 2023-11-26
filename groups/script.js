@@ -76,7 +76,7 @@ const memberAddRoleBody = {
  *
  * FOR RENDERING GROUP ROLES IN 'MANAGE ROLES' TAB
  */
-const groupsData = await getDiscordGroups(isDev);
+const groupsData = await getDiscordGroups();
 const groupRoles = document.querySelector('.groups-list');
 groupsData?.forEach((item) => {
   const group = document.createElement('li');
@@ -157,13 +157,8 @@ groupRoles?.addEventListener('click', function (event) {
     groupListItem.classList.add('active-group');
     memberAddRoleBody.roleid = groupListItem.id;
     if (IsUserVerified) {
-      if (isDev) {
-        buttonAddRole.removeEventListener('click', addrole);
-        updateButtonState();
-      } else {
-        buttonAddRole.disabled = false;
-        buttonAddRole.addEventListener('click', addrole);
-      }
+      buttonAddRole.removeEventListener('click', addrole);
+      updateButtonState();
     }
   }
 });
@@ -258,22 +253,14 @@ async function addrole() {
       if (currentCount !== null && currentCount !== undefined) {
         groupNameElement.setAttribute('data-member-count', +currentCount + 1);
       }
-      if (isDev) {
-        // After adding the role, re-fetch the user group data to update it
-        UserGroupData = await getUserGroupRoles();
+      // After adding the role, re-fetch the user group data to update it
+      UserGroupData = await getUserGroupRoles();
 
-        // Update the button state with the refreshed data
-        updateButtonState();
-        showToaster(res.message);
-      } else {
-        alert(res.message);
-      }
+      // Update the button state with the refreshed data
+      updateButtonState();
+      showToaster(res.message);
     } catch (err) {
-      if (isDev) {
-        showToaster(err.message);
-      } else {
-        alert(err.message);
-      }
+      showToaster(err.message);
     } finally {
       loader.classList.add('hidden');
     }

@@ -10,11 +10,13 @@ const requestorSkeleton = document.querySelector(
 
 const taskRequestContainer = document.getElementById('task-request-details');
 const taskContainer = document.getElementById('task-details');
+const toast = document.getElementById('toast_task_details');
 const requestorsContainer = document.getElementById('requestors-details');
 
 const taskRequestId = new URLSearchParams(window.location.search).get('id');
 history.pushState({}, '', window.location.href);
-
+const errorMessage =
+  'The requested operation could not be completed. Please try again later.';
 let taskId;
 
 function renderTaskRequestDetails(taskRequest) {
@@ -27,7 +29,7 @@ function renderTaskRequestDetails(taskRequest) {
         createCustomElement({
           tagName: 'span',
           class: 'taskRequest__title__subtitle',
-          textContent: `#${taskRequest.id}`,
+          textContent: `#${taskRequest?.id}`,
         }),
       ],
     }),
@@ -38,10 +40,25 @@ function renderTaskRequestDetails(taskRequest) {
       child: [
         createCustomElement({
           tagName: 'span',
-          textContent: taskRequest.status,
+          textContent: taskRequest?.status,
           class: [
             'taskRequest__status__chip',
-            `taskRequest__status__chip--${taskRequest.status.toLowerCase()}`,
+            `taskRequest__status__chip--${taskRequest?.status?.toLowerCase()}`,
+          ],
+        }),
+      ],
+    }),
+    createCustomElement({
+      tagName: 'p',
+      textContent: 'Request Type: ',
+      class: 'taskRequest__status',
+      child: [
+        createCustomElement({
+          tagName: 'span',
+          textContent: taskRequest?.requestType || 'ASSIGNMENT',
+          class: [
+            'taskRequest__status__chip',
+            `taskRequest__status__chip--tag`,
           ],
         }),
       ],
@@ -49,11 +66,13 @@ function renderTaskRequestDetails(taskRequest) {
   );
 }
 
-async function renderTaskDetails(taskId) {
+async function renderTaskDetails(taskRequest) {
+  const { taskId, taskTitle } = taskRequest;
   try {
     const res = await fetch(`${API_BASE_URL}/tasks/${taskId}/details`);
     taskSkeleton.classList.add('hidden');
     const data = await res.json();
+    let taskReqAssigneeName = await getAssigneeName();
 
     const { taskData } = data ?? {};
 
@@ -61,7 +80,7 @@ async function renderTaskDetails(taskId) {
       createCustomElement({
         tagName: 'h2',
         class: 'task__title',
-        textContent: taskData?.title || 'N/A',
+        textContent: taskData?.title || taskTitle || 'N/A',
       }),
       createCustomElement({
         tagName: 'p',
@@ -73,7 +92,7 @@ async function renderTaskDetails(taskId) {
                 tagName: 'span',
                 class: [
                   'task__type__chip',
-                  `task__type__chip--${taskData.type}`,
+                  `task__type__chip--${taskData?.type}`,
                 ],
                 textContent: taskData?.type,
               })
@@ -94,35 +113,37 @@ async function renderTaskDetails(taskId) {
         child: [
           createCustomElement({
             tagName: 'a',
-            href: `https://members.realdevsquad.com/${taskData.createdBy}`,
+            href: `https://members.realdevsquad.com/${taskData?.createdBy}`,
             textContent: taskData?.createdBy || 'N/A',
           }),
         ],
       }),
       createCustomElement({
         tagName: 'p',
-        class: 'task__purpose',
-        textContent: taskData?.purpose || 'N/A',
+        class: 'task__createdBy',
+        textContent: `Purpose : ${taskData?.purpose ?? 'N/A'}`,
       }),
     );
+    renderAssignedTo(taskReqAssigneeName);
   } catch (e) {
     console.error(e);
   }
 }
 
 function getAvatar(user) {
-  if (user.user?.picture?.url) {
+  if (user?.user?.picture?.url) {
     return createCustomElement({
       tagName: 'img',
-      src: user.user.picture.url,
-      alt: user.user.first_name,
-      title: user.user.first_name,
+      src: user?.user?.picture?.url,
+      alt: user?.user?.first_name,
+      title: user?.user?.first_name,
+      className: 'circular-image',
     });
   }
   return createCustomElement({
     tagName: 'span',
-    title: user.user.first_name,
-    textContent: user.user.first_name[0],
+    title: user?.user?.first_name,
+    textContent: user?.user?.first_name[0],
   });
 }
 
@@ -141,18 +162,22 @@ async function approveTaskRequest(userId) {
     });
 
     if (res.ok) {
+      showToast('Task Approved Successfully', 'success');
       taskRequest = await fetchTaskRequest();
       requestorsContainer.innerHTML = '';
-      renderRequestors(taskRequest.requestors);
+      renderRequestors(taskRequest?.requestors);
+    } else {
+      showToast(errorMessage, 'failure');
     }
   } catch (e) {
+    showToast(errorMessage, 'failure');
     console.error(e);
   }
 }
 
 function getActionButton(requestor) {
-  if (taskRequest.status === taskRequestStatus.APPROVED) {
-    if (taskRequest?.approvedTo === requestor.user.id) {
+  if (taskRequest?.status === taskRequestStatus.APPROVED) {
+    if (taskRequest?.approvedTo === requestor?.user?.id) {
       return createCustomElement({
         tagName: 'p',
         textContent: 'Approved',
@@ -167,7 +192,7 @@ function getActionButton(requestor) {
     textContent: 'Approve',
     class: 'requestors__conatainer__list__button',
     eventListeners: [
-      { event: 'click', func: () => approveTaskRequest(requestor.user.id) },
+      { event: 'click', func: () => approveTaskRequest(requestor.user?.id) },
     ],
   });
 }
@@ -184,30 +209,37 @@ async function renderRequestors(requestors) {
 
   requestorSkeleton.classList.add('hidden');
 
-  data.forEach((requestor) => {
-    requestorsContainer.append(
-      createCustomElement({
-        tagName: 'li',
-        child: [
-          createCustomElement({
-            tagName: 'div',
-            class: 'requestors__container__list__userDetails',
-            child: [
-              createCustomElement({
-                tagName: 'div',
-                class: 'requestors__container__list__userDetails__avatar',
-                child: [getAvatar(requestor)],
-              }),
-              createCustomElement({
-                tagName: 'p',
-                textContent: requestor.user.first_name,
-              }),
-            ],
-          }),
-          getActionButton(requestor),
-        ],
-      }),
+  data.forEach((requestor, index) => {
+    const userDetailsDiv = createCustomElement({
+      tagName: 'li',
+      child: [
+        createCustomElement({
+          tagName: 'div',
+          class: 'requestors__container__list__userDetails',
+          child: [
+            createCustomElement({
+              tagName: 'div',
+              class: 'requestors__container__list__userDetails__avatar',
+              child: [getAvatar(requestor)],
+            }),
+            createCustomElement({
+              tagName: 'p',
+              textContent: requestor.user?.first_name,
+            }),
+          ],
+        }),
+        getActionButton(requestor),
+      ],
+    });
+    const avatarDiv = userDetailsDiv.querySelector(
+      '.requestors__container__list__userDetails__avatar',
     );
+    const firstNameParagraph = userDetailsDiv.querySelector('p');
+    avatarDiv.addEventListener('click', () => populateModalContent(index));
+    firstNameParagraph.addEventListener('click', () =>
+      populateModalContent(index),
+    );
+    requestorsContainer.append(userDetailsDiv);
   });
 }
 
@@ -228,11 +260,155 @@ const renderTaskRequest = async () => {
     taskRequestSkeleton.classList.add('hidden');
 
     renderTaskRequestDetails(taskRequest);
-    renderTaskDetails(taskRequest.taskId);
-    renderRequestors(taskRequest.requestors);
+    renderTaskDetails(taskRequest);
+    renderRequestors(taskRequest?.requestors);
   } catch (e) {
     console.error(e);
   }
 };
+
+function showToast(message, type) {
+  toast.innerHTML = `<div class="message">${message}</div>`;
+  toast.classList.remove('hidden');
+
+  if (type === 'success') {
+    toast.classList.add('success');
+    toast.classList.remove('failure');
+  } else if (type === 'failure') {
+    toast.classList.add('failure');
+    toast.classList.remove('success');
+  }
+
+  setTimeout(() => {
+    toast.classList.add('hidden');
+    toast.innerHTML = '';
+  }, 5000);
+}
+
+async function getAssigneeName() {
+  let userName = '';
+  let res;
+  if (taskRequest.approvedTo) {
+    try {
+      res = await fetch(
+        `${API_BASE_URL}/users/userId/${taskRequest.approvedTo}`,
+      );
+    } catch (error) {
+      console.error(error);
+    }
+    if (res.ok) {
+      const userData = await res.json();
+      userName = userData.user.first_name;
+    }
+  }
+  return userName;
+}
+
+async function renderAssignedTo(userName) {
+  const assignedToText = 'Assigned To: ';
+  const linkOrText = userName.length
+    ? `<a href="https://members.realdevsquad.com/${userName}">${userName}</a>`
+    : 'N/A';
+
+  taskContainer.append(
+    createCustomElement({
+      tagName: 'p',
+      class: 'task__createdBy',
+      id: 'task__createdBy',
+      innerHTML: assignedToText + linkOrText,
+    }),
+  );
+}
+
+const openModalBtn = document.getElementById('requestor_details_modal_open');
+const closeModal = document.getElementById('requestor_details_modal_close');
+
+const modalOverlay = document.getElementById('overlay');
+
+closeModal.addEventListener('click', function () {
+  modalOverlay.style.display = 'none';
+});
+modalOverlay.addEventListener('click', function (event) {
+  if (event.target == modalOverlay) {
+    modalOverlay.style.display = 'none';
+  }
+});
+
+function populateModalContent(index) {
+  if (
+    !Array.isArray(taskRequest.users) ||
+    index < 0 ||
+    index >= taskRequest.users.length
+  ) {
+    showToast('No Data Available for this requestor', 'failure');
+    return;
+  }
+  const modal = document.getElementById('requestor_details_modal_content');
+  const userData = taskRequest.users[index];
+
+  const modalContent = modal.querySelector('.requestor_details_modal_info');
+
+  const proposedStartDateText = document.createElement('p');
+  proposedStartDateText.setAttribute(
+    'data-modal-start-date-text',
+    'proposed-start-date-text',
+  );
+  proposedStartDateText.innerHTML = '<strong>Proposed Start Date:</strong>';
+
+  const proposedStartDateValue = document.createElement('p');
+  proposedStartDateValue.setAttribute(
+    'data-modal-start-date-value',
+    'proposed-start-date-value',
+  );
+  proposedStartDateValue.textContent = getHumanReadableDate(
+    userData.proposedStartDate,
+  );
+
+  const proposedDeadlineText = document.createElement('p');
+  proposedDeadlineText.setAttribute(
+    'data-modal-end-date-text',
+    'proposed-end-date-text',
+  );
+  proposedDeadlineText.innerHTML = '<strong>Proposed Deadline:</strong>';
+
+  const proposedDeadlineValue = document.createElement('p');
+  proposedDeadlineValue.setAttribute(
+    'data-modal-end-date-value',
+    'proposed-end-date-value',
+  );
+  proposedDeadlineValue.textContent = getHumanReadableDate(
+    userData.proposedDeadline,
+  );
+
+  const descriptionText = document.createElement('p');
+  descriptionText.setAttribute(
+    'data-modal-description-text',
+    'proposed-description-text',
+  );
+  descriptionText.innerHTML = '<strong>Description:</strong>';
+
+  const descriptionValue = document.createElement('p');
+  descriptionValue.setAttribute(
+    'data-modal-description-value',
+    'proposed-description-value',
+  );
+  descriptionValue.textContent = userData.description;
+
+  const header = document.createElement('h2');
+  header.setAttribute('data-modal-header', 'requestor-details-header');
+  header.className = 'requestor_details_modal_heading';
+  header.textContent = 'Requestor Details';
+
+  modalContent.innerHTML = '';
+
+  modalContent.appendChild(header);
+  modalContent.appendChild(proposedStartDateText);
+  modalContent.appendChild(proposedStartDateValue);
+  modalContent.appendChild(proposedDeadlineText);
+  modalContent.appendChild(proposedDeadlineValue);
+  modalContent.appendChild(descriptionText);
+  modalContent.appendChild(descriptionValue);
+  modalOverlay.style.display = 'block';
+}
 
 renderTaskRequest();

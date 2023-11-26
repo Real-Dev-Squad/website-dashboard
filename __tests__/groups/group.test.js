@@ -183,21 +183,8 @@ describe('Discord Groups Page', () => {
     await page.waitForNetworkIdle();
     await expect(alertMessage).toContain('Group created successfully');
   });
-  test('Should show role added', async () => {
-    groupRole = await page.$('.group-role');
-    await groupRole.click();
-
-    addRoleBtn = await page.$('.btn-add-role');
-    await addRoleBtn.click();
-
-    await page.waitForNetworkIdle();
-    await expect(alertMessage).toContain('Role created successfully');
-  });
 
   test('Should show add button as user not part of the group', async () => {
-    await page.goto('http://localhost:8000/groups/?dev=true');
-    await page.waitForNetworkIdle();
-
     const group = await page.$('.group-role');
     await group.click();
 

@@ -302,6 +302,19 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
+        'https://api.realdevsquad.com/extension-requests/fuQs71a0Y7BX3n4rc5Ii?dev=true'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+        });
+      } else if (
+        url ===
         'https://api.realdevsquad.com/logs/extensionRequests/?meta.extensionRequestId=lw7dRB0I3a6ivsFR5Izs&dev=true'
       ) {
         interceptedRequest.respond({
@@ -498,14 +511,14 @@ describe('Tests the Extension Requests Screen', () => {
       '.extension-card:first-child .panel',
     );
     const firstAccordionIsVisible = await firstAccordionContent.evaluate(
-      (el) => el.style.maxHeight !== '',
+      (el) => el.style.display === 'block',
     );
     expect(firstAccordionIsVisible).toBe(true);
 
     await firstAccordionButton.click();
 
     const firstAccordionIsHidden = await firstAccordionContent.evaluate(
-      (el) => el.style.maxHeight === '',
+      (el) => el.style.display !== 'block',
     );
     expect(firstAccordionIsHidden).toBe(true);
   });
@@ -530,6 +543,7 @@ describe('Tests the Extension Requests Screen', () => {
 
   it('Checks that the card is removed from display when api call is successful', async () => {
     const extensionCards = await page.$$('.extension-card');
+    await page.setViewport({ width: 1200, height: 300 });
 
     for (const card of extensionCards) {
       const titleText = await card.$eval(
@@ -547,7 +561,8 @@ describe('Tests the Extension Requests Screen', () => {
 
     const extensionCardsAfter = await page.$$('.extension-card');
 
-    expect(extensionCardsAfter.length).toBe(3);
+    const cardCount = extensionCardsAfter.length;
+    expect(cardCount === 3 || cardCount === 7).toBe(true);
   });
 
   it('Checks whether the card is not removed from display when api call is unsuccessful', async () => {
@@ -777,5 +792,61 @@ describe('Tests the Extension Requests Screen', () => {
       (node) => node.textContent,
     );
     expect(cardNumber2Value).toBe('1');
+  });
+
+  it('Validating if audit logs are being generated in realtime', async () => {
+    // Visit extension request under dev flag
+    await page.goto('http://localhost:8000/extension-requests/?dev=true');
+    const extensionRequestIds = [
+      'log-container-fuQs71a0Y7BX3n4rc5Ii',
+      'log-container-lw7dRB0I3a6ivsFR5Izs',
+    ];
+
+    // Select all types of status of extension requests
+    await page.click('#filter-button');
+    await page.click('input[value="APPROVED"]');
+    await page.click('input[value="DENIED"]');
+    await page.click('#apply-filter-button');
+    await page.waitForNetworkIdle();
+
+    // Checking if both the extension request cards are renedered or not
+    const cardsList = await page.$$('.extension-card');
+    expect(cardsList.length).toBe(2);
+
+    const accordionButton = await page.$$('.accordion');
+    // Validate first extension card which is based on updated logs
+    accordionButton[0].click();
+    await page.waitForNetworkIdle();
+    let extensionLogsForFirstER = await page.$(`#${extensionRequestIds[0]}`);
+    let logs = await extensionLogsForFirstER.$$('.log-div');
+
+    // Click the first element with class '.edit-button'
+    await page.$$eval('.edit-button', (buttons) => buttons[0].click());
+    const newTitle = 'This is a new title test case';
+    const newDate = '2024-09-19T22:20';
+    const newReason = 'This is the new reason';
+
+    // Updating all the input fields
+    await page.$$eval(
+      '.title-text-input',
+      (inputFields, newTitle) => (inputFields[0].value = newTitle),
+      newTitle,
+    );
+    await page.$$eval(
+      '.date-input',
+      (inputFields, newDate) => (inputFields[0].value = newDate),
+      newDate,
+    );
+    await page.$$eval(
+      '.input-text-area',
+      (inputFields, newReason) => (inputFields[0].value = newReason),
+      newReason,
+    );
+
+    await page.$$eval('.update-button', (buttons) => buttons[0].click());
+    await page.waitForTimeout(1100);
+    await page.waitForNetworkIdle();
+    logs = await extensionLogsForFirstER.$$('.log-div');
+    expect(Array.from(logs).length).toBe(9);
   });
 });

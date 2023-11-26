@@ -205,38 +205,6 @@ function formDataToObject(formData) {
   return result;
 }
 
-function dateDiff(date1, date2, formatter) {
-  if (date2 > date1) {
-    return dateDiff(date2, date1, formatter);
-  }
-
-  const timeDifference = new Date(date1).getTime() - new Date(date2).getTime();
-
-  const seconds = Math.floor(timeDifference / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
-  const months = Math.floor(days / 30);
-  const years = Math.floor(days / 365);
-
-  let res;
-  if (seconds < 60) {
-    res = `${seconds} ${seconds === 1 ? 'second' : 'seconds'}`;
-  } else if (minutes < 60) {
-    res = `${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`;
-  } else if (hours < 24) {
-    res = `${hours} ${hours === 1 ? 'hour' : 'hours'}`;
-  } else if (days < 30) {
-    res = `${days} ${days === 1 ? 'day' : 'days'}`;
-  } else if (months < 12) {
-    res = `${months} ${months === 1 ? 'month' : 'months'}`;
-  } else {
-    res = `${years} ${years === 1 ? 'year' : 'years'}`;
-  }
-
-  return formatter ? formatter(res) : res;
-}
-
 const addSpinner = (container) => {
   const spinner = createElement({
     type: 'div',
@@ -252,9 +220,21 @@ const addSpinner = (container) => {
   return removeSpinner;
 };
 
-const dateTimeString = (timestamp) => {
-  return new Date(timestamp).toISOString().substring(0, 16);
-};
+/**
+  Generates a formatted date-time string from milliseconds.*
+  @param {number} milliseconds - The number of milliseconds since January 1, 1970 00:00:00 UTC.
+  @returns {string} The formatted date-time string in the format 'YYYY-MM-DDTHH:mm'.
+  
+*/
+function dateTimeString(milliseconds) {
+  const date = new Date(milliseconds);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+    2,
+    '0',
+  )}-${String(date.getDate()).padStart(2, '0')}T${String(
+    date.getHours(),
+  ).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+}
 
 const fullDateString = (timestamp) => {
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
