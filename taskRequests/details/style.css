@@ -242,6 +242,7 @@ body {
   color: #19805e;
   border-radius: 0.25rem;
   cursor: pointer;
+  margin-left: 1rem;
 }
 .requestors__conatainer__list__button:hover {
   color: var(--color-white);
@@ -253,6 +254,7 @@ body {
   border: none;
   color: #c3c3c3;
   font-weight: 600;
+  margin-left: 1rem;
 }
 .reject__container {
   display: flex;
@@ -394,6 +396,9 @@ body {
   }
   .taskRequest__skeleton__subtitle {
     max-width: 40%;
+  }
+  .request-details {
+    grid-column: auto;
   }
 }
 
