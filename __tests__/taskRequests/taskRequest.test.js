@@ -12,14 +12,15 @@ describe('Task Requests', () => {
 
   jest.setTimeout(60000);
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     browser = await puppeteer.launch({
       headless: 'new',
       ignoreHTTPSErrors: true,
       args: ['--incognito', '--disable-web-security'],
       devtools: false,
     });
-
+  });
+  beforeEach(async () => {
     page = await browser.newPage();
 
     await page.setRequestInterception(true);
@@ -66,9 +67,12 @@ describe('Task Requests', () => {
   });
 
   afterEach(async () => {
-    await browser.close();
+    await page.close();
   });
 
+  afterAll(async () => {
+    await browser.close();
+  });
   describe('When the user is super user', () => {
     it('should display the task requests card', async () => {
       const url = await page.evaluate(() => API_BASE_URL);
@@ -120,14 +124,18 @@ describe('Task Requests', () => {
       });
 
       it('Selecting filters and clicking on apply should filter task request list', async () => {
+        let cardsList = await page.$$('.taskRequest__card');
+        expect(cardsList).not.toBeNull();
+        const initialLength = cardsList.length;
         await page.click('#filter-button');
         await page.click('input[value="PENDING"]');
         await page.click('input[value="APPROVED"]');
         await page.click('#apply-filter-button');
         await page.waitForNetworkIdle();
-        const cardsList = await page.$$('.taskRequest__card');
+        cardsList = await page.$$('.taskRequest__card');
         expect(cardsList).not.toBeNull();
         expect(cardsList.length).toBeGreaterThanOrEqual(0);
+        expect(cardsList.length).not.toBe(initialLength);
       });
 
       it('clears the filter when the Clear button is clicked', async () => {

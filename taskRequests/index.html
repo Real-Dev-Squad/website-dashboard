@@ -43,9 +43,13 @@
           />
         </button>
         <div class="backdrop"></div>
-        <div class="sort-modal hidden">
+        <div
+          class="sort-modal hidden"
+          role="dialog"
+          aria-labelledby="sort-dialog-label"
+        >
           <div class="sort-head">
-            <h3>Sort By</h3>
+            <h3 id="sort-dialog-label">Sort By</h3>
           </div>
           <div class="sorts-container">
             <form class="modal-form" id="sort_by-filter"></form>
@@ -60,9 +64,13 @@
             alt="funnel icon"
           />
         </button>
-        <div class="filter-modal hidden">
+        <div
+          class="filter-modal hidden"
+          role="dialog"
+          aria-labelledby="filter-dialog-label"
+        >
           <div class="filter-head">
-            <h3>Filters</h3>
+            <h3 id="filter-dialog-label">Filters</h3>
             <button id="clear-button" class="clear-btn">Clear</button>
           </div>
           <div class="filters-container">
