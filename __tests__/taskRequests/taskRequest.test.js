@@ -19,7 +19,8 @@ describe('Task Requests', () => {
       args: ['--incognito', '--disable-web-security'],
       devtools: false,
     });
-
+  });
+  beforeEach(async () => {
     page = await browser.newPage();
 
     await page.setRequestInterception(true);
@@ -27,7 +28,9 @@ describe('Task Requests', () => {
     page.on('request', (request) => {
       if (
         request.url() === `${API_BASE_URL}/taskRequests` ||
-        request.url() === `${API_BASE_URL}/taskRequests?dev=true`
+        request.url() === `${API_BASE_URL}/taskRequests?dev=true` ||
+        request.url() ===
+          `${API_BASE_URL}/taskRequests?size=20&q=status%3Apending+sort%3Acreated-asc&dev=true`
       ) {
         request.respond({
           status: 200,
@@ -39,19 +42,37 @@ describe('Task Requests', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
         });
+      } else if (
+        request.url() ===
+        `${API_BASE_URL}/taskRequests?size=20&q=status%3Aapproved++sort%3Acreated-asc&dev=true`
+      ) {
+        const list = [];
+        for (let i = 0; i < 20; i++) {
+          list.push(fetchedTaskRequests[0]);
+        }
+        request.respond({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            data: list,
+            next: '/taskRequests?size=20&q=status%3Aapproved++sort%3Acreated-asc&dev=true',
+          }),
+        });
       } else {
         request.continue();
       }
     });
-
     await page.goto(`${SITE_URL}/taskRequests`);
     await page.waitForNetworkIdle();
+  });
+
+  afterEach(async () => {
+    await page.close();
   });
 
   afterAll(async () => {
     await browser.close();
   });
-
   describe('When the user is super user', () => {
     it('should display the task requests card', async () => {
       const url = await page.evaluate(() => API_BASE_URL);
@@ -68,11 +89,6 @@ describe('Task Requests', () => {
       expect(purpose).toMatch(/test purpose/i);
     });
     describe('Filter Modal', () => {
-      beforeAll(async () => {
-        await page.goto(`${SITE_URL}/taskRequests/?dev=true`);
-        await page.waitForNetworkIdle();
-      });
-
       it('should be hidden initially', async () => {
         const modal = await page.$('.filter-modal');
         expect(
@@ -84,28 +100,63 @@ describe('Task Requests', () => {
         const modal = await page.$('.filter-modal');
         const filterHead = await page.$('.filter-head');
         const filterContainer = await page.$('.filters-container');
-
         expect(filterHead).toBeTruthy();
         expect(filterContainer).toBeTruthy();
-
         await page.click('#filter-button');
         expect(modal).not.toBeNull();
         expect(
           await modal.evaluate((el) => el.classList.contains('hidden')),
         ).toBe(false);
-
         await page.mouse.click(20, 20);
         expect(
           await modal.evaluate((el) => el.classList.contains('hidden')),
         ).toBe(true);
+      });
+
+      it('checks if PENDING is checked by default', async () => {
+        const filterButton = await page.$('#filter-button');
+        await filterButton.click();
+        await page.waitForSelector('.filter-modal');
+        const activeFilter = await page.$('input[value="PENDING"]');
+        const currentState = await activeFilter.getProperty('checked');
+        const isChecked = await currentState.jsonValue();
+        expect(isChecked).toBe(true);
+      });
+
+      it('Selecting filters and clicking on apply should filter task request list', async () => {
+        let cardsList = await page.$$('.taskRequest__card');
+        expect(cardsList).not.toBeNull();
+        const initialLength = cardsList.length;
+        await page.click('#filter-button');
+        await page.click('input[value="PENDING"]');
+        await page.click('input[value="APPROVED"]');
+        await page.click('#apply-filter-button');
+        await page.waitForNetworkIdle();
+        cardsList = await page.$$('.taskRequest__card');
+        expect(cardsList).not.toBeNull();
+        expect(cardsList.length).toBeGreaterThanOrEqual(0);
+        expect(cardsList.length).not.toBe(initialLength);
+      });
+
+      it('clears the filter when the Clear button is clicked', async () => {
+        const filterButton = await page.$('#filter-button');
+        await filterButton.click();
+        await page.waitForSelector('.filter-modal');
+        const activeFilter = await page.$('input[value="APPROVED"]');
+        await activeFilter.click();
+        const clearButton = await page.$('.filter-modal #clear-button');
+        await clearButton.click();
+        await page.waitForSelector('.filter-modal', { hidden: true });
+        const currentState = await activeFilter.getProperty('checked');
+        const isChecked = await currentState.jsonValue();
+        expect(isChecked).toBe(false);
       });
     });
 
     describe('Sort Modal', () => {
       it('should be hidden initially', async () => {
         const sortModal = await page.$('.sort-modal');
-        const assigneButton = await page.$('#ASSIGNEE_COUNT');
-
+        const assigneButton = await page.$('#REQUESTORS_COUNT_ASC');
         expect(
           await sortModal.evaluate((el) => el.classList.contains('hidden')),
         ).toBe(true);
@@ -114,7 +165,7 @@ describe('Task Requests', () => {
 
       it('should toggle visibility sort modal by clicking the sort button and selecting an option', async () => {
         const sortModal = await page.$('.sort-modal');
-        const assigneButton = await page.$('#ASSIGNEE_COUNT');
+        const assigneButton = await page.$('#REQUESTORS_COUNT_ASC');
         const sortHead = await page.$('.sort-head');
         const sortContainer = await page.$('.sorts-container');
 
@@ -122,7 +173,7 @@ describe('Task Requests', () => {
         expect(sortContainer).toBeTruthy();
 
         await page.click('.sort-button');
-        await page.click('#ASSIGNEE_COUNT');
+        await page.click('#REQUESTORS_COUNT_ASC');
         expect(
           await assigneButton.evaluate((el) =>
             el.classList.contains('selected'),
@@ -131,9 +182,8 @@ describe('Task Requests', () => {
         expect(
           await sortModal.evaluate((el) => el.classList.contains('hidden')),
         ).toBe(true);
-
         await page.click('.sort-button');
-        await page.click('#ASSIGNEE_COUNT');
+        await page.click('#REQUESTORS_COUNT_ASC');
         expect(
           await assigneButton.evaluate((el) =>
             el.classList.contains('selected'),
@@ -143,6 +193,25 @@ describe('Task Requests', () => {
           await sortModal.evaluate((el) => el.classList.contains('hidden')),
         ).toBe(true);
       });
+    });
+
+    it('Checks that new items are loaded when scrolled to the bottom', async () => {
+      await page.click('#filter-button');
+      await page.click('input[value="PENDING"]');
+      await page.click('input[value="APPROVED"]');
+      await page.click('#apply-filter-button');
+      await page.waitForNetworkIdle();
+      let taskRequestList = await page.$$('.taskRequest__card');
+      expect(taskRequestList.length).toBe(20);
+      await page.evaluate(() => {
+        const element = document.querySelector('.virtual');
+        if (element) {
+          element.scrollIntoView({ behavior: 'auto' });
+        }
+      });
+      await page.waitForNetworkIdle();
+      taskRequestList = await page.$$('.taskRequest__card');
+      expect(taskRequestList.length).toBe(40);
     });
   });
 });

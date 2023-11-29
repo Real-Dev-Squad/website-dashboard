@@ -14,6 +14,16 @@ const fetchedTaskRequests = [
       priority: 'HIGH',
       status: 'ASSIGNED',
     },
+    users: [
+      {
+        proposedStartDate: 1700304616479,
+        proposedDeadline: 1700909416479,
+        userId: 'eChYAP0kUwLo4wQ1gqMV',
+        status: 'PENDING',
+        username: 'ajeyak',
+        first_name: 'Test first_name',
+      },
+    ],
     requestors: [
       {
         userExists: true,
@@ -60,10 +70,10 @@ const individualTaskReqDetail = {
         proposedDeadline: 1699142400000,
         description: 'code change 3 days , testing - 2 days. total - 5 days',
         userId: 'SooJK37gzjIZfFNH0tlL',
-        status: 'APPROVED',
+        status: 'PENDING',
       },
     ],
-    status: 'APPROVED',
+    status: 'PENDING',
     id: 'dM5wwD9QsiTzi7eG7Oq5',
     url: 'http://localhost:3000/taskRequests/dM5wwD9QsiTzi7eG7Oq5',
   },
@@ -142,6 +152,14 @@ const urlMappings = {
     userInformation,
   'https://staging-api.realdevsquad.com/users/userId/SooJK37gzjIZfFNH0tlL':
     userInformation,
+  'https://staging-api.realdevsquad.com/taskRequests?action=approve':
+    fetchedTaskRequests,
+  'https://api.realdevsquad.com/taskRequests?action=approve':
+    fetchedTaskRequests,
+  'https://staging-api.realdevsquad.com/taskRequests?action=reject':
+    fetchedTaskRequests,
+  'https://api.realdevsquad.com/taskRequests?action=reject':
+    fetchedTaskRequests,
 };
 
 module.exports = {
