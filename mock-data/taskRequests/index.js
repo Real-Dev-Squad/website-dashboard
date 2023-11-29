@@ -24,6 +24,16 @@ const fetchedTaskRequests = [
         first_name: 'Test first_name',
       },
     ],
+    requestors: [
+      {
+        proposedStartDate: 1700304616479,
+        proposedDeadline: 1700909416479,
+        userId: 'eChYAP0kUwLo4wQ1gqMV',
+        status: 'PENDING',
+        username: 'ajeyak',
+        first_name: 'Test first_name',
+      },
+    ],
   },
 ];
 
