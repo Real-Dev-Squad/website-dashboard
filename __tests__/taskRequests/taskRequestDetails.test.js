@@ -4,7 +4,7 @@ const {
   defaultMockResponseHeaders,
 } = require('../../mock-data/taskRequests');
 
-describe('Tests the User Management User Listing Screen', () => {
+describe('Task request details page', () => {
   let browser;
   let page;
   jest.setTimeout(60000);
@@ -32,11 +32,6 @@ describe('Tests the User Management User Listing Screen', () => {
     await page.goto(
       'http://localhost:8000/taskRequests/details/?id=dM5wwD9QsiTzi7eG7Oq5',
     );
-    await page.waitForNetworkIdle();
-    await page.click('.requestors__container__list__userDetails');
-    await page.waitForSelector('#requestor_details_modal_content', {
-      visible: true,
-    });
   });
 
   afterAll(async () => {
@@ -44,6 +39,11 @@ describe('Tests the User Management User Listing Screen', () => {
   });
 
   it('Checks the Modal working as expected', async () => {
+    await page.waitForNetworkIdle();
+    await page.click('.info__more');
+    await page.waitForSelector('#requestor_details_modal_content', {
+      visible: true,
+    });
     const modalHeading = await page.$eval(
       '[data-modal-header="requestor-details-header"]',
       (element) => element.textContent,
@@ -87,5 +87,12 @@ describe('Tests the User Management User Listing Screen', () => {
     expect(descriptionTextValue).toBe(
       'code change 3 days , testing - 2 days. total - 5 days',
     );
+  });
+
+  it('Should contain Approve and Reject buttons', async function () {
+    const approveButton = await page.$('.requestors__conatainer__list__button');
+    const rejectButton = await page.$('.request-details__reject__button');
+    expect(approveButton).toBeTruthy();
+    expect(rejectButton).toBeTruthy();
   });
 });

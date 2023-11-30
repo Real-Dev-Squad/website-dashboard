@@ -12,7 +12,7 @@ describe('Task Requests', () => {
 
   jest.setTimeout(60000);
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     browser = await puppeteer.launch({
       headless: 'new',
       ignoreHTTPSErrors: true,
