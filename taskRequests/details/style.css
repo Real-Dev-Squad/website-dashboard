@@ -450,3 +450,9 @@ p:hover {
   background-color: rgba(0, 0, 0, 0.5);
   display: none;
 }
+
+#task-details img {
+  max-width: 100%;
+  border: 1px solid #78716c;
+  border-radius: 0.5rem;
+}

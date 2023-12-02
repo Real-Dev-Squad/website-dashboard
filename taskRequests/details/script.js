@@ -314,7 +314,16 @@ const renderTaskRequest = async () => {
     taskRequestSkeleton.classList.add('hidden');
     renderRejectButton(taskRequest);
     renderTaskRequestDetails(taskRequest);
-    renderTaskDetails(taskRequest);
+
+    if (taskRequest?.requestType === 'CREATION') {
+      converter = new showdown.Converter();
+      text = await fetch(taskRequest?.externalIssueUrl);
+      text = await text.json();
+      html = converter.makeHtml(text?.body);
+      taskContainer.innerHTML = html;
+    } else if (taskRequest?.requestType === 'ASSIGNMENT') {
+      renderTaskDetails(taskRequest);
+    }
     renderRequestors(taskRequest);
   } catch (e) {
     console.error(e);
