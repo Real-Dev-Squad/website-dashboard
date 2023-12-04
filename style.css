@@ -81,11 +81,12 @@ img {
   order: 3;
 }
 
-.sign-in-btn a {
+.sign-in-btn button {
   position: absolute;
   right: 10px;
   margin: 10px;
   height: 30px;
+  width: fit-content;
   padding: 5px;
   background-color: var(--blue-color);
   color: var(--white-color);
@@ -93,9 +94,10 @@ img {
   border: 2px solid var(--white-color);
   border-radius: 6px;
   text-decoration: none;
+  font-size: 16px;
 }
 
-.sign-in-btn a img {
+.sign-in-btn button img {
   height: 15px;
   width: 15px;
   position: relative;
@@ -465,7 +467,7 @@ footer {
     justify-content: space-between;
   }
 
-  .sign-in-btn a {
+  .sign-in-btn button {
     position: static;
   }
 
