@@ -96,3 +96,49 @@ describe('Task request details page', () => {
     expect(rejectButton).toBeTruthy();
   });
 });
+
+describe('Task request details page with status creation', () => {
+  let browser;
+  let page;
+  jest.setTimeout(60000);
+
+  beforeAll(async () => {
+    browser = await puppeteer.launch({
+      headless: 'new',
+      ignoreHTTPSErrors: true,
+      args: ['--incognito', '--disable-web-security'],
+      devtools: false,
+    });
+    page = await browser.newPage();
+    await page.setRequestInterception(true);
+    page.on('request', (interceptedRequest) => {
+      const url = interceptedRequest.url();
+      if (urlMappings.hasOwnProperty(url)) {
+        interceptedRequest.respond({
+          ...defaultMockResponseHeaders,
+          body: JSON.stringify(urlMappings[url]),
+        });
+      } else {
+        interceptedRequest.continue();
+      }
+    });
+    await page.goto(
+      'http://localhost:8000/taskRequests/details/?id=uC0IUpkFMx393XjnKx4w',
+    );
+  });
+
+  afterAll(async () => {
+    await browser.close();
+  });
+
+  it('Should render github issue', async () => {
+    await page.waitForNetworkIdle();
+
+    const issue = await page.$('#task-details');
+    const testId = await issue.evaluate((el) => el.innerHTML);
+
+    expect(testId).toContain(
+      'When super_user try to update skills of new users the data of',
+    );
+  });
+});

@@ -321,6 +321,7 @@ const renderTaskRequest = async () => {
       text = await text.json();
       html = converter.makeHtml(text?.body);
       taskContainer.innerHTML = html;
+      taskContainer.setAttribute('testId', 'CREATION');
     } else if (taskRequest?.requestType === 'ASSIGNMENT') {
       renderTaskDetails(taskRequest);
     }
