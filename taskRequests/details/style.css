@@ -456,3 +456,10 @@ p:hover {
   border: 1px solid #78716c;
   border-radius: 0.5rem;
 }
+.card__link {
+  color: #2563eb;
+  text-decoration: none;
+}
+.card__link_issue {
+  color: #78716c;
+}

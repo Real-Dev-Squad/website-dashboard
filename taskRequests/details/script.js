@@ -306,6 +306,79 @@ const renderRejectButton = (taskRequest) => {
     }
   });
 };
+const renderGithubIssue = async () => {
+  converter = new showdown.Converter();
+  let res = await fetch(taskRequest?.externalIssueUrl);
+  res = await res.json();
+  taskSkeleton.classList.add('hidden');
+  taskContainer.append(
+    createCustomElement({
+      tagName: 'h1',
+      innerHTML: res?.title,
+      id: 'issue_title',
+    }),
+  );
+  taskContainer.appendChild(
+    createCustomElement({
+      tagName: 'p',
+      id: 'issue_time_author',
+      innerHTML:
+        'Opened on ' +
+        new Date(res?.created_at).toDateString() +
+        ' by <a class="card__link" href="' +
+        res?.user?.html_url +
+        '">' +
+        res?.user?.login +
+        '</a>',
+    }),
+  );
+  html = converter.makeHtml(res?.body);
+  taskContainer.appendChild(
+    createCustomElement({
+      tagName: 'div',
+      innerHTML: html,
+    }),
+  );
+
+  if (res?.assignee) {
+    taskContainer.appendChild(
+      createCustomElement({
+        tagName: 'p',
+        id: 'issue_assignee',
+        innerHTML:
+          '<span>Assigned to: <a class="card__link" href="' +
+          (res?.assignee?.html_url || '#') +
+          '">' +
+          res?.assignee?.login +
+          '</a></span>',
+      }),
+    );
+  }
+  taskContainer.appendChild(
+    createCustomElement({
+      tagName: 'p',
+      id: 'issue_link',
+      class: 'card__link_issue',
+      innerHTML:
+        'Issue link: <a class="card__link" href="' +
+        (res?.html_url || '#') +
+        '"  target="_blank" rel="noreferrer">' +
+        res?.html_url +
+        '</a>',
+    }),
+  );
+  taskContainer.appendChild(
+    createCustomElement({
+      tagName: 'div',
+      child: res?.labels.map((label) =>
+        createCustomElement({
+          tagName: 'button',
+          textContent: label?.name,
+        }),
+      ),
+    }),
+  );
+};
 const renderTaskRequest = async () => {
   taskRequestSkeleton.classList.remove('hidden');
   taskContainer.classList.remove('hidden');
@@ -316,12 +389,7 @@ const renderTaskRequest = async () => {
     renderTaskRequestDetails(taskRequest);
 
     if (taskRequest?.requestType === 'CREATION') {
-      converter = new showdown.Converter();
-      text = await fetch(taskRequest?.externalIssueUrl);
-      text = await text.json();
-      html = converter.makeHtml(text?.body);
-      taskContainer.innerHTML = html;
-      taskContainer.setAttribute('testId', 'CREATION');
+      renderGithubIssue();
     } else if (taskRequest?.requestType === 'ASSIGNMENT') {
       renderTaskDetails(taskRequest);
     }
