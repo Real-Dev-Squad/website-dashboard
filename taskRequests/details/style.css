@@ -463,3 +463,15 @@ p:hover {
 .card__link_issue {
   color: #78716c;
 }
+
+.card__tag {
+  display: block;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  border: none;
+  border-radius: 1.25rem;
+  background: #dbeafe;
+  font-weight: 500;
+  font-family: Inter;
+  margin-right: 0.5rem;
+}

@@ -374,6 +374,7 @@ const renderGithubIssue = async () => {
         createCustomElement({
           tagName: 'button',
           textContent: label?.name,
+          class: 'card__tag',
         }),
       ),
     }),
