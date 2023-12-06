@@ -182,7 +182,6 @@ body {
 .requestors {
   padding: 1rem;
   align-self: flex-start;
-  border-left: solid 1px rgba(0, 0, 0, 0.1);
 }
 .requestors__container__title {
   font-size: 1.375rem;
@@ -474,4 +473,14 @@ p:hover {
   font-weight: 500;
   font-family: Inter;
   margin-right: 0.5rem;
+}
+.task__issue__container {
+  margin: 0 1rem 1.5rem 1rem;
+  border-right: solid 1px rgba(0, 0, 0, 0.1);
+  border: solid 1px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+}
+
+.requester-border {
+  border-left: solid 1px rgba(0, 0, 0, 0.1);
 }

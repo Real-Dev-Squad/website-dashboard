@@ -81,6 +81,9 @@ function updateStatus(status) {
 async function renderTaskDetails(taskRequest) {
   const { taskId, taskTitle } = taskRequest;
   try {
+    document
+      .getElementById('requestors-details')
+      .classList.add('requester-border');
     const res = await fetch(`${API_BASE_URL}/tasks/${taskId}/details`);
     taskSkeleton.classList.add('hidden');
     const data = await res.json();
@@ -311,9 +314,10 @@ const renderGithubIssue = async () => {
   let res = await fetch(taskRequest?.externalIssueUrl);
   res = await res.json();
   taskSkeleton.classList.add('hidden');
+  taskContainer.classList.add('task__issue__container');
   taskContainer.append(
     createCustomElement({
-      tagName: 'h1',
+      tagName: 'h2',
       innerHTML: res?.title,
       id: 'issue_title',
     }),
