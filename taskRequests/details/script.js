@@ -13,7 +13,6 @@ const taskRequestContainer = document.getElementById('task-request-details');
 const taskContainer = document.getElementById('task-details');
 const toast = document.getElementById('toast_task_details');
 const requestorsContainer = document.getElementById('requestors-details');
-const rejectButton = document.getElementById('reject-button');
 const taskRequestId = new URLSearchParams(window.location.search).get('id');
 history.pushState({}, '', window.location.href);
 const errorMessage =
@@ -185,7 +184,6 @@ async function updateTaskRequest(action, userId) {
       requestorsContainer.innerHTML = '';
       updateStatus(taskRequest.status);
       renderRequestors(taskRequest);
-      renderRejectButton(taskRequest);
       return res;
     } else {
       showToast(errorMessage, 'failure');
@@ -275,7 +273,31 @@ async function renderRequestors(taskRequest) {
             }),
           ],
         }),
-        taskRequest.status !== 'DENIED' ? getActionButton(requestor) : '',
+        createCustomElement({
+          tagName: 'div',
+          child: [
+            taskRequest.status !== 'DENIED' ? getActionButton(requestor) : '',
+            createCustomElement({
+              tagName: 'button',
+              textContent: 'Reject',
+              class: 'request-details__reject__button',
+              disabled: taskRequest?.status !== 'PENDING',
+              eventListeners: [
+                {
+                  event: 'click',
+                  func: async () => {
+                    const res = await updateTaskRequest(
+                      TaskRequestAction.REJECT,
+                    );
+                    if (res?.ok) {
+                      rejectButton.disabled = true;
+                    }
+                  },
+                },
+              ],
+            }),
+          ],
+        }),
       ],
     });
     const avatarDiv = userDetailsDiv.querySelector(
@@ -297,20 +319,16 @@ async function fetchTaskRequest() {
   data.approvedTo = approvedTo;
   return data;
 }
-const renderRejectButton = (taskRequest) => {
-  if (taskRequest?.status !== 'PENDING') {
-    rejectButton.disabled = true;
-  }
 
-  rejectButton.addEventListener('click', async () => {
-    const res = await updateTaskRequest(TaskRequestAction.REJECT);
-    if (res?.ok) {
-      rejectButton.disabled = true;
-    }
-  });
-};
 const renderGithubIssue = async () => {
-  converter = new showdown.Converter();
+  converter = new showdown.Converter({
+    tables: true,
+    simplifiedAutoLink: true,
+    tasklists: true,
+    simplifiedAutoLink: true,
+    ghCodeBlocks: true,
+    openLinksInNewWindow: true,
+  });
   let res = await fetch(taskRequest?.externalIssueUrl);
   res = await res.json();
   taskSkeleton.classList.add('hidden');
@@ -390,7 +408,7 @@ const renderTaskRequest = async () => {
   try {
     taskRequest = await fetchTaskRequest();
     taskRequestSkeleton.classList.add('hidden');
-    renderRejectButton(taskRequest);
+    // renderRejectButton(taskRequest);
     renderTaskRequestDetails(taskRequest);
 
     if (taskRequest?.requestType === 'CREATION') {
