@@ -307,6 +307,11 @@
   color: var(--medium-gray);
 }
 
+.card-row-text-small {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--medium-gray);
+}
 .title-text {
   text-decoration-line: none;
   font-size: 1.6rem;
@@ -840,6 +845,9 @@ body {
 
   .filter-modal {
     top: 12.5rem;
+  }
+  .card-row-text-small {
+    display: none;
   }
 }
 .panel::-webkit-scrollbar {
