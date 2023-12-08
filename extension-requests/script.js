@@ -507,20 +507,23 @@ async function createExtensionCard(data) {
   const extensionForText = createElement({
     type: 'span',
     attributes: { class: 'card-row-text' },
-    innerText: 'Extension for:',
+    innerText: 'New Deadline:',
   });
   extensionForContainer.appendChild(extensionForText);
+  const extensionInValue = createElement({
+    type: 'span',
+    attributes: { class: 'card-row-text-small' },
+    innerText: ` (in ${extensionDays})`,
+  });
   const extensionForValue = createElement({
     type: 'span',
     attributes: { class: 'tooltip-container' },
-    innerText: ` +${extensionDays}`,
+    innerText: ` ${shortDateString(secondsToMilliSeconds(data.newEndsOn))}`,
   });
   const extensionToolTip = createElement({
     type: 'span',
     attributes: { class: 'tooltip' },
-    innerText: `New Deadline: ${fullDateString(
-      secondsToMilliSeconds(data.newEndsOn),
-    )}`,
+    innerText: `${fullDateString(secondsToMilliSeconds(data.newEndsOn))}`,
   });
   extensionForValue.appendChild(extensionToolTip);
   const extensionInput = createElement({
@@ -536,6 +539,7 @@ async function createExtensionCard(data) {
   });
   extensionForContainer.appendChild(extensionInput);
   extensionForContainer.appendChild(extensionForValue);
+  extensionForContainer.appendChild(extensionInValue);
   const requestedContainer = createElement({
     type: 'div',
   });
