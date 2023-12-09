@@ -177,3 +177,44 @@ describe('Task request details page with status creation', () => {
     );
   });
 });
+
+describe('Task request details page with status creation with dev flag', () => {
+  let browser;
+  let page;
+  jest.setTimeout(60000);
+
+  beforeAll(async () => {
+    browser = await puppeteer.launch({
+      headless: 'new',
+      ignoreHTTPSErrors: true,
+      args: ['--incognito', '--disable-web-security'],
+      devtools: false,
+    });
+    page = await browser.newPage();
+    await page.setRequestInterception(true);
+    page.on('request', (interceptedRequest) => {
+      const url = interceptedRequest.url();
+      if (urlMappings.hasOwnProperty(url)) {
+        interceptedRequest.respond({
+          ...defaultMockResponseHeaders,
+          body: JSON.stringify(urlMappings[url]),
+        });
+      } else {
+        interceptedRequest.continue();
+      }
+    });
+    await page.goto(
+      'http://localhost:8000/taskRequests/details/?id=uC0IUpkFMx393XjnKx4w&dev=true',
+    );
+  });
+
+  afterAll(async () => {
+    await browser.close();
+  });
+  it('Should render reject btn per approver on query dev true', async () => {
+    await page.waitForNetworkIdle();
+    const btn = await page.$('.request-details__reject__button_dev');
+
+    expect(btn).toBeTruthy();
+  });
+});

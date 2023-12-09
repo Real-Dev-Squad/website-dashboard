@@ -8,10 +8,13 @@ const taskSkeleton = document.querySelector('.task__skeleton');
 const requestorSkeleton = document.querySelector(
   '.requestors__container__list__skeleton',
 );
+const params = new URLSearchParams(window.location.search);
+const isDev = params.get(DEV_FEATURE_FLAG) === 'true';
 
 const taskRequestContainer = document.getElementById('task-request-details');
 const taskContainer = document.getElementById('task-details');
 const toast = document.getElementById('toast_task_details');
+const rejectButton = document.getElementById('reject-button');
 const requestorsContainer = document.getElementById('requestors-details');
 const taskRequestId = new URLSearchParams(window.location.search).get('id');
 history.pushState({}, '', window.location.href);
@@ -80,9 +83,7 @@ function updateStatus(status) {
 async function renderTaskDetails(taskRequest) {
   const { taskId, taskTitle } = taskRequest;
   try {
-    document
-      .getElementById('requestors-details')
-      .classList.add('requester-border');
+    requestorsContainer.classList.add('requester-border');
     const res = await fetch(`${API_BASE_URL}/tasks/${taskId}/details`);
     taskSkeleton.classList.add('hidden');
     const data = await res.json();
@@ -223,6 +224,28 @@ function getActionButton(requestor) {
   });
 }
 
+const getRejectorButton = (taskRequest) => {
+  if (taskRequest.status !== 'DENIED') {
+    return createCustomElement({
+      tagName: 'button',
+      textContent: 'Reject',
+      class: [
+        'request-details__reject__button',
+        'request-details__reject__button_dev',
+      ],
+      disabled: taskRequest?.status !== 'PENDING',
+      eventListeners: [
+        {
+          event: 'click',
+          func: async (ev) => {
+            await updateTaskRequest(TaskRequestAction.REJECT);
+          },
+        },
+      ],
+    });
+  }
+  return '';
+};
 async function renderRequestors(taskRequest) {
   const requestors = taskRequest?.users;
   requestorSkeleton.classList.remove('hidden');
@@ -277,25 +300,7 @@ async function renderRequestors(taskRequest) {
           tagName: 'div',
           child: [
             taskRequest.status !== 'DENIED' ? getActionButton(requestor) : '',
-            createCustomElement({
-              tagName: 'button',
-              textContent: 'Reject',
-              class: 'request-details__reject__button',
-              disabled: taskRequest?.status !== 'PENDING',
-              eventListeners: [
-                {
-                  event: 'click',
-                  func: async () => {
-                    const res = await updateTaskRequest(
-                      TaskRequestAction.REJECT,
-                    );
-                    if (res?.ok) {
-                      rejectButton.disabled = true;
-                    }
-                  },
-                },
-              ],
-            }),
+            isDev ? getRejectorButton(taskRequest) : '',
           ],
         }),
       ],
@@ -402,13 +407,29 @@ const renderGithubIssue = async () => {
     }),
   );
 };
+const renderRejectButton = (taskRequest) => {
+  if (taskRequest?.status !== 'PENDING') {
+    rejectButton.disabled = true;
+  }
+
+  rejectButton.addEventListener('click', async () => {
+    const res = await updateTaskRequest(TaskRequestAction.REJECT);
+    if (res?.ok) {
+      rejectButton.disabled = true;
+    }
+  });
+};
 const renderTaskRequest = async () => {
   taskRequestSkeleton.classList.remove('hidden');
   taskContainer.classList.remove('hidden');
   try {
     taskRequest = await fetchTaskRequest();
     taskRequestSkeleton.classList.add('hidden');
-    // renderRejectButton(taskRequest);
+    if (isDev) {
+      rejectButton.style.display = 'none';
+    } else {
+      renderRejectButton(taskRequest);
+    }
     renderTaskRequestDetails(taskRequest);
 
     if (taskRequest?.requestType === 'CREATION') {
