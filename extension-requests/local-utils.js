@@ -242,6 +242,17 @@ const fullDateString = (timestamp) => {
   return `${daysOfWeek[date.getDay()]}, ${date.toLocaleString()}`;
 };
 
+const shortDateString = (timestamp) => {
+  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const date = new Date(timestamp);
+
+  const day = daysOfWeek[date.getDay()];
+  const month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(
+    date,
+  );
+  return `${day}, ${date.getDate()} ${month}`;
+};
+
 function addEmptyPageMessage(container) {
   const emptyPageMessage = createElement({
     type: 'p',
