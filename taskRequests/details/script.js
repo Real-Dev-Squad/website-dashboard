@@ -352,14 +352,18 @@ const renderGithubIssue = async () => {
     createCustomElement({
       tagName: 'p',
       id: 'issue_time_author',
-      innerHTML:
-        'Opened on ' +
-        new Date(res?.created_at).toDateString() +
-        ' by <a class="card__link" href="' +
-        res?.user?.html_url +
-        '">' +
-        res?.user?.login +
-        '</a>',
+      child: [
+        createCustomElement({
+          tagName: 'span',
+          textContent:
+            'Opened on ' + new Date(res?.created_at).toDateString() + ' by ',
+        }),
+        createCustomElement({
+          tagName: 'a',
+          href: res?.user?.html_url,
+          textContent: res?.user?.login,
+        }),
+      ],
     }),
   );
   html = converter.makeHtml(res?.body);
@@ -375,12 +379,23 @@ const renderGithubIssue = async () => {
       createCustomElement({
         tagName: 'p',
         id: 'issue_assignee',
-        innerHTML:
-          '<span>Assigned to: <a class="card__link" href="' +
-          (res?.assignee?.html_url || '#') +
-          '">' +
-          res?.assignee?.login +
-          '</a></span>',
+        child: [
+          createCustomElement({
+            tagName: 'span',
+            child: [
+              createCustomElement({
+                tagName: 'span',
+                textContent: 'Assigned to: ',
+              }),
+              createCustomElement({
+                tagName: 'a',
+                class: 'card__link',
+                textContent: res?.assignee?.login,
+                href: res?.assignee?.html_url,
+              }),
+            ],
+          }),
+        ],
       }),
     );
   }
@@ -389,12 +404,18 @@ const renderGithubIssue = async () => {
       tagName: 'p',
       id: 'issue_link',
       class: 'card__link_issue',
-      innerHTML:
-        'Issue link: <a class="card__link" href="' +
-        (res?.html_url || '#') +
-        '"  target="_blank" rel="noreferrer">' +
-        res?.html_url +
-        '</a>',
+      child: [
+        createCustomElement({
+          tagName: 'span',
+          textContent: 'Issue link: ',
+        }),
+        createCustomElement({
+          tagName: 'a',
+          class: 'card__link',
+          textContent: res?.html_url,
+          href: res?.html_url || '#',
+        }),
+      ],
     }),
   );
   taskContainer.appendChild(
@@ -591,3 +612,10 @@ function populateModalContent(index) {
 }
 
 renderTaskRequest();
+
+/**
+ * Aggrgrate outcome
+marintae on advice
+Borowinf conviction
+building conviction
+ */
