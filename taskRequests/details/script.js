@@ -183,9 +183,7 @@ async function updateTaskRequest(action, userId) {
       requestorsContainer.innerHTML = '';
       updateStatus(taskRequest.status);
       renderRequestors(taskRequest);
-      if (!isDev) {
-        renderRejectButton(taskRequest);
-      }
+      renderRejectButton(taskRequest);
       return res;
     } else {
       showToast(errorMessage, 'failure');
