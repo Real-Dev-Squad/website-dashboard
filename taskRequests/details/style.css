@@ -453,9 +453,6 @@ table tr td {
     width: 100%;
     margin-left: 0px;
   }
-  .request-details__reject__button_dev {
-    margin-left: 1rem;
-  }
 }
 
 @media (max-width: 904px) {
@@ -530,9 +527,4 @@ p:hover {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   display: none;
-}
-
-.request-details__reject__button_dev {
-  width: auto;
-  max-width: none;
 }

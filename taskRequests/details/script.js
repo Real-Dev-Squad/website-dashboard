@@ -8,8 +8,6 @@ const taskSkeleton = document.querySelector('.task__skeleton');
 const requestorSkeleton = document.querySelector(
   '.requestors__container__list__skeleton',
 );
-const params = new URLSearchParams(window.location.search);
-const isDev = params.get(DEV_FEATURE_FLAG) === 'true';
 
 const taskRequestContainer = document.getElementById('task-request-details');
 const taskContainer = document.getElementById('task-details');
@@ -227,28 +225,6 @@ function getActionButton(requestor) {
   });
 }
 
-const getRejectorButton = (taskRequest) => {
-  if (taskRequest.status !== 'DENIED') {
-    return createCustomElement({
-      tagName: 'button',
-      textContent: 'Reject',
-      class: [
-        'request-details__reject__button',
-        'request-details__reject__button_dev',
-      ],
-      disabled: taskRequest?.status !== 'PENDING',
-      eventListeners: [
-        {
-          event: 'click',
-          func: async (ev) => {
-            await updateTaskRequest(TaskRequestAction.REJECT);
-          },
-        },
-      ],
-    });
-  }
-  return '';
-};
 async function renderRequestors(taskRequest) {
   const requestors = taskRequest?.users;
   requestorSkeleton.classList.remove('hidden');
@@ -303,7 +279,6 @@ async function renderRequestors(taskRequest) {
           tagName: 'div',
           child: [
             taskRequest.status !== 'DENIED' ? getActionButton(requestor) : '',
-            isDev ? getRejectorButton(taskRequest) : '',
           ],
         }),
       ],
@@ -449,11 +424,7 @@ const renderTaskRequest = async () => {
   try {
     taskRequest = await fetchTaskRequest();
     taskRequestSkeleton.classList.add('hidden');
-    if (isDev) {
-      rejectButton.style.display = 'none';
-    } else {
-      renderRejectButton(taskRequest);
-    }
+    renderRejectButton(taskRequest);
     renderTaskRequestDetails(taskRequest);
 
     if (taskRequest?.requestType === 'CREATION') {
@@ -612,10 +583,3 @@ function populateModalContent(index) {
 }
 
 renderTaskRequest();
-
-/**
- * Aggrgrate outcome
-marintae on advice
-Borowinf conviction
-building conviction
- */
