@@ -339,4 +339,14 @@ describe('Discord Groups Page', () => {
       expect.arrayContaining(['DSA', 'DSA-Coding-Group']),
     );
   });
+
+  test('should select the group from URL and have active-group class', async () => {
+    await page.goto('http://localhost:8000/groups?DSA');
+    const activeGroup = await page.$('.active-group');
+    const groupName = await page.evaluate(
+      (element) => element.innerText,
+      activeGroup,
+    );
+    expect(groupName).toMatch('DSA');
+  });
 });
