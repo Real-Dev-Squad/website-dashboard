@@ -1,3 +1,14 @@
+:root {
+  font-family: 'Inter', sans-serif;
+  --color-primary: #1d1283;
+  --color-gray: #666;
+  --black-color: black;
+  --elevation-1: 0 1px 3px 1px rgba(0, 0, 0, 0.1),
+    0 1px 2px 0 rgba(0, 0, 0, 0.1);
+  --elevation-3: 0px 1px 3px 0px rgba(0, 0, 0, 0.3),
+    0px 4px 8px 3px rgba(0, 0, 0, 0.15);
+}
+
 body {
   font-family: 'Roboto', sans-serif;
   margin: 0;
@@ -10,21 +21,18 @@ body {
 
 .application-container {
   display: flex;
-  margin-top: 20px;
+  margin-top: 30px;
   flex-wrap: wrap;
   padding-bottom: 10px;
-  justify-content: space-between;
   width: 90%;
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
-  gap: 20px;
+  gap: 25px;
 }
 
 .application-card {
   border-radius: 15px;
-  border: 1px solid #f7f7f7;
-  background: #f7f7f7;
-  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--elevation-1);
   padding: 15px;
   width: 44%;
   display: flex;
@@ -32,9 +40,15 @@ body {
   gap: 2px;
 }
 
+.application-card:hover {
+  box-shadow: var(--elevation-3);
+  transition: 300ms ease-in;
+}
+
 .application-card .user-info {
   display: flex;
   flex-direction: column;
+  gap: 5px;
 }
 
 .application-card .user-info * {
@@ -42,7 +56,7 @@ body {
 }
 
 .application-card .user-info .username {
-  color: #252525;
+  color: var(--black-color);
   font-size: 20px;
   font-style: normal;
 
@@ -51,21 +65,21 @@ body {
 }
 
 .application-card .user-info .company-name {
-  color: #868686;
+  color: var(--color-gray);
   font-size: 14px;
   font-weight: 600;
   line-height: normal;
 }
 
 .application-card .user-info .skills {
-  color: #868686;
+  color: var(--color-gray);
   font-size: 13px;
   font-weight: 600;
   line-height: normal;
 }
 
 .application-card .user-intro {
-  color: #868686;
+  color: var(--color-gray);
   font-size: 16px;
   font-weight: 600;
   line-height: normal;
@@ -73,8 +87,8 @@ body {
 }
 
 .application-card .view-details-button {
-  border-radius: 10px;
-  background: #1d1283;
+  border-radius: 5px;
+  background: var(--color-primary);
   color: #fff;
   font-size: 16px;
   padding: 6px 16px;
@@ -82,4 +96,11 @@ body {
   font-weight: 700;
   line-height: normal;
   cursor: pointer;
+  border: none;
+}
+
+@media screen and (max-width: 850px) {
+  .application-card {
+    width: 100%;
+  }
 }
