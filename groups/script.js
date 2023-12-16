@@ -281,6 +281,15 @@ async function removeRoleHandler() {
         memberAddRoleBody.roleid,
         memberAddRoleBody.userid,
       );
+      if (isDev) {
+        const groupNameElement = document.getElementById(
+          `name-${memberAddRoleBody.roleid}`,
+        );
+        const currentCount = groupNameElement.getAttribute('data-member-count');
+        if (currentCount !== null && currentCount !== undefined) {
+          groupNameElement.setAttribute('data-member-count', currentCount - 1);
+        }
+      }
       showToaster(res.message);
       UserGroupData = await getUserGroupRoles();
       updateButtonState();
