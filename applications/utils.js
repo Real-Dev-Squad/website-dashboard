@@ -12,7 +12,8 @@ function createElement({ type, attributes = {}, innerText }) {
 async function getApplications({ applicationStatus, size = 5, next = '' }) {
   let url;
 
-  if (applicationStatus === 'all') {
+  if (next) url = `${BASE_URL}${next}`;
+  else if (applicationStatus === 'all') {
     url = `${BASE_URL}/applications?size=${size}`;
   } else {
     url = `${BASE_URL}/applications?size=${size}&status=${applicationStatus}`;

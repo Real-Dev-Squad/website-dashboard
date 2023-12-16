@@ -1,6 +1,14 @@
 import { createElement, getApplications } from './utils.js';
-const BASE_URL = 'https://localhost:3000';
 let status = 'all';
+let nextLink;
+let isDataLoading = false;
+const loader = document.querySelector('.loader');
+const lastElementContainer = document.getElementById('page_bottom_element');
+
+function changeLoaderVisibility({ hide }) {
+  if (hide) loader.classList.add('hidden');
+  else loader.classList.remove('hidden');
+}
 
 function createApplicationCard({ username, companyName, skills, intro }) {
   const applicationCard = createElement({
@@ -54,10 +62,18 @@ function createApplicationCard({ username, companyName, skills, intro }) {
   return applicationCard;
 }
 
-async function renderApplicationCards() {
+async function renderApplicationCards(next) {
   const applicationContainer = document.querySelector('.application-container');
-  const { applications } = await getApplications({ applicationStatus: 'all' });
-  console.log(applications, 'applications');
+  changeLoaderVisibility({ hide: false });
+  isDataLoading = true;
+  const data = await getApplications({
+    applicationStatus: 'all',
+    next,
+  });
+  isDataLoading = false;
+  changeLoaderVisibility({ hide: true });
+  const applications = data.applications;
+  nextLink = data.next;
   applications.forEach((application) => {
     const applicationCard = createApplicationCard({
       username: application.biodata.firstName,
@@ -69,39 +85,21 @@ async function renderApplicationCards() {
   });
 }
 
-renderApplicationCards();
+(async function renderCardsInitial() {
+  await renderApplicationCards();
+  addIntersectionObserver();
+})();
 
-const data = {
-  id: 'bWkwmQRGbdZIVV6qiXG2',
-  createdAt: {
-    _seconds: 1702598350,
-    _nanoseconds: 357000000,
-  },
-  intro: {
-    funFact:
-      'mattis aliquam faucibus purus in massa tempor nec feugiat nisl pretium fusce id velit ut tortor pretium viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare suspendisse sed nisi lacus sed viverra tellus in hac habitasse platea dictumst vestibulum rhoncus est pellentesque elit ullamcorper dignissim cras tincidunt lobortis feugiat vivamus at augue eget arcu dictum varius duis at consectetur lorem donec massa sapien faucibus et molestie ac feugiat sed lectus vestibulum mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare massa eget egestas purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae auctor eu augue ut lectus arcu bibendum at',
-    forFun:
-      'mattis aliquam faucibus purus in massa tempor nec feugiat nisl pretium fusce id velit ut tortor pretium viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare suspendisse sed nisi lacus sed viverra tellus in hac habitasse platea dictumst vestibulum rhoncus est pellentesque elit ullamcorper dignissim cras tincidunt lobortis feugiat vivamus at augue eget arcu dictum varius duis at consectetur lorem donec massa sapien faucibus et molestie ac feugiat sed lectus vestibulum mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare massa eget egestas purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae auctor eu augue ut lectus arcu bibendum at',
-    numberOfHours: 14,
-    whyRds:
-      'mattis aliquam faucibus purus in massa tempor nec feugiat nisl pretium fusce id velit ut tortor pretium viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare suspendisse sed nisi lacus sed viverra tellus in hac habitasse platea dictumst vestibulum rhoncus est pellentesque elit ullamcorper dignissim cras tincidunt lobortis feugiat vivamus at augue eget arcu dictum varius duis at consectetur lorem donec massa sapien faucibus et molestie ac feugiat sed lectus vestibulum mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare massa eget egestas purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae auctor eu augue ut lectus arcu bibendum at',
-    introduction:
-      'mattis aliquam faucibus purus in massa tempor nec feugiat nisl pretium fusce id velit ut tortor pretium viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare suspendisse sed nisi lacus sed viverra tellus in hac habitasse platea dictumst vestibulum rhoncus est pellentesque elit ullamcorper dignissim cras tincidunt lobortis feugiat vivamus at augue eget arcu dictum varius duis at consectetur lorem donec massa sapien faucibus et molestie ac feugiat sed lectus vestibulum mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare massa eget egestas purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae auctor eu augue ut lectus arcu bibendum at',
-  },
-  biodata: {
-    firstName: 'vinayak',
-    lastName: 'trivedi',
-  },
-  location: {
-    country: 'India',
-    city: 'Kanpur',
-    state: 'UP',
-  },
-  foundFrom: 'twitter',
-  userId: 'hKzs2IQGe4sLnAuSZ85i',
-  professional: {
-    skills: 'REACT, NODE JS',
-    institution: 'Christ church college',
-  },
-  status: 'pending',
+const intersectionObserver = new IntersectionObserver(async (entries) => {
+  console.log('coming here', nextLink);
+  if (!nextLink) {
+    return;
+  }
+  if (entries[0].isIntersecting && !isDataLoading) {
+    await renderApplicationCards(nextLink);
+  }
+});
+
+const addIntersectionObserver = () => {
+  intersectionObserver.observe(lastElementContainer);
 };
