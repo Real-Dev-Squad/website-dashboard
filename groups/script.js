@@ -154,6 +154,9 @@ groupRoles?.addEventListener('click', function (event) {
   });
   const groupListItem = event.target?.closest('li');
   if (groupListItem) {
+    const groupName = `${groupListItem.querySelector('p').textContent}`;
+    const newURL = `${window.location.pathname}?${groupName}`;
+    window.history.pushState({}, '', newURL);
     groupListItem.classList.add('active-group');
     memberAddRoleBody.roleid = groupListItem.id;
     if (IsUserVerified) {
@@ -358,3 +361,20 @@ createGroupButton.addEventListener('click', async () => {
       location.reload();
     });
 });
+
+/**
+ * TO SELECT A GROUP ROLE
+ */
+
+if (searchValue) {
+  const groupName = searchValue;
+  const paragraphs = document.querySelectorAll('p');
+
+  const groupElement = Array.from(paragraphs).find((paragraph) =>
+    paragraph.textContent.includes(groupName),
+  );
+
+  if (groupElement) {
+    groupElement.parentElement.click();
+  }
+}

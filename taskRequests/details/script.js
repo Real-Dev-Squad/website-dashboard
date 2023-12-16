@@ -12,8 +12,8 @@ const requestorSkeleton = document.querySelector(
 const taskRequestContainer = document.getElementById('task-request-details');
 const taskContainer = document.getElementById('task-details');
 const toast = document.getElementById('toast_task_details');
-const requestorsContainer = document.getElementById('requestors-details');
 const rejectButton = document.getElementById('reject-button');
+const requestorsContainer = document.getElementById('requestors-details');
 const taskRequestId = new URLSearchParams(window.location.search).get('id');
 history.pushState({}, '', window.location.href);
 const errorMessage =
@@ -81,6 +81,7 @@ function updateStatus(status) {
 async function renderTaskDetails(taskRequest) {
   const { taskId, taskTitle } = taskRequest;
   try {
+    requestorsContainer.classList.add('requester-border');
     const res = await fetch(`${API_BASE_URL}/tasks/${taskId}/details`);
     taskSkeleton.classList.add('hidden');
     const data = await res.json();
@@ -272,7 +273,12 @@ async function renderRequestors(taskRequest) {
             }),
           ],
         }),
-        taskRequest.status !== 'DENIED' ? getActionButton(requestor) : '',
+        createCustomElement({
+          tagName: 'div',
+          child: [
+            taskRequest.status !== 'DENIED' ? getActionButton(requestor) : '',
+          ],
+        }),
       ],
     });
     const avatarDiv = userDetailsDiv.querySelector(
@@ -294,6 +300,110 @@ async function fetchTaskRequest() {
   data.approvedTo = approvedTo;
   return data;
 }
+
+const renderGithubIssue = async () => {
+  converter = new showdown.Converter({
+    tables: true,
+    simplifiedAutoLink: true,
+    tasklists: true,
+    simplifiedAutoLink: true,
+    ghCodeBlocks: true,
+    openLinksInNewWindow: true,
+  });
+  let res = await fetch(taskRequest?.externalIssueUrl);
+  res = await res.json();
+  taskSkeleton.classList.add('hidden');
+  taskContainer.classList.add('task__issue__container');
+  taskContainer.append(
+    createCustomElement({
+      tagName: 'h2',
+      innerHTML: res?.title,
+      id: 'issue_title',
+    }),
+  );
+  taskContainer.appendChild(
+    createCustomElement({
+      tagName: 'p',
+      id: 'issue_time_author',
+      child: [
+        createCustomElement({
+          tagName: 'span',
+          textContent:
+            'Opened on ' + new Date(res?.created_at).toDateString() + ' by ',
+        }),
+        createCustomElement({
+          tagName: 'a',
+          href: res?.user?.html_url,
+          textContent: res?.user?.login,
+        }),
+      ],
+    }),
+  );
+  html = converter.makeHtml(res?.body);
+  taskContainer.appendChild(
+    createCustomElement({
+      tagName: 'div',
+      innerHTML: html,
+    }),
+  );
+
+  if (res?.assignee) {
+    taskContainer.appendChild(
+      createCustomElement({
+        tagName: 'p',
+        id: 'issue_assignee',
+        child: [
+          createCustomElement({
+            tagName: 'span',
+            child: [
+              createCustomElement({
+                tagName: 'span',
+                textContent: 'Assigned to: ',
+              }),
+              createCustomElement({
+                tagName: 'a',
+                class: 'card__link',
+                textContent: res?.assignee?.login,
+                href: res?.assignee?.html_url,
+              }),
+            ],
+          }),
+        ],
+      }),
+    );
+  }
+  taskContainer.appendChild(
+    createCustomElement({
+      tagName: 'p',
+      id: 'issue_link',
+      class: 'card__link_issue',
+      child: [
+        createCustomElement({
+          tagName: 'span',
+          textContent: 'Issue link: ',
+        }),
+        createCustomElement({
+          tagName: 'a',
+          class: 'card__link',
+          textContent: res?.html_url,
+          href: res?.html_url || '#',
+        }),
+      ],
+    }),
+  );
+  taskContainer.appendChild(
+    createCustomElement({
+      tagName: 'div',
+      child: res?.labels.map((label) =>
+        createCustomElement({
+          tagName: 'button',
+          textContent: label?.name,
+          class: 'card__tag',
+        }),
+      ),
+    }),
+  );
+};
 const renderRejectButton = (taskRequest) => {
   if (taskRequest?.status !== 'PENDING') {
     rejectButton.disabled = true;
@@ -314,7 +424,12 @@ const renderTaskRequest = async () => {
     taskRequestSkeleton.classList.add('hidden');
     renderRejectButton(taskRequest);
     renderTaskRequestDetails(taskRequest);
-    renderTaskDetails(taskRequest);
+
+    if (taskRequest?.requestType === 'CREATION') {
+      renderGithubIssue();
+    } else if (taskRequest?.requestType === 'ASSIGNMENT') {
+      renderTaskDetails(taskRequest);
+    }
     renderRequestors(taskRequest);
   } catch (e) {
     console.error(e);

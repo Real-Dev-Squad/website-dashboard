@@ -180,9 +180,9 @@ describe('Tasks On User Management Page', () => {
     await page.waitForTimeout(500); //waiting for a moment to check changes(very helpful when you turn headless into false)
   });
 
-  it('Scroll of task should work in dev mode', async () => {
+  it('Scroll of task should work', async () => {
     await page.goto(
-      'http://localhost:8000/users/details/index.html?username=ajeyakrishna&dev=true',
+      'http://localhost:8000/users/details/index.html?username=ajeyakrishna',
     );
     await page.waitForNetworkIdle();
     const taskDiv = await page.$$('.accordion-tasks');
@@ -218,7 +218,7 @@ describe('Tasks On User Management Page', () => {
 
   it('New task card should have all the detail fields', async () => {
     await page.goto(
-      'http://localhost:8000/users/details/index.html?username=ajeyakrishna&dev=true',
+      'http://localhost:8000/users/details/index.html?username=ajeyakrishna',
     );
     await page.waitForNetworkIdle();
     const taskDiv = await page.$$('.accordion-tasks');
