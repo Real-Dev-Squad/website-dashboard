@@ -270,7 +270,7 @@ footer {
 .action-button:hover {
   color: var(--white-color);
   background-color: var(--blue-color);
-  border: none;
+  border-color: var(--blue-color);
 }
 
 #sync-buttons.element-display-remove {
