@@ -1,5 +1,4 @@
 import { createElement, getApplications } from './utils.js';
-let status = 'all';
 let nextLink;
 let isDataLoading = false;
 const loader = document.querySelector('.loader');
@@ -91,7 +90,6 @@ async function renderApplicationCards(next) {
 })();
 
 const intersectionObserver = new IntersectionObserver(async (entries) => {
-  console.log('coming here', nextLink);
   if (!nextLink) {
     return;
   }

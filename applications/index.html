@@ -11,8 +11,60 @@
     <header class="header">
       <h1>RDS Join Applications</h1>
     </header>
-    <main class="application-container"></main>
-    <div class="loader hidden">Loading...</div>
-    <div id="page_bottom_element"></div>
+    <div class="container">
+      <button id="filter-button" class="filter-button">
+        <span class="filter-text">Filters</span>
+
+        <img
+          class="funnel-icon"
+          src="/taskRequests/assets/funnel.svg"
+          alt="funnel icon"
+        />
+      </button>
+      <div
+        class="filter-modal"
+        role="dialog"
+        aria-labelledby="filter-dialog-label"
+      >
+        <div class="filter-head">
+          <h3 id="filter-dialog-label">Filters</h3>
+          <button id="clear-button" class="clear-btn">Clear</button>
+        </div>
+        <div class="filters-container">
+          <h2>Status</h2>
+          <form class="modal-form" id="status-filter">
+            <div>
+              <input
+                type="radio"
+                id="rejected"
+                name="status"
+                value="rejected"
+              />
+              <label for="rejected">Rejected</label>
+            </div>
+            <div>
+              <input
+                type="radio"
+                id="accepted"
+                name="status"
+                value="accepted"
+              />
+              <label for="accepted">Accepted</label>
+            </div>
+
+            <div>
+              <input type="radio" id="pending" name="status" value="pending" />
+              <label for="pending">Pending</label>
+            </div>
+          </form>
+        </div>
+        <button id="apply-filter-button" class="apply-filter-button">
+          Apply Filter
+        </button>
+      </div>
+      <main class="application-container"></main>
+      <div class="loader hidden">Loading...</div>
+      <div id="page_bottom_element"></div>
+    </div>
   </body>
 </html>
