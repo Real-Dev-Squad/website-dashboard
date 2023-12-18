@@ -20,6 +20,15 @@ body {
   padding: 0;
 }
 
+.backdrop {
+  display: none;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 .header {
   text-align: center;
 }

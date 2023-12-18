@@ -2,6 +2,9 @@ import { createElement, getApplications } from './utils.js';
 let nextLink;
 let isDataLoading = false;
 const loader = document.querySelector('.loader');
+const filterButton = document.getElementById('filter-button');
+const filterModal = document.querySelector('.filter-modal');
+const backDrop = document.querySelector('.backdrop');
 const lastElementContainer = document.getElementById('page_bottom_element');
 
 function changeLoaderVisibility({ hide }) {
@@ -101,3 +104,13 @@ const intersectionObserver = new IntersectionObserver(async (entries) => {
 const addIntersectionObserver = () => {
   intersectionObserver.observe(lastElementContainer);
 };
+
+filterButton.addEventListener('click', () => {
+  filterModal.classList.toggle('hidden');
+  backDrop.style.display = 'flex';
+});
+
+backDrop.addEventListener('click', () => {
+  filterModal.classList.add('hidden');
+  backDrop.style.display = 'none';
+});
