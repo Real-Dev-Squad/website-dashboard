@@ -5,7 +5,16 @@ const loader = document.querySelector('.loader');
 const filterButton = document.getElementById('filter-button');
 const filterModal = document.querySelector('.filter-modal');
 const backDrop = document.querySelector('.backdrop');
+const applyFilterButton = document.getElementById('apply-filter-button');
+const applicationContainer = document.querySelector('.application-container');
 const lastElementContainer = document.getElementById('page_bottom_element');
+
+let status = 'all';
+
+function changeFilter() {
+  nextLink = '';
+  applicationContainer.innerHTML = '';
+}
 
 function changeLoaderVisibility({ hide }) {
   if (hide) loader.classList.add('hidden');
@@ -64,12 +73,11 @@ function createApplicationCard({ username, companyName, skills, intro }) {
   return applicationCard;
 }
 
-async function renderApplicationCards(next) {
-  const applicationContainer = document.querySelector('.application-container');
+async function renderApplicationCards(next, status) {
   changeLoaderVisibility({ hide: false });
   isDataLoading = true;
   const data = await getApplications({
-    applicationStatus: 'all',
+    applicationStatus: status,
     next,
   });
   isDataLoading = false;
@@ -88,7 +96,7 @@ async function renderApplicationCards(next) {
 }
 
 (async function renderCardsInitial() {
-  await renderApplicationCards();
+  await renderApplicationCards('', status);
   addIntersectionObserver();
 })();
 
@@ -113,4 +121,13 @@ filterButton.addEventListener('click', () => {
 backDrop.addEventListener('click', () => {
   filterModal.classList.add('hidden');
   backDrop.style.display = 'none';
+});
+
+applyFilterButton.addEventListener('click', () => {
+  const selectedFilterOption = document.querySelector(
+    'input[name="status"]:checked',
+  );
+  changeFilter();
+  status = selectedFilterOption.value;
+  renderApplicationCards(nextLink, status);
 });
