@@ -7,6 +7,9 @@ const filterModal = document.querySelector('.filter-modal');
 const backDrop = document.querySelector('.backdrop');
 const backDropBlur = document.querySelector('.backdrop-blur');
 const applicationDetailsModal = document.querySelector('.application-details');
+const applicationDetailsMain = document.querySelector(
+  '.application-details-main',
+);
 const applyFilterButton = document.getElementById('apply-filter-button');
 const applicationContainer = document.querySelector('.application-container');
 const clearButton = document.getElementById('clear-button');
@@ -21,6 +24,7 @@ function changeFilter() {
 }
 
 function openApplicationDetails(application) {
+  applicationDetailsMain.innerHTML = '';
   backDropBlur.style.display = 'flex';
   applicationDetailsModal.classList.remove('hidden');
   document.body.style.overflow = 'hidden';
@@ -63,15 +67,13 @@ function openApplicationDetails(application) {
     ],
   };
 
-  console.log(selectedApplication, 'applications');
-
   const title = createElement({
     type: 'h1',
     attributes: { class: 'title' },
     innerText: `${selectedApplication.username}'s Application`,
   });
 
-  applicationDetailsModal.appendChild(title);
+  applicationDetailsMain.appendChild(title);
 
   selectedApplication.applicationDetails.forEach((application) => {
     const applicationSection = createElement({
@@ -91,7 +93,7 @@ function openApplicationDetails(application) {
 
     applicationSection.appendChild(applicationSectionTitle);
     applicationSection.appendChild(applicationSectionDescription);
-    applicationDetailsModal.appendChild(applicationSection);
+    applicationDetailsMain.appendChild(applicationSection);
   });
 }
 
