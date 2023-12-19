@@ -5,6 +5,8 @@ const loader = document.querySelector('.loader');
 const filterButton = document.getElementById('filter-button');
 const filterModal = document.querySelector('.filter-modal');
 const backDrop = document.querySelector('.backdrop');
+const backDropBlur = document.querySelector('.backdrop-blur');
+const applicationDetailsModal = document.querySelector('.application-details');
 const applyFilterButton = document.getElementById('apply-filter-button');
 const applicationContainer = document.querySelector('.application-container');
 const clearButton = document.getElementById('clear-button');
@@ -16,6 +18,81 @@ function changeFilter() {
   nextLink = '';
   filterModal.classList.add('hidden');
   applicationContainer.innerHTML = '';
+}
+
+function openApplicationDetails(application) {
+  backDropBlur.style.display = 'flex';
+  applicationDetailsModal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  const selectedApplication = {
+    username: application.biodata.firstName,
+    id: application.id,
+    applicationDetails: [
+      {
+        title: 'Introduction',
+        description: application.intro.introduction,
+      },
+      {
+        title: 'Skills',
+        description: application.professional.skills,
+      },
+      {
+        title: 'Found from',
+        description: application.foundFrom,
+      },
+      {
+        title: 'Institution',
+        description: application.professional.institution,
+      },
+      {
+        title: 'Number of hours committed',
+        description: application.intro.numberOfHours,
+      },
+      {
+        title: 'Why RDS',
+        description: application.intro.whyRds,
+      },
+      {
+        title: 'Fun fact',
+        description: application.intro.funFact,
+      },
+      {
+        title: 'For fun',
+        description: application.intro.forFun,
+      },
+    ],
+  };
+
+  console.log(selectedApplication, 'applications');
+
+  const title = createElement({
+    type: 'h1',
+    attributes: { class: 'title' },
+    innerText: `${selectedApplication.username}'s Application`,
+  });
+
+  applicationDetailsModal.appendChild(title);
+
+  selectedApplication.applicationDetails.forEach((application) => {
+    const applicationSection = createElement({
+      type: 'div',
+      attributes: { class: 'application-section' },
+    });
+    const applicationSectionTitle = createElement({
+      type: 'h2',
+      attributes: { class: 'section-title' },
+      innerText: application.title,
+    });
+    const applicationSectionDescription = createElement({
+      type: 'p',
+      attributes: { class: 'description' },
+      innerText: application.description,
+    });
+
+    applicationSection.appendChild(applicationSectionTitle);
+    applicationSection.appendChild(applicationSectionDescription);
+    applicationDetailsModal.appendChild(applicationSection);
+  });
 }
 
 function clearFilter() {
@@ -34,7 +111,7 @@ function changeLoaderVisibility({ hide }) {
   else loader.classList.remove('hidden');
 }
 
-function createApplicationCard({ username, companyName, skills, intro }) {
+function createApplicationCard({ application }) {
   const applicationCard = createElement({
     type: 'div',
     attributes: { class: 'application-card' },
@@ -48,19 +125,19 @@ function createApplicationCard({ username, companyName, skills, intro }) {
   const usernameText = createElement({
     type: 'p',
     attributes: { class: 'username' },
-    innerText: username,
+    innerText: application.biodata.firstName,
   });
 
   const companyNameText = createElement({
     type: 'p',
     attributes: { class: 'company-name' },
-    innerText: `Company name: ${companyName}`,
+    innerText: `Company name: ${application.professional.institution}`,
   });
 
   const skillsText = createElement({
     type: 'p',
     attributes: { class: 'skills' },
-    innerText: `Skills: ${skills}`,
+    innerText: `Skills: ${application.professional.skills}`,
   });
 
   userInfoContainer.appendChild(usernameText);
@@ -70,7 +147,7 @@ function createApplicationCard({ username, companyName, skills, intro }) {
   const introductionText = createElement({
     type: 'p',
     attributes: { class: 'user-intro' },
-    innerText: intro,
+    innerText: application.intro.introduction.slice(0, 200),
   });
 
   const viewDetailsButton = createElement({
@@ -78,6 +155,10 @@ function createApplicationCard({ username, companyName, skills, intro }) {
     attributes: { class: 'view-details-button' },
     innerText: 'View Details',
   });
+
+  viewDetailsButton.addEventListener('click', () =>
+    openApplicationDetails(application),
+  );
 
   applicationCard.appendChild(userInfoContainer);
   applicationCard.appendChild(introductionText);
@@ -99,10 +180,7 @@ async function renderApplicationCards(next, status) {
   nextLink = data.next;
   applications.forEach((application) => {
     const applicationCard = createApplicationCard({
-      username: application.biodata.firstName,
-      companyName: application.professional.institution,
-      intro: `${application.intro.introduction.slice(0, 200)}...`,
-      skills: application.professional.skills,
+      application,
     });
     applicationContainer.appendChild(applicationCard);
   });
@@ -134,6 +212,12 @@ filterButton.addEventListener('click', () => {
 backDrop.addEventListener('click', () => {
   filterModal.classList.add('hidden');
   backDrop.style.display = 'none';
+});
+
+backDropBlur.addEventListener('click', () => {
+  applicationDetailsModal.classList.add('hidden');
+  backDropBlur.style.display = 'none';
+  document.body.style.overflow = 'auto';
 });
 
 applyFilterButton.addEventListener('click', () => {
