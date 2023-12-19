@@ -7,13 +7,26 @@ const filterModal = document.querySelector('.filter-modal');
 const backDrop = document.querySelector('.backdrop');
 const applyFilterButton = document.getElementById('apply-filter-button');
 const applicationContainer = document.querySelector('.application-container');
+const clearButton = document.getElementById('clear-button');
 const lastElementContainer = document.getElementById('page_bottom_element');
 
 let status = 'all';
 
 function changeFilter() {
   nextLink = '';
+  filterModal.classList.add('hidden');
   applicationContainer.innerHTML = '';
+}
+
+function clearFilter() {
+  if (status === 'all') return;
+  changeFilter();
+  const selectedFilterOption = document.querySelector(
+    'input[name="status"]:checked',
+  );
+  selectedFilterOption.checked = false;
+  status = 'all';
+  renderApplicationCards(nextLink, status);
 }
 
 function changeLoaderVisibility({ hide }) {
@@ -131,3 +144,5 @@ applyFilterButton.addEventListener('click', () => {
   status = selectedFilterOption.value;
   renderApplicationCards(nextLink, status);
 });
+
+clearButton.addEventListener('click', clearFilter);
