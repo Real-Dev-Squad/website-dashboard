@@ -212,9 +212,7 @@ describe('Discord Groups Page', () => {
 
   test('Should decrease user count by one when user is removed from group', async () => {
     const userCount = await page.$$eval('.group-role', (elements) => {
-      return elements[1].click((event) =>
-        event.target.getAttribute('data-member-count'),
-      );
+      return elements[1].getAttribute('data-member-count');
     });
 
     // Wait for the btn-add-role and click it
