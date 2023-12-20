@@ -220,18 +220,22 @@ describe('Discord Groups Page', () => {
 
     await page.waitForNetworkIdle();
 
-    const element = await page.$$eval('.group-role', (elements) => {
-      return elements[1].querySelector('[id^="name-"]');
+    const oldUserCount = await page.$$eval('.group-role', (elements) => {
+      return elements[1]
+        .querySelector('[id^="name-"]')
+        .getAttribute('data-member-count');
     });
-
-    const oldUserCount = element.getAttribute('data-member-count');
 
     const deleteRoleBtn = await page.$('.btn-add-role');
     await deleteRoleBtn.click();
 
     await page.waitForNetworkIdle();
 
-    const newUserCount = element.getAttribute('data-member-count');
+    const newUserCount = await page.$$eval('.group-role', (elements) => {
+      return elements[1]
+        .querySelector('[id^="name-"]')
+        .getAttribute('data-member-count');
+    });
 
     // Now, check the user count
     expect(newUserCount).toBe(oldUserCount - 1);
