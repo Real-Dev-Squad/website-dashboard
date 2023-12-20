@@ -221,7 +221,7 @@ describe('Discord Groups Page', () => {
     const deleteRoleBtn = await page.$('.btn-add-role');
     await deleteRoleBtn.click();
 
-    // Now, check the text content of the button
+    // Now, check the user count
     expect(userCount).toBe(userCount - 1);
   });
 
