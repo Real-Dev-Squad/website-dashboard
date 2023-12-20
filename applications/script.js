@@ -23,11 +23,11 @@ const applyFilterButton = document.getElementById('apply-filter-button');
 const applicationContainer = document.querySelector('.application-container');
 const clearButton = document.getElementById('clear-button');
 const lastElementContainer = document.getElementById('page_bottom_element');
-const feedbackModal = document.querySelector('.feedback-modal');
-const feedbackModalButton = document.querySelector('.feedback-modal-cta');
 let applicationUpdateStatus;
 
 let status = 'all';
+
+function updateApplicationStatus() {}
 
 function changeFilter() {
   nextLink = '';
@@ -39,17 +39,6 @@ function closeApplicationDetails() {
   applicationDetailsModal.classList.add('hidden');
   backDropBlur.style.display = 'none';
   document.body.style.overflow = 'auto';
-}
-
-function openFeedbackModal({ isAccepted }) {
-  if (isAccepted) {
-    feedbackModalButton.textContent = 'Accept';
-    applicationUpdateStatus = 'accepted';
-  } else {
-    feedbackModalButton.textContent = 'Reject';
-    applicationUpdateStatus = 'rejected';
-  }
-  feedbackModal.classList.remove('hidden');
 }
 
 function openApplicationDetails(application) {
@@ -124,6 +113,29 @@ function openApplicationDetails(application) {
     applicationSection.appendChild(applicationSectionDescription);
     applicationDetailsMain.appendChild(applicationSection);
   });
+
+  const applicationSection = createElement({
+    type: 'div',
+    attributes: { class: 'application-section' },
+  });
+
+  const applicationSectionTitle = createElement({
+    type: 'h2',
+    attributes: { class: 'section-title' },
+    innerText: 'Add Feedback',
+  });
+
+  const applicationTextArea = createElement({
+    type: 'textarea',
+    attributes: {
+      class: 'application-textarea',
+      placeHolder: 'Add Feedback here',
+    },
+  });
+
+  applicationSection.appendChild(applicationSectionTitle);
+  applicationSection.appendChild(applicationTextArea);
+  applicationDetailsMain.appendChild(applicationSection);
 }
 
 function clearFilter() {
@@ -258,9 +270,3 @@ applyFilterButton.addEventListener('click', () => {
 });
 
 clearButton.addEventListener('click', clearFilter);
-applicationAcceptButton.addEventListener('click', () =>
-  openFeedbackModal({ isAccepted: true }),
-);
-applicationRejectButton.addEventListener('click', () =>
-  openFeedbackModal({ isAccepted: false }),
-);
