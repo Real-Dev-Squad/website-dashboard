@@ -27,24 +27,30 @@ let currentApplicationId;
 
 let status = 'all';
 
-async function updateUserApplication({ isAccepted }) {
+function updateUserApplication({ isAccepted }) {
   const applicationTextarea = document.querySelector('.application-textarea');
   let status;
   const payload = {};
 
   if (isAccepted) status = 'accepted';
-  else status = 'rejected';
+  else status = 'rejectedd';
 
   payload['status'] = status;
 
   if (applicationTextarea.value) payload.feedback = applicationTextarea.value;
 
-  const data = await updateApplication({
+  updateApplication({
     applicationId: currentApplicationId,
     applicationPayload: payload,
-  });
-  console.log(data);
-  closeApplicationDetails();
+  })
+    .then((res) => {
+      closeApplicationDetails();
+      alert(res.message);
+    })
+    .catch((error) => {
+      alert(error.message);
+      console.log(error);
+    });
 }
 
 function changeFilter() {

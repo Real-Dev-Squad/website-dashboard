@@ -31,16 +31,26 @@ async function getApplications({ applicationStatus, size = 5, next = '' }) {
 }
 
 async function updateApplication({ applicationPayload, applicationId }) {
-  const res = await fetch(`${BASE_URL}/applications/${applicationId}`, {
-    method: 'PATCH',
-    credentials: 'include',
-    body: JSON.stringify(applicationPayload),
-    headers: {
-      'Content-type': 'application/json',
-    },
-  });
-  const data = res.json();
-  return data;
+  try {
+    const res = await fetch(`${BASE_URL}/applications/${applicationId}`, {
+      method: 'PATCH',
+      credentials: 'include',
+      body: JSON.stringify(applicationPayload),
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw error;
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export { createElement, getApplications, updateApplication };
