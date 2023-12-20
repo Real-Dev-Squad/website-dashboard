@@ -13,10 +13,19 @@ const applicationCloseButton = document.querySelector(
 const applicationDetailsMain = document.querySelector(
   '.application-details-main',
 );
+const applicationAcceptButton = document.querySelector(
+  '.application-details-accept',
+);
+const applicationRejectButton = document.querySelector(
+  '.application-details-reject',
+);
 const applyFilterButton = document.getElementById('apply-filter-button');
 const applicationContainer = document.querySelector('.application-container');
 const clearButton = document.getElementById('clear-button');
 const lastElementContainer = document.getElementById('page_bottom_element');
+const feedbackModal = document.querySelector('.feedback-modal');
+const feedbackModalButton = document.querySelector('.feedback-modal-cta');
+let applicationUpdateStatus;
 
 let status = 'all';
 
@@ -30,6 +39,17 @@ function closeApplicationDetails() {
   applicationDetailsModal.classList.add('hidden');
   backDropBlur.style.display = 'none';
   document.body.style.overflow = 'auto';
+}
+
+function openFeedbackModal({ isAccepted }) {
+  if (isAccepted) {
+    feedbackModalButton.textContent = 'Accept';
+    applicationUpdateStatus = 'accepted';
+  } else {
+    feedbackModalButton.textContent = 'Reject';
+    applicationUpdateStatus = 'rejected';
+  }
+  feedbackModal.classList.remove('hidden');
 }
 
 function openApplicationDetails(application) {
@@ -238,3 +258,9 @@ applyFilterButton.addEventListener('click', () => {
 });
 
 clearButton.addEventListener('click', clearFilter);
+applicationAcceptButton.addEventListener('click', () =>
+  openFeedbackModal({ isAccepted: true }),
+);
+applicationRejectButton.addEventListener('click', () =>
+  openFeedbackModal({ isAccepted: false }),
+);

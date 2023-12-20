@@ -219,7 +219,6 @@ body {
 }
 
 .hidden {
-  display: none;
   visibility: collapse;
 }
 
@@ -338,6 +337,51 @@ body {
 
 .application-details .application-details-actions .application-details-accept {
   background: var(--color-primary);
+}
+
+.feedback-modal {
+  border-radius: 15px;
+  background: #fff;
+  border: 1px solid var(--light-gray-color);
+  box-shadow: var(--elevation-1);
+  width: 90%;
+  max-width: 540px;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  justify-content: space-between;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 10px;
+  z-index: 1;
+}
+
+.feedback-modal .feedback-modal-text {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.feedback-modal-textarea {
+  width: 95%;
+  height: 150px;
+  resize: none;
+  border: 1px solid var(--light-gray-color);
+  border-radius: 5px;
+  padding: 10px;
+  outline: none;
+}
+
+.feedback-modal-cta {
+  margin-left: auto;
+  background: var(--color-primary);
+  padding: 10px 20px;
+  margin-top: 5px;
+  color: var(--white);
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 5px;
+  border: none;
 }
 
 @media screen and (max-width: 850px) {
