@@ -30,4 +30,17 @@ async function getApplications({ applicationStatus, size = 5, next = '' }) {
   return data;
 }
 
-export { createElement, getApplications };
+async function updateApplication({ applicationPayload, applicationId }) {
+  const res = await fetch(`${BASE_URL}/applications/${applicationId}`, {
+    method: 'PATCH',
+    credentials: 'include',
+    body: JSON.stringify(applicationPayload),
+    headers: {
+      'Content-type': 'application/json',
+    },
+  });
+  const data = res.json();
+  return data;
+}
+
+export { createElement, getApplications, updateApplication };

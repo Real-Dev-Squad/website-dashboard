@@ -1,4 +1,4 @@
-import { createElement, getApplications } from './utils.js';
+import { createElement, getApplications, updateApplication } from './utils.js';
 let nextLink;
 let isDataLoading = false;
 const loader = document.querySelector('.loader');
@@ -23,11 +23,29 @@ const applyFilterButton = document.getElementById('apply-filter-button');
 const applicationContainer = document.querySelector('.application-container');
 const clearButton = document.getElementById('clear-button');
 const lastElementContainer = document.getElementById('page_bottom_element');
-let applicationUpdateStatus;
+let currentApplicationId;
 
 let status = 'all';
 
-function updateApplicationStatus() {}
+async function updateUserApplication({ isAccepted }) {
+  const applicationTextarea = document.querySelector('.application-textarea');
+  let status;
+  const payload = {};
+
+  if (isAccepted) status = 'accepted';
+  else status = 'rejected';
+
+  payload['status'] = status;
+
+  if (applicationTextarea.value) payload.feedback = applicationTextarea.value;
+
+  const data = await updateApplication({
+    applicationId: currentApplicationId,
+    applicationPayload: payload,
+  });
+  console.log(data);
+  closeApplicationDetails();
+}
 
 function changeFilter() {
   nextLink = '';
@@ -42,6 +60,7 @@ function closeApplicationDetails() {
 }
 
 function openApplicationDetails(application) {
+  currentApplicationId = application.id;
   applicationDetailsMain.innerHTML = '';
   backDropBlur.style.display = 'flex';
   applicationDetailsModal.classList.remove('hidden');
@@ -91,6 +110,7 @@ function openApplicationDetails(application) {
     innerText: `${selectedApplication.username}'s Application`,
   });
 
+  console.log(application);
   applicationDetailsMain.appendChild(title);
 
   selectedApplication.applicationDetails.forEach((application) => {
@@ -270,3 +290,10 @@ applyFilterButton.addEventListener('click', () => {
 });
 
 clearButton.addEventListener('click', clearFilter);
+
+applicationAcceptButton.addEventListener('click', () =>
+  updateUserApplication({ isAccepted: true }),
+);
+applicationRejectButton.addEventListener('click', () =>
+  updateUserApplication({ isAccepted: false }),
+);
