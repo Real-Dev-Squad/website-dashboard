@@ -7,6 +7,9 @@ const filterModal = document.querySelector('.filter-modal');
 const backDrop = document.querySelector('.backdrop');
 const backDropBlur = document.querySelector('.backdrop-blur');
 const applicationDetailsModal = document.querySelector('.application-details');
+const applicationCloseButton = document.querySelector(
+  '.application-close-button',
+);
 const applicationDetailsMain = document.querySelector(
   '.application-details-main',
 );
@@ -21,6 +24,12 @@ function changeFilter() {
   nextLink = '';
   filterModal.classList.add('hidden');
   applicationContainer.innerHTML = '';
+}
+
+function closeApplicationDetails() {
+  applicationDetailsModal.classList.add('hidden');
+  backDropBlur.style.display = 'none';
+  document.body.style.overflow = 'auto';
 }
 
 function openApplicationDetails(application) {
@@ -216,11 +225,8 @@ backDrop.addEventListener('click', () => {
   backDrop.style.display = 'none';
 });
 
-backDropBlur.addEventListener('click', () => {
-  applicationDetailsModal.classList.add('hidden');
-  backDropBlur.style.display = 'none';
-  document.body.style.overflow = 'auto';
-});
+backDropBlur.addEventListener('click', closeApplicationDetails);
+applicationCloseButton.addEventListener('click', closeApplicationDetails);
 
 applyFilterButton.addEventListener('click', () => {
   const selectedFilterOption = document.querySelector(
