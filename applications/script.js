@@ -1,4 +1,9 @@
-import { createElement, getApplications, updateApplication } from './utils.js';
+import {
+  createElement,
+  getApplications,
+  getIsSuperUser,
+  updateApplication,
+} from './utils.js';
 let nextLink;
 let isDataLoading = false;
 const loader = document.querySelector('.loader');
@@ -7,6 +12,7 @@ const filterModal = document.querySelector('.filter-modal');
 const backDrop = document.querySelector('.backdrop');
 const backDropBlur = document.querySelector('.backdrop-blur');
 const applicationDetailsModal = document.querySelector('.application-details');
+const mainContainer = document.querySelector('.container');
 const applicationCloseButton = document.querySelector(
   '.application-close-button',
 );
@@ -236,7 +242,7 @@ function createApplicationCard({ application }) {
   return applicationCard;
 }
 
-async function renderApplicationCards(next, status) {
+async function renderApplicationCards(next, status, isInitialRender) {
   changeLoaderVisibility({ hide: false });
   isDataLoading = true;
   const data = await getApplications({
@@ -253,10 +259,24 @@ async function renderApplicationCards(next, status) {
     });
     applicationContainer.appendChild(applicationCard);
   });
+  if (isInitialRender) filterButton.classList.remove('hidden');
 }
 
 (async function renderCardsInitial() {
-  await renderApplicationCards('', status);
+  changeLoaderVisibility({ hide: false });
+  const isSuperUser = await getIsSuperUser();
+  console.log(isSuperUser, 'usresr');
+  if (!isSuperUser) {
+    const unAuthorizedText = createElement({
+      type: 'h1',
+      attributes: { class: 'unauthorized-text' },
+      innerText: 'You are not authorized to view this page.',
+    });
+    mainContainer.append(unAuthorizedText);
+    changeLoaderVisibility({ hide: true });
+    return;
+  }
+  await renderApplicationCards('', status, true);
   addIntersectionObserver();
 })();
 

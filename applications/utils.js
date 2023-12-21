@@ -30,6 +30,20 @@ async function getApplications({ applicationStatus, size = 5, next = '' }) {
   return data;
 }
 
+async function getIsSuperUser() {
+  const res = await fetch(`${BASE_URL}/users/self`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: {
+      'Content-type': 'application/json',
+    },
+  });
+
+  const self_user = await res.json();
+  console.log(self_user, 'self');
+  return self_user?.roles['super_user'];
+}
+
 async function updateApplication({ applicationPayload, applicationId }) {
   try {
     const res = await fetch(`${BASE_URL}/applications/${applicationId}`, {
@@ -53,4 +67,4 @@ async function updateApplication({ applicationPayload, applicationId }) {
   }
 }
 
-export { createElement, getApplications, updateApplication };
+export { createElement, getApplications, updateApplication, getIsSuperUser };
