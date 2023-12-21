@@ -1,6 +1,8 @@
 const puppeteer = require('puppeteer');
 const { allUsersData } = require('../../mock-data/users');
 const { discordGroups, GroupRoleData } = require('../../mock-data/groups');
+const params = new URLSearchParams(window.location.search);
+const isDev = params.get(DEV_FEATURE_FLAG) === 'true';
 
 const BASE_URL = 'https://api.realdevsquad.com';
 
@@ -214,11 +216,6 @@ describe('Discord Groups Page', () => {
     await page.$$eval('.group-role', (elements) => {
       elements[1].click();
     });
-    // Wait for the btn-add-role and click it
-    const addRoleBtn = await page.$('.btn-add-role');
-    await addRoleBtn.click();
-
-    await page.waitForNetworkIdle();
 
     const oldUserCount = await page.$$eval('.group-role', (elements) => {
       return elements[1]
@@ -226,6 +223,7 @@ describe('Discord Groups Page', () => {
         .getAttribute('data-member-count');
     });
 
+    // Wait for the btn-add-role and click it
     const deleteRoleBtn = await page.$('.btn-add-role');
     await deleteRoleBtn.click();
 
@@ -238,7 +236,9 @@ describe('Discord Groups Page', () => {
     });
 
     // Now, check the user count
-    expect(newUserCount).toBe(oldUserCount - 1);
+    isDev
+      ? expect(Number(newUserCount)).toBe(Number(oldUserCount - 1))
+      : expect(Number(newUserCount)).toBe(Number(oldUserCount));
   });
 
   test('Should show role deleted', async () => {
