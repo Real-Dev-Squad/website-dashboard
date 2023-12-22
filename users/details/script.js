@@ -15,7 +15,6 @@ let isTaskAccordionOpen = false;
 let totalPrsPages = 0;
 let totalPages = Math.ceil(userAllTasks.length / taskPerPage);
 const username = new URLSearchParams(window.location.search).get('username');
-const isDev = params.get('dev') === 'true';
 
 function createElement({ type, classList = [] }) {
   const element = document.createElement(type);
@@ -198,7 +197,7 @@ function toggleAccordionTabsVisibility() {
         arrowIcon.classList.toggle('open');
         hiddenContent.classList.toggle('hide');
       }
-      if (tab.innerText === 'Tasks' && isDev) {
+      if (tab.innerText === 'Tasks') {
         isTaskAccordionOpen = !isTaskAccordionOpen && hiddenContent;
         if (isTaskAccordionOpen) {
           tab.classList.add('sticky-header');
@@ -251,59 +250,30 @@ function generateTasksTabDetails() {
 
   const tasks = createElement({
     type: 'div',
-    classList: isDev ? ['user-tasks', 'user-tasks-dev'] : ['user-tasks'],
+    classList: ['user-tasks', 'user-tasks-dev'],
   });
   div.append(tasks);
-  if (!isDev) {
-    const pagination = createElement({
-      type: 'div',
-      classList: ['pagination'],
-    });
-    const prevBtn = createElement({
-      type: 'button',
-      classList: ['pagination-prev-page'],
-    });
-    prevBtn.appendChild(createTextNode('Prev'));
-    prevBtn.addEventListener('click', fetchPrevTasks);
-    const nextBtn = createElement({
-      type: 'button',
-      classList: ['pagination-next-page'],
-    });
-    nextBtn.appendChild(createTextNode('Next'));
-    nextBtn.addEventListener('click', fetchNextTasks);
-
-    pagination.append(prevBtn, nextBtn);
-    div.append(tasks, pagination);
-  }
-
   document.querySelector('.accordion-tasks').appendChild(div);
 }
 
 async function getUserTasks() {
   try {
-    taskSearchQuery = isDev
-      ? taskSearchQuery || `/tasks/?size=3&dev=true&assignee=${username}`
-      : `/tasks/${username}`;
+    taskSearchQuery =
+      taskSearchQuery || `/tasks/?size=3&dev=true&assignee=${username}`;
 
     //Flag to avoid multiple API calls with same payload
-    if (!(isDev && isTaskFetching) && !allTasksFetched) {
+    if (!isTaskFetching && !allTasksFetched) {
       isTaskFetching = true;
       const res = await makeApiCall(`${API_BASE_URL}${taskSearchQuery}`);
       if (res.status === 200) {
         const data = await res.json();
         generateTasksTabDetails();
-        if (isDev) {
-          taskSearchQuery = data.next;
-          if (data.next === '') {
-            allTasksFetched = true;
-          }
-          generateUserTaskList(data.tasks);
-        } else {
-          userAllTasks = data.tasks;
-          totalPages = Math.ceil(userAllTasks.length / taskPerPage);
-          const tasks = getTasksToFetch(userAllTasks, currentPageIndex);
-          generateUserTaskList(tasks);
+
+        taskSearchQuery = data.next;
+        if (data.next === '') {
+          allTasksFetched = true;
         }
+        generateUserTaskList(data.tasks);
       }
       isTaskFetching = false;
     }
@@ -335,8 +305,6 @@ function onScrollHandler() {
 }
 
 function generateUserTaskList(userTasks) {
-  if (isDev !== true) document.querySelector('.user-tasks').innerHTML = '';
-
   if (!userTasks.length) {
     const errorEl = createElement({ type: 'p', classList: ['error'] });
     errorEl.appendChild(createTextNode('No Data Found'));
@@ -350,91 +318,13 @@ function generateUserTaskList(userTasks) {
       const taskCard = createSingleTaskCard(task);
       document.querySelector('.user-tasks').appendChild(taskCard);
     });
-
-    if (!isDev) {
-      if (currentPageIndex === 1) {
-        document.querySelector('.pagination-prev-page').disabled = true;
-      } else {
-        document.querySelector('.pagination-prev-page').disabled = false;
-      }
-
-      if (currentPageIndex === totalPages) {
-        document.querySelector('.pagination-next-page').disabled = true;
-      } else {
-        document.querySelector('.pagination-next-page').disabled = false;
-      }
-    }
   }
 }
 
 function createSingleTaskCard(task) {
   const container = createElement({ type: 'div', classList: ['user-task'] });
-  if (isDev === true) {
-    const innerHTMl = generateCardUIInDev(task);
-    container.innerHTML = innerHTMl;
-    return container;
-  }
-  const h2 = createElement({ type: 'h2', classList: ['task-title'] });
-  h2.appendChild(createTextNode(task?.title));
-  const p = createElement({ type: 'p', classList: ['task-description'] });
-
-  if (task?.purpose == undefined) {
-    p.appendChild(createTextNode('N/A'));
-  } else {
-    p.appendChild(createTextNode(task?.purpose));
-  }
-
-  const div = createElement({ type: 'div', classList: ['task-details'] });
-
-  const dueDate = createElement({ type: 'div', classList: ['hidden-details'] });
-  const dueDateTitle = createElement({ type: 'h3' });
-  dueDateTitle.appendChild(createTextNode('Due Date'));
-  const dueDateValue = createElement({
-    type: 'p',
-    classList: ['due-date-value'],
-  }); // added class for testing purpose
-
-  const daysToGo = generateDaysToGo(
-    generateReadableDateFromSecondsTimeStamp(task.endsOn),
-    task.status,
-  );
-  if (daysToGo.includes('Less Than a Day Remaining')) {
-    // Wrap the text in a <span> with a yellow color style
-    dueDateValue.innerHTML = `<span style="color: yellow;">${daysToGo}</span>`;
-  } else {
-    dueDateValue.appendChild(createTextNode(daysToGo));
-  }
-
-  dueDate.append(dueDateTitle, dueDateValue);
-
-  //creating tooltip, gets displayed when we hover the element
-  const toolTip = createElement({
-    type: 'span',
-    classList: ['task-due-date'],
-  }); //creating a span for tooltip
-  toolTip.appendChild(
-    createTextNode(
-      `Due Date: ${generateReadableDateFromSecondsTimeStamp(task.endsOn)}`,
-    ),
-  );
-
-  dueDateValue.appendChild(toolTip); //appending it to the dueDateValue that we have create above
-  dueDateValue.addEventListener('mouseover', (event) => {
-    toolTip.style.visibility = 'visible';
-  });
-  dueDateValue.addEventListener('mouseout', (event) => {
-    toolTip.style.visibility = 'hidden';
-  });
-
-  const status = createElement({ type: 'div', classList: ['hidden-details'] });
-  const statusTitle = createElement({ type: 'h3' });
-  statusTitle.appendChild(createTextNode('Status'));
-  const statusValue = createElement({ type: 'p' });
-  statusValue.appendChild(createTextNode(task.status));
-  status.append(statusTitle, statusValue);
-
-  div.append(dueDate, status);
-  container.append(h2, p, div);
+  const innerHTMl = generateCardUIInDev(task);
+  container.innerHTML = innerHTMl;
   return container;
 }
 
@@ -473,13 +363,7 @@ function fetchPrevTasks() {
 }
 
 async function fetchNextTasks() {
-  if (isDev) {
-    await getUserTasks();
-  } else if (currentPageIndex < totalPages) {
-    currentPageIndex++;
-    const tasks = getTasksToFetch(userAllTasks, currentPageIndex);
-    generateUserTaskList(tasks);
-  }
+  await getUserTasks();
 }
 
 async function getUserSkills() {
@@ -953,12 +837,6 @@ function generateUserPrsList(userPrs) {
       const prsCard = createSinglePrCard(pr);
       document.querySelector('.user-pr').appendChild(prsCard);
     });
-    if (!isDev) {
-      document.querySelector('.pagination-next-page').disabled =
-        currentPageIndex === totalPrsPages;
-      document.querySelector('.pagination-prev-page').disabled =
-        currentPageIndex === 1;
-    }
   }
 }
 
