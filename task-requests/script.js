@@ -21,6 +21,7 @@ let isDataLoading = false;
 let selectedSortButton = null;
 
 const filterStates = {
+  dev: true,
   status: Status.PENDING,
   order: CREATED_TIME,
   size: DEFAULT_PAGE_SIZE,
