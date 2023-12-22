@@ -141,12 +141,11 @@ body {
   border-radius: 0.31rem;
   flex-direction: column;
   align-items: center;
-  padding: 10px;
-  padding-bottom: 1rem;
+  padding: 1rem;
+  padding-bottom: 1.5rem;
   z-index: 2;
   position: absolute;
   top: 5.5rem;
-  right: 1rem;
   background-color: var(--white);
 }
 
@@ -183,12 +182,10 @@ body {
   border-radius: 0.31rem;
   flex-direction: column;
   align-items: center;
-  padding: 10px;
-  padding-bottom: 1rem;
-  z-index: 1;
+  padding: 1rem;
+  padding-bottom: 1.5rem;
   position: absolute;
   top: 5.5rem;
-  right: 1rem;
   background-color: var(--white);
 }
 
