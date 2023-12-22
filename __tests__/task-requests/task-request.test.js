@@ -62,7 +62,7 @@ describe('Task Requests', () => {
         request.continue();
       }
     });
-    await page.goto(`${SITE_URL}/taskRequests`);
+    await page.goto(`${SITE_URL}/task-requests`);
     await page.waitForNetworkIdle();
   });
 
@@ -227,7 +227,7 @@ describe('createCustomElement', () => {
 
     page = await browser.newPage();
 
-    await page.goto(`${SITE_URL}/taskRequests`);
+    await page.goto(`${SITE_URL}/task-requests`);
     await page.waitForNetworkIdle();
   });
 
