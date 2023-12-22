@@ -97,7 +97,7 @@ function getRemainingCount(requestors) {
   }
 }
 function openTaskDetails(id) {
-  const url = new URL(`/taskRequests/details`, window.location.href);
+  const url = new URL(`/task-requests/details`, window.location.href);
 
   url.searchParams.append('id', id);
   window.location.href = url;
