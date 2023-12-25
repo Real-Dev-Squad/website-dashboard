@@ -149,7 +149,7 @@ const giveABForCompariosn = (a, b, field) => {
 
 function onDropdownClick(ev) {
   const dropDownNo = ev.target.dataset.list;
-  const fieldToSortBy = SortByFields.find((field) => field.idx === dropDownNo);
+  const fieldToSortBy = SortByFields.find((field) => field.id === dropDownNo);
   groupsData.sort((firstObj, secondObj) => {
     const [a, b] = giveABForCompariosn(
       firstObj,
