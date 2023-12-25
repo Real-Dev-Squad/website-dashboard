@@ -365,13 +365,13 @@ describe('Discord Groups Page', () => {
     await page.$$eval('[data-list="1"]', (el) => {
       el[0].click();
     });
-    const filteredGroupNames = await page.$$eval('.group-name', (elements) => {
+    const groupsAfterSort = await page.$$eval('.group-name', (elements) => {
       return elements.map((element) =>
         element.getAttribute('data-member-count'),
       );
     });
-    const sortedIntial = groupsBeforeSort.sort((a, b) => b - a);
-    expect(filteredGroupNames).toEqual(sortedIntial);
+    const manualSortedGroup = groupsBeforeSort.sort((a, b) => b - a);
+    expect(groupsAfterSort).toEqual(manualSortedGroup);
   });
   test('On click on "Recently created" will result in latest created group at the top', async () => {
     await page.goto('http://localhost:8000/groups?dev=true');
@@ -392,12 +392,12 @@ describe('Discord Groups Page', () => {
     await page.$$eval('[data-list="2"]', (el) => {
       el[0].click();
     });
-    const filteredGroupNames = await page.$$eval('.group-name', (elements) => {
+    const groupAfterSort = await page.$$eval('.group-name', (elements) => {
       return elements.map((element) => element.innerText);
     });
-    const sortedIntial = groupsBeforeSort.sort(
+    const manualSortedGroup = groupsBeforeSort.sort(
       (a, b) => groupNameCreateDateLookup[b] - groupNameCreateDateLookup[a],
     );
-    expect(filteredGroupNames).toEqual(sortedIntial);
+    expect(groupAfterSort).toEqual(manualSortedGroup);
   });
 });
