@@ -353,13 +353,13 @@ describe('Discord Groups Page', () => {
     await page.goto('http://localhost:8000/groups?dev=true');
     await page.waitForNetworkIdle();
 
-    await page.$$eval('#dropdown_main', (el) => {
-      el[0].click();
-    });
     const groupsBeforeSort = await page.$$eval('.group-name', (elements) => {
       return elements.map((element) =>
         element.getAttribute('data-member-count'),
       );
+    });
+    await page.$$eval('#dropdown_main', (el) => {
+      el[0].click();
     });
 
     await page.$$eval('[data-list="1"]', (el) => {
@@ -377,9 +377,6 @@ describe('Discord Groups Page', () => {
     await page.goto('http://localhost:8000/groups?dev=true');
     await page.waitForNetworkIdle();
 
-    await page.$$eval('#dropdown_main', (el) => {
-      el[0].click();
-    });
     const groupNameCreateDateLookup = {};
     discordGroups.groups.forEach((group) => {
       const grpName = group.rolename.split('-').slice(1).join('-');
@@ -389,6 +386,9 @@ describe('Discord Groups Page', () => {
       return elements.map((element) => element.innerText);
     });
 
+    await page.$$eval('#dropdown_main', (el) => {
+      el[0].click();
+    });
     await page.$$eval('[data-list="2"]', (el) => {
       el[0].click();
     });
