@@ -3,6 +3,7 @@ import {
   CANNOT_CONTAIN_GROUP,
   DEV_FEATURE_FLAG,
   NO_SPACES_ALLOWED,
+  SortByFields,
 } from './constants.js';
 import {
   removeGroupKeywordFromDiscordRoleName,
@@ -22,6 +23,19 @@ const userIsNotVerifiedText = document.querySelector('.not-verified-tag');
 const params = new URLSearchParams(window.location.search);
 const searchValue = getSearchValueFromURL();
 const isDev = params.get(DEV_FEATURE_FLAG) === 'true';
+const dropdownContainer = document.getElementById('dropdown_container');
+
+//Dropdown
+const dropdown_main = document.getElementById('dropdown_main');
+const dropdown_txt = document.getElementById('sortby_text');
+function toggleDropDown() {
+  dropdown_main.classList.toggle('show_filter');
+}
+dropdown_txt.addEventListener('click', toggleDropDown);
+if (isDev) {
+  dropdownContainer.classList.remove('hidden');
+  dropdown_main.addEventListener('click', onDropdownClick);
+}
 // const paragraphElement = null, paragraphContent = '';
 
 const searchInput = document.getElementById('search-groups');
@@ -76,46 +90,83 @@ const memberAddRoleBody = {
  *
  * FOR RENDERING GROUP ROLES IN 'MANAGE ROLES' TAB
  */
-const groupsData = await getDiscordGroups();
+let groupsData = await getDiscordGroups();
 const groupRoles = document.querySelector('.groups-list');
-groupsData?.forEach((item) => {
-  const group = document.createElement('li');
-  group.setAttribute('id', item.roleid);
-  group.classList.add('group-role');
-  const formattedRoleName = removeGroupKeywordFromDiscordRoleName(
-    item.rolename,
-  );
 
-  //If searchValue present, filter out the list
-  if (searchValue) {
-    group.style.display = formattedRoleName
-      .toUpperCase()
-      .includes(searchValue.toUpperCase())
-      ? ''
-      : 'none';
+const renderGroups = () => {
+  groupRoles.innerHTML = null;
+  groupsData?.forEach((item) => {
+    const group = document.createElement('li');
+    group.setAttribute('id', item.roleid);
+    group.classList.add('group-role');
+    const formattedRoleName = removeGroupKeywordFromDiscordRoleName(
+      item.rolename,
+    );
+
+    //If searchValue present, filter out the list
+    if (searchValue) {
+      group.style.display = formattedRoleName
+        .toUpperCase()
+        .includes(searchValue.toUpperCase())
+        ? ''
+        : 'none';
+    }
+
+    const groupname = document.createElement('p');
+    groupname.classList.add('group-name');
+    groupname.setAttribute('id', `name-${item.roleid}`);
+
+    if (item.memberCount !== null && item.memberCount !== undefined) {
+      groupname.setAttribute('data-member-count', item.memberCount);
+    }
+
+    groupname.textContent = formattedRoleName;
+
+    const createdBy = createAuthorDetailsDOM(
+      item.firstName,
+      item.lastName,
+      item.image,
+    );
+
+    group.appendChild(groupname);
+    group.appendChild(createdBy);
+    groupRoles.appendChild(group);
+  });
+};
+
+const giveABForCompariosn = (a, b, field) => {
+  switch (field) {
+    case 'date._seconds':
+      if (a.date && a.date._seconds) {
+        return [a.date._seconds, b.date._seconds];
+      }
+    case 'memberCount':
+      return [a.memberCount, b.memberCount];
+    default:
+      return [0, 0];
   }
+};
 
-  const groupname = document.createElement('p');
-  groupname.classList.add('group-name');
-  groupname.setAttribute('id', `name-${item.roleid}`);
+function onDropdownClick(ev) {
+  const dropDownNo = ev.target.dataset.list;
+  const fieldToSortBy = SortByFields.find((field) => field.idx === dropDownNo);
+  groupsData.sort((firstObj, secondObj) => {
+    const [a, b] = giveABForCompariosn(
+      firstObj,
+      secondObj,
+      fieldToSortBy.fieldName,
+    );
+    if (a > b) {
+      return -1;
+    } else if (a > b) {
+      return 1;
+    }
+    return 0;
+  });
+  renderGroups();
+}
 
-  if (item.memberCount !== null && item.memberCount !== undefined) {
-    groupname.setAttribute('data-member-count', item.memberCount);
-  }
-
-  groupname.textContent = formattedRoleName;
-
-  const createdBy = createAuthorDetailsDOM(
-    item.firstName,
-    item.lastName,
-    item.image,
-  );
-
-  group.appendChild(groupname);
-  group.appendChild(createdBy);
-  groupRoles.appendChild(group);
-});
-
+renderGroups();
 /**
  * FOR RENDERING TABS
  * I.E. MANAGE ROLES, CREATE GROUP

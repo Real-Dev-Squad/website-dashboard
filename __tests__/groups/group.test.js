@@ -349,4 +349,55 @@ describe('Discord Groups Page', () => {
     );
     expect(groupName).toMatch('DSA');
   });
+  test('On click on "Popular with dev" will result group with most member at the top', async () => {
+    await page.goto('http://localhost:8000/groups?dev=true');
+    await page.waitForNetworkIdle();
+
+    await page.$$eval('#dropdown_main', (el) => {
+      el[0].click();
+    });
+    const groupsBeforeSort = await page.$$eval('.group-name', (elements) => {
+      return elements.map((element) =>
+        element.getAttribute('data-member-count'),
+      );
+    });
+
+    await page.$$eval('[data-list="1"]', (el) => {
+      el[0].click();
+    });
+    const filteredGroupNames = await page.$$eval('.group-name', (elements) => {
+      return elements.map((element) =>
+        element.getAttribute('data-member-count'),
+      );
+    });
+    const sortedIntial = groupsBeforeSort.sort((a, b) => b - a);
+    expect(filteredGroupNames).toEqual(sortedIntial);
+  });
+  test('On click on "Recently created" will result in latest created group at the top', async () => {
+    await page.goto('http://localhost:8000/groups?dev=true');
+    await page.waitForNetworkIdle();
+
+    await page.$$eval('#dropdown_main', (el) => {
+      el[0].click();
+    });
+    const groupNameCreateDateLookup = {};
+    discordGroups.groups.forEach((group) => {
+      const grpName = group.rolename.split('-').slice(1).join('-');
+      groupNameCreateDateLookup[grpName] = group.date._seconds;
+    });
+    const groupsBeforeSort = await page.$$eval('.group-name', (elements) => {
+      return elements.map((element) => element.innerText);
+    });
+
+    await page.$$eval('[data-list="2"]', (el) => {
+      el[0].click();
+    });
+    const filteredGroupNames = await page.$$eval('.group-name', (elements) => {
+      return elements.map((element) => element.innerText);
+    });
+    const sortedIntial = groupsBeforeSort.sort(
+      (a, b) => groupNameCreateDateLookup[b] - groupNameCreateDateLookup[a],
+    );
+    expect(filteredGroupNames).toEqual(sortedIntial);
+  });
 });

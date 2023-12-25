@@ -284,6 +284,72 @@ NOT VERIFIED TEXT ABOVE
   text-align: center;
 }
 
+.dropbtn {
+  padding: 1rem;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f6f6f6;
+  min-width: 14rem;
+  overflow: auto;
+  border: 1px solid #ddd;
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 0.75rem 1rem;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown a:hover {
+  background-color: #ddd;
+}
+
+.show_filter {
+  display: block;
+}
+
+.dropdown-content {
+  cursor: pointer;
+}
+
+.task_filter-button {
+  width: 5rem;
+  height: 2rem;
+  border-radius: 0.27rem 0 0 0.27rem;
+  background-color: #fff;
+  color: #000;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 0.3rem;
+  border: 1px solid #d0d7de;
+}
+
+.task_filter-button:after {
+  content: '';
+  border-left: 0.3rem solid transparent;
+  border-right: 0.3rem solid transparent;
+  border-top: 0.3rem solid #000;
+  margin-left: 0.5rem;
+}
+
 @media (max-width: 650px) {
   .btn-add-role {
     position: static;
