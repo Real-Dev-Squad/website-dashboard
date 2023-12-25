@@ -107,7 +107,7 @@ describe('Task Requests', () => {
         expect(
           await modal.evaluate((el) => el.classList.contains('hidden')),
         ).toBe(false);
-        await page.mouse.click(20, 20);
+        await page.mouse.click(200, 200);
         expect(
           await modal.evaluate((el) => el.classList.contains('hidden')),
         ).toBe(true);
