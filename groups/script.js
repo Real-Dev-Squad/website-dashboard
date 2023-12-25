@@ -158,7 +158,7 @@ function onDropdownClick(ev) {
     );
     if (a > b) {
       return -1;
-    } else if (a > b) {
+    } else if (b < a) {
       return 1;
     }
     return 0;
