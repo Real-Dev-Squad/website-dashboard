@@ -26,15 +26,15 @@ const isDev = params.get(DEV_FEATURE_FLAG) === 'true';
 const dropdownContainer = document.getElementById('dropdown_container');
 
 //Dropdown
-const dropdown_main = document.getElementById('dropdown_main');
-const dropdown_txt = document.getElementById('sortby_text');
+const dropdownMain = document.getElementById('dropdown_main');
+const dropdownTxt = document.getElementById('sortby_text');
 function toggleDropDown() {
-  dropdown_main.classList.toggle('show_filter');
+  dropdownMain.classList.toggle('show_filter');
 }
-dropdown_txt.addEventListener('click', toggleDropDown);
+dropdownTxt.addEventListener('click', toggleDropDown);
 if (isDev) {
   dropdownContainer.classList.remove('hidden');
-  dropdown_main.addEventListener('click', onDropdownClick);
+  dropdownMain.addEventListener('click', onDropdownClick);
 }
 // const paragraphElement = null, paragraphContent = '';
 
@@ -90,7 +90,7 @@ const memberAddRoleBody = {
  *
  * FOR RENDERING GROUP ROLES IN 'MANAGE ROLES' TAB
  */
-let groupsData = await getDiscordGroups();
+const groupsData = await getDiscordGroups();
 const groupRoles = document.querySelector('.groups-list');
 
 const renderGroups = () => {

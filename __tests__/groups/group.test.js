@@ -3,6 +3,7 @@ const { allUsersData } = require('../../mock-data/users');
 const { discordGroups, GroupRoleData } = require('../../mock-data/groups');
 
 const BASE_URL = 'https://api.realdevsquad.com';
+const PAGE_URL = 'http://localhost:8000';
 
 describe('Discord Groups Page', () => {
   let browser;
@@ -135,7 +136,7 @@ describe('Discord Groups Page', () => {
         interceptedRequest.continue();
       }
     });
-    await page.goto('http://localhost:8000/groups');
+    await page.goto(`${PAGE_URL}/groups`);
     await page.waitForNetworkIdle();
   });
 
@@ -319,7 +320,7 @@ describe('Discord Groups Page', () => {
   });
 
   test('should update input field and filter group list with search value in URL', async () => {
-    await page.goto('http://localhost:8000/groups/?dev=true&DSA');
+    await page.goto(`${PAGE_URL}/groups/?dev=true&DSA`);
     manageGroup = await page.$('.manage-groups-tab');
     await manageGroup.click();
     const searchInput = await page.$('#search-groups');
@@ -341,7 +342,7 @@ describe('Discord Groups Page', () => {
   });
 
   test('should select the group from URL and have active-group class', async () => {
-    await page.goto('http://localhost:8000/groups?DSA');
+    await page.goto(`${PAGE_URL}/groups?DSA`);
     const activeGroup = await page.$('.active-group');
     const groupName = await page.evaluate(
       (element) => element.innerText,
@@ -350,7 +351,7 @@ describe('Discord Groups Page', () => {
     expect(groupName).toMatch('DSA');
   });
   test('On click on "Popular with dev" will result group with most member at the top', async () => {
-    await page.goto('http://localhost:8000/groups?dev=true');
+    await page.goto(`${PAGE_URL}/groups?dev=true`);
     await page.waitForNetworkIdle();
 
     const groupsBeforeSort = await page.$$eval('.group-name', (elements) => {
@@ -374,7 +375,7 @@ describe('Discord Groups Page', () => {
     expect(groupsAfterSort).toEqual(manualSortedGroup);
   });
   test('On click on "Recently created" will result in latest created group at the top', async () => {
-    await page.goto('http://localhost:8000/groups?dev=true');
+    await page.goto(`${PAGE_URL}/groups?dev=true`);
     await page.waitForNetworkIdle();
 
     const groupNameCreateDateLookup = {};
