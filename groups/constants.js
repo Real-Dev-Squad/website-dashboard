@@ -4,6 +4,7 @@ const DEV_FEATURE_FLAG = 'dev';
 const SortByFields = [
   { id: '1', fieldName: 'memberCount' },
   { id: '2', fieldName: 'date._seconds' },
+  { id: '3', fieldName: 'lastUsedOn._seconds' },
 ];
 
 export {

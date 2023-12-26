@@ -350,7 +350,7 @@ describe('Discord Groups Page', () => {
     );
     expect(groupName).toMatch('DSA');
   });
-  test('On click on "Popular with dev" will result group with most member at the top', async () => {
+  test('On click on "Popular within dev" will result group with most member at the top', async () => {
     await page.goto(`${PAGE_URL}/groups?dev=true`);
     await page.waitForNetworkIdle();
 
@@ -391,6 +391,35 @@ describe('Discord Groups Page', () => {
       el[0].click();
     });
     await page.$$eval('[data-list="2"]', (el) => {
+      el[0].click();
+    });
+    const groupAfterSort = await page.$$eval('.group-name', (elements) => {
+      return elements.map((element) => element.innerText);
+    });
+    const manualSortedGroup = groupsBeforeSort.sort(
+      (a, b) => groupNameCreateDateLookup[b] - groupNameCreateDateLookup[a],
+    );
+    expect(groupAfterSort).toEqual(manualSortedGroup);
+  });
+  test('On click on "Recently used" will result in recently used group at the top', async () => {
+    await page.goto(`${PAGE_URL}/groups?dev=true`);
+    await page.waitForNetworkIdle();
+
+    const groupNameCreateDateLookup = {};
+    discordGroups.groups.forEach((group) => {
+      const grpName = group.rolename.split('-').slice(1).join('-');
+      groupNameCreateDateLookup[grpName] = group.lastUsedOn
+        ? group.lastUsedOn._seconds
+        : 0;
+    });
+    const groupsBeforeSort = await page.$$eval('.group-name', (elements) => {
+      return elements.map((element) => element.innerText);
+    });
+
+    await page.$$eval('#dropdown_main', (el) => {
+      el[0].click();
+    });
+    await page.$$eval('[data-list="3"]', (el) => {
       el[0].click();
     });
     const groupAfterSort = await page.$$eval('.group-name', (elements) => {

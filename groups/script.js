@@ -135,16 +135,28 @@ const renderGroups = () => {
 };
 
 const giveABForCompariosn = (a, b, field) => {
+  let data = [0, 0];
   switch (field) {
     case 'date._seconds':
-      if (a.date && a.date._seconds) {
-        return [a.date._seconds, b.date._seconds];
-      }
+      data[0] = a.date._seconds;
+      data[1] = b.date._seconds;
+      break;
     case 'memberCount':
-      return [a.memberCount, b.memberCount];
+      data[0] = a.memberCount || 0;
+      data[1] = b.memberCount || 0;
+      break;
+    case 'lastUsedOn._seconds':
+      if (a.lastUsedOn) {
+        data[0] = a.lastUsedOn._seconds;
+      }
+      if (b.lastUsedOn) {
+        data[1] = b.lastUsedOn._seconds;
+      }
+      break;
     default:
-      return [0, 0];
+      data = [0, 0];
   }
+  return data;
 };
 
 function onDropdownClick(ev) {
