@@ -133,4 +133,19 @@ describe.only('Applications page', () => {
     applicationCards = await page.$$('.application-card');
     expect(applicationCards.length).toBe(10);
   });
+
+  it('should open application details modal for application, when user click on view details on any card', async function () {
+    const applicationDetailsModal = await page.$('.application-details');
+    expect(
+      await applicationDetailsModal.evaluate((el) =>
+        el.classList.contains('hidden'),
+      ),
+    ).toBe(true);
+    await page.click('.view-details-button');
+    expect(
+      await applicationDetailsModal.evaluate((el) =>
+        el.classList.contains('hidden'),
+      ),
+    ).toBe(false);
+  });
 });
