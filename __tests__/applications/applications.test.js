@@ -23,7 +23,7 @@ describe.only('Applications page', () => {
       args: ['--incognito', '--disable-web-security'],
       slowMo: 500,
 
-      devtools: false,
+      devtools: true,
     });
   });
   beforeEach(async () => {
@@ -120,5 +120,17 @@ describe.only('Applications page', () => {
     expect(applicationCards.length).toBe(5);
   });
 
-  it('should load more items on going to the bottom of the page', async function () {});
+  it('should load more applications on going to the bottom of the page', async function () {
+    let applicationCards = await page.$$('.application-card');
+    expect(applicationCards.length).toBe(5);
+    await page.evaluate(() => {
+      const element = document.querySelector('#page_bottom_element');
+      if (element) {
+        element.scrollIntoView({ behavior: 'auto' });
+      }
+    });
+    await page.waitForNetworkIdle();
+    applicationCards = await page.$$('.application-card');
+    expect(applicationCards.length).toBe(10);
+  });
 });
