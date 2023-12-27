@@ -75,6 +75,21 @@ describe.only('Applications page', () => {
           },
           body: JSON.stringify(superUserForAudiLogs),
         });
+      } else if (
+        request.url() === `${API_BASE_URL}/applications/lavEduxsb2C5Bl4s289P`
+      ) {
+        request.respond({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            message: 'application updated successfully!',
+          }),
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+        });
       } else {
         request.continue();
       }
@@ -147,5 +162,18 @@ describe.only('Applications page', () => {
         el.classList.contains('hidden'),
       ),
     ).toBe(false);
+  });
+
+  it('should show alert message with application updated successfully', async function () {
+    page.on('dialog', async (dialog) => {
+      // Check if it's an alert and has the expected message
+      if (dialog.type() === 'alert') {
+        expect(dialog.message()).toBe('application updated successfully!');
+        await dialog.accept(); // Automatically accept the alert
+      }
+    });
+    await page.click('.view-details-button');
+    await page.click('.application-details-accept');
+    await page.waitForNetworkIdle();
   });
 });
