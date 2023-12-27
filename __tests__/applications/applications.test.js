@@ -21,6 +21,7 @@ describe.only('Applications page', () => {
       headless: false,
       ignoreHTTPSErrors: true,
       args: ['--incognito', '--disable-web-security'],
+      slowMo: 500,
 
       devtools: false,
     });
@@ -32,11 +33,18 @@ describe.only('Applications page', () => {
 
     page.on('request', (request) => {
       console.log(request.url(), 'request');
-      if (request.url() === `${API_BASE_URL}/applications?size=5`) {
+      if (
+        request.url() === `${API_BASE_URL}/applications?size=5` ||
+        request.url() ===
+          `${API_BASE_URL}/applications?next=YwTi6zFNI3GlDsZVjD8C&size=5`
+      ) {
         request.respond({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify({ applications: fetchedApplications }),
+          body: JSON.stringify({
+            applications: fetchedApplications,
+            next: '/applications?next=YwTi6zFNI3GlDsZVjD8C&size=5',
+          }),
           headers: {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
@@ -93,22 +101,24 @@ describe.only('Applications page', () => {
     expect(applicationCards.length).toBe(5);
   });
 
-  it('should load and render the accepted application requests when accept is selected from filter, and on clearing the interval it should start showing all requests again', async function () {
+  it('should load and render the accepted application requests when accept is selected from filter, and after clearing the filter it should again show all the applications', async function () {
     await page.click('.filter-button');
+
     await page.$eval('input[name="status"][value="accepted"]', (radio) =>
       radio.click(),
     );
     await page.click('.apply-filter-button');
+    await page.waitForNetworkIdle();
     let applicationCards = await page.$$('.application-card');
     expect(applicationCards.length).toBe(4);
 
     await page.click('.filter-button');
-    // clearing interval here
-    await page.waitForTimeout(10000);
     await page.click('.clear-btn');
-    await page.waitForTimeout(10000);
 
+    await page.waitForNetworkIdle();
     applicationCards = await page.$$('.application-card');
     expect(applicationCards.length).toBe(5);
   });
+
+  it('should load more items on going to the bottom of the page', async function () {});
 });

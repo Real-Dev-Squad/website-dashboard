@@ -62,6 +62,7 @@ function updateUserApplication({ isAccepted }) {
 function changeFilter() {
   nextLink = '';
   filterModal.classList.add('hidden');
+  backDrop.style.display = 'none';
   applicationContainer.innerHTML = '';
 }
 
