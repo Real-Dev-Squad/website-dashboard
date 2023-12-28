@@ -18,12 +18,9 @@ describe.only('Applications page', () => {
 
   beforeEach(async () => {
     browser = await puppeteer.launch({
-      headless: false,
+      headless: 'new',
       ignoreHTTPSErrors: true,
       args: ['--incognito', '--disable-web-security'],
-      slowMo: 500,
-
-      devtools: true,
     });
   });
   beforeEach(async () => {
@@ -32,7 +29,6 @@ describe.only('Applications page', () => {
     await page.setRequestInterception(true);
 
     page.on('request', (request) => {
-      console.log(request.url(), 'request');
       if (
         request.url() === `${API_BASE_URL}/applications?size=5` ||
         request.url() ===
