@@ -16,6 +16,7 @@ const mainContainer = document.querySelector('.container');
 const applicationCloseButton = document.querySelector(
   '.application-close-button',
 );
+const noApplicationFoundText = document.querySelector('.no_applications_found');
 const applicationDetailsMain = document.querySelector(
   '.application-details-main',
 );
@@ -244,6 +245,7 @@ function createApplicationCard({ application }) {
 }
 
 async function renderApplicationCards(next, status, isInitialRender) {
+  noApplicationFoundText.classList.add('hidden');
   changeLoaderVisibility({ hide: false });
   isDataLoading = true;
   const data = await getApplications({
@@ -254,13 +256,15 @@ async function renderApplicationCards(next, status, isInitialRender) {
   changeLoaderVisibility({ hide: true });
   const applications = data.applications;
   nextLink = data.next;
+  if (isInitialRender) filterButton.classList.remove('hidden');
+  if (!applications.length)
+    return noApplicationFoundText.classList.remove('hidden');
   applications.forEach((application) => {
     const applicationCard = createApplicationCard({
       application,
     });
     applicationContainer.appendChild(applicationCard);
   });
-  if (isInitialRender) filterButton.classList.remove('hidden');
 }
 
 (async function renderCardsInitial() {

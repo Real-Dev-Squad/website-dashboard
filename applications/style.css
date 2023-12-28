@@ -356,6 +356,13 @@ body {
   text-align: center;
 }
 
+.no_applications_found {
+  text-align: center;
+  font-size: 32px;
+  margin-top: 20px;
+  font-weight: 600;
+}
+
 @media screen and (max-width: 850px) {
   .application-card {
     width: 100%;
