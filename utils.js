@@ -29,7 +29,7 @@ async function checkUserIsSuperUser() {
   return self_user?.roles['super_user'];
 }
 
-export function createElement({ type, attributes = {}, innerText }) {
+function createElement({ type, attributes = {}, innerText }) {
   const element = document.createElement(type);
   Object.keys(attributes).forEach((item) => {
     element.setAttribute(item, attributes[item]);
