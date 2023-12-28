@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = window.API_BASE_URL;
 
 function createElement({ type, attributes = {}, innerText }) {
   const element = document.createElement(type);

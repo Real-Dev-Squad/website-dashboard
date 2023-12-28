@@ -8,7 +8,7 @@ const { superUserForAudiLogs } = require('../../mock-data/users');
 
 const SITE_URL = 'http://localhost:8000';
 // helper/loadEnv.js file causes API_BASE_URL to be stagin-api on local env url in taskRequest/index.html
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'https://staging-api.realdevsquad.com';
 
 describe.only('Applications page', () => {
   let browser;
