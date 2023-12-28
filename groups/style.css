@@ -13,6 +13,8 @@
   --color-white: rgb(255, 255, 255);
   --color-not-verified: rgb(255, 0, 0);
   --color-member-count: #717171;
+  --color-group-dropdown-background: #f6f6f6;
+  --color-group-dropdown-border-color: #ddd;
 }
 .container {
   font-family: 'Roboto', sans-serif;
@@ -101,7 +103,7 @@
   display: flex;
 }
 .manage-groups main {
-  padding: 1rem 4rem;
+  padding: 1rem 2rem;
   flex: 1;
 }
 
@@ -282,6 +284,63 @@ NOT VERIFIED TEXT ABOVE
 .not-verified-tag {
   color: var(--color-not-verified);
   text-align: center;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: var(--color-group-dropdown-background);
+  min-width: 14rem;
+  overflow: auto;
+  border: 1px solid var(--color-group-dropdown-border-color);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  padding: 0.75rem 1rem;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown a:hover {
+  background-color: var(--color-group-dropdown-border-color);
+}
+
+.show_filter {
+  display: block;
+}
+
+.dropdown-content {
+  cursor: pointer;
+}
+
+.task_filter-button {
+  width: 5rem;
+  height: 2rem;
+  border-radius: 0.27rem 0 0 0.27rem;
+  background-color: var(--color-group-dropdown-background);
+  color: #000;
+  font-weight: 700;
+  cursor: pointer;
+  outline: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 0.3rem;
+  border: 1px solid var(--color-group-dropdown-border-color);
+}
+
+.task_filter-button:after {
+  content: '';
+  border-left: 0.3rem solid transparent;
+  border-right: 0.3rem solid transparent;
+  border-top: 0.3rem solid;
+  margin-left: 0.5rem;
 }
 
 @media (max-width: 650px) {

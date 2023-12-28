@@ -64,6 +64,175 @@ const individualTaskReqDetail = {
   },
 };
 
+const taskDetailCreation = {
+  message: 'Task request returned successfully',
+  data: {
+    createdAt: 1698090070313,
+    lastModifiedAt: 1698090070313,
+    requestType: 'CREATION',
+    createdBy: 'ajeyak',
+    requestors: ['eChYAP0kUwLo4wQ1gqMV'],
+    lastModifiedBy: 'ajeyak',
+    taskTitle: 'Fix: user data is not showing up in memberSkillsUpdateModal',
+    externalIssueUrl:
+      'https://api.github.com/repos/Real-Dev-Squad/members-site/issues/92',
+    users: [
+      {
+        proposedStartDate: 1698089500541,
+        proposedDeadline: 1698089500541,
+        description: ' ',
+        userId: 'eChYAP0kUwLo4wQ1gqMV',
+        status: 'PENDING',
+      },
+    ],
+    status: 'PENDING',
+    usersCount: 1,
+    id: 'uC0IUpkFMx393XjnKx4w',
+    url: 'https://realdevsquad.com/taskRequests/uC0IUpkFMx393XjnKx4w',
+  },
+};
+
+const githubIssue = {
+  url: 'https://api.github.com/repos/Real-Dev-Squad/members-site/issues/92',
+  repository_url: 'https://api.github.com/repos/Real-Dev-Squad/members-site',
+  labels_url:
+    'https://api.github.com/repos/Real-Dev-Squad/members-site/issues/92/labels{/name}',
+  comments_url:
+    'https://api.github.com/repos/Real-Dev-Squad/members-site/issues/92/comments',
+  events_url:
+    'https://api.github.com/repos/Real-Dev-Squad/members-site/issues/92/events',
+  html_url: 'https://github.com/Real-Dev-Squad/members-site/issues/92',
+  id: 1883898994,
+  node_id: 'I_kwDOIe8XEs5wSgRy',
+  number: 92,
+  title: 'Fix: user data is not showing up in memberSkillsUpdateModal',
+  user: {
+    login: 'anishpawaskar',
+    id: 22213872,
+    node_id: 'MDQ6VXNlcjIyMjEzODcy',
+    avatar_url: 'https://avatars.githubusercontent.com/u/22213872?v=4',
+    gravatar_id: '',
+    url: 'https://api.github.com/users/anishpawaskar',
+    html_url: 'https://github.com/anishpawaskar',
+    followers_url: 'https://api.github.com/users/anishpawaskar/followers',
+    following_url:
+      'https://api.github.com/users/anishpawaskar/following{/other_user}',
+    gists_url: 'https://api.github.com/users/anishpawaskar/gists{/gist_id}',
+    starred_url:
+      'https://api.github.com/users/anishpawaskar/starred{/owner}{/repo}',
+    subscriptions_url:
+      'https://api.github.com/users/anishpawaskar/subscriptions',
+    organizations_url: 'https://api.github.com/users/anishpawaskar/orgs',
+    repos_url: 'https://api.github.com/users/anishpawaskar/repos',
+    events_url: 'https://api.github.com/users/anishpawaskar/events{/privacy}',
+    received_events_url:
+      'https://api.github.com/users/anishpawaskar/received_events',
+    type: 'User',
+    site_admin: false,
+  },
+  labels: [],
+  state: 'closed',
+  locked: false,
+  assignee: {
+    login: 'anishpawaskar',
+    id: 22213872,
+    node_id: 'MDQ6VXNlcjIyMjEzODcy',
+    avatar_url: 'https://avatars.githubusercontent.com/u/22213872?v=4',
+    gravatar_id: '',
+    url: 'https://api.github.com/users/anishpawaskar',
+    html_url: 'https://github.com/anishpawaskar',
+    followers_url: 'https://api.github.com/users/anishpawaskar/followers',
+    following_url:
+      'https://api.github.com/users/anishpawaskar/following{/other_user}',
+    gists_url: 'https://api.github.com/users/anishpawaskar/gists{/gist_id}',
+    starred_url:
+      'https://api.github.com/users/anishpawaskar/starred{/owner}{/repo}',
+    subscriptions_url:
+      'https://api.github.com/users/anishpawaskar/subscriptions',
+    organizations_url: 'https://api.github.com/users/anishpawaskar/orgs',
+    repos_url: 'https://api.github.com/users/anishpawaskar/repos',
+    events_url: 'https://api.github.com/users/anishpawaskar/events{/privacy}',
+    received_events_url:
+      'https://api.github.com/users/anishpawaskar/received_events',
+    type: 'User',
+    site_admin: false,
+  },
+  assignees: [
+    {
+      login: 'anishpawaskar',
+      id: 22213872,
+      node_id: 'MDQ6VXNlcjIyMjEzODcy',
+      avatar_url: 'https://avatars.githubusercontent.com/u/22213872?v=4',
+      gravatar_id: '',
+      url: 'https://api.github.com/users/anishpawaskar',
+      html_url: 'https://github.com/anishpawaskar',
+      followers_url: 'https://api.github.com/users/anishpawaskar/followers',
+      following_url:
+        'https://api.github.com/users/anishpawaskar/following{/other_user}',
+      gists_url: 'https://api.github.com/users/anishpawaskar/gists{/gist_id}',
+      starred_url:
+        'https://api.github.com/users/anishpawaskar/starred{/owner}{/repo}',
+      subscriptions_url:
+        'https://api.github.com/users/anishpawaskar/subscriptions',
+      organizations_url: 'https://api.github.com/users/anishpawaskar/orgs',
+      repos_url: 'https://api.github.com/users/anishpawaskar/repos',
+      events_url: 'https://api.github.com/users/anishpawaskar/events{/privacy}',
+      received_events_url:
+        'https://api.github.com/users/anishpawaskar/received_events',
+      type: 'User',
+      site_admin: false,
+    },
+  ],
+  milestone: null,
+  comments: 0,
+  created_at: '2023-09-06T12:21:37Z',
+  updated_at: '2023-11-08T19:02:33Z',
+  closed_at: '2023-11-08T19:02:33Z',
+  author_association: 'CONTRIBUTOR',
+  active_lock_reason: null,
+  body: "- When super_user try to update skills of new users the data of user is not being passed that's why in memberSkillsUpdateModal it is showing undefined and undefined instead of showing firstname and lastname of user.\r\n\r\n![Real Dev Squad - Google Chrome 06-09-2023 17_47_05](https://github.com/Real-Dev-Squad/members-site/assets/22213872/2f89448e-94e4-4290-8ba3-45bc147f31cc)\r\n",
+  closed_by: {
+    login: 'anishpawaskar',
+    id: 22213872,
+    node_id: 'MDQ6VXNlcjIyMjEzODcy',
+    avatar_url: 'https://avatars.githubusercontent.com/u/22213872?v=4',
+    gravatar_id: '',
+    url: 'https://api.github.com/users/anishpawaskar',
+    html_url: 'https://github.com/anishpawaskar',
+    followers_url: 'https://api.github.com/users/anishpawaskar/followers',
+    following_url:
+      'https://api.github.com/users/anishpawaskar/following{/other_user}',
+    gists_url: 'https://api.github.com/users/anishpawaskar/gists{/gist_id}',
+    starred_url:
+      'https://api.github.com/users/anishpawaskar/starred{/owner}{/repo}',
+    subscriptions_url:
+      'https://api.github.com/users/anishpawaskar/subscriptions',
+    organizations_url: 'https://api.github.com/users/anishpawaskar/orgs',
+    repos_url: 'https://api.github.com/users/anishpawaskar/repos',
+    events_url: 'https://api.github.com/users/anishpawaskar/events{/privacy}',
+    received_events_url:
+      'https://api.github.com/users/anishpawaskar/received_events',
+    type: 'User',
+    site_admin: false,
+  },
+  reactions: {
+    url: 'https://api.github.com/repos/Real-Dev-Squad/members-site/issues/92/reactions',
+    total_count: 0,
+    '+1': 0,
+    '-1': 0,
+    laugh: 0,
+    hooray: 0,
+    confused: 0,
+    heart: 0,
+    rocket: 0,
+    eyes: 0,
+  },
+  timeline_url:
+    'https://api.github.com/repos/Real-Dev-Squad/members-site/issues/92/timeline',
+  performed_via_github_app: null,
+  state_reason: 'completed',
+};
+
 const individualTaskDetail = {
   message: 'task returned successfully',
   taskData: {
@@ -78,6 +247,35 @@ const individualTaskDetail = {
     status: 'ASSIGNED',
     assigneeId: 'SooJK37gzjIZfFNH0tlL',
     dependsOn: [],
+  },
+};
+const userInformationTaskCreation = {
+  message: 'User returned successfully!',
+  user: {
+    id: 'eChYAP0kUwLo4wQ1gqMV',
+    incompleteUserDetails: false,
+    website: 'www.',
+    discordId: '1095941231403597854',
+    last_name: 'asdfasdfsd',
+    linkedin_id: 'afds',
+    created_at: 1697215478406,
+    yoe: 100,
+    instagram_id: 'sdaf',
+    github_created_at: 1694358348000,
+    github_display_name: null,
+    github_id: 'Aryex82',
+    company: 'Rebel base',
+    designation: 'adsf',
+    twitter_id: 'ajeya900',
+    first_name: 'ajeya',
+    username: 'ajeyak',
+    updated_at: 1701555788092,
+    roles: {
+      archived: false,
+      in_discord: true,
+      member: false,
+      super_user: true,
+    },
   },
 };
 
@@ -145,6 +343,12 @@ const urlMappings = {
     fetchedTaskRequests,
   'https://api.realdevsquad.com/taskRequests?action=reject':
     fetchedTaskRequests,
+  'https://staging-api.realdevsquad.com/users/userId/eChYAP0kUwLo4wQ1gqMV':
+    userInformationTaskCreation,
+  'https://staging-api.realdevsquad.com/taskRequests/uC0IUpkFMx393XjnKx4w':
+    taskDetailCreation,
+  'https://api.github.com/repos/Real-Dev-Squad/members-site/issues/92':
+    githubIssue,
 };
 
 module.exports = {

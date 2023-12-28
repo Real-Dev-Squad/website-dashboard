@@ -3,6 +3,7 @@ const { allUsersData } = require('../../mock-data/users');
 const { discordGroups, GroupRoleData } = require('../../mock-data/groups');
 
 const BASE_URL = 'https://api.realdevsquad.com';
+const PAGE_URL = 'http://localhost:8000';
 
 describe('Discord Groups Page', () => {
   let browser;
@@ -135,7 +136,7 @@ describe('Discord Groups Page', () => {
         interceptedRequest.continue();
       }
     });
-    await page.goto('http://localhost:8000/groups');
+    await page.goto(`${PAGE_URL}/groups`);
     await page.waitForNetworkIdle();
   });
 
@@ -319,7 +320,7 @@ describe('Discord Groups Page', () => {
   });
 
   test('should update input field and filter group list with search value in URL', async () => {
-    await page.goto('http://localhost:8000/groups/?dev=true&DSA');
+    await page.goto(`${PAGE_URL}/groups/?dev=true&DSA`);
     manageGroup = await page.$('.manage-groups-tab');
     await manageGroup.click();
     const searchInput = await page.$('#search-groups');
@@ -338,5 +339,95 @@ describe('Discord Groups Page', () => {
     expect(filteredGroupNames).toEqual(
       expect.arrayContaining(['DSA', 'DSA-Coding-Group']),
     );
+  });
+
+  test('should select the group from URL and have active-group class', async () => {
+    await page.goto(`${PAGE_URL}/groups?DSA`);
+    const activeGroup = await page.$('.active-group');
+    const groupName = await page.evaluate(
+      (element) => element.innerText,
+      activeGroup,
+    );
+    expect(groupName).toMatch('DSA');
+  });
+  test('On click on "Popular within dev" will result group with most member at the top', async () => {
+    await page.goto(`${PAGE_URL}/groups?dev=true`);
+    await page.waitForNetworkIdle();
+
+    const groupsBeforeSort = await page.$$eval('.group-name', (elements) => {
+      return elements.map((element) =>
+        element.getAttribute('data-member-count'),
+      );
+    });
+    await page.$$eval('#dropdown_main', (el) => {
+      el[0].click();
+    });
+
+    await page.$$eval('[data-list="1"]', (el) => {
+      el[0].click();
+    });
+    const groupsAfterSort = await page.$$eval('.group-name', (elements) => {
+      return elements.map((element) =>
+        element.getAttribute('data-member-count'),
+      );
+    });
+    const manualSortedGroup = groupsBeforeSort.sort((a, b) => b - a);
+    expect(groupsAfterSort).toEqual(manualSortedGroup);
+  });
+  test('On click on "Recently created" will result in latest created group at the top', async () => {
+    await page.goto(`${PAGE_URL}/groups?dev=true`);
+    await page.waitForNetworkIdle();
+
+    const groupNameCreateDateLookup = {};
+    discordGroups.groups.forEach((group) => {
+      const grpName = group.rolename.split('-').slice(1).join('-');
+      groupNameCreateDateLookup[grpName] = group.date._seconds;
+    });
+    const groupsBeforeSort = await page.$$eval('.group-name', (elements) => {
+      return elements.map((element) => element.innerText);
+    });
+
+    await page.$$eval('#dropdown_main', (el) => {
+      el[0].click();
+    });
+    await page.$$eval('[data-list="2"]', (el) => {
+      el[0].click();
+    });
+    const groupAfterSort = await page.$$eval('.group-name', (elements) => {
+      return elements.map((element) => element.innerText);
+    });
+    const manualSortedGroup = groupsBeforeSort.sort(
+      (a, b) => groupNameCreateDateLookup[b] - groupNameCreateDateLookup[a],
+    );
+    expect(groupAfterSort).toEqual(manualSortedGroup);
+  });
+  test('On click on "Recently used" will result in recently used group at the top', async () => {
+    await page.goto(`${PAGE_URL}/groups?dev=true`);
+    await page.waitForNetworkIdle();
+
+    const groupNameCreateDateLookup = {};
+    discordGroups.groups.forEach((group) => {
+      const grpName = group.rolename.split('-').slice(1).join('-');
+      groupNameCreateDateLookup[grpName] = group.lastUsedOn
+        ? group.lastUsedOn._seconds
+        : 0;
+    });
+    const groupsBeforeSort = await page.$$eval('.group-name', (elements) => {
+      return elements.map((element) => element.innerText);
+    });
+
+    await page.$$eval('#dropdown_main', (el) => {
+      el[0].click();
+    });
+    await page.$$eval('[data-list="3"]', (el) => {
+      el[0].click();
+    });
+    const groupAfterSort = await page.$$eval('.group-name', (elements) => {
+      return elements.map((element) => element.innerText);
+    });
+    const manualSortedGroup = groupsBeforeSort.sort(
+      (a, b) => groupNameCreateDateLookup[b] - groupNameCreateDateLookup[a],
+    );
+    expect(groupAfterSort).toEqual(manualSortedGroup);
   });
 });

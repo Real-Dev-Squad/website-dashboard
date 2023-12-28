@@ -167,79 +167,6 @@ button {
   background-color: var(--blue-color);
   border-color: transparent;
 }
-#user-management-link {
-  color: var(--black-color);
-  font-weight: 500;
-  font-size: larger;
-  background-color: var(--white-color);
-  border: 2px solid var(--black-color);
-  border-radius: 5px;
-  padding: 10px 3.12rem;
-  cursor: pointer;
-  transition: all 0.5s ease;
-  width: 17rem;
-  text-decoration: none;
-}
-#user-management-link:hover {
-  color: var(--white-color);
-  background-color: var(--blue-color);
-  border-color: transparent;
-}
-
-/* Extension Requests */
-#extension-requests-link {
-  color: var(--black-color);
-  font-weight: 500;
-  font-size: larger;
-  background-color: var(--white-color);
-  border: 2px solid var(--black-color);
-  border-radius: 5px;
-  padding: 10px 3.12rem;
-  cursor: pointer;
-  transition: all 0.5s ease;
-  width: max-content;
-  text-decoration: none;
-}
-#extension-requests-link:hover {
-  color: var(--white-color);
-  background-color: var(--blue-color);
-  border-color: transparent;
-}
-/* Task Requests */
-#task-requests-link {
-  color: var(--black-color);
-  font-weight: 500;
-  font-size: larger;
-  background-color: var(--white-color);
-  border: 2px solid var(--black-color);
-  border-radius: 5px;
-  padding: 10px 3.12rem;
-  cursor: pointer;
-  transition: all 0.5s ease;
-  width: max-content;
-  text-decoration: none;
-}
-#task-requests-link:hover {
-  color: var(--white-color);
-  background-color: var(--blue-color);
-  border-color: transparent;
-}
-/* Online-members */
-.online-members-link {
-  color: var(--black-color);
-  font-weight: 500;
-  font-size: larger;
-  border: 2px solid var(--black-color);
-  border-radius: 5px;
-  padding: 10px 3.12rem;
-  transition: all 0.5s ease;
-}
-
-.online-members-link:hover {
-  color: var(--white-color);
-  background-color: var(--blue-color);
-  border-color: transparent;
-}
 
 /* Online-members */
 .info-repo {
@@ -264,13 +191,13 @@ footer {
   transition: all 0.5s ease;
   outline: none;
   text-decoration: none;
-  color: var(--black-color);
 }
 
-.action-button:hover {
+.action-button:hover,
+.action-button:focus {
   color: var(--white-color);
   background-color: var(--blue-color);
-  border: none;
+  border-color: var(--blue-color);
 }
 
 #sync-buttons.element-display-remove {
