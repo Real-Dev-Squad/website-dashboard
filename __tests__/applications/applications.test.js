@@ -10,7 +10,7 @@ const SITE_URL = 'http://localhost:8000';
 // helper/loadEnv.js file causes API_BASE_URL to be stagin-api on local env url in taskRequest/index.html
 const API_BASE_URL = 'https://staging-api.realdevsquad.com';
 
-describe.only('Applications page', () => {
+describe('Applications page', () => {
   let browser;
   let page;
 
@@ -160,16 +160,16 @@ describe.only('Applications page', () => {
     ).toBe(false);
   });
 
-  it('should show alert message with application updated successfully', async function () {
-    page.on('dialog', async (dialog) => {
-      // Check if it's an alert and has the expected message
-      if (dialog.type() === 'alert') {
-        expect(dialog.message()).toBe('application updated successfully!');
-        await dialog.accept(); // Automatically accept the alert
-      }
-    });
+  it('should show toast message with application updated successfully', async function () {
     await page.click('.view-details-button');
     await page.click('.application-details-accept');
+    const toast = await page.$('#toast');
+    expect(await toast.evaluate((el) => el.classList.contains('hidden'))).toBe(
+      false,
+    );
+    expect(await toast.evaluate((el) => el.innerText)).toBe(
+      'application updated successfully!',
+    );
     await page.waitForNetworkIdle();
   });
 });
