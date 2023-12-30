@@ -357,6 +357,7 @@ async function createExtensionCard(data) {
   const isDeadLineCrossed = Date.now() > secondsToMilliSeconds(data.oldEndsOn);
   const isNewDeadLineCrossed =
     Date.now() > secondsToMilliSeconds(data.newEndsOn);
+  const isStatusPending = data.status === Status.PENDING;
   const wasDeadlineBreached = data.timestamp > data.oldEndsOn;
   const extensionDays = dateDiff(
     secondsToMilliSeconds(data.newEndsOn),
@@ -477,7 +478,9 @@ async function createExtensionCard(data) {
     type: 'span',
     innerText: `${deadlineDays}`,
     attributes: {
-      class: `tooltip-container ${isDeadLineCrossed ? 'red-text' : ''}`,
+      class: `tooltip-container ${
+        isDeadLineCrossed && isStatusPending ? 'red-text' : ''
+      }`,
     },
   });
   deadlineContainer.appendChild(deadlineValue);
