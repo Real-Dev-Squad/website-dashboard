@@ -361,6 +361,31 @@ describe('Tests the Extension Requests Screen', () => {
     expect(extensionCardsList.length).toBe(4);
     expect(extensionRequestsElement).toBeTruthy();
   });
+  it('Should contain all dates elements', async () => {
+    const checkContainer = async (containerId) => {
+      const textExists = await page.$eval(
+        `${containerId} .card-row-text`,
+        (el) => !!el,
+      );
+      const valueExists = await page.$eval(
+        `${containerId} .tooltip-container`,
+        (el) => !!el,
+      );
+      const tooltipExists = await page.$eval(
+        `${containerId} .tooltip`,
+        (el) => !!el,
+      );
+
+      expect(textExists).toBeTruthy();
+      expect(valueExists).toBeTruthy();
+      expect(tooltipExists).toBeTruthy();
+    };
+
+    await checkContainer('#deadline-container');
+    await checkContainer('#requested-time-container');
+    await checkContainer('#new-deadline-container');
+    await checkContainer('#extension-container');
+  });
 
   it('checks the search functionality', async () => {
     await page.type('#assignee-search', 'sunny');
