@@ -56,6 +56,7 @@ body {
   max-width: 1440px;
   margin: 0 auto;
   padding: 2.5rem;
+  position: relative;
 }
 .container__filters {
   margin: 1rem 0;
@@ -140,12 +141,11 @@ body {
   border-radius: 0.31rem;
   flex-direction: column;
   align-items: center;
-  padding: 10px;
-  padding-bottom: 1rem;
+  padding: 1rem;
+  padding-bottom: 1.5rem;
   z-index: 2;
   position: absolute;
-  top: 11.25rem;
-  right: 1rem;
+  top: 5.5rem;
   background-color: var(--white);
 }
 
@@ -163,6 +163,7 @@ body {
 .selected {
   background-color: var(--dark-gray-color);
 }
+
 .sort-container:hover {
   background-color: var(--color-gray-light);
 }
@@ -181,12 +182,10 @@ body {
   border-radius: 0.31rem;
   flex-direction: column;
   align-items: center;
-  padding: 10px;
-  padding-bottom: 1rem;
-  z-index: 1;
+  padding: 1rem;
+  padding-bottom: 1.5rem;
   position: absolute;
-  top: 11.25rem;
-  right: 1rem;
+  top: 5.5rem;
   background-color: var(--white);
 }
 
@@ -279,16 +278,14 @@ body {
   font-weight: 600;
   text-align: center;
   font-size: 1.5rem;
-  margin: 2rem;
-  width: 100vw;
+  width: 100%;
+  position: absolute;
 }
 .taskRequest__message--error {
   color: var(--color-error);
   font-weight: 600;
   text-align: center;
   font-size: 1.5rem;
-  margin: 2rem;
-  width: 100vw;
 }
 .taskRequest__card {
   cursor: pointer;
@@ -394,7 +391,7 @@ body {
 
   .filter-modal,
   .sort-modal {
-    top: 10.5rem;
+    top: 4.5rem;
   }
   .funnel-icon {
     margin: auto;
@@ -408,7 +405,7 @@ body {
 
   .filter-modal,
   .sort-modal {
-    top: 10rem;
+    top: 4rem;
   }
 }
 @media (max-width: 1439px) {

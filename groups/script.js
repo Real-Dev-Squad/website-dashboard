@@ -3,6 +3,7 @@ import {
   CANNOT_CONTAIN_GROUP,
   DEV_FEATURE_FLAG,
   NO_SPACES_ALLOWED,
+  SortByFields,
 } from './constants.js';
 import {
   removeGroupKeywordFromDiscordRoleName,
@@ -22,6 +23,19 @@ const userIsNotVerifiedText = document.querySelector('.not-verified-tag');
 const params = new URLSearchParams(window.location.search);
 const searchValue = getSearchValueFromURL();
 const isDev = params.get(DEV_FEATURE_FLAG) === 'true';
+const dropdownContainer = document.getElementById('dropdown_container');
+
+//Dropdown
+const dropdownMain = document.getElementById('dropdown_main');
+const dropdownTxt = document.getElementById('sortby_text');
+function toggleDropDown() {
+  dropdownMain.classList.toggle('show_filter');
+}
+dropdownTxt.addEventListener('click', toggleDropDown);
+if (isDev) {
+  dropdownContainer.classList.remove('hidden');
+  dropdownMain.addEventListener('click', onDropdownClick);
+}
 // const paragraphElement = null, paragraphContent = '';
 
 const searchInput = document.getElementById('search-groups');
@@ -78,44 +92,95 @@ const memberAddRoleBody = {
  */
 const groupsData = await getDiscordGroups();
 const groupRoles = document.querySelector('.groups-list');
-groupsData?.forEach((item) => {
-  const group = document.createElement('li');
-  group.setAttribute('id', item.roleid);
-  group.classList.add('group-role');
-  const formattedRoleName = removeGroupKeywordFromDiscordRoleName(
-    item.rolename,
-  );
 
-  //If searchValue present, filter out the list
-  if (searchValue) {
-    group.style.display = formattedRoleName
-      .toUpperCase()
-      .includes(searchValue.toUpperCase())
-      ? ''
-      : 'none';
+const renderGroups = () => {
+  groupRoles.innerHTML = null;
+  groupsData?.forEach((item) => {
+    const group = document.createElement('li');
+    group.setAttribute('id', item.roleid);
+    group.classList.add('group-role');
+    const formattedRoleName = removeGroupKeywordFromDiscordRoleName(
+      item.rolename,
+    );
+
+    //If searchValue present, filter out the list
+    if (searchValue) {
+      group.style.display = formattedRoleName
+        .toUpperCase()
+        .includes(searchValue.toUpperCase())
+        ? ''
+        : 'none';
+    }
+
+    const groupname = document.createElement('p');
+    groupname.classList.add('group-name');
+    groupname.setAttribute('id', `name-${item.roleid}`);
+
+    if (item.memberCount !== null && item.memberCount !== undefined) {
+      groupname.setAttribute('data-member-count', item.memberCount);
+    }
+
+    groupname.textContent = formattedRoleName;
+
+    const createdBy = createAuthorDetailsDOM(
+      item.firstName,
+      item.lastName,
+      item.image,
+    );
+
+    group.appendChild(groupname);
+    group.appendChild(createdBy);
+    groupRoles.appendChild(group);
+  });
+};
+
+const giveABForCompariosn = (a, b, field) => {
+  let data = [0, 0];
+  switch (field) {
+    case 'date._seconds':
+      data[0] = a.date._seconds;
+      data[1] = b.date._seconds;
+      break;
+    case 'memberCount':
+      data[0] = a.memberCount || 0;
+      data[1] = b.memberCount || 0;
+      break;
+    case 'lastUsedOn._seconds':
+      if (a.lastUsedOn) {
+        data[0] = a.lastUsedOn._seconds;
+      }
+      if (b.lastUsedOn) {
+        data[1] = b.lastUsedOn._seconds;
+      }
+      break;
+    default:
+      data = [0, 0];
   }
+  return data;
+};
 
-  const groupname = document.createElement('p');
-  groupname.classList.add('group-name');
-  groupname.setAttribute('id', `name-${item.roleid}`);
-
-  if (item.memberCount !== null && item.memberCount !== undefined) {
-    groupname.setAttribute('data-member-count', item.memberCount);
-  }
-
-  groupname.textContent = formattedRoleName;
-
-  const createdBy = createAuthorDetailsDOM(
-    item.firstName,
-    item.lastName,
-    item.image,
+function onDropdownClick(ev) {
+  const clickedOptionsId = ev.target.dataset.list;
+  const fieldToSortBy = SortByFields.find(
+    (field) => field.id === clickedOptionsId,
   );
+  groupsData.sort((firstObj, secondObj) => {
+    const [a, b] = giveABForCompariosn(
+      firstObj,
+      secondObj,
+      fieldToSortBy.fieldName,
+    );
+    if (a > b) {
+      return -1;
+    } else if (b < a) {
+      return 1;
+    }
+    return 0;
+  });
+  renderGroups();
+}
 
-  group.appendChild(groupname);
-  group.appendChild(createdBy);
-  groupRoles.appendChild(group);
-});
-
+renderGroups();
 /**
  * FOR RENDERING TABS
  * I.E. MANAGE ROLES, CREATE GROUP
