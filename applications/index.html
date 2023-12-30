@@ -12,6 +12,7 @@
     <header class="header">
       <h1>RDS Join Applications</h1>
     </header>
+    <div id="toast" class="hidden"></div>
     <div class="container">
       <div class="backdrop"></div>
       <button id="filter-button" class="filter-button hidden">
@@ -68,7 +69,11 @@
       <div class="backdrop-blur"></div>
       <div class="application-details hidden">
         <button class="application-close-button">
-          <img src="./assets/closeButton.svg" width="32px" height="32px" />
+          <img
+            src="./assets/closeButton.svg"
+            class="close-button-icon"
+            alt=""
+          />
         </button>
         <div class="application-details-main"></div>
         <div class="application-details-actions">

@@ -12,6 +12,8 @@
     0 1px 2px 0 rgba(0, 0, 0, 0.1);
   --elevation-3: 0px 1px 3px 0px rgba(0, 0, 0, 0.3),
     0px 4px 8px 3px rgba(0, 0, 0, 0.15);
+  --color-green: green;
+  --color-red-variant1: #f43030;
 }
 
 body {
@@ -361,6 +363,53 @@ body {
   font-size: 32px;
   margin-top: 20px;
   font-weight: 600;
+}
+
+.close-button-icon {
+  width: 32px;
+  height: 32px;
+}
+
+#toast {
+  position: fixed;
+  top: 20px;
+  right: -300px;
+  color: #fff;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.animated_toast {
+  animation: slideIn 0.5s ease-in-out forwards,
+    slideOut 0.5s ease-in-out 2.5s forwards;
+}
+
+.success {
+  background: var(--color-green);
+}
+
+.failure {
+  background: var(--color-red-variant1);
+}
+
+@keyframes slideIn {
+  from {
+    right: -300px;
+  }
+
+  to {
+    right: 20px;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    right: 20px;
+  }
+
+  to {
+    right: -300px;
+  }
 }
 
 @media screen and (max-width: 850px) {

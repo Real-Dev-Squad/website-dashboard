@@ -2,6 +2,7 @@ import {
   createElement,
   getApplications,
   getIsSuperUser,
+  showToast,
   updateApplication,
 } from './utils.js';
 let nextLink;
@@ -40,7 +41,7 @@ function updateUserApplication({ isAccepted }) {
   const payload = {};
 
   if (isAccepted) status = 'accepted';
-  else status = 'rejectedd';
+  else status = 'rejected';
 
   payload['status'] = status;
 
@@ -52,11 +53,11 @@ function updateUserApplication({ isAccepted }) {
   })
     .then((res) => {
       closeApplicationDetails();
-      alert(res.message);
+      showToast({ type: 'success', message: res.message });
     })
     .catch((error) => {
-      alert(error.message);
-      console.log(error);
+      closeApplicationDetails();
+      showToast({ type: 'error', message: error.message });
     });
 }
 
@@ -124,7 +125,6 @@ function openApplicationDetails(application) {
     innerText: `${selectedApplication.username}'s Application`,
   });
 
-  console.log(application);
   applicationDetailsMain.appendChild(title);
 
   selectedApplication.applicationDetails.forEach((application) => {
@@ -270,7 +270,6 @@ async function renderApplicationCards(next, status, isInitialRender) {
 (async function renderCardsInitial() {
   changeLoaderVisibility({ hide: false });
   const isSuperUser = await getIsSuperUser();
-  console.log(isSuperUser, 'usresr');
   if (!isSuperUser) {
     const unAuthorizedText = createElement({
       type: 'h1',

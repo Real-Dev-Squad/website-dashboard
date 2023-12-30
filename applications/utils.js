@@ -1,4 +1,5 @@
 const BASE_URL = window.API_BASE_URL;
+const toast = document.getElementById('toast');
 
 function createElement({ type, attributes = {}, innerText }) {
   const element = document.createElement(type);
@@ -67,4 +68,30 @@ async function updateApplication({ applicationPayload, applicationId }) {
   }
 }
 
-export { createElement, getApplications, updateApplication, getIsSuperUser };
+function showToast({ message, type }) {
+  toast.innerText = message;
+
+  if (type === 'success') {
+    toast.classList.add('success');
+    toast.classList.remove('failure');
+  } else {
+    toast.classList.add('failure');
+    toast.classList.remove('success');
+  }
+
+  toast.classList.remove('hidden');
+  toast.classList.add('animated_toast');
+
+  setTimeout(() => {
+    toast.classList.add('hidden');
+    toast.classList.remove('animated_toast');
+  }, 3000);
+}
+
+export {
+  createElement,
+  getApplications,
+  updateApplication,
+  getIsSuperUser,
+  showToast,
+};
