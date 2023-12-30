@@ -28,6 +28,10 @@ const discordGroups = {
       lastName: 'User2',
       image: 'https://image.cdn.com/12dfg',
       memberCount: 200,
+      lastUsedOn: {
+        _nanoseconds: 61000000,
+        _seconds: 1703615100,
+      },
     },
     {
       id: '"mvWVuAxtSuhQtunjcywv"',
@@ -42,6 +46,10 @@ const discordGroups = {
       lastName: 'User1',
       image: 'https://image.cdn.com/123dfgh',
       memberCount: 0,
+      lastUsedOn: {
+        _nanoseconds: 61070000,
+        _seconds: 1703615154,
+      },
     },
   ],
 };
