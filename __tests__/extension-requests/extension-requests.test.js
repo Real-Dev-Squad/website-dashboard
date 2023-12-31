@@ -21,7 +21,7 @@ const {
 } = require('../../mock-data/users');
 const { usersStatus } = require('../../mock-data/users-status');
 const { taskDone, auditLogTasks } = require('../../mock-data/tasks/index');
-
+const baseUrl = 'http://localhost:8000/extension-requests';
 describe('Tests the Extension Requests Screen', () => {
   let browser;
   let page;
@@ -33,7 +33,7 @@ describe('Tests the Extension Requests Screen', () => {
 
   beforeAll(async () => {
     browser = await puppeteer.launch({
-      headless: 'new',
+      headless: false,
       ignoreHTTPSErrors: true,
       args: ['--incognito', '--disable-web-security'],
       devtools: false,
@@ -108,6 +108,19 @@ describe('Tests the Extension Requests Screen', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
           body: JSON.stringify(userSunny),
+        });
+      } else if (
+        url === 'https://api.realdevsquad.com/users?search=randhir&size=1'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(userRandhir),
         });
       } else if (
         url ===
@@ -327,12 +340,26 @@ describe('Tests the Extension Requests Screen', () => {
           },
           body: JSON.stringify(extensionRequestLogs['lw7dRB0I3a6ivsFR5Izs']),
         });
+      } else if (
+        url ===
+        'https://api.realdevsquad.com/extension-requests?order=asc&size=5&q=status%3AAPPROVED%2Cassignee%3AiODXB6gfsjaZB9p0XlBw%2B7yzVDl8s1ORNCtH9Ps7K'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(extensionRequestsListUserSearch),
+        });
       } else {
         interceptedRequest.continue();
       }
     });
 
-    await page.goto('http://localhost:8000/extension-requests');
+    await page.goto(baseUrl);
 
     await page.waitForNetworkIdle();
 
@@ -873,5 +900,42 @@ describe('Tests the Extension Requests Screen', () => {
     await page.waitForNetworkIdle();
     logs = await extensionLogsForFirstER.$$('.log-div');
     expect(Array.from(logs).length).toBe(9);
+  });
+
+  it('Should update page url when filters and usernames are changed', async () => {
+    await page.click('#filter-button');
+    await page.click('input[value="PENDING"]');
+    await page.click('input[value="APPROVED"]');
+    await page.click('#apply-filter-button');
+    await page.type('#assignee-search', 'sunny,randhir');
+    await page.keyboard.press('Enter');
+    await page.waitForNetworkIdle();
+    const url = page.url();
+    expect(url).toBe(
+      `${baseUrl}?order=asc&size=5&q=status%3AAPPROVED%2Cassignee%3Asunny%2Brandhir`,
+    );
+  });
+  it('Should have UI elements in sync with url', async () => {
+    await page.goto(
+      `${baseUrl}/?order=asc&size=5&q=status%3AAPPROVED%2Cassignee%3Asunny%2Brandhir`,
+    );
+    const filterButton = await page.$('#filter-button');
+    await filterButton.click();
+    await page.waitForSelector('.filter-modal');
+    const approvedFilter = await page.$('input[value="APPROVED"]');
+    const currentState = await approvedFilter.getProperty('checked');
+    const isApprovedChecked = await currentState.jsonValue();
+    expect(isApprovedChecked).toBe(true);
+    const searchText = await page.$eval(
+      '#assignee-search',
+      (input) => input.value,
+    );
+    expect(searchText).toBe('sunny,randhir');
+    await page.waitForSelector('.sort-button');
+    const ascSortIconDisplayStyle = await page.$eval(
+      '#asc-sort-icon',
+      (icon) => window.getComputedStyle(icon).display,
+    );
+    expect(ascSortIconDisplayStyle).toBe('block');
   });
 });

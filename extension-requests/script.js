@@ -22,15 +22,18 @@ const state = {
   currentExtensionRequest: null,
 };
 let currentUserDetails;
-const filterStates = {
-  status: Status.PENDING,
-  order: Order.ASCENDING,
-  size: DEFAULT_PAGE_SIZE,
-};
+const filterStates = {};
+let assigneeUsernamesList = [];
 const isDev = params.get('dev') === 'true';
 getSelfUser().then((response) => {
   currentUserDetails = response;
 });
+
+const updateUrl = () => {
+  const states = { ...filterStates };
+  states.assignee = assigneeUsernamesList;
+  window.history.pushState({}, '', generateExtensionRequestParams(states));
+};
 
 const updateFilterStates = (key, value) => {
   filterStates[key] = value;
@@ -51,18 +54,91 @@ const initializeUserMap = (userList) => {
       first_name: user.first_name,
       picture: { url: user.picture?.url },
       id: user.id,
+      username: user.username,
     });
   });
+};
+
+const processUsernames = async (usernames) => {
+  const validUsernameList = [];
+  const userIdList = [];
+  if (!usernames)
+    return {
+      validUsernameList,
+      userIdList,
+    };
+  const usernameList = Array.isArray(usernames)
+    ? usernames
+    : usernames.split(',');
+  const userPromise = [];
+  for (const username of usernameList) {
+    userPromise.push(getUser(username));
+  }
+  const userList = await Promise.all(userPromise);
+  for (const user of userList) {
+    if (user) {
+      validUsernameList.push(user.username);
+      userIdList.push(user.id);
+    }
+  }
+  return { validUsernameList, userIdList };
 };
 const initializeUserStatusMap = (userStatusList) => {
   userStatusList.forEach((status) => {
     userStatusMap.set(status.userId, status);
   });
 };
+
+const updateUIBasedOnFilterStates = () => {
+  const states = { ...filterStates };
+  states.assignee = assigneeUsernamesList;
+  if (states.assignee && states.assignee.length > 0) {
+    searchElement.value = states.assignee.join(',');
+  } else {
+    searchElement.value = '';
+  }
+
+  if (states.order === 'asc') {
+    ascIcon.style.display = 'block';
+    descIcon.style.display = 'none';
+  } else if (states.order === 'desc') {
+    ascIcon.style.display = 'none';
+    descIcon.style.display = 'block';
+  }
+
+  if (
+    states.status &&
+    Array.isArray(states.status) &&
+    states.status.length > 0
+  ) {
+    states.status.forEach((state) => {
+      toggleStatusCheckbox(state);
+    });
+  } else {
+    toggleStatusCheckbox(states.status);
+  }
+};
+
 const render = async () => {
   addTooltipToSortButton();
-  toggleStatusCheckbox(Status.PENDING);
+  if (window.location.search) {
+    parseExtensionRequestParams(window.location.search, filterStates);
+    const usersList = await processUsernames(filterStates.assignee);
+    const userIdList = usersList.userIdList;
+    assigneeUsernamesList = usersList.validUsernameList;
+    const assigneeFilterState = userIdList.length ? userIdList : '';
+    filterStates.assignee = assigneeFilterState;
+    if (!filterStates.order) {
+      filterStates.order = Order.ASCENDING;
+    }
+  } else {
+    filterStates.status = Status.PENDING;
+    filterStates.order = Order.ASCENDING;
+    filterStates.size = DEFAULT_PAGE_SIZE;
+  }
+  updateUIBasedOnFilterStates();
   changeFilter();
+  updateUrl();
   getInDiscordUserList().then((response) => {
     initializeUserMap(response.users);
   });
@@ -125,6 +201,17 @@ const addTooltipToSortButton = () => {
     innerText: `Oldest first`,
   });
   sortButton.appendChild(sortToolTip);
+};
+const getExtensionColor = (deadline, createdTime) => {
+  const wasDeadlineBreached = createdTime > deadline;
+  if (wasDeadlineBreached) {
+    return 'red-text';
+  }
+  const days = Math.floor((deadline - createdTime) / (1000 * 60 * 60 * 24));
+  if (days > 3) {
+    return 'green-text';
+  }
+  return 'orange-text';
 };
 async function populateExtensionRequests(query = {}, newLink) {
   extensionPageVersion++;
@@ -234,6 +321,7 @@ function populateStatus() {
   }
 }
 function toggleStatusCheckbox(statusValue) {
+  if (!statusValue) return;
   const element = document.querySelector(
     `#status-filter input[value=${statusValue}]`,
   );
@@ -256,6 +344,7 @@ applyFilterButton.addEventListener('click', async () => {
   const checkedValuesStatus = getCheckedValues('status-filter');
   changeFilter();
   updateFilterStates('status', checkedValuesStatus);
+  updateUrl();
   await populateExtensionRequests(filterStates);
 });
 clearButton.addEventListener('click', async function () {
@@ -263,6 +352,7 @@ clearButton.addEventListener('click', async function () {
   filterModal.classList.toggle('hidden');
   changeFilter();
   updateFilterStates('status', '');
+  updateUrl();
   await populateExtensionRequests(filterStates);
 });
 filterModal.addEventListener('click', (event) => {
@@ -274,30 +364,24 @@ window.onclick = function () {
 searchElement.addEventListener('keypress', async (event) => {
   if (event.key === 'Enter') {
     const usernames = event.target.value.trim();
+    let userIdList = [];
     if (usernames) {
-      const usernameList = usernames.split(',');
-      const userPromise = [];
-      for (const username of usernameList) {
-        userPromise.push(getUser(username));
-      }
-      const userList = await Promise.all(userPromise);
-      const userIdList = [];
-      for (const user of userList) {
-        if (user) userIdList.push(user.id);
-      }
+      const usersList = await processUsernames(usernames);
+      userIdList = usersList.userIdList;
+      assigneeUsernamesList = usersList.validUsernameList;
       if (userIdList.length === 0) {
         searchElement.setCustomValidity('No users found!');
         searchElement.reportValidity();
         return;
       }
-      updateFilterStates('assignee', userIdList);
-      changeFilter();
-      await populateExtensionRequests(filterStates);
     } else {
-      updateFilterStates('assignee', '');
-      changeFilter();
-      await populateExtensionRequests(filterStates);
+      assigneeUsernamesList = [];
     }
+    const assigneeFilterState = userIdList.length ? userIdList : '';
+    updateFilterStates('assignee', assigneeFilterState);
+    updateUrl();
+    changeFilter();
+    await populateExtensionRequests(filterStates);
   }
 });
 sortButton.addEventListener('click', async (event) => {
@@ -321,6 +405,7 @@ const toggleOrder = () => {
   } else {
     updateFilterStates('order', Order.DESCENDING);
   }
+  updateUrl();
 };
 const toggleSortIcon = () => {
   if (ascIcon.style.display === 'none') {
@@ -358,7 +443,10 @@ async function createExtensionCard(data) {
   const isNewDeadLineCrossed =
     Date.now() > secondsToMilliSeconds(data.newEndsOn);
   const isStatusPending = data.status === Status.PENDING;
-  const wasDeadlineBreached = data.timestamp > data.oldEndsOn;
+  const requestedDaysTextColor = getExtensionColor(
+    secondsToMilliSeconds(data.oldEndsOn),
+    secondsToMilliSeconds(data.timestamp),
+  );
   const extensionDays = dateDiff(
     secondsToMilliSeconds(data.newEndsOn),
     secondsToMilliSeconds(data.oldEndsOn),
@@ -504,9 +592,7 @@ async function createExtensionCard(data) {
   const requestedValue = createElement({
     type: 'span',
     attributes: {
-      class: `requested-day tooltip-container ${
-        wasDeadlineBreached ? 'red-text' : ''
-      }`,
+      class: `requested-day tooltip-container ${requestedDaysTextColor}`,
     },
     innerText: ` ${requestedDaysAgo}`,
   });

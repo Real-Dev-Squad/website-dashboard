@@ -47,11 +47,11 @@ const generateExtensionRequestParams = (nextPageParams) => {
     if (searchQueries.includes(key)) {
       let queryString;
       if (Array.isArray(value)) {
-        queryString = key + ':' + value.join('+');
+        if (value.length) queryString = key + ':' + value.join('+');
       } else {
         queryString = key + ':' + value;
       }
-      queryStringList.push(queryString);
+      if (queryString) queryStringList.push(queryString);
     } else {
       urlSearchParams.append(key, value);
     }
@@ -62,6 +62,29 @@ const generateExtensionRequestParams = (nextPageParams) => {
   const uri = `/extension-requests?${urlSearchParams.toString()}`;
   return uri;
 };
+
+const parseExtensionRequestParams = (uri, nextPageParamsObject) => {
+  const urlSearchParams = new URLSearchParams(uri);
+
+  for (const [key, value] of urlSearchParams.entries()) {
+    if (key === 'q') {
+      const searchQueries = value.split(',');
+      searchQueries.forEach((query) => {
+        if (!query) return;
+        const [queryKey, queryValue] = query.split(':');
+        if (queryValue?.includes('+')) {
+          nextPageParamsObject[queryKey] = queryValue.split('+');
+        } else if (queryValue) {
+          nextPageParamsObject[queryKey] = queryValue;
+        }
+      });
+    } else {
+      nextPageParamsObject[key] = value;
+    }
+  }
+  return nextPageParamsObject;
+};
+
 async function updateExtensionRequest({ id, body, isDev = false }) {
   const url = `${API_BASE_URL}/extension-requests/${id}${
     isDev ? `?dev=true` : ''

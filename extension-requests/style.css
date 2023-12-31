@@ -27,6 +27,8 @@
   --blue-color-heading: #041187;
   --white-gray: #f2f2f3;
   --color-red: #ae1820;
+  --color-green: rgba(0, 128, 0, 0.8);
+  --color-warn: rgba(199, 129, 18, 0.8);
 }
 
 *,
@@ -747,7 +749,12 @@ body {
 .red-text {
   color: var(--red-color);
 }
-
+.green-text {
+  color: var(--color-green);
+}
+.orange-text {
+  color: var(--color-warn);
+}
 @-webkit-keyframes spin {
   0% {
     -webkit-transform: rotate(0deg);
