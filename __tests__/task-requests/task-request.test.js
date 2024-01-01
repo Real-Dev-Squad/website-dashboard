@@ -28,9 +28,8 @@ describe('Task Requests', () => {
     page.on('request', (request) => {
       if (
         request.url() === `${API_BASE_URL}/taskRequests` ||
-        request.url() === `${API_BASE_URL}/taskRequests?dev=true` ||
         request.url() ===
-          `${API_BASE_URL}/taskRequests?size=20&q=status%3Apending+sort%3Acreated-asc&dev=true`
+          `${API_BASE_URL}/taskRequests?size=20&q=status%3Apending+sort%3Acreated-asc`
       ) {
         request.respond({
           status: 200,
@@ -44,7 +43,7 @@ describe('Task Requests', () => {
         });
       } else if (
         request.url() ===
-        `${API_BASE_URL}/taskRequests?size=20&q=status%3Aapproved++sort%3Acreated-asc&dev=true`
+        `${API_BASE_URL}/taskRequests?size=20&q=status%3Aapproved++sort%3Acreated-asc`
       ) {
         const list = [];
         for (let i = 0; i < 20; i++) {
@@ -55,7 +54,7 @@ describe('Task Requests', () => {
           contentType: 'application/json',
           body: JSON.stringify({
             data: list,
-            next: '/taskRequests?size=20&q=status%3Aapproved++sort%3Acreated-asc&dev=true',
+            next: '/taskRequests?size=20&q=status%3Aapproved++sort%3Acreated-asc',
           }),
         });
       } else {
