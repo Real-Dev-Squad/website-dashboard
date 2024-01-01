@@ -199,7 +199,7 @@ describe('Home Page', () => {
     await taskRequestsButton.click();
     await page.waitForNetworkIdle();
     const newUrl = page.url();
-    expect(newUrl).toContain('/taskRequests');
+    expect(newUrl).toContain('/task-requests');
   });
   it('should call the right api endpoint when Sync External Accounts button is clicked', async () => {
     let isRightUrlCalled = false;
