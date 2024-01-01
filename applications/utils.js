@@ -20,29 +20,39 @@ async function getApplications({ applicationStatus, size = 5, next = '' }) {
     url = `${BASE_URL}/applications?size=${size}&status=${applicationStatus}`;
   }
 
-  const res = await fetch(url, {
-    method: 'GET',
-    credentials: 'include',
-    headers: {
-      'Content-type': 'application/json',
-    },
-  });
-  const data = res.json();
-  return data;
+  try {
+    const res = await fetch(url, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+    const data = res.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    const errorMessage = error?.message || 'Something went wrong!';
+    showToast({ message: errorMessage, type: 'error' });
+  }
 }
 
 async function getIsSuperUser() {
-  const res = await fetch(`${BASE_URL}/users/self`, {
-    method: 'GET',
-    credentials: 'include',
-    headers: {
-      'Content-type': 'application/json',
-    },
-  });
-
-  const self_user = await res.json();
-  console.log(self_user, 'self');
-  return self_user?.roles['super_user'];
+  try {
+    const res = await fetch(`${BASE_URL}/users/self`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+    const self_user = await res.json();
+    return self_user?.roles['super_user'];
+  } catch (error) {
+    console.error(error);
+    const errorMessage = error?.message || 'Something went wrong!';
+    showToast({ message: errorMessage, type: 'error' });
+  }
 }
 
 async function updateApplication({ applicationPayload, applicationId }) {
