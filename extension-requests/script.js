@@ -25,6 +25,7 @@ let currentUserDetails;
 const filterStates = {};
 let assigneeUsernamesList = [];
 const isDev = params.get('dev') === 'true';
+
 getSelfUser().then((response) => {
   currentUserDetails = response;
 });
@@ -38,6 +39,7 @@ const updateUrl = () => {
 const updateFilterStates = (key, value) => {
   filterStates[key] = value;
 };
+
 const getUser = async (username) => {
   username = username?.toLowerCase();
   if (userMap.has(username)) {
@@ -48,6 +50,7 @@ const getUser = async (username) => {
     return user;
   }
 };
+
 const initializeUserMap = (userList) => {
   userList.forEach((user) => {
     userMap.set(user?.username?.toLowerCase(), {
@@ -83,6 +86,7 @@ const processUsernames = async (usernames) => {
   }
   return { validUsernameList, userIdList };
 };
+
 const initializeUserStatusMap = (userStatusList) => {
   userStatusList.forEach((status) => {
     userStatusMap.set(status.userId, status);
@@ -148,21 +152,26 @@ const render = async () => {
   await populateExtensionRequests(filterStates);
   addIntersectionObserver();
 };
+
 const addIntersectionObserver = () => {
   intersectionObserver.observe(lastElementContainer);
 };
+
 const removeIntersectionObserver = () => {
   intersectionObserver.unobserve(lastElementContainer);
 };
+
 const changeFilter = () => {
   nextLink = '';
   extensionRequestsContainer.innerHTML = '';
 };
+
 const statusChange = () => {
   nextLink = '';
   extensionRequestsContainer.innerHTML = '';
   addIntersectionObserver();
 };
+
 const initializeAccordions = () => {
   let accordionList = document.querySelectorAll('.accordion.uninitialized');
   let i;
@@ -181,9 +190,11 @@ const initializeAccordions = () => {
     });
   }
 };
+
 const updateAccordionHeight = (element) => {
   element.style.maxHeight = element.scrollHeight + 'px';
 };
+
 const closeAllAccordions = () => {
   let accordionsList = document.querySelectorAll('.accordion.active');
   for (let i = 0; i < accordionsList.length; i++) {
@@ -194,6 +205,7 @@ const closeAllAccordions = () => {
     }
   }
 };
+
 const addTooltipToSortButton = () => {
   const sortToolTip = createElement({
     type: 'span',
@@ -202,6 +214,7 @@ const addTooltipToSortButton = () => {
   });
   sortButton.appendChild(sortToolTip);
 };
+
 const getExtensionColor = (deadline, createdTime) => {
   const wasDeadlineBreached = createdTime > deadline;
   if (wasDeadlineBreached) {
@@ -213,6 +226,7 @@ const getExtensionColor = (deadline, createdTime) => {
   }
   return 'orange-text';
 };
+
 async function populateExtensionRequests(query = {}, newLink) {
   extensionPageVersion++;
   const currentVersion = extensionPageVersion;
@@ -240,6 +254,7 @@ async function populateExtensionRequests(query = {}, newLink) {
     }
   }
 }
+
 const intersectionObserver = new IntersectionObserver(async (entries) => {
   if (!nextLink) {
     return;
@@ -248,14 +263,17 @@ const intersectionObserver = new IntersectionObserver(async (entries) => {
     await populateExtensionRequests({}, nextLink);
   }
 });
+
 function handleSuccess(element) {
   element.classList.add('green-card');
   setTimeout(() => element.classList.remove('green-card'), 1000);
 }
+
 function handleFailure(element) {
   element.classList.add('red-card');
   setTimeout(() => element.classList.remove('red-card'), 1000);
 }
+
 async function removeCard(element, style) {
   element.classList.add(style);
   await addDelay(800);
@@ -297,6 +315,7 @@ async function removeCard(element, style) {
     addEmptyPageMessage(extensionRequestsContainer);
   }
 }
+
 function addCheckbox(labelText, value, groupName) {
   const group = document.getElementById(groupName);
   const label = document.createElement('label');
@@ -309,6 +328,7 @@ function addCheckbox(labelText, value, groupName) {
   label.appendChild(document.createElement('br'));
   group.appendChild(label);
 }
+
 function populateStatus() {
   const statusList = [
     { name: 'Approved', id: 'APPROVED' },
@@ -320,6 +340,7 @@ function populateStatus() {
     addCheckbox(name, id, 'status-filter');
   }
 }
+
 function toggleStatusCheckbox(statusValue) {
   if (!statusValue) return;
   const element = document.querySelector(
@@ -327,18 +348,21 @@ function toggleStatusCheckbox(statusValue) {
   );
   element.checked = !element.checked;
 }
+
 function clearCheckboxes(groupName) {
   const checkboxes = document.querySelectorAll(`input[name="${groupName}"]`);
   checkboxes.forEach((cb) => {
     cb.checked = false;
   });
 }
+
 function getCheckedValues(groupName) {
   const checkboxes = document.querySelectorAll(
     `input[name="${groupName}"]:checked`,
   );
   return Array.from(checkboxes).map((cb) => cb.value);
 }
+
 applyFilterButton.addEventListener('click', async () => {
   filterModal.classList.toggle('hidden');
   const checkedValuesStatus = getCheckedValues('status-filter');
@@ -347,6 +371,7 @@ applyFilterButton.addEventListener('click', async () => {
   updateUrl();
   await populateExtensionRequests(filterStates);
 });
+
 clearButton.addEventListener('click', async function () {
   clearCheckboxes('status-filter');
   filterModal.classList.toggle('hidden');
@@ -355,12 +380,15 @@ clearButton.addEventListener('click', async function () {
   updateUrl();
   await populateExtensionRequests(filterStates);
 });
+
 filterModal.addEventListener('click', (event) => {
   event.stopPropagation();
 });
+
 window.onclick = function () {
   filterModal.classList.add('hidden');
 };
+
 searchElement.addEventListener('keypress', async (event) => {
   if (event.key === 'Enter') {
     const usernames = event.target.value.trim();
@@ -384,6 +412,7 @@ searchElement.addEventListener('keypress', async (event) => {
     await populateExtensionRequests(filterStates);
   }
 });
+
 sortButton.addEventListener('click', async (event) => {
   toggleTooltipText();
   toggleSortIcon();
@@ -391,6 +420,7 @@ sortButton.addEventListener('click', async (event) => {
   changeFilter();
   await populateExtensionRequests(filterStates);
 });
+
 const toggleTooltipText = () => {
   const tooltip = sortButton.querySelector('.tooltip');
   if (tooltip.textContent === OLDEST_FIRST) {
@@ -399,6 +429,7 @@ const toggleTooltipText = () => {
     tooltip.textContent = OLDEST_FIRST;
   }
 };
+
 const toggleOrder = () => {
   if (filterStates.order === Order.DESCENDING) {
     updateFilterStates('order', Order.ASCENDING);
@@ -407,6 +438,7 @@ const toggleOrder = () => {
   }
   updateUrl();
 };
+
 const toggleSortIcon = () => {
   if (ascIcon.style.display === 'none') {
     descIcon.style.display = 'none';
@@ -421,11 +453,15 @@ filterButton.addEventListener('click', (event) => {
   event.stopPropagation();
   filterModal.classList.toggle('hidden');
 });
+
 populateStatus();
+
 render();
+
 const handleFormPropagation = async (event) => {
   event.preventDefault();
 };
+
 async function createExtensionCard(data) {
   renderLogRecord[data.id] = [];
   //Create card element
