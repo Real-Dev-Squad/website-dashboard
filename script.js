@@ -19,8 +19,7 @@ const syncIdle7dUsersUpdate = document.getElementById(
 );
 const repoSyncStatusUpdate = document.getElementById(SYNC_REPO_STATUS_UPDATE);
 const params = new URLSearchParams(window.location.search);
-const taskRequestsLink =
-  params.get('dev') === 'true' && document.getElementById(TASK_REQUESTS_LINK);
+const taskRequestsLink = document.getElementById(TASK_REQUESTS_LINK);
 
 const syncNicknamesStatusUpdate = document.getElementById(
   SYNC_NICKNAMES_STATUS_UPDATE,
