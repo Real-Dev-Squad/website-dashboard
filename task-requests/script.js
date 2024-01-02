@@ -21,7 +21,6 @@ let isDataLoading = false;
 let selectedSortButton = null;
 
 const filterStates = {
-  dev: true,
   status: Status.PENDING,
   order: CREATED_TIME,
   size: DEFAULT_PAGE_SIZE,
@@ -98,7 +97,7 @@ function getRemainingCount(requestors) {
   }
 }
 function openTaskDetails(id) {
-  const url = new URL(`/taskRequests/details`, window.location.href);
+  const url = new URL(`/task-requests/details`, window.location.href);
 
   url.searchParams.append('id', id);
   window.location.href = url;
