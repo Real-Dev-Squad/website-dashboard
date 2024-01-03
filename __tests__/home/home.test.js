@@ -186,20 +186,20 @@ describe('Home Page', () => {
     expect(syncExternalAccountsUpdate).toBeTruthy();
   });
   it('should display the task requests button', async () => {
-    await page.goto('http://localhost:8000/?dev=true');
+    await page.goto('http://localhost:8000');
     await page.waitForNetworkIdle();
     const taskRequestsButton = await page.$('#task-requests-link');
     expect(taskRequestsButton).toBeTruthy();
   });
   it('should go to the task requests page', async () => {
-    await page.goto('http://localhost:8000/?dev=true');
+    await page.goto('http://localhost:8000');
     await page.waitForNetworkIdle();
 
     const taskRequestsButton = await page.$('#task-requests-link');
     await taskRequestsButton.click();
     await page.waitForNetworkIdle();
     const newUrl = page.url();
-    expect(newUrl).toContain('/taskRequests');
+    expect(newUrl).toContain('/task-requests');
   });
   it('should call the right api endpoint when Sync External Accounts button is clicked', async () => {
     let isRightUrlCalled = false;

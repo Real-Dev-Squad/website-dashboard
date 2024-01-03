@@ -30,7 +30,7 @@ describe('Task request details page', () => {
       }
     });
     await page.goto(
-      'http://localhost:8000/taskRequests/details/?id=dM5wwD9QsiTzi7eG7Oq5',
+      'http://localhost:8000/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq5',
     );
   });
 
@@ -123,7 +123,7 @@ describe('Task request details page with status creation', () => {
       }
     });
     await page.goto(
-      'http://localhost:8000/taskRequests/details/?id=uC0IUpkFMx393XjnKx4w',
+      'http://localhost:8000/task-requests/details/?id=uC0IUpkFMx393XjnKx4w',
     );
   });
 
