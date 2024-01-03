@@ -65,10 +65,7 @@ if (searchValue) {
 }
 //User Data
 const userSelfData = await getUserSelf();
-if (userSelfData) {
-  const signInButton = document.querySelector('.sign-in-btn');
-  signInButton.style.display = 'none';
-}
+
 let UserGroupData = await getUserGroupRoles();
 
 /**
@@ -101,9 +98,13 @@ const createAuthorDetailsDOM = (firstName, lastName, imageUrl) => {
  * GET SELF DATA
  */
 const IsUserVerified = !!userSelfData.discordId;
-const IsUserArchived = userSelfData.roles.archived;
-if (!IsUserVerified || IsUserArchived) {
-  userIsNotVerifiedText.classList.remove('hidden');
+const IsUserArchived = userSelfData?.roles?.archived;
+if (userSelfData.statusCode !== 401) {
+  const signInButton = document.querySelector('.sign-in-btn');
+  signInButton.style.display = 'none';
+  if (!IsUserVerified || IsUserArchived) {
+    userIsNotVerifiedText.classList.remove('hidden');
+  }
 }
 const memberAddRoleBody = {
   userid: userSelfData?.discordId,
