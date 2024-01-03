@@ -103,8 +103,8 @@ const updateUIBasedOnFilterStates = () => {
   }
 
   if (states.order === 'asc') {
-    ascIcon.style.display = 'block';
     descIcon.style.display = 'none';
+    ascIcon.style.display = 'block';
   } else if (states.order === 'desc') {
     ascIcon.style.display = 'none';
     descIcon.style.display = 'block';

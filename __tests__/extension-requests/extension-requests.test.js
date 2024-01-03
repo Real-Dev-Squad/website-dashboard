@@ -33,7 +33,7 @@ describe('Tests the Extension Requests Screen', () => {
 
   beforeAll(async () => {
     browser = await puppeteer.launch({
-      headless: false,
+      headless: 'new',
       ignoreHTTPSErrors: true,
       args: ['--incognito', '--disable-web-security'],
       devtools: false,

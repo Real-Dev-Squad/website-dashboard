@@ -63,6 +63,24 @@ const generateExtensionRequestParams = (nextPageParams) => {
   return uri;
 };
 
+/**
+ * Parses the query parameters from a URL and stores them in the provided object.
+ *
+ * @param {string} uri - The URI string containing the query parameters.
+ * @param {Object} nextPageParamsObject - The object in which the parsed parameters will be stored.
+ * @returns {Object} The updated `nextPageParamsObject` containing the parsed parameters.
+ *
+ * @example
+ * let params = {};
+ * parseExtensionRequestParams("/?order=asc&size=5&q=status:APPROVED,assignee:sunny+randhir", params);
+ * // params will be updated to:
+ * // {
+ * //   order: "asc",
+ * //   size: "5",
+ * //   status: "APPROVED",
+ * //   assignee: ["sunny", "randhir"]
+ * // }
+ */
 const parseExtensionRequestParams = (uri, nextPageParamsObject) => {
   const urlSearchParams = new URLSearchParams(uri);
 

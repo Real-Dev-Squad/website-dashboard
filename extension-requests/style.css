@@ -76,6 +76,7 @@
 .external-link:hover {
   text-decoration: none;
   color: var(--dark-gray);
+  transition-delay: 300ms;
 }
 .task-title {
   border: 0.5px solid var(--light-gray-color);
