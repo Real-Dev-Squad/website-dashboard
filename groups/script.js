@@ -15,7 +15,6 @@ import {
   getUserGroupRoles,
   getSearchValueFromURL,
 } from './utils.js';
-const groupTabs = document.querySelector('.groups-tab');
 const tabs = document.querySelectorAll('.Header_link');
 const sections = document.querySelectorAll('.manage-groups, .create-group');
 const loader = document.querySelector('.backdrop');
@@ -127,7 +126,6 @@ const renderGroups = () => {
     const formattedRoleName = removeGroupKeywordFromDiscordRoleName(
       item.rolename,
     );
-
     //If searchValue present, filter out the list
     if (searchValue) {
       group.style.display = formattedRoleName

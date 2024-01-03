@@ -458,7 +458,7 @@ NOT VERIFIED TEXT ABOVE
 @media (max-width: 650px) {
   .btn-add-role {
     position: static;
-    min-width: 20rem;
+    min-width: 21rem;
   }
   .manage-groups main {
     padding: unset;
@@ -477,6 +477,6 @@ NOT VERIFIED TEXT ABOVE
   }
 
   .search_container {
-    min-width: 92%;
+    min-width: 80%;
   }
 }

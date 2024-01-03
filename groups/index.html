@@ -12,6 +12,7 @@
     <script src="/constants.js"></script>
     <script type="module" src="/groups/script.js" defer></script>
   </head>
+
   <body>
     <nav id="tasksNav">
       <div class="logo">
@@ -98,19 +99,12 @@
         </div>
 
         <div>
-          <aside class="groups">
-            <div class="groups-search hidden">
-              <input
-                type="text"
-                id="search-groups"
-                placeholder="Search for groups"
-              />
-            </div>
+          <main class="groups">
             <ul class="groups-list"></ul>
-          </aside>
-          <main class="hidden">
-            <h2 id="no-results-message">No results found.</h2>
           </main>
+          <div>
+            <h2 id="no-results-message">No results found.</h2>
+          </div>
         </div>
         <button class="btn btn-add-role" disabled>Add me to this group</button>
       </div>
