@@ -228,6 +228,7 @@
 
 .btn-add-role {
   margin: 5px;
+  min-width: 40rem;
 }
 
 #no-results-message {
@@ -332,10 +333,6 @@ NOT VERIFIED TEXT ABOVE
   border-right: 0.3rem solid transparent;
   border-top: 0.3rem solid;
   margin-left: 0.5rem;
-}
-
-.container_width {
-  min-width: 40rem;
 }
 
 .Header_header__NLhag {
@@ -460,6 +457,7 @@ NOT VERIFIED TEXT ABOVE
 @media (max-width: 650px) {
   .btn-add-role {
     position: static;
+    min-width: 20rem;
   }
   .manage-groups main {
     padding: unset;
@@ -476,9 +474,7 @@ NOT VERIFIED TEXT ABOVE
   .groups-list li {
     min-width: auto;
   }
-  .container_width {
-    min-width: 20rem;
-  }
+
   .search_container {
     min-width: 92%;
   }
