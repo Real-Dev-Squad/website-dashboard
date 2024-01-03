@@ -335,12 +335,13 @@ NOT VERIFIED TEXT ABOVE
   margin-left: 0.5rem;
 }
 
-.Header_header__NLhag {
+.sub_menu {
   padding-top: 0.6rem;
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
   align-items: center;
+  margin: 0 2rem;
   border-bottom: 1px solid var(--toastify-text-color-light);
 }
 

@@ -53,72 +53,68 @@
       <div class="backdrop hidden">
         <div class="loader"></div>
       </div>
-      <div style="margin: 0 2rem">
-        <div class="Header_header__NLhag">
-          <a
-            ><button
-              type="button"
-              tabindex="0"
-              class="
-                Header_link Header_link__vertical
-                Header_active
-                manage-groups-tab
-              "
-            >
-              Manage Groups
-            </button></a
+      <div class="sub_menu">
+        <a
+          ><button
+            type="button"
+            tabindex="0"
+            class="
+              Header_link Header_link__vertical
+              Header_active
+              manage-groups-tab
+            "
           >
-          <a
-            ><button
-              type="button"
-              tabindex="0"
-              class="Header_link create-groups-tab"
-            >
-              Create Groups
-            </button></a
+            Manage Groups
+          </button></a
+        >
+        <a
+          ><button
+            type="button"
+            tabindex="0"
+            class="Header_link create-groups-tab"
           >
-        </div>
-        <div class="groups_container manage-groups">
-          <div class="search_container">
-            <div class="filter_ccontainer hidden" id="dropdown_container">
-              <div class="tasksearch_filter-button__Lr_GZ" id="sortby_text">
-                Sort by
-              </div>
-              <div id="dropdown_main" class="dropdown-content">
-                <a data-list="1">Popular within dev</a>
-                <a data-list="2">Recently created</a>
-                <a data-list="3">Recently used</a>
-              </div>
+            Create Groups
+          </button></a
+        >
+      </div>
+      <div class="groups_container manage-groups">
+        <div class="search_container">
+          <div class="filter_ccontainer hidden" id="dropdown_container">
+            <div class="tasksearch_filter-button__Lr_GZ" id="sortby_text">
+              Sort by
             </div>
-            <input
-              class="groups-search-input groups-search-input"
-              id="search-groups"
-              data-testid="search-input"
-              type="text"
-              placeholder="Search for groups"
-              spellcheck="false"
-            />
+            <div id="dropdown_main" class="dropdown-content">
+              <a data-list="1">Popular within dev</a>
+              <a data-list="2">Recently created</a>
+              <a data-list="3">Recently used</a>
+            </div>
           </div>
-
-          <div>
-            <aside class="groups">
-              <div class="groups-search hidden">
-                <input
-                  type="text"
-                  id="search-groups"
-                  placeholder="Search for groups"
-                />
-              </div>
-              <ul class="groups-list"></ul>
-            </aside>
-            <main class="hidden">
-              <h2 id="no-results-message">No results found.</h2>
-            </main>
-          </div>
-          <button class="btn btn-add-role" disabled>
-            Add me to this group
-          </button>
+          <input
+            class="groups-search-input groups-search-input"
+            id="search-groups"
+            data-testid="search-input"
+            type="text"
+            placeholder="Search for groups"
+            spellcheck="false"
+          />
         </div>
+
+        <div>
+          <aside class="groups">
+            <div class="groups-search hidden">
+              <input
+                type="text"
+                id="search-groups"
+                placeholder="Search for groups"
+              />
+            </div>
+            <ul class="groups-list"></ul>
+          </aside>
+          <main class="hidden">
+            <h2 id="no-results-message">No results found.</h2>
+          </main>
+        </div>
+        <button class="btn btn-add-role" disabled>Add me to this group</button>
       </div>
 
       <div class="toaster-container">
