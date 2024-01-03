@@ -6,12 +6,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="/images/index.ico" type="image/x-icon" />
     <title>Discord Groups | Real Dev Squad</title>
+    <link rel="stylesheet" href="/style.css" />
     <link rel="stylesheet" href="/global.css" />
     <link rel="stylesheet" href="/groups/style.css" />
     <script src="/constants.js"></script>
     <script type="module" src="/groups/script.js" defer></script>
   </head>
   <body>
+    <nav id="tasksNav">
+      <div class="logo">
+        <a href="/index.html">
+          <img src="/images/Real-Dev-Squad@1x.png" alt="logo" />
+        </a>
+      </div>
+      <div class="nav-links">
+        <div class="hamburger">
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+        </div>
+        <div class="links">
+          <a href="https://welcome.realdevsquad.com/">Welcome</a>
+          <a href="https://www.realdevsquad.com/events">Events</a>
+          <a href="https://members.realdevsquad.com/">Members</a>
+          <a href="https://status.realdevsquad.com/tasks">Status</a>
+        </div>
+      </div>
+      <div class="sign-in-btn">
+        <button id="github_auth">
+          Sign In <span>With GitHub</span>
+          <img src="/images/github.png" class="user-avatar" />
+        </button>
+      </div>
+      <div class="user-info">
+        <span id="user-name"></span>
+        <span>
+          <img id="user-img" src="" alt="" />
+        </span>
+      </div>
+      <div id="dropdown"></div>
+    </nav>
     <h3 class="not-verified-tag hidden">
       Cannot use RDS Discord features as you are not verified
     </h3>
@@ -19,37 +53,74 @@
       <div class="backdrop hidden">
         <div class="loader"></div>
       </div>
-      <nav class="groups-tab">
-        <div class="manage-groups-tab active-tab tab">Manage Groups</div>
-        <div class="create-groups-tab tab">Create Groups</div>
-      </nav>
-      <div class="manage-groups">
-        <aside class="groups">
-          <div class="groups-search">
+      <div style="margin: 0 2rem">
+        <div class="Header_header__NLhag">
+          <a
+            ><button
+              type="button"
+              tabindex="0"
+              class="
+                Header_link Header_link__vertical
+                Header_active
+                manage-groups-tab
+              "
+            >
+              Manage Groups
+            </button></a
+          >
+          <a
+            ><button
+              type="button"
+              tabindex="0"
+              class="Header_link create-groups-tab"
+            >
+              Create Groups
+            </button></a
+          >
+        </div>
+        <div class="groups_container manage-groups">
+          <div class="search_container">
+            <div class="filter_ccontainer hidden" id="dropdown_container">
+              <div class="tasksearch_filter-button__Lr_GZ" id="sortby_text">
+                Sort by
+              </div>
+              <div id="dropdown_main" class="dropdown-content">
+                <a data-list="1">Popular within dev</a>
+                <a data-list="2">Recently created</a>
+                <a data-list="3">Recently used</a>
+              </div>
+            </div>
             <input
-              type="text"
-              class="groups-search-input"
+              class="groups-search-input groups-search-input"
               id="search-groups"
+              data-testid="search-input"
+              type="text"
               placeholder="Search for groups"
+              spellcheck="false"
             />
           </div>
-          <ul class="groups-list"></ul>
-        </aside>
-        <main>
-          <div class="dropdown hidden" id="dropdown_container">
-            <button class="task_filter-button" id="sortby_text">Sort by</button>
-            <div id="dropdown_main" class="dropdown-content">
-              <a data-list="1">Popular within dev</a>
-              <a data-list="2">Recently created</a>
-              <a data-list="3">Recently used</a>
-            </div>
+
+          <div>
+            <aside class="groups">
+              <div class="groups-search hidden">
+                <input
+                  type="text"
+                  id="search-groups"
+                  placeholder="Search for groups"
+                />
+              </div>
+              <ul class="groups-list"></ul>
+            </aside>
+            <main class="hidden">
+              <h2 id="no-results-message">No results found.</h2>
+            </main>
           </div>
-          <button class="btn btn-add-role" disabled>
+          <button class="btn btn-add-role container_width" disabled>
             Add me to this group
           </button>
-          <h2 id="no-results-message">No results found.</h2>
-        </main>
+        </div>
       </div>
+
       <div class="toaster-container">
         <div id="toaster" class="toaster-message hidden"></div>
       </div>

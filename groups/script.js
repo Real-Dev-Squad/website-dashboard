@@ -16,7 +16,7 @@ import {
   getSearchValueFromURL,
 } from './utils.js';
 const groupTabs = document.querySelector('.groups-tab');
-const tabs = document.querySelectorAll('.groups-tab div');
+const tabs = document.querySelectorAll('.Header_link');
 const sections = document.querySelectorAll('.manage-groups, .create-group');
 const loader = document.querySelector('.backdrop');
 const userIsNotVerifiedText = document.querySelector('.not-verified-tag');
@@ -24,7 +24,27 @@ const params = new URLSearchParams(window.location.search);
 const searchValue = getSearchValueFromURL();
 const isDev = params.get(DEV_FEATURE_FLAG) === 'true';
 const dropdownContainer = document.getElementById('dropdown_container');
+const githubAuth = document.getElementById('github_auth');
+function goToAuthPage() {
+  const authUrl = `https://github.com/login/oauth/authorize?client_id=23c78f66ab7964e5ef97&}&state=${window.location.href}`;
 
+  window.open(authUrl, '_self');
+}
+
+const hamburgerDiv = document.querySelector('.hamburger');
+const navLinks = document.querySelector('.links');
+let toggle = true;
+
+hamburgerDiv.addEventListener('click', function () {
+  if (toggle) {
+    navLinks.classList.add('active');
+    toggle = false;
+  } else {
+    navLinks.classList.remove('active');
+    toggle = true;
+  }
+});
+githubAuth.addEventListener('click', goToAuthPage);
 //Dropdown
 const dropdownMain = document.getElementById('dropdown_main');
 const dropdownTxt = document.getElementById('sortby_text');
@@ -45,6 +65,10 @@ if (searchValue) {
 }
 //User Data
 const userSelfData = await getUserSelf();
+if (userSelfData) {
+  const signInButton = document.querySelector('.sign-in-btn');
+  signInButton.style.display = 'none';
+}
 let UserGroupData = await getUserGroupRoles();
 
 /**
@@ -190,6 +214,13 @@ tabs?.forEach((tab, index) => {
     sections.forEach((section) => {
       section.classList.add('hidden');
     });
+    tabs.forEach((t) => {
+      if (t.classList.contains('Header_active')) {
+        t.classList.remove('Header_active');
+      } else {
+        t.classList.add('Header_active');
+      }
+    });
     sections[index].classList.remove('hidden');
   });
 });
@@ -197,12 +228,6 @@ tabs?.forEach((tab, index) => {
 /**
  * FOR CHANGING TABS
  */
-groupTabs.addEventListener('click', (e) => {
-  tabs.forEach((tab) => {
-    tab.classList?.remove('active-tab');
-  });
-  if (e.target.nodeName !== 'NAV') e.target?.classList?.add('active-tab');
-});
 function isRoleIdInData(data, targetRoleId) {
   // Use the some() method to check if any element in data.groups has a matching roleId
   return data.groups.some((group) => group.roleId === targetRoleId);
