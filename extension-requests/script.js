@@ -274,8 +274,8 @@ function handleFailure(element) {
   setTimeout(() => element.classList.remove('red-card'), 1000);
 }
 
-async function removeCard(element, style) {
-  element.classList.add(style);
+async function removeCard(element, elementClass) {
+  element.classList.add(elementClass);
   await addDelay(800);
   element.style.overflow = 'hidden';
   element
