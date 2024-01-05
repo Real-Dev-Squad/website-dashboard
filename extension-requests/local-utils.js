@@ -236,10 +236,31 @@ function dateTimeString(milliseconds) {
   ).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 }
 
+/**
+  Generates a formatted date string from milliseconds.*
+  @param {number} milliseconds - The number of milliseconds since January 1, 1970 00:00:00 UTC.
+  @returns {string} The formatted date string in the format 'YYYY-MM-DD'.
+  
+*/
+function dateString(milliseconds) {
+  const date = new Date(milliseconds);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+    2,
+    '0',
+  )}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
 const fullDateString = (timestamp) => {
-  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const date = new Date(timestamp);
-  return `${daysOfWeek[date.getDay()]}, ${date.toLocaleString()}`;
+  const options = {
+    weekday: 'short',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true,
+  };
+  return new Intl.DateTimeFormat('en-US', options).format(new Date(timestamp));
 };
 
 const shortDateString = (timestamp) => {

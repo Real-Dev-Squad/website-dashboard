@@ -361,6 +361,31 @@ describe('Tests the Extension Requests Screen', () => {
     expect(extensionCardsList.length).toBe(4);
     expect(extensionRequestsElement).toBeTruthy();
   });
+  it('Should contain all dates elements', async () => {
+    const checkContainer = async (containerId) => {
+      const textExists = await page.$eval(
+        `${containerId} .card-row-text`,
+        (el) => !!el,
+      );
+      const valueExists = await page.$eval(
+        `${containerId} .tooltip-container`,
+        (el) => !!el,
+      );
+      const tooltipExists = await page.$eval(
+        `${containerId} .tooltip`,
+        (el) => !!el,
+      );
+
+      expect(textExists).toBeTruthy();
+      expect(valueExists).toBeTruthy();
+      expect(tooltipExists).toBeTruthy();
+    };
+
+    await checkContainer('#deadline-container');
+    await checkContainer('#requested-time-container');
+    await checkContainer('#new-deadline-container');
+    await checkContainer('#extension-container');
+  });
 
   it('checks the search functionality', async () => {
     await page.type('#assignee-search', 'sunny');
@@ -511,14 +536,14 @@ describe('Tests the Extension Requests Screen', () => {
       '.extension-card:first-child .panel',
     );
     const firstAccordionIsVisible = await firstAccordionContent.evaluate(
-      (el) => el.style.display === 'block',
+      (el) => el.style.maxHeight !== '',
     );
     expect(firstAccordionIsVisible).toBe(true);
 
     await firstAccordionButton.click();
 
     const firstAccordionIsHidden = await firstAccordionContent.evaluate(
-      (el) => el.style.display !== 'block',
+      (el) => el.style.maxHeight === '',
     );
     expect(firstAccordionIsHidden).toBe(true);
   });
@@ -630,7 +655,7 @@ describe('Tests the Extension Requests Screen', () => {
     await page.$eval('.title-text-input', (el) => (el.value = ''));
     await page.type('.title-text-input', newTitle);
 
-    const newDate = '2023-09-19T22:20';
+    const newDate = '2023-09-19';
     await page.evaluate((newDate) => {
       document.querySelector('.date-input').value = newDate;
     }, newDate);
@@ -668,7 +693,7 @@ describe('Tests the Extension Requests Screen', () => {
     const newTitle = 'New Title Text';
     await page.type('.title-text-input', newTitle);
 
-    const newDate = '2023-09-19T22:20';
+    const newDate = '2023-09-19';
     await page.evaluate((newDate) => {
       document.querySelector('.date-input').value = newDate;
     }, newDate);
@@ -823,7 +848,7 @@ describe('Tests the Extension Requests Screen', () => {
     // Click the first element with class '.edit-button'
     await page.$$eval('.edit-button', (buttons) => buttons[0].click());
     const newTitle = 'This is a new title test case';
-    const newDate = '2024-09-19T22:20';
+    const newDate = '2024-09-19';
     const newReason = 'This is the new reason';
 
     // Updating all the input fields
