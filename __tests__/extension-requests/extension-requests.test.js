@@ -46,7 +46,9 @@ describe('Tests the Extension Requests Screen', () => {
       const url = interceptedRequest.url();
       if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?order=asc&size=5&q=status%3APENDING'
+          'https://api.realdevsquad.com/extension-requests?order=asc&size=5&q=status%3APENDING' ||
+        url ===
+          'https://api.realdevsquad.com/extension-requests?dev=true&order=asc'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -276,7 +278,9 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?order=asc&size=5&q=status%3AAPPROVED%2BPENDING%2BDENIED'
+          'https://api.realdevsquad.com/extension-requests?order=asc&size=5&q=status%3AAPPROVED%2BPENDING%2BDENIED' ||
+        url ===
+          'https://api.realdevsquad.com/extension-requests?dev=true&order=asc&q=status%3AAPPROVED%2BDENIED'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -826,7 +830,7 @@ describe('Tests the Extension Requests Screen', () => {
     const cardNumber1Value = await extensionRequestNumberContainer[1].evaluate(
       (node) => node.textContent,
     );
-    expect(cardNumber1Value).toBe('5');
+    expect(cardNumber1Value).toBe('#5');
   });
 
   test('Default Request Number to 1 if requestNumber field is missing in API Response', async () => {
@@ -843,7 +847,7 @@ describe('Tests the Extension Requests Screen', () => {
     const cardNumber2Value = await extensionRequestNumberContainer[3].evaluate(
       (node) => node.textContent,
     );
-    expect(cardNumber2Value).toBe('1');
+    expect(cardNumber2Value).toBe('#1');
   });
 
   it('Validating if audit logs are being generated in realtime', async () => {
