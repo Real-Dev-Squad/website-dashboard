@@ -85,6 +85,10 @@ function openApplicationDetails(application) {
     id: application.id,
     applicationDetails: [
       {
+        title: 'Status',
+        description: application.status,
+      },
+      {
         title: 'Introduction',
         description: application.intro.introduction,
       },
