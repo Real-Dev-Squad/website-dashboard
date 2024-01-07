@@ -22,19 +22,24 @@ const state = {
   currentExtensionRequest: null,
 };
 let currentUserDetails;
-const filterStates = {
-  status: Status.PENDING,
-  order: Order.ASCENDING,
-  size: DEFAULT_PAGE_SIZE,
-};
+const filterStates = {};
+let assigneeUsernamesList = [];
 const isDev = params.get('dev') === 'true';
+
 getSelfUser().then((response) => {
   currentUserDetails = response;
 });
 
+const updateUrl = () => {
+  const states = { ...filterStates };
+  states.assignee = assigneeUsernamesList;
+  window.history.pushState({}, '', generateExtensionRequestParams(states));
+};
+
 const updateFilterStates = (key, value) => {
   filterStates[key] = value;
 };
+
 const getUser = async (username) => {
   username = username?.toLowerCase();
   if (userMap.has(username)) {
@@ -45,24 +50,99 @@ const getUser = async (username) => {
     return user;
   }
 };
+
 const initializeUserMap = (userList) => {
   userList.forEach((user) => {
     userMap.set(user?.username?.toLowerCase(), {
       first_name: user.first_name,
       picture: { url: user.picture?.url },
       id: user.id,
+      username: user.username,
     });
   });
 };
+
+const processUsernames = async (usernames) => {
+  const validUsernameList = [];
+  const userIdList = [];
+  if (!usernames)
+    return {
+      validUsernameList,
+      userIdList,
+    };
+  const usernameList = Array.isArray(usernames)
+    ? usernames
+    : usernames.split(',');
+  const userPromise = [];
+  for (const username of usernameList) {
+    userPromise.push(getUser(username));
+  }
+  const userList = await Promise.all(userPromise);
+  for (const user of userList) {
+    if (user) {
+      validUsernameList.push(user.username);
+      userIdList.push(user.id);
+    }
+  }
+  return { validUsernameList, userIdList };
+};
+
 const initializeUserStatusMap = (userStatusList) => {
   userStatusList.forEach((status) => {
     userStatusMap.set(status.userId, status);
   });
 };
+
+const updateUIBasedOnFilterStates = () => {
+  const states = { ...filterStates };
+  states.assignee = assigneeUsernamesList;
+  if (states.assignee && states.assignee.length > 0) {
+    searchElement.value = states.assignee.join(',');
+  } else {
+    searchElement.value = '';
+  }
+
+  if (states.order === 'asc') {
+    descIcon.style.display = 'none';
+    ascIcon.style.display = 'block';
+  } else if (states.order === 'desc') {
+    ascIcon.style.display = 'none';
+    descIcon.style.display = 'block';
+  }
+
+  if (
+    states.status &&
+    Array.isArray(states.status) &&
+    states.status.length > 0
+  ) {
+    states.status.forEach((state) => {
+      toggleStatusCheckbox(state);
+    });
+  } else {
+    toggleStatusCheckbox(states.status);
+  }
+};
+
 const render = async () => {
   addTooltipToSortButton();
-  toggleStatusCheckbox(Status.PENDING);
+  if (window.location.search) {
+    parseExtensionRequestParams(window.location.search, filterStates);
+    const usersList = await processUsernames(filterStates.assignee);
+    const userIdList = usersList.userIdList;
+    assigneeUsernamesList = usersList.validUsernameList;
+    const assigneeFilterState = userIdList.length ? userIdList : '';
+    filterStates.assignee = assigneeFilterState;
+    if (!filterStates.order) {
+      filterStates.order = Order.ASCENDING;
+    }
+  } else {
+    filterStates.status = Status.PENDING;
+    filterStates.order = Order.ASCENDING;
+    filterStates.size = DEFAULT_PAGE_SIZE;
+  }
+  updateUIBasedOnFilterStates();
   changeFilter();
+  updateUrl();
   getInDiscordUserList().then((response) => {
     initializeUserMap(response.users);
   });
@@ -72,21 +152,26 @@ const render = async () => {
   await populateExtensionRequests(filterStates);
   addIntersectionObserver();
 };
+
 const addIntersectionObserver = () => {
   intersectionObserver.observe(lastElementContainer);
 };
+
 const removeIntersectionObserver = () => {
   intersectionObserver.unobserve(lastElementContainer);
 };
+
 const changeFilter = () => {
   nextLink = '';
   extensionRequestsContainer.innerHTML = '';
 };
+
 const statusChange = () => {
   nextLink = '';
   extensionRequestsContainer.innerHTML = '';
   addIntersectionObserver();
 };
+
 const initializeAccordions = () => {
   let accordionList = document.querySelectorAll('.accordion.uninitialized');
   let i;
@@ -105,9 +190,11 @@ const initializeAccordions = () => {
     });
   }
 };
+
 const updateAccordionHeight = (element) => {
   element.style.maxHeight = element.scrollHeight + 'px';
 };
+
 const closeAllAccordions = () => {
   let accordionsList = document.querySelectorAll('.accordion.active');
   for (let i = 0; i < accordionsList.length; i++) {
@@ -118,6 +205,7 @@ const closeAllAccordions = () => {
     }
   }
 };
+
 const addTooltipToSortButton = () => {
   const sortToolTip = createElement({
     type: 'span',
@@ -126,6 +214,19 @@ const addTooltipToSortButton = () => {
   });
   sortButton.appendChild(sortToolTip);
 };
+
+const getExtensionColor = (deadline, createdTime) => {
+  const wasDeadlineBreached = createdTime > deadline;
+  if (wasDeadlineBreached) {
+    return 'red-text';
+  }
+  const days = Math.floor((deadline - createdTime) / (1000 * 60 * 60 * 24));
+  if (days > 3) {
+    return 'green-text';
+  }
+  return 'orange-text';
+};
+
 async function populateExtensionRequests(query = {}, newLink) {
   extensionPageVersion++;
   const currentVersion = extensionPageVersion;
@@ -153,6 +254,7 @@ async function populateExtensionRequests(query = {}, newLink) {
     }
   }
 }
+
 const intersectionObserver = new IntersectionObserver(async (entries) => {
   if (!nextLink) {
     return;
@@ -161,14 +263,17 @@ const intersectionObserver = new IntersectionObserver(async (entries) => {
     await populateExtensionRequests({}, nextLink);
   }
 });
+
 function handleSuccess(element) {
   element.classList.add('green-card');
   setTimeout(() => element.classList.remove('green-card'), 1000);
 }
+
 function handleFailure(element) {
   element.classList.add('red-card');
   setTimeout(() => element.classList.remove('red-card'), 1000);
 }
+
 async function removeCard(element, elementClass) {
   element.classList.add(elementClass);
   await addDelay(800);
@@ -210,6 +315,7 @@ async function removeCard(element, elementClass) {
     addEmptyPageMessage(extensionRequestsContainer);
   }
 }
+
 function addCheckbox(labelText, value, groupName) {
   const group = document.getElementById(groupName);
   const label = document.createElement('label');
@@ -222,6 +328,7 @@ function addCheckbox(labelText, value, groupName) {
   label.appendChild(document.createElement('br'));
   group.appendChild(label);
 }
+
 function populateStatus() {
   const statusList = [
     { name: 'Approved', id: 'APPROVED' },
@@ -233,73 +340,79 @@ function populateStatus() {
     addCheckbox(name, id, 'status-filter');
   }
 }
+
 function toggleStatusCheckbox(statusValue) {
+  if (!statusValue) return;
   const element = document.querySelector(
     `#status-filter input[value=${statusValue}]`,
   );
   element.checked = !element.checked;
 }
+
 function clearCheckboxes(groupName) {
   const checkboxes = document.querySelectorAll(`input[name="${groupName}"]`);
   checkboxes.forEach((cb) => {
     cb.checked = false;
   });
 }
+
 function getCheckedValues(groupName) {
   const checkboxes = document.querySelectorAll(
     `input[name="${groupName}"]:checked`,
   );
   return Array.from(checkboxes).map((cb) => cb.value);
 }
+
 applyFilterButton.addEventListener('click', async () => {
   filterModal.classList.toggle('hidden');
   const checkedValuesStatus = getCheckedValues('status-filter');
   changeFilter();
   updateFilterStates('status', checkedValuesStatus);
+  updateUrl();
   await populateExtensionRequests(filterStates);
 });
+
 clearButton.addEventListener('click', async function () {
   clearCheckboxes('status-filter');
   filterModal.classList.toggle('hidden');
   changeFilter();
   updateFilterStates('status', '');
+  updateUrl();
   await populateExtensionRequests(filterStates);
 });
+
 filterModal.addEventListener('click', (event) => {
   event.stopPropagation();
 });
+
 window.onclick = function () {
   filterModal.classList.add('hidden');
 };
+
 searchElement.addEventListener('keypress', async (event) => {
   if (event.key === 'Enter') {
     const usernames = event.target.value.trim();
+    let userIdList = [];
     if (usernames) {
-      const usernameList = usernames.split(',');
-      const userPromise = [];
-      for (const username of usernameList) {
-        userPromise.push(getUser(username));
-      }
-      const userList = await Promise.all(userPromise);
-      const userIdList = [];
-      for (const user of userList) {
-        if (user) userIdList.push(user.id);
-      }
+      const usersList = await processUsernames(usernames);
+      userIdList = usersList.userIdList;
+      assigneeUsernamesList = usersList.validUsernameList;
       if (userIdList.length === 0) {
         searchElement.setCustomValidity('No users found!');
         searchElement.reportValidity();
         return;
       }
-      updateFilterStates('assignee', userIdList);
-      changeFilter();
-      await populateExtensionRequests(filterStates);
     } else {
-      updateFilterStates('assignee', '');
-      changeFilter();
-      await populateExtensionRequests(filterStates);
+      assigneeUsernamesList = [];
     }
+    const assigneeFilterState = userIdList.length ? userIdList : '';
+    updateFilterStates('assignee', assigneeFilterState);
+    updateUrl();
+    changeFilter();
+    await populateExtensionRequests(filterStates);
   }
 });
+
 sortButton.addEventListener('click', async (event) => {
   toggleTooltipText();
   toggleSortIcon();
@@ -307,6 +420,7 @@ sortButton.addEventListener('click', async (event) => {
   changeFilter();
   await populateExtensionRequests(filterStates);
 });
+
 const toggleTooltipText = () => {
   const tooltip = sortButton.querySelector('.tooltip');
   if (tooltip.textContent === OLDEST_FIRST) {
@@ -315,13 +429,16 @@ const toggleTooltipText = () => {
     tooltip.textContent = OLDEST_FIRST;
   }
 };
+
 const toggleOrder = () => {
   if (filterStates.order === Order.DESCENDING) {
     updateFilterStates('order', Order.ASCENDING);
   } else {
     updateFilterStates('order', Order.DESCENDING);
   }
+  updateUrl();
 };
+
 const toggleSortIcon = () => {
   if (ascIcon.style.display === 'none') {
     descIcon.style.display = 'none';
@@ -336,11 +453,15 @@ filterButton.addEventListener('click', (event) => {
   event.stopPropagation();
   filterModal.classList.toggle('hidden');
 });
+
 populateStatus();
+
 render();
+
 const handleFormPropagation = async (event) => {
   event.preventDefault();
 };
+
 async function createExtensionCard(data) {
   renderLogRecord[data.id] = [];
   //Create card element
@@ -358,7 +479,10 @@ async function createExtensionCard(data) {
   const isNewDeadLineCrossed =
     Date.now() > secondsToMilliSeconds(data.newEndsOn);
   const isStatusPending = data.status === Status.PENDING;
-  const wasDeadlineBreached = data.timestamp > data.oldEndsOn;
+  const requestedDaysTextColor = getExtensionColor(
+    secondsToMilliSeconds(data.oldEndsOn),
+    secondsToMilliSeconds(data.timestamp),
+  );
   const extensionDays = dateDiff(
     secondsToMilliSeconds(data.newEndsOn),
     secondsToMilliSeconds(data.oldEndsOn),
@@ -504,9 +628,7 @@ async function createExtensionCard(data) {
   const requestedValue = createElement({
     type: 'span',
     attributes: {
-      class: `requested-day tooltip-container ${
-        wasDeadlineBreached ? 'red-text' : ''
-      }`,
+      class: `requested-day tooltip-container ${requestedDaysTextColor}`,
     },
     innerText: ` ${requestedDaysAgo}`,
   });
@@ -625,7 +747,7 @@ async function createExtensionCard(data) {
   const extensionRequestNumberValue = createElement({
     type: 'span',
     attributes: { class: 'extension-request-number' },
-    innerText: `${requestNumber}`,
+    innerText: `#${requestNumber}`,
   });
   extensionRequestNumberContainer.appendChild(extensionRequestNumberValue);
   const cardAssigneeButtonContainer = createElement({
