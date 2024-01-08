@@ -1,8 +1,6 @@
 const puppeteer = require('puppeteer');
 const { allUsersData } = require('../../mock-data/users');
 const { discordGroups, GroupRoleData } = require('../../mock-data/groups');
-const params = new URLSearchParams(window.location.search);
-const isDev = params.get(DEV_FEATURE_FLAG) === 'true';
 
 const BASE_URL = 'https://api.realdevsquad.com';
 
@@ -213,6 +211,7 @@ describe('Discord Groups Page', () => {
   });
 
   test('Should decrease user count by one when user is removed from group', async () => {
+    await page.goto('http://localhost:8000/groups/?dev=true');
     await page.$$eval('.group-role', (elements) => {
       elements[1].click();
     });
@@ -236,9 +235,7 @@ describe('Discord Groups Page', () => {
     });
 
     // Now, check the user count
-    isDev
-      ? expect(Number(newUserCount)).toBe(Number(oldUserCount - 1))
-      : expect(Number(newUserCount)).toBe(Number(oldUserCount));
+    expect(Number(newUserCount)).toBe(Number(oldUserCount - 1));
   });
 
   test('Should show role deleted', async () => {
