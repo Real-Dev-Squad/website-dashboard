@@ -23,8 +23,12 @@
   --secondary10: #fff0f6;
   --secondary600: #b6004e;
   --medium-gray: #aeaeae;
+  --dark-gray: #737373;
   --blue-color-heading: #041187;
   --white-gray: #f2f2f3;
+  --color-red: #ae1820;
+  --color-green: rgba(0, 128, 0, 0.8);
+  --color-warn: rgba(199, 129, 18, 0.8);
 }
 
 *,
@@ -69,6 +73,11 @@
   color: var(--medium-gray);
 }
 
+.external-link:hover {
+  text-decoration: none;
+  color: var(--dark-gray);
+  transition-delay: 300ms;
+}
 .task-title {
   border: 0.5px solid var(--light-gray-color);
   border-radius: 5px;
@@ -176,14 +185,17 @@
 }
 
 .update-button {
-  background: none;
-  max-height: 2rem;
-  border-radius: 6px;
+  width: 6.25rem;
+  height: 2rem;
   background-color: var(--green10);
+  border-radius: 6px;
   border: 1px solid var(--green500);
   color: var(--green500);
-  font-size: 0.7rem;
   transition: 200ms ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
 }
 
 .update-button:hover {
@@ -192,14 +204,17 @@
 }
 
 .cancel-button {
-  background: none;
-  max-height: 2rem;
+  width: 6.25rem;
+  height: 2rem;
+  background-color: transparent;
   border-radius: 6px;
-  font-size: 0.7rem;
-  background-color: var(--secondary10);
   border: 1px solid var(--secondary600);
   color: var(--secondary600);
   transition: 200ms ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
 }
 
 .cancel-button:hover {
@@ -210,7 +225,8 @@
 .update-wrapper {
   display: flex;
   width: auto;
-  gap: 2px;
+  gap: 0.5rem;
+  margin-right: 2.5rem;
 }
 
 .task-details-container,
@@ -282,7 +298,9 @@
 
 .panel {
   background-color: var(--white-gray);
-  display: none;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease-out;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
 }
@@ -566,13 +584,13 @@ body {
   display: none;
 }
 
-.success-card {
+.green-card {
   opacity: 1;
   border: 1px solid var(--green-color);
   background-color: var(--green-transparent);
 }
 
-.failed-card {
+.red-card {
   opacity: 1;
   border: 1px solid var(--red-color);
   background-color: var(--red-transparent);
@@ -722,10 +740,22 @@ body {
   align-items: center;
   justify-content: space-between;
   position: relative;
+  height: 1.6rem;
 }
 .disabled {
   opacity: 0.5;
   pointer-events: none;
+}
+
+.red-text {
+  color: var(--red-color);
+}
+
+.green-text {
+  color: var(--color-green);
+}
+.orange-text {
+  color: var(--color-warn);
 }
 
 @-webkit-keyframes spin {
