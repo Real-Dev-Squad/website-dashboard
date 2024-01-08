@@ -22,19 +22,24 @@ const state = {
   currentExtensionRequest: null,
 };
 let currentUserDetails;
-const filterStates = {
-  status: Status.PENDING,
-  order: Order.ASCENDING,
-  size: DEFAULT_PAGE_SIZE,
-};
+const filterStates = {};
+let assigneeUsernamesList = [];
 const isDev = params.get('dev') === 'true';
+
 getSelfUser().then((response) => {
   currentUserDetails = response;
 });
 
+const updateUrl = () => {
+  const states = { ...filterStates };
+  states.assignee = assigneeUsernamesList;
+  window.history.pushState({}, '', generateExtensionRequestParams(states));
+};
+
 const updateFilterStates = (key, value) => {
   filterStates[key] = value;
 };
+
 const getUser = async (username) => {
   username = username?.toLowerCase();
   if (userMap.has(username)) {
@@ -45,24 +50,99 @@ const getUser = async (username) => {
     return user;
   }
 };
+
 const initializeUserMap = (userList) => {
   userList.forEach((user) => {
     userMap.set(user?.username?.toLowerCase(), {
       first_name: user.first_name,
       picture: { url: user.picture?.url },
       id: user.id,
+      username: user.username,
     });
   });
 };
+
+const processUsernames = async (usernames) => {
+  const validUsernameList = [];
+  const userIdList = [];
+  if (!usernames)
+    return {
+      validUsernameList,
+      userIdList,
+    };
+  const usernameList = Array.isArray(usernames)
+    ? usernames
+    : usernames.split(',');
+  const userPromise = [];
+  for (const username of usernameList) {
+    userPromise.push(getUser(username));
+  }
+  const userList = await Promise.all(userPromise);
+  for (const user of userList) {
+    if (user) {
+      validUsernameList.push(user.username);
+      userIdList.push(user.id);
+    }
+  }
+  return { validUsernameList, userIdList };
+};
+
 const initializeUserStatusMap = (userStatusList) => {
   userStatusList.forEach((status) => {
     userStatusMap.set(status.userId, status);
   });
 };
+
+const updateUIBasedOnFilterStates = () => {
+  const states = { ...filterStates };
+  states.assignee = assigneeUsernamesList;
+  if (states.assignee && states.assignee.length > 0) {
+    searchElement.value = states.assignee.join(',');
+  } else {
+    searchElement.value = '';
+  }
+
+  if (states.order === 'asc') {
+    descIcon.style.display = 'none';
+    ascIcon.style.display = 'block';
+  } else if (states.order === 'desc') {
+    ascIcon.style.display = 'none';
+    descIcon.style.display = 'block';
+  }
+
+  if (
+    states.status &&
+    Array.isArray(states.status) &&
+    states.status.length > 0
+  ) {
+    states.status.forEach((state) => {
+      toggleStatusCheckbox(state);
+    });
+  } else {
+    toggleStatusCheckbox(states.status);
+  }
+};
+
 const render = async () => {
   addTooltipToSortButton();
-  toggleStatusCheckbox(Status.PENDING);
+  if (window.location.search) {
+    parseExtensionRequestParams(window.location.search, filterStates);
+    const usersList = await processUsernames(filterStates.assignee);
+    const userIdList = usersList.userIdList;
+    assigneeUsernamesList = usersList.validUsernameList;
+    const assigneeFilterState = userIdList.length ? userIdList : '';
+    filterStates.assignee = assigneeFilterState;
+    if (!filterStates.order) {
+      filterStates.order = Order.ASCENDING;
+    }
+  } else {
+    filterStates.status = Status.PENDING;
+    filterStates.order = Order.ASCENDING;
+    filterStates.size = DEFAULT_PAGE_SIZE;
+  }
+  updateUIBasedOnFilterStates();
   changeFilter();
+  updateUrl();
   getInDiscordUserList().then((response) => {
     initializeUserMap(response.users);
   });
@@ -72,21 +152,26 @@ const render = async () => {
   await populateExtensionRequests(filterStates);
   addIntersectionObserver();
 };
+
 const addIntersectionObserver = () => {
   intersectionObserver.observe(lastElementContainer);
 };
+
 const removeIntersectionObserver = () => {
   intersectionObserver.unobserve(lastElementContainer);
 };
+
 const changeFilter = () => {
   nextLink = '';
   extensionRequestsContainer.innerHTML = '';
 };
+
 const statusChange = () => {
   nextLink = '';
   extensionRequestsContainer.innerHTML = '';
   addIntersectionObserver();
 };
+
 const initializeAccordions = () => {
   let accordionList = document.querySelectorAll('.accordion.uninitialized');
   let i;
@@ -96,8 +181,8 @@ const initializeAccordions = () => {
       handleFormPropagation(event);
       this.classList.toggle('active');
       let panel = this.nextElementSibling;
-      if (panel.style.display) {
-        panel.style.display = null;
+      if (panel.style.maxHeight) {
+        panel.style.maxHeight = null;
       } else {
         closeAllAccordions();
         updateAccordionHeight(panel);
@@ -105,19 +190,22 @@ const initializeAccordions = () => {
     });
   }
 };
+
 const updateAccordionHeight = (element) => {
-  element.style.display = 'block';
+  element.style.maxHeight = element.scrollHeight + 'px';
 };
+
 const closeAllAccordions = () => {
   let accordionsList = document.querySelectorAll('.accordion.active');
   for (let i = 0; i < accordionsList.length; i++) {
     let panel = accordionsList[i].nextElementSibling;
-    if (panel.style.display) {
-      accordionsList[i]?.classList.remove('active');
-      panel.style.display = null;
+    if (panel.style.maxHeight) {
+      accordionsList[i].classList.remove('active');
+      panel.style.maxHeight = null;
     }
   }
 };
+
 const addTooltipToSortButton = () => {
   const sortToolTip = createElement({
     type: 'span',
@@ -126,6 +214,19 @@ const addTooltipToSortButton = () => {
   });
   sortButton.appendChild(sortToolTip);
 };
+
+const getExtensionColor = (deadline, createdTime) => {
+  const wasDeadlineBreached = createdTime > deadline;
+  if (wasDeadlineBreached) {
+    return 'red-text';
+  }
+  const days = Math.floor((deadline - createdTime) / (1000 * 60 * 60 * 24));
+  if (days > 3) {
+    return 'green-text';
+  }
+  return 'orange-text';
+};
+
 async function populateExtensionRequests(query = {}, newLink) {
   extensionPageVersion++;
   const currentVersion = extensionPageVersion;
@@ -153,6 +254,7 @@ async function populateExtensionRequests(query = {}, newLink) {
     }
   }
 }
+
 const intersectionObserver = new IntersectionObserver(async (entries) => {
   if (!nextLink) {
     return;
@@ -161,24 +263,59 @@ const intersectionObserver = new IntersectionObserver(async (entries) => {
     await populateExtensionRequests({}, nextLink);
   }
 });
+
 function handleSuccess(element) {
-  element.classList.add('success-card');
-  setTimeout(() => element.classList.remove('success-card'), 1000);
+  element.classList.add('green-card');
+  setTimeout(() => element.classList.remove('green-card'), 1000);
 }
+
 function handleFailure(element) {
-  element.classList.add('failed-card');
-  setTimeout(() => element.classList.remove('failed-card'), 1000);
+  element.classList.add('red-card');
+  setTimeout(() => element.classList.remove('red-card'), 1000);
 }
-async function removeCard(element) {
-  element.classList.add('success-card');
+
+async function removeCard(element, elementClass) {
+  element.classList.add(elementClass);
   await addDelay(800);
-  element.classList.add('fade-out');
-  await addDelay(800);
-  element.remove();
+  element.style.overflow = 'hidden';
+  element
+    .animate(
+      [
+        {
+          height: `${element.scrollHeight}px`,
+          opacity: 1,
+        },
+        {
+          height: `${Math.round(element.scrollHeight * 0.5)}px`,
+          opacity: 0.2,
+        },
+        {
+          height: `${Math.round(element.scrollHeight * 0.2)}px`,
+          opacity: 0,
+          margin: 0,
+          padding: '1rem',
+        },
+        {
+          height: 0,
+          opacity: 0,
+          margin: 0,
+          padding: 0,
+        },
+      ],
+      {
+        duration: 800,
+        easing: 'ease-out',
+      },
+    )
+    .addEventListener('finish', () => {
+      element.style.overflow = '';
+      element.remove();
+    });
   if (extensionRequestsContainer.innerHTML === '') {
     addEmptyPageMessage(extensionRequestsContainer);
   }
 }
+
 function addCheckbox(labelText, value, groupName) {
   const group = document.getElementById(groupName);
   const label = document.createElement('label');
@@ -191,6 +328,7 @@ function addCheckbox(labelText, value, groupName) {
   label.appendChild(document.createElement('br'));
   group.appendChild(label);
 }
+
 function populateStatus() {
   const statusList = [
     { name: 'Approved', id: 'APPROVED' },
@@ -202,73 +340,79 @@ function populateStatus() {
     addCheckbox(name, id, 'status-filter');
   }
 }
+
 function toggleStatusCheckbox(statusValue) {
+  if (!statusValue) return;
   const element = document.querySelector(
     `#status-filter input[value=${statusValue}]`,
   );
   element.checked = !element.checked;
 }
+
 function clearCheckboxes(groupName) {
   const checkboxes = document.querySelectorAll(`input[name="${groupName}"]`);
   checkboxes.forEach((cb) => {
     cb.checked = false;
   });
 }
+
 function getCheckedValues(groupName) {
   const checkboxes = document.querySelectorAll(
     `input[name="${groupName}"]:checked`,
   );
   return Array.from(checkboxes).map((cb) => cb.value);
 }
+
 applyFilterButton.addEventListener('click', async () => {
   filterModal.classList.toggle('hidden');
   const checkedValuesStatus = getCheckedValues('status-filter');
   changeFilter();
   updateFilterStates('status', checkedValuesStatus);
+  updateUrl();
   await populateExtensionRequests(filterStates);
 });
+
 clearButton.addEventListener('click', async function () {
   clearCheckboxes('status-filter');
   filterModal.classList.toggle('hidden');
   changeFilter();
   updateFilterStates('status', '');
+  updateUrl();
   await populateExtensionRequests(filterStates);
 });
+
 filterModal.addEventListener('click', (event) => {
   event.stopPropagation();
 });
+
 window.onclick = function () {
   filterModal.classList.add('hidden');
 };
+
 searchElement.addEventListener('keypress', async (event) => {
   if (event.key === 'Enter') {
     const usernames = event.target.value.trim();
+    let userIdList = [];
     if (usernames) {
-      const usernameList = usernames.split(',');
-      const userPromise = [];
-      for (const username of usernameList) {
-        userPromise.push(getUser(username));
-      }
-      const userList = await Promise.all(userPromise);
-      const userIdList = [];
-      for (const user of userList) {
-        if (user) userIdList.push(user.id);
-      }
+      const usersList = await processUsernames(usernames);
+      userIdList = usersList.userIdList;
+      assigneeUsernamesList = usersList.validUsernameList;
       if (userIdList.length === 0) {
         searchElement.setCustomValidity('No users found!');
         searchElement.reportValidity();
         return;
       }
-      updateFilterStates('assignee', userIdList);
-      changeFilter();
-      await populateExtensionRequests(filterStates);
     } else {
-      updateFilterStates('assignee', '');
-      changeFilter();
-      await populateExtensionRequests(filterStates);
+      assigneeUsernamesList = [];
     }
+    const assigneeFilterState = userIdList.length ? userIdList : '';
+    updateFilterStates('assignee', assigneeFilterState);
+    updateUrl();
+    changeFilter();
+    await populateExtensionRequests(filterStates);
   }
 });
+
 sortButton.addEventListener('click', async (event) => {
   toggleTooltipText();
   toggleSortIcon();
@@ -276,6 +420,7 @@ sortButton.addEventListener('click', async (event) => {
   changeFilter();
   await populateExtensionRequests(filterStates);
 });
+
 const toggleTooltipText = () => {
   const tooltip = sortButton.querySelector('.tooltip');
   if (tooltip.textContent === OLDEST_FIRST) {
@@ -284,13 +429,16 @@ const toggleTooltipText = () => {
     tooltip.textContent = OLDEST_FIRST;
   }
 };
+
 const toggleOrder = () => {
   if (filterStates.order === Order.DESCENDING) {
     updateFilterStates('order', Order.ASCENDING);
   } else {
     updateFilterStates('order', Order.DESCENDING);
   }
+  updateUrl();
 };
+
 const toggleSortIcon = () => {
   if (ascIcon.style.display === 'none') {
     descIcon.style.display = 'none';
@@ -305,11 +453,15 @@ filterButton.addEventListener('click', (event) => {
   event.stopPropagation();
   filterModal.classList.toggle('hidden');
 });
+
 populateStatus();
+
 render();
+
 const handleFormPropagation = async (event) => {
   event.preventDefault();
 };
+
 async function createExtensionCard(data) {
   renderLogRecord[data.id] = [];
   //Create card element
@@ -324,6 +476,13 @@ async function createExtensionCard(data) {
   const userDataPromise = getUser(data.assignee);
   const taskDataPromise = getTaskDetails(data.taskId);
   const isDeadLineCrossed = Date.now() > secondsToMilliSeconds(data.oldEndsOn);
+  const isNewDeadLineCrossed =
+    Date.now() > secondsToMilliSeconds(data.newEndsOn);
+  const isStatusPending = data.status === Status.PENDING;
+  const requestedDaysTextColor = getExtensionColor(
+    secondsToMilliSeconds(data.oldEndsOn),
+    secondsToMilliSeconds(data.timestamp),
+  );
   const extensionDays = dateDiff(
     secondsToMilliSeconds(data.newEndsOn),
     secondsToMilliSeconds(data.oldEndsOn),
@@ -332,6 +491,11 @@ async function createExtensionCard(data) {
     Date.now(),
     secondsToMilliSeconds(data.oldEndsOn),
     (d) => d + (isDeadLineCrossed ? ' ago' : ''),
+  );
+  const newDeadlineDays = dateDiff(
+    Date.now(),
+    secondsToMilliSeconds(data.newEndsOn),
+    (d) => d + (isNewDeadLineCrossed ? ' ago' : ''),
   );
   const requestedDaysAgo = dateDiff(
     Date.now(),
@@ -423,18 +587,25 @@ async function createExtensionCard(data) {
     attributes: { class: 'details-line' },
   });
   detailsContainer.appendChild(detailsLine);
-  const deadlineContainer = createElement({ type: 'div' });
+  const deadlineContainer = createElement({
+    type: 'div',
+    attributes: { id: 'deadline-container' },
+  });
   taskDetailsContainer.appendChild(deadlineContainer);
   const deadlineText = createElement({
     type: 'span',
     attributes: { class: 'card-row-text' },
-    innerText: `Deadline${isDeadLineCrossed ? ': ' : ' in: '}`,
+    innerText: `Deadline${isDeadLineCrossed ? ' ' : ' in '}`,
   });
   deadlineContainer.appendChild(deadlineText);
   const deadlineValue = createElement({
     type: 'span',
     innerText: `${deadlineDays}`,
-    attributes: { class: 'tooltip-container' },
+    attributes: {
+      class: `tooltip-container ${
+        isDeadLineCrossed && isStatusPending ? 'red-text' : ''
+      }`,
+    },
   });
   deadlineContainer.appendChild(deadlineValue);
   const deadlineTooltip = createElement({
@@ -443,12 +614,37 @@ async function createExtensionCard(data) {
     innerText: `${fullDateString(secondsToMilliSeconds(data.oldEndsOn))}`,
   });
   deadlineValue.appendChild(deadlineTooltip);
+  const requestedContainer = createElement({
+    type: 'div',
+    attributes: { id: 'requested-time-container' },
+  });
+  taskDetailsContainer.appendChild(requestedContainer);
+  const requestedText = createElement({
+    type: 'span',
+    attributes: { class: 'card-row-text' },
+    innerText: 'Requested ',
+  });
+  requestedContainer.appendChild(requestedText);
+  const requestedValue = createElement({
+    type: 'span',
+    attributes: {
+      class: `requested-day tooltip-container ${requestedDaysTextColor}`,
+    },
+    innerText: ` ${requestedDaysAgo}`,
+  });
+  const requestedToolTip = createElement({
+    type: 'span',
+    attributes: { class: 'tooltip' },
+    innerText: `${fullDateString(secondsToMilliSeconds(data.timestamp))}`,
+  });
+  requestedValue.appendChild(requestedToolTip);
+  requestedContainer.appendChild(requestedValue);
   const taskStatusContainer = createElement({ type: 'div' });
   taskDetailsContainer.appendChild(taskStatusContainer);
   const taskStatusText = createElement({
     type: 'span',
     attributes: { class: 'card-row-text' },
-    innerText: 'Task status:',
+    innerText: 'Task status ',
   });
   taskStatusContainer.appendChild(taskStatusText);
   const taskStatusValue = createElement({
@@ -476,92 +672,84 @@ async function createExtensionCard(data) {
     attributes: { class: 'details-line' },
   });
   datesDetailsContainer.appendChild(extensionDetailsLine);
-
-  //Added it for displaying extension request number
-  if (params.get('dev') === 'true') {
-    const extensionRequestNumberContainer = createElement({ type: 'div' });
-    datesContainer.appendChild(extensionRequestNumberContainer);
-
-    const extensionRequestNumber = createElement({
-      type: 'span',
-      attributes: { class: 'card-row-text extension-request-number' },
-      innerText: 'Request No.:  ',
-    });
-    extensionRequestNumberContainer.appendChild(extensionRequestNumber);
-
-    //Since previous extensions does not contain requestNumber field
-    const requestNumber = data.requestNumber || 1;
-
-    const extensionRequestNumberValue = createElement({
-      type: 'span',
-      attributes: { class: 'extension-request-number' },
-      innerText: `${requestNumber}`,
-    });
-    extensionRequestNumberContainer.appendChild(extensionRequestNumberValue);
-  }
-
+  const newDeadlineContainer = createElement({
+    type: 'div',
+    attributes: { id: 'new-deadline-container' },
+  });
+  datesContainer.appendChild(newDeadlineContainer);
+  const newDeadlineText = createElement({
+    type: 'span',
+    attributes: { class: 'card-row-text' },
+    innerText: `New deadline${isNewDeadLineCrossed ? ' ' : ' in '}`,
+  });
+  newDeadlineContainer.appendChild(newDeadlineText);
+  const newDeadlineValue = createElement({
+    type: 'span',
+    attributes: { class: 'requested-day tooltip-container' },
+    innerText: ` ${newDeadlineDays}`,
+  });
+  const newDeadlineToolTip = createElement({
+    type: 'span',
+    attributes: { class: 'tooltip' },
+    innerText: `${fullDateString(secondsToMilliSeconds(data.newEndsOn))}`,
+  });
+  newDeadlineValue.appendChild(newDeadlineToolTip);
+  newDeadlineContainer.appendChild(newDeadlineValue);
   const extensionForContainer = createElement({
     type: 'div',
+    attributes: { id: 'extension-container' },
   });
   datesContainer.appendChild(extensionForContainer);
   const extensionForText = createElement({
     type: 'span',
     attributes: { class: 'card-row-text' },
-    innerText: 'New Deadline:',
+    innerText: 'Extend by ',
   });
   extensionForContainer.appendChild(extensionForText);
-  const extensionInValue = createElement({
-    type: 'span',
-    attributes: { class: 'card-row-text-small' },
-    innerText: ` (in ${extensionDays})`,
-  });
+
   const extensionForValue = createElement({
     type: 'span',
     attributes: { class: 'tooltip-container' },
-    innerText: ` ${shortDateString(secondsToMilliSeconds(data.newEndsOn))}`,
+    innerText: ` +${extensionDays}`,
   });
   const extensionToolTip = createElement({
     type: 'span',
     attributes: { class: 'tooltip' },
-    innerText: `${fullDateString(secondsToMilliSeconds(data.newEndsOn))}`,
+    innerText: fullDateString(secondsToMilliSeconds(data.newEndsOn)),
   });
   extensionForValue.appendChild(extensionToolTip);
   const extensionInput = createElement({
     type: 'input',
     attributes: {
       class: 'date-input hidden',
-      type: 'datetime-local',
+      type: 'date',
       name: 'newEndsOn',
       id: 'newEndsOn',
       oninput: 'this.blur()',
-      value: dateTimeString(secondsToMilliSeconds(data.newEndsOn)),
+      value: dateString(secondsToMilliSeconds(data.newEndsOn)),
     },
   });
-  extensionForContainer.appendChild(extensionInput);
+  newDeadlineContainer.appendChild(extensionInput);
   extensionForContainer.appendChild(extensionForValue);
-  extensionForContainer.appendChild(extensionInValue);
-  const requestedContainer = createElement({
-    type: 'div',
-  });
-  datesContainer.appendChild(requestedContainer);
-  const requestedText = createElement({
+
+  const extensionRequestNumberContainer = createElement({ type: 'div' });
+  datesContainer.appendChild(extensionRequestNumberContainer);
+
+  const extensionRequestNumber = createElement({
     type: 'span',
-    attributes: { class: 'card-row-text' },
-    innerText: 'Requested:',
+    attributes: { class: 'card-row-text extension-request-number' },
+    innerText: 'Request ',
   });
-  requestedContainer.appendChild(requestedText);
-  const requestedValue = createElement({
+  extensionRequestNumberContainer.appendChild(extensionRequestNumber);
+
+  const requestNumber = data.requestNumber || 1;
+
+  const extensionRequestNumberValue = createElement({
     type: 'span',
-    attributes: { class: 'requested-day tooltip-container' },
-    innerText: ` ${requestedDaysAgo}`,
+    attributes: { class: 'extension-request-number' },
+    innerText: `#${requestNumber}`,
   });
-  const requestedToolTip = createElement({
-    type: 'span',
-    attributes: { class: 'tooltip' },
-    innerText: `${fullDateString(secondsToMilliSeconds(data.timestamp))}`,
-  });
-  requestedValue.appendChild(requestedToolTip);
-  requestedContainer.appendChild(requestedValue);
+  extensionRequestNumberContainer.appendChild(extensionRequestNumberValue);
   const cardAssigneeButtonContainer = createElement({
     type: 'div',
     attributes: { class: 'card-assignee-button-container' },
@@ -626,7 +814,7 @@ async function createExtensionCard(data) {
     const updateButton = createElement({
       type: 'button',
       attributes: { class: 'update-button' },
-      innerText: 'UPDATE',
+      innerText: 'SAVE',
     });
 
     const cancelButton = createElement({
@@ -665,6 +853,7 @@ async function createExtensionCard(data) {
     editButton.addEventListener('click', (event) => {
       handleFormPropagation(event);
       toggleInputs();
+      toggleActionButtonVisibility();
       editButton.classList.toggle('hidden');
       updateWrapper.classList.toggle('hidden');
       if (!panel.style.maxHeight) {
@@ -674,6 +863,7 @@ async function createExtensionCard(data) {
     });
     updateButton.addEventListener('click', (event) => {
       toggleInputs();
+      toggleActionButtonVisibility();
       editButton.classList.toggle('hidden');
       updateWrapper.classList.toggle('hidden');
     });
@@ -681,11 +871,10 @@ async function createExtensionCard(data) {
       // Resetting input fields
       titleInput.value = data.title;
       reasonInput.value = data.reason;
-      extensionInput.value = dateTimeString(
-        secondsToMilliSeconds(data.newEndsOn),
-      );
+      extensionInput.value = dateString(secondsToMilliSeconds(data.newEndsOn));
       handleFormPropagation(event);
       toggleInputs();
+      toggleActionButtonVisibility();
       editButton.classList.toggle('hidden');
       updateWrapper.classList.toggle('hidden');
     });
@@ -716,7 +905,7 @@ async function createExtensionCard(data) {
           if (isDev) {
             appendLogs(payloadForLog, data.id);
           }
-          await removeCard(rootElement);
+          await removeCard(rootElement, 'green-card');
         })
         .catch(() => {
           removeSpinner();
@@ -749,7 +938,7 @@ async function createExtensionCard(data) {
       })
         .then(async () => {
           removeSpinner();
-          await removeCard(rootElement);
+          await removeCard(rootElement, 'red-card');
           if (isDev) {
             appendLogs(payloadForLog, data.id);
           }
@@ -768,6 +957,20 @@ async function createExtensionCard(data) {
     denyButton.addEventListener('mouseleave', (event) => {
       denyIcon.src = CANCEL_ICON;
     });
+
+    function toggleActionButtonVisibility() {
+      if (approveButton.style.display === 'none') {
+        approveButton.style.display = 'block';
+      } else {
+        approveButton.style.display = 'none';
+      }
+
+      if (denyButton.style.display === 'none') {
+        denyButton.style.display = 'block';
+      } else {
+        denyButton.style.display = 'none';
+      }
+    }
   }
   const accordionButton = createElement({
     type: 'button',
@@ -875,7 +1078,6 @@ async function createExtensionCard(data) {
     const removeSpinner = addSpinner(rootElement);
     rootElement.classList.add('disabled');
     const revertDataChange = updateCardData(formData);
-    updateAccordionHeight(panel);
     const payloadForLog = {
       body: {
         ...(formData?.newEndsOn !== data.newEndsOn && {
@@ -920,13 +1122,16 @@ async function createExtensionCard(data) {
       })
       .finally(() => {
         rootElement.classList.remove('disabled');
+        updateAccordionHeight(panel);
         removeSpinner();
       });
   });
+
   function updateCardData(formData) {
     const previousTitle = titleText.innerText;
     const previousReason = reasonParagraph.innerText;
     const previousExtensionValue = extensionForValue.innerText;
+    const previousNewDeadlineValue = newDeadlineValue.innerText;
     titleText.innerText = formData.title;
     reasonParagraph.innerText = formData.reason;
     const extDays = dateDiff(
@@ -934,10 +1139,27 @@ async function createExtensionCard(data) {
       secondsToMilliSeconds(data.oldEndsOn),
     );
     extensionForValue.innerText = ` +${extDays}`;
+    extensionToolTip.innerText = fullDateString(
+      secondsToMilliSeconds(formData.newEndsOn),
+    );
+    extensionForValue.appendChild(extensionToolTip);
+    const isNewDeadLineCrossed =
+      Date.now() > secondsToMilliSeconds(formData.newEndsOn);
+    const newDeadlineDays = dateDiff(
+      Date.now(),
+      secondsToMilliSeconds(formData.newEndsOn),
+      (d) => d + (isNewDeadLineCrossed ? ' ago' : ''),
+    );
+    newDeadlineValue.innerText = newDeadlineDays;
+    newDeadlineToolTip.innerText = fullDateString(
+      secondsToMilliSeconds(formData.newEndsOn),
+    );
+    newDeadlineValue.appendChild(newDeadlineToolTip);
     function revertDataChange() {
       titleText.innerText = previousTitle;
       reasonParagraph.innerText = previousReason;
       extensionForValue.innerText = previousExtensionValue;
+      newDeadlineValue.innerText = previousNewDeadlineValue;
     }
     return revertDataChange;
   }
@@ -946,7 +1168,7 @@ async function createExtensionCard(data) {
     titleText.classList.toggle('hidden');
     reasonInput.classList.toggle('hidden');
     reasonParagraph.classList.toggle('hidden');
-    extensionForValue.classList.toggle('hidden');
+    newDeadlineValue.classList.toggle('hidden');
     extensionInput.classList.toggle('hidden');
   }
 
@@ -955,7 +1177,6 @@ async function createExtensionCard(data) {
       `log-container-${extensionRequestId}`,
     );
     if (logContainer.querySelector('.server-log')?.innerHTML) {
-      panel.style.overflowY = 'scroll';
       return;
     }
     const extensionLogs = await getExtensionRequestLogs({
@@ -980,7 +1201,6 @@ async function createExtensionCard(data) {
       } else {
         logContainer.innerHTML += innerHTML;
       }
-      panel.style.overflowY = 'scroll';
     }
   }
 
@@ -993,7 +1213,7 @@ async function createExtensionCard(data) {
     const userStatus = userStatusMap.get(userId);
     const comittedHours = userStatus?.monthlyHours?.comitted;
     userFirstName = userFirstName ?? '';
-    statusSiteLink.attributes.href = `${STATUS_BASE_URL}/tasks/${data.taskId}`;
+    statusSiteLink.href = `${STATUS_BASE_URL}/tasks/${data.taskId}`;
     statusSiteLink.innerText = taskData.title;
     assigneeImage.src = userImage;
     assigneeImage.alt = userFirstName;
@@ -1031,7 +1251,6 @@ async function createExtensionCard(data) {
       extensionRequestId,
     );
     if (innerHTML) {
-      panel.style.overflowY = 'scroll';
       logContainer.innerHTML += innerHTML;
     }
   }

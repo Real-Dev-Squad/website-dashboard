@@ -21,7 +21,7 @@ const {
 } = require('../../mock-data/users');
 const { usersStatus } = require('../../mock-data/users-status');
 const { taskDone, auditLogTasks } = require('../../mock-data/tasks/index');
-
+const baseUrl = 'http://localhost:8000/extension-requests';
 describe('Tests the Extension Requests Screen', () => {
   let browser;
   let page;
@@ -46,7 +46,9 @@ describe('Tests the Extension Requests Screen', () => {
       const url = interceptedRequest.url();
       if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?order=asc&size=5&q=status%3APENDING'
+          'https://api.realdevsquad.com/extension-requests?order=asc&size=5&q=status%3APENDING' ||
+        url ===
+          'https://api.realdevsquad.com/extension-requests?dev=true&order=asc'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -108,6 +110,19 @@ describe('Tests the Extension Requests Screen', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
           body: JSON.stringify(userSunny),
+        });
+      } else if (
+        url === 'https://api.realdevsquad.com/users?search=randhir&size=1'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(userRandhir),
         });
       } else if (
         url ===
@@ -263,7 +278,9 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?order=asc&size=5&q=status%3AAPPROVED%2BPENDING%2BDENIED'
+          'https://api.realdevsquad.com/extension-requests?order=asc&size=5&q=status%3AAPPROVED%2BPENDING%2BDENIED' ||
+        url ===
+          'https://api.realdevsquad.com/extension-requests?dev=true&order=asc&q=status%3AAPPROVED%2BDENIED'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -327,12 +344,26 @@ describe('Tests the Extension Requests Screen', () => {
           },
           body: JSON.stringify(extensionRequestLogs['lw7dRB0I3a6ivsFR5Izs']),
         });
+      } else if (
+        url ===
+        'https://api.realdevsquad.com/extension-requests?order=asc&size=5&q=status%3AAPPROVED%2Cassignee%3AiODXB6gfsjaZB9p0XlBw%2B7yzVDl8s1ORNCtH9Ps7K'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(extensionRequestsListUserSearch),
+        });
       } else {
         interceptedRequest.continue();
       }
     });
 
-    await page.goto('http://localhost:8000/extension-requests');
+    await page.goto(baseUrl);
 
     await page.waitForNetworkIdle();
 
@@ -360,6 +391,31 @@ describe('Tests the Extension Requests Screen', () => {
     expect(filterButton).toBeTruthy();
     expect(extensionCardsList.length).toBe(4);
     expect(extensionRequestsElement).toBeTruthy();
+  });
+  it('Should contain all dates elements', async () => {
+    const checkContainer = async (containerId) => {
+      const textExists = await page.$eval(
+        `${containerId} .card-row-text`,
+        (el) => !!el,
+      );
+      const valueExists = await page.$eval(
+        `${containerId} .tooltip-container`,
+        (el) => !!el,
+      );
+      const tooltipExists = await page.$eval(
+        `${containerId} .tooltip`,
+        (el) => !!el,
+      );
+
+      expect(textExists).toBeTruthy();
+      expect(valueExists).toBeTruthy();
+      expect(tooltipExists).toBeTruthy();
+    };
+
+    await checkContainer('#deadline-container');
+    await checkContainer('#requested-time-container');
+    await checkContainer('#new-deadline-container');
+    await checkContainer('#extension-container');
   });
 
   it('checks the search functionality', async () => {
@@ -511,14 +567,14 @@ describe('Tests the Extension Requests Screen', () => {
       '.extension-card:first-child .panel',
     );
     const firstAccordionIsVisible = await firstAccordionContent.evaluate(
-      (el) => el.style.display === 'block',
+      (el) => el.style.maxHeight !== '',
     );
     expect(firstAccordionIsVisible).toBe(true);
 
     await firstAccordionButton.click();
 
     const firstAccordionIsHidden = await firstAccordionContent.evaluate(
-      (el) => el.style.display !== 'block',
+      (el) => el.style.maxHeight === '',
     );
     expect(firstAccordionIsHidden).toBe(true);
   });
@@ -630,7 +686,7 @@ describe('Tests the Extension Requests Screen', () => {
     await page.$eval('.title-text-input', (el) => (el.value = ''));
     await page.type('.title-text-input', newTitle);
 
-    const newDate = '2023-09-19T22:20';
+    const newDate = '2023-09-19';
     await page.evaluate((newDate) => {
       document.querySelector('.date-input').value = newDate;
     }, newDate);
@@ -668,7 +724,7 @@ describe('Tests the Extension Requests Screen', () => {
     const newTitle = 'New Title Text';
     await page.type('.title-text-input', newTitle);
 
-    const newDate = '2023-09-19T22:20';
+    const newDate = '2023-09-19';
     await page.evaluate((newDate) => {
       document.querySelector('.date-input').value = newDate;
     }, newDate);
@@ -774,7 +830,7 @@ describe('Tests the Extension Requests Screen', () => {
     const cardNumber1Value = await extensionRequestNumberContainer[1].evaluate(
       (node) => node.textContent,
     );
-    expect(cardNumber1Value).toBe('5');
+    expect(cardNumber1Value).toBe('#5');
   });
 
   test('Default Request Number to 1 if requestNumber field is missing in API Response', async () => {
@@ -791,7 +847,7 @@ describe('Tests the Extension Requests Screen', () => {
     const cardNumber2Value = await extensionRequestNumberContainer[3].evaluate(
       (node) => node.textContent,
     );
-    expect(cardNumber2Value).toBe('1');
+    expect(cardNumber2Value).toBe('#1');
   });
 
   it('Validating if audit logs are being generated in realtime', async () => {
@@ -823,7 +879,7 @@ describe('Tests the Extension Requests Screen', () => {
     // Click the first element with class '.edit-button'
     await page.$$eval('.edit-button', (buttons) => buttons[0].click());
     const newTitle = 'This is a new title test case';
-    const newDate = '2024-09-19T22:20';
+    const newDate = '2024-09-19';
     const newReason = 'This is the new reason';
 
     // Updating all the input fields
@@ -848,5 +904,42 @@ describe('Tests the Extension Requests Screen', () => {
     await page.waitForNetworkIdle();
     logs = await extensionLogsForFirstER.$$('.log-div');
     expect(Array.from(logs).length).toBe(9);
+  });
+
+  it('Should update page url when filters and usernames are changed', async () => {
+    await page.click('#filter-button');
+    await page.click('input[value="PENDING"]');
+    await page.click('input[value="APPROVED"]');
+    await page.click('#apply-filter-button');
+    await page.type('#assignee-search', 'sunny,randhir');
+    await page.keyboard.press('Enter');
+    await page.waitForNetworkIdle();
+    const url = page.url();
+    expect(url).toBe(
+      `${baseUrl}?order=asc&size=5&q=status%3AAPPROVED%2Cassignee%3Asunny%2Brandhir`,
+    );
+  });
+  it('Should have UI elements in sync with url', async () => {
+    await page.goto(
+      `${baseUrl}/?order=asc&size=5&q=status%3AAPPROVED%2Cassignee%3Asunny%2Brandhir`,
+    );
+    const filterButton = await page.$('#filter-button');
+    await filterButton.click();
+    await page.waitForSelector('.filter-modal');
+    const approvedFilter = await page.$('input[value="APPROVED"]');
+    const currentState = await approvedFilter.getProperty('checked');
+    const isApprovedChecked = await currentState.jsonValue();
+    expect(isApprovedChecked).toBe(true);
+    const searchText = await page.$eval(
+      '#assignee-search',
+      (input) => input.value,
+    );
+    expect(searchText).toBe('sunny,randhir');
+    await page.waitForSelector('.sort-button');
+    const ascSortIconDisplayStyle = await page.$eval(
+      '#asc-sort-icon',
+      (icon) => window.getComputedStyle(icon).display,
+    );
+    expect(ascSortIconDisplayStyle).toBe('block');
   });
 });
