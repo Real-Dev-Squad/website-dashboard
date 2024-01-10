@@ -494,6 +494,22 @@ describe('Home Page', () => {
     expect(latestSyncStatusText).not.toBe(`Last Sync: In progress`);
   });
 
+  it('should display Applications button', async () => {
+    const applicationButton = await page.$('#application-button');
+    expect(applicationButton).toBeTruthy();
+    const applicationButtonHref = await page.evaluate(
+      (el) => el.getAttribute('href'),
+      applicationButton,
+    );
+    expect(applicationButtonHref).toBe('/applications');
+    const applicationButtonText = await page.evaluate(
+      (el) => el.innerText,
+      applicationButton,
+    );
+    const trimmedApplicationButtonText = applicationButtonText.trim();
+    expect(trimmedApplicationButtonText).toBe('Applications');
+  });
+
   it('should close hamburger menu on clicking anywhere on the screen except the menu', async () => {
     await page.setViewport({ width: 970, height: 1800 });
     await page.goto('http://localhost:8000/index.html');
