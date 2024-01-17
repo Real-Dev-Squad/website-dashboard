@@ -211,6 +211,34 @@ describe('Discord Groups Page', () => {
     expect(buttonText).toBe('Remove me from this group');
   });
 
+  test('Should decrease user count by one when user is removed from group', async () => {
+    await page.goto('http://localhost:8000/groups/?dev=true');
+    await page.$$eval('.group-role', (elements) => {
+      elements[1].click();
+    });
+
+    const oldUserCount = await page.$$eval('.group-role', (elements) => {
+      return elements[1]
+        .querySelector('[id^="name-"]')
+        .getAttribute('data-member-count');
+    });
+
+    // Wait for the btn-add-role and click it
+    const deleteRoleBtn = await page.$('.btn-add-role');
+    await deleteRoleBtn.click();
+
+    await page.waitForNetworkIdle();
+
+    const newUserCount = await page.$$eval('.group-role', (elements) => {
+      return elements[1]
+        .querySelector('[id^="name-"]')
+        .getAttribute('data-member-count');
+    });
+
+    // Now, check the user count
+    expect(Number(newUserCount)).toBe(Number(oldUserCount - 1));
+  });
+
   test('Should show role deleted', async () => {
     await page.$$eval('.group-role', (elements) => {
       elements[1].click();
