@@ -12,7 +12,7 @@ Dashboard helps to create and assigns task to the members and can be accessed on
 
 # Running the project
 
-- First follow the contribution link on how to contribute given above.
+- First follow the contribution lin k on how to contribute given above.
 
 - You need to install Live Server extension in you VSCode and start server from src/index.html or you can simply go into the file where you have cloned and run index.html in your browser.
 
