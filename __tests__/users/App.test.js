@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const { API_BASE_URL_PROD: API_BASE_URL } = require('../../constants');
 const { filteredUsersData } = require('../../mock-data/users');
 
 describe('App Component', () => {
