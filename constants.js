@@ -1,4 +1,4 @@
-API_BASE_URL = 'https://api.realdevsquad.com';
+let API_BASE_URL = 'https://api.realdevsquad.com';
 
 try {
   API_BASE_URL = window.API_BASE_URL;
