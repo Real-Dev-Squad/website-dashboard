@@ -33,4 +33,4 @@ const USER_MANAGEMENT_URL =
   'https://dashboard.realdevsquad.com/users/details/?username=';
 const TEST = '';
 
-console.log(this);
+console.log(this, document);
