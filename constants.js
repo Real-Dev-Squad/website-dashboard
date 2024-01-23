@@ -1,5 +1,17 @@
-const API_BASE_URL =
-  (window && winodw.API_BASE_URL) || 'https://api.realdevsquad.com';
+let API_BASE_URL;
+
+/* 
+During test script we would not have access to winodw, therefore we will set 
+API_BASE_URL to prod API
+*/
+try {
+  if (typeof window !== 'undefined') {
+    API_BASE_URL = window.API_BASE_URL;
+  }
+} catch (err) {
+  API_BASE_URL = 'https://api.realdevsquad.com';
+}
+
 const REPO_SYNC_API_URL =
   'https://staging-sync.staging-realdevsquad-com.workers.dev';
 const USER_MANAGEMENT_LINK = 'user-management-link';
