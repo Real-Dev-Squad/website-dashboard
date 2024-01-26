@@ -1,6 +1,5 @@
-const API_BASE_URL = 'https://api.realdevsquad.com';
-const REPO_SYNC_API_URL =
-  'https://staging-sync.staging-realdevsquad-com.workers.dev';
+const API_BASE_URL = window.API_BASE_URL || 'https://api.realdevsquad.com';
+('https://staging-sync.staging-realdevsquad-com.workers.dev');
 const USER_MANAGEMENT_LINK = 'user-management-link';
 const EXTENSION_REQUESTS_LINK = 'extension-requests-link';
 const TASK_REQUESTS_LINK = 'task-requests-link';
