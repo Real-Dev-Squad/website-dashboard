@@ -186,20 +186,20 @@ describe('Home Page', () => {
     expect(syncExternalAccountsUpdate).toBeTruthy();
   });
   it('should display the task requests button', async () => {
-    await page.goto('http://localhost:8000/?dev=true');
+    await page.goto('http://localhost:8000');
     await page.waitForNetworkIdle();
     const taskRequestsButton = await page.$('#task-requests-link');
     expect(taskRequestsButton).toBeTruthy();
   });
   it('should go to the task requests page', async () => {
-    await page.goto('http://localhost:8000/?dev=true');
+    await page.goto('http://localhost:8000');
     await page.waitForNetworkIdle();
 
     const taskRequestsButton = await page.$('#task-requests-link');
     await taskRequestsButton.click();
     await page.waitForNetworkIdle();
     const newUrl = page.url();
-    expect(newUrl).toContain('/taskRequests');
+    expect(newUrl).toContain('/task-requests');
   });
   it('should call the right api endpoint when Sync External Accounts button is clicked', async () => {
     let isRightUrlCalled = false;
@@ -492,6 +492,22 @@ describe('Home Page', () => {
       `Last Sync: Synced Data Not Available`,
     );
     expect(latestSyncStatusText).not.toBe(`Last Sync: In progress`);
+  });
+
+  it('should display Applications button', async () => {
+    const applicationButton = await page.$('#application-button');
+    expect(applicationButton).toBeTruthy();
+    const applicationButtonHref = await page.evaluate(
+      (el) => el.getAttribute('href'),
+      applicationButton,
+    );
+    expect(applicationButtonHref).toBe('/applications');
+    const applicationButtonText = await page.evaluate(
+      (el) => el.innerText,
+      applicationButton,
+    );
+    const trimmedApplicationButtonText = applicationButtonText.trim();
+    expect(trimmedApplicationButtonText).toBe('Applications');
   });
 
   it('should close hamburger menu on clicking anywhere on the screen except the menu', async () => {

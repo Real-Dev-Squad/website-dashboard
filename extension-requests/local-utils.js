@@ -47,11 +47,11 @@ const generateExtensionRequestParams = (nextPageParams) => {
     if (searchQueries.includes(key)) {
       let queryString;
       if (Array.isArray(value)) {
-        queryString = key + ':' + value.join('+');
+        if (value.length) queryString = key + ':' + value.join('+');
       } else {
         queryString = key + ':' + value;
       }
-      queryStringList.push(queryString);
+      if (queryString) queryStringList.push(queryString);
     } else {
       urlSearchParams.append(key, value);
     }
@@ -62,6 +62,47 @@ const generateExtensionRequestParams = (nextPageParams) => {
   const uri = `/extension-requests?${urlSearchParams.toString()}`;
   return uri;
 };
+
+/**
+ * Parses the query parameters from a URL and stores them in the provided object.
+ *
+ * @param {string} uri - The URI string containing the query parameters.
+ * @param {Object} nextPageParamsObject - The object in which the parsed parameters will be stored.
+ * @returns {Object} The updated `nextPageParamsObject` containing the parsed parameters.
+ *
+ * @example
+ * let params = {};
+ * parseExtensionRequestParams("/?order=asc&size=5&q=status:APPROVED,assignee:sunny+randhir", params);
+ * // params will be updated to:
+ * // {
+ * //   order: "asc",
+ * //   size: "5",
+ * //   status: "APPROVED",
+ * //   assignee: ["sunny", "randhir"]
+ * // }
+ */
+const parseExtensionRequestParams = (uri, nextPageParamsObject) => {
+  const urlSearchParams = new URLSearchParams(uri);
+
+  for (const [key, value] of urlSearchParams.entries()) {
+    if (key === 'q') {
+      const searchQueries = value.split(',');
+      searchQueries.forEach((query) => {
+        if (!query) return;
+        const [queryKey, queryValue] = query.split(':');
+        if (queryValue?.includes('+')) {
+          nextPageParamsObject[queryKey] = queryValue.split('+');
+        } else if (queryValue) {
+          nextPageParamsObject[queryKey] = queryValue;
+        }
+      });
+    } else {
+      nextPageParamsObject[key] = value;
+    }
+  }
+  return nextPageParamsObject;
+};
+
 async function updateExtensionRequest({ id, body, isDev = false }) {
   const url = `${API_BASE_URL}/extension-requests/${id}${
     isDev ? `?dev=true` : ''
@@ -236,10 +277,31 @@ function dateTimeString(milliseconds) {
   ).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 }
 
+/**
+  Generates a formatted date string from milliseconds.*
+  @param {number} milliseconds - The number of milliseconds since January 1, 1970 00:00:00 UTC.
+  @returns {string} The formatted date string in the format 'YYYY-MM-DD'.
+  
+*/
+function dateString(milliseconds) {
+  const date = new Date(milliseconds);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+    2,
+    '0',
+  )}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
 const fullDateString = (timestamp) => {
-  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const date = new Date(timestamp);
-  return `${daysOfWeek[date.getDay()]}, ${date.toLocaleString()}`;
+  const options = {
+    weekday: 'short',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true,
+  };
+  return new Intl.DateTimeFormat('en-US', options).format(new Date(timestamp));
 };
 
 const shortDateString = (timestamp) => {
