@@ -1,8 +1,8 @@
-const BASE_URL = 'https://api.realdevsquad.com'; // REPLACE WITH YOUR LOCALHOST URL FOR TESTING LOCAL BACKEND
+console.log(`API_BASE_URL: ${API_BASE_URL} `);
 
 async function getMembers() {
   try {
-    const res = await fetch(`${BASE_URL}/users/`, {
+    const res = await fetch(`${API_BASE_URL}/users/`, {
       method: 'GET',
       credentials: 'include',
       headers: {
@@ -18,7 +18,7 @@ async function getMembers() {
 }
 async function getUserSelf() {
   try {
-    const res = await fetch(`${BASE_URL}/users/self`, {
+    const res = await fetch(`${API_BASE_URL}/users/self`, {
       method: 'GET',
       credentials: 'include',
       headers: {
@@ -33,7 +33,7 @@ async function getUserSelf() {
   }
 }
 async function getUserGroupRoles() {
-  const res = await fetch(`${BASE_URL}/discord-actions/roles`, {
+  const res = await fetch(`${API_BASE_URL}/discord-actions/roles`, {
     method: 'GET',
     credentials: 'include',
     headers: {
@@ -45,7 +45,7 @@ async function getUserGroupRoles() {
 
 async function getDiscordGroups() {
   try {
-    const res = await fetch(`${BASE_URL}/discord-actions/groups`, {
+    const res = await fetch(`${API_BASE_URL}/discord-actions/groups`, {
       method: 'GET',
       credentials: 'include',
       headers: {
@@ -61,7 +61,7 @@ async function getDiscordGroups() {
 }
 async function createDiscordGroupRole(groupRoleBody) {
   try {
-    const res = await fetch(`${BASE_URL}/discord-actions/groups`, {
+    const res = await fetch(`${API_BASE_URL}/discord-actions/groups`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -79,7 +79,7 @@ async function createDiscordGroupRole(groupRoleBody) {
 
 async function addGroupRoleToMember(memberRoleBody) {
   try {
-    const res = await fetch(`${BASE_URL}/discord-actions/roles`, {
+    const res = await fetch(`${API_BASE_URL}/discord-actions/roles`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -102,7 +102,7 @@ async function addGroupRoleToMember(memberRoleBody) {
 
 async function removeRoleFromMember(roleId, discordId) {
   try {
-    const res = await fetch(`${BASE_URL}/discord-actions/roles`, {
+    const res = await fetch(`${API_BASE_URL}/discord-actions/roles`, {
       method: 'DELETE',
       credentials: 'include',
       headers: {
