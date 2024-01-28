@@ -897,14 +897,11 @@ async function createExtensionCard(data) {
       };
       updateExtensionRequestStatus({
         id: data.id,
-        isDev,
         body: { status: Status.APPROVED },
       })
         .then(async () => {
           removeSpinner();
-          if (isDev) {
-            appendLogs(payloadForLog, data.id);
-          }
+          appendLogs(payloadForLog, data.id);
           await removeCard(rootElement, 'green-card');
         })
         .catch(() => {
@@ -933,15 +930,12 @@ async function createExtensionCard(data) {
       };
       updateExtensionRequestStatus({
         id: data.id,
-        isDev,
         body: { status: Status.DENIED },
       })
         .then(async () => {
           removeSpinner();
           await removeCard(rootElement, 'red-card');
-          if (isDev) {
-            appendLogs(payloadForLog, data.id);
-          }
+          appendLogs(payloadForLog, data.id);
         })
         .catch(() => {
           removeSpinner();
@@ -1039,33 +1033,31 @@ async function createExtensionCard(data) {
     logContainer.appendChild(creationLog);
   };
   // Adding log feature under dev flag
-  if (isDev) {
-    // Div for log container
-    const logContainer = createElement({
-      type: 'div',
-      attributes: { id: `log-container-${data.id}` },
-    });
-    panel.appendChild(logContainer);
+  // Div for log container
+  const logContainer = createElement({
+    type: 'div',
+    attributes: { id: `log-container-${data.id}` },
+  });
+  panel.appendChild(logContainer);
 
-    // Creating title for container
-    const logDetailsLine = createElement({
-      type: 'span',
-      attributes: { class: 'log-details-line' },
-      innerText: 'Logs',
-    });
-    logContainer.appendChild(logDetailsLine);
+  // Creating title for container
+  const logDetailsLine = createElement({
+    type: 'span',
+    attributes: { class: 'log-details-line' },
+    innerText: 'Logs',
+  });
+  logContainer.appendChild(logDetailsLine);
 
-    // Separation line
-    const logDetailsLines = createElement({
-      type: 'span',
-      attributes: { class: 'details-line' },
-    });
-    logContainer.appendChild(logDetailsLines);
+  // Separation line
+  const logDetailsLines = createElement({
+    type: 'span',
+    attributes: { class: 'details-line' },
+  });
+  logContainer.appendChild(logDetailsLines);
 
-    accordionContainer.addEventListener('click', function () {
-      renderLogs(data.id);
-    });
-  }
+  accordionContainer.addEventListener('click', function () {
+    renderLogs(data.id);
+  });
   const cardFooter = createElement({ type: 'div' });
   cardFooter.appendChild(cardAssigneeButtonContainer);
   cardFooter.appendChild(accordionContainer);
@@ -1104,7 +1096,6 @@ async function createExtensionCard(data) {
     };
     updateExtensionRequest({
       id: data.id,
-      isDev,
       body: formData,
     })
       .then(() => {
@@ -1112,9 +1103,7 @@ async function createExtensionCard(data) {
         data.tile = formData.title;
         data.newEndsOn = data.newEndsOn;
         handleSuccess(rootElement);
-        if (isDev) {
-          appendLogs(payloadForLog, data.id);
-        }
+        appendLogs(payloadForLog, data.id);
       })
       .catch(() => {
         revertDataChange();
@@ -1181,7 +1170,6 @@ async function createExtensionCard(data) {
     }
     const extensionLogs = await getExtensionRequestLogs({
       extensionRequestId,
-      isDev: true,
     });
     const innerHTML = generateSentence(
       extensionLogs.logs,
@@ -1201,6 +1189,7 @@ async function createExtensionCard(data) {
       } else {
         logContainer.innerHTML += innerHTML;
       }
+      updateAccordionHeight(panel);
     }
   }
 
@@ -1228,7 +1217,7 @@ async function createExtensionCard(data) {
     }
 
     removeSpinner();
-    if (isDev) renderExtensionCreatedLog();
+    renderExtensionCreatedLog();
     rootElement.classList.remove('disabled');
   });
   return rootElement;
