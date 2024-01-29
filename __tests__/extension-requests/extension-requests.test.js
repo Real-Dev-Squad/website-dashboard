@@ -305,7 +305,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/logs/extensionRequests/?meta.extensionRequestId=fuQs71a0Y7BX3n4rc5Ii&dev=true'
+        'https://api.realdevsquad.com/logs/extensionRequests/?meta.extensionRequestId=fuQs71a0Y7BX3n4rc5Ii'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -319,7 +319,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests/fuQs71a0Y7BX3n4rc5Ii?dev=true'
+        'https://api.realdevsquad.com/extension-requests/fuQs71a0Y7BX3n4rc5Ii'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -332,7 +332,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/logs/extensionRequests/?meta.extensionRequestId=lw7dRB0I3a6ivsFR5Izs&dev=true'
+        'https://api.realdevsquad.com/logs/extensionRequests/?meta.extensionRequestId=lw7dRB0I3a6ivsFR5Izs'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -772,7 +772,7 @@ describe('Tests the Extension Requests Screen', () => {
   });
   it('Validating audit logs for extension request', async () => {
     // Visit extension request under dev flag
-    await page.goto('http://localhost:8000/extension-requests/?dev=true');
+    await page.goto('http://localhost:8000/extension-requests');
     const extensionRequestIds = [
       'log-container-fuQs71a0Y7BX3n4rc5Ii',
       'log-container-lw7dRB0I3a6ivsFR5Izs',
@@ -818,7 +818,7 @@ describe('Tests the Extension Requests Screen', () => {
   });
 
   test('Checks the Request Number and request value element on Extension requests listing page', async () => {
-    const url = 'http://localhost:8000/extension-requests/?dev=true'; // Include the dev parameter in the URL
+    const url = 'http://localhost:8000/extension-requests'; // Include the dev parameter in the URL
     await page.goto(url);
 
     const extensionRequestNumberContainer = await page.$$(
@@ -834,7 +834,7 @@ describe('Tests the Extension Requests Screen', () => {
   });
 
   test('Default Request Number to 1 if requestNumber field is missing in API Response', async () => {
-    const url = 'http://localhost:8000/extension-requests/?dev=true'; // Include the dev parameter in the URL
+    const url = 'http://localhost:8000/extension-requests'; // Include the dev parameter in the URL
     await page.goto(url);
 
     const extensionRequestNumberContainer = await page.$$(
@@ -852,7 +852,7 @@ describe('Tests the Extension Requests Screen', () => {
 
   it('Validating if audit logs are being generated in realtime', async () => {
     // Visit extension request under dev flag
-    await page.goto('http://localhost:8000/extension-requests/?dev=true');
+    await page.goto('http://localhost:8000/extension-requests');
     const extensionRequestIds = [
       'log-container-fuQs71a0Y7BX3n4rc5Ii',
       'log-container-lw7dRB0I3a6ivsFR5Izs',
