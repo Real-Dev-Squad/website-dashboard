@@ -1201,6 +1201,7 @@ async function createExtensionCard(data) {
       } else {
         logContainer.innerHTML += innerHTML;
       }
+      updateAccordionHeight(panel);
     }
   }
 
