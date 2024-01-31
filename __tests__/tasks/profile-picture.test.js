@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer');
-const API_BASE_URL = 'https://staging-api.realdevsquad.com';
 const { allUsersData } = require('../../mock-data/users');
+const API_BASE_URL = 'https://api.realdevsquad.com';
 
 describe('Task Page - Assignee Profile Pic', () => {
   let browser;
