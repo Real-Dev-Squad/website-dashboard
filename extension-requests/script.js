@@ -868,7 +868,6 @@ async function createExtensionCard(data) {
       updateWrapper.classList.toggle('hidden');
     });
     cancelButton.addEventListener('click', (event) => {
-      // Resetting input fields
       titleInput.value = data.title;
       reasonInput.value = data.reason;
       extensionInput.value = dateString(secondsToMilliSeconds(data.newEndsOn));
@@ -1032,15 +1031,12 @@ async function createExtensionCard(data) {
     creationLog.appendChild(logText);
     logContainer.appendChild(creationLog);
   };
-  // Adding log feature under dev flag
-  // Div for log container
   const logContainer = createElement({
     type: 'div',
     attributes: { id: `log-container-${data.id}` },
   });
   panel.appendChild(logContainer);
 
-  // Creating title for container
   const logDetailsLine = createElement({
     type: 'span',
     attributes: { class: 'log-details-line' },
@@ -1048,7 +1044,6 @@ async function createExtensionCard(data) {
   });
   logContainer.appendChild(logDetailsLine);
 
-  // Separation line
   const logDetailsLines = createElement({
     type: 'span',
     attributes: { class: 'details-line' },
@@ -1183,7 +1178,6 @@ async function createExtensionCard(data) {
         tempDiv.classList.add('invisible-div');
         tempDiv.innerHTML = innerHTML;
 
-        // Insert all the html before the first local-log
         const localLogElement = logContainer.querySelector('.local-log');
         logContainer.insertBefore(tempDiv, localLogElement);
       } else {
@@ -1227,7 +1221,6 @@ async function createExtensionCard(data) {
       `log-container-${extensionRequestId}`,
     );
 
-    // If logs has been previously rendered then only append logs
     if (
       payload?.body?.status &&
       !logContainer.querySelector('.server-log')?.innerHTML
