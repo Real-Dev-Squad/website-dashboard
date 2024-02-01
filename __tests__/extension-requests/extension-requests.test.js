@@ -305,7 +305,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/logs/extensionRequests/?meta.extensionRequestId=fuQs71a0Y7BX3n4rc5Ii&dev=true'
+        'https://api.realdevsquad.com/logs/extensionRequests/?meta.extensionRequestId=fuQs71a0Y7BX3n4rc5Ii'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -319,7 +319,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests/fuQs71a0Y7BX3n4rc5Ii?dev=true'
+        'https://api.realdevsquad.com/extension-requests/fuQs71a0Y7BX3n4rc5Ii'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -332,7 +332,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/logs/extensionRequests/?meta.extensionRequestId=lw7dRB0I3a6ivsFR5Izs&dev=true'
+        'https://api.realdevsquad.com/logs/extensionRequests/?meta.extensionRequestId=lw7dRB0I3a6ivsFR5Izs'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -771,54 +771,37 @@ describe('Tests the Extension Requests Screen', () => {
     expect(isTooltipVisible).toBe(true);
   });
   it('Validating audit logs for extension request', async () => {
-    // Visit extension request under dev flag
-    await page.goto('http://localhost:8000/extension-requests/?dev=true');
+    await page.goto('http://localhost:8000/extension-requests');
     const extensionRequestIds = [
       'log-container-fuQs71a0Y7BX3n4rc5Ii',
       'log-container-lw7dRB0I3a6ivsFR5Izs',
     ];
 
-    // Select all types of status of extension requests
     await page.click('#filter-button');
     await page.click('input[value="APPROVED"]');
     await page.click('input[value="DENIED"]');
     await page.click('#apply-filter-button');
     await page.waitForNetworkIdle();
 
-    // Checking if both the extension request cards are renedered or not
     const cardsList = await page.$$('.extension-card');
     expect(cardsList.length).toBe(2);
 
     const accordionButton = await page.$$('.accordion');
-    // Validate first extension card which is based on updated logs
     accordionButton[0].click();
     await page.waitForNetworkIdle();
     let extensionLogsForFirstER = await page.$(`#${extensionRequestIds[0]}`);
     let logs = await extensionLogsForFirstER.$$('.log-div');
     expect(Array.from(logs).length).toBe(6);
-    // Array.from(logs).forEach(async (log) => {
-    //   const innerText = await log.evaluate((element) => element.innerText);
-    //   expect(extensionRequestLogsInSentence[extensionRequestIds[0]]).toContain(
-    //     innerText,
-    //   );
-    // });
 
-    // Validating if it is backward compatible or not
     accordionButton[1].click();
     await page.waitForNetworkIdle();
     extensionLogsForFirstER = await page.$(`#${extensionRequestIds[1]}`);
     logs = await extensionLogsForFirstER.$$('.log-div');
     expect(Array.from(logs).length).toBe(1);
-    // Array.from(logs).forEach(async (log) => {
-    //   const innerText = await log.evaluate((element) => element.innerText);
-    //   expect(extensionRequestLogsInSentence[extensionRequestIds[1]]).toContain(
-    //     innerText,
-    //   );
-    // });
   });
 
   test('Checks the Request Number and request value element on Extension requests listing page', async () => {
-    const url = 'http://localhost:8000/extension-requests/?dev=true'; // Include the dev parameter in the URL
+    const url = 'http://localhost:8000/extension-requests';
     await page.goto(url);
 
     const extensionRequestNumberContainer = await page.$$(
@@ -834,7 +817,7 @@ describe('Tests the Extension Requests Screen', () => {
   });
 
   test('Default Request Number to 1 if requestNumber field is missing in API Response', async () => {
-    const url = 'http://localhost:8000/extension-requests/?dev=true'; // Include the dev parameter in the URL
+    const url = 'http://localhost:8000/extension-requests';
     await page.goto(url);
 
     const extensionRequestNumberContainer = await page.$$(
@@ -851,38 +834,32 @@ describe('Tests the Extension Requests Screen', () => {
   });
 
   it('Validating if audit logs are being generated in realtime', async () => {
-    // Visit extension request under dev flag
-    await page.goto('http://localhost:8000/extension-requests/?dev=true');
+    await page.goto('http://localhost:8000/extension-requests');
     const extensionRequestIds = [
       'log-container-fuQs71a0Y7BX3n4rc5Ii',
       'log-container-lw7dRB0I3a6ivsFR5Izs',
     ];
 
-    // Select all types of status of extension requests
     await page.click('#filter-button');
     await page.click('input[value="APPROVED"]');
     await page.click('input[value="DENIED"]');
     await page.click('#apply-filter-button');
     await page.waitForNetworkIdle();
 
-    // Checking if both the extension request cards are renedered or not
     const cardsList = await page.$$('.extension-card');
     expect(cardsList.length).toBe(2);
 
     const accordionButton = await page.$$('.accordion');
-    // Validate first extension card which is based on updated logs
     accordionButton[0].click();
     await page.waitForNetworkIdle();
     let extensionLogsForFirstER = await page.$(`#${extensionRequestIds[0]}`);
     let logs = await extensionLogsForFirstER.$$('.log-div');
 
-    // Click the first element with class '.edit-button'
     await page.$$eval('.edit-button', (buttons) => buttons[0].click());
     const newTitle = 'This is a new title test case';
     const newDate = '2024-09-19';
     const newReason = 'This is the new reason';
 
-    // Updating all the input fields
     await page.$$eval(
       '.title-text-input',
       (inputFields, newTitle) => (inputFields[0].value = newTitle),

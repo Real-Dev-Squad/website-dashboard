@@ -868,7 +868,6 @@ async function createExtensionCard(data) {
       updateWrapper.classList.toggle('hidden');
     });
     cancelButton.addEventListener('click', (event) => {
-      // Resetting input fields
       titleInput.value = data.title;
       reasonInput.value = data.reason;
       extensionInput.value = dateString(secondsToMilliSeconds(data.newEndsOn));
@@ -897,14 +896,11 @@ async function createExtensionCard(data) {
       };
       updateExtensionRequestStatus({
         id: data.id,
-        isDev,
         body: { status: Status.APPROVED },
       })
         .then(async () => {
           removeSpinner();
-          if (isDev) {
-            appendLogs(payloadForLog, data.id);
-          }
+          appendLogs(payloadForLog, data.id);
           await removeCard(rootElement, 'green-card');
         })
         .catch(() => {
@@ -933,15 +929,12 @@ async function createExtensionCard(data) {
       };
       updateExtensionRequestStatus({
         id: data.id,
-        isDev,
         body: { status: Status.DENIED },
       })
         .then(async () => {
           removeSpinner();
           await removeCard(rootElement, 'red-card');
-          if (isDev) {
-            appendLogs(payloadForLog, data.id);
-          }
+          appendLogs(payloadForLog, data.id);
         })
         .catch(() => {
           removeSpinner();
@@ -1038,34 +1031,28 @@ async function createExtensionCard(data) {
     creationLog.appendChild(logText);
     logContainer.appendChild(creationLog);
   };
-  // Adding log feature under dev flag
-  if (isDev) {
-    // Div for log container
-    const logContainer = createElement({
-      type: 'div',
-      attributes: { id: `log-container-${data.id}` },
-    });
-    panel.appendChild(logContainer);
+  const logContainer = createElement({
+    type: 'div',
+    attributes: { id: `log-container-${data.id}` },
+  });
+  panel.appendChild(logContainer);
 
-    // Creating title for container
-    const logDetailsLine = createElement({
-      type: 'span',
-      attributes: { class: 'log-details-line' },
-      innerText: 'Logs',
-    });
-    logContainer.appendChild(logDetailsLine);
+  const logDetailsLine = createElement({
+    type: 'span',
+    attributes: { class: 'log-details-line' },
+    innerText: 'Logs',
+  });
+  logContainer.appendChild(logDetailsLine);
 
-    // Separation line
-    const logDetailsLines = createElement({
-      type: 'span',
-      attributes: { class: 'details-line' },
-    });
-    logContainer.appendChild(logDetailsLines);
+  const logDetailsLines = createElement({
+    type: 'span',
+    attributes: { class: 'details-line' },
+  });
+  logContainer.appendChild(logDetailsLines);
 
-    accordionContainer.addEventListener('click', function () {
-      renderLogs(data.id);
-    });
-  }
+  accordionContainer.addEventListener('click', function () {
+    renderLogs(data.id);
+  });
   const cardFooter = createElement({ type: 'div' });
   cardFooter.appendChild(cardAssigneeButtonContainer);
   cardFooter.appendChild(accordionContainer);
@@ -1104,7 +1091,6 @@ async function createExtensionCard(data) {
     };
     updateExtensionRequest({
       id: data.id,
-      isDev,
       body: formData,
     })
       .then(() => {
@@ -1112,9 +1098,7 @@ async function createExtensionCard(data) {
         data.tile = formData.title;
         data.newEndsOn = data.newEndsOn;
         handleSuccess(rootElement);
-        if (isDev) {
-          appendLogs(payloadForLog, data.id);
-        }
+        appendLogs(payloadForLog, data.id);
       })
       .catch(() => {
         revertDataChange();
@@ -1181,7 +1165,6 @@ async function createExtensionCard(data) {
     }
     const extensionLogs = await getExtensionRequestLogs({
       extensionRequestId,
-      isDev: true,
     });
     const innerHTML = generateSentence(
       extensionLogs.logs,
@@ -1195,12 +1178,12 @@ async function createExtensionCard(data) {
         tempDiv.classList.add('invisible-div');
         tempDiv.innerHTML = innerHTML;
 
-        // Insert all the html before the first local-log
         const localLogElement = logContainer.querySelector('.local-log');
         logContainer.insertBefore(tempDiv, localLogElement);
       } else {
         logContainer.innerHTML += innerHTML;
       }
+      updateAccordionHeight(panel);
     }
   }
 
@@ -1228,7 +1211,7 @@ async function createExtensionCard(data) {
     }
 
     removeSpinner();
-    if (isDev) renderExtensionCreatedLog();
+    renderExtensionCreatedLog();
     rootElement.classList.remove('disabled');
   });
   return rootElement;
@@ -1238,7 +1221,6 @@ async function createExtensionCard(data) {
       `log-container-${extensionRequestId}`,
     );
 
-    // If logs has been previously rendered then only append logs
     if (
       payload?.body?.status &&
       !logContainer.querySelector('.server-log')?.innerHTML

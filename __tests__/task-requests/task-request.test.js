@@ -3,8 +3,7 @@ const puppeteer = require('puppeteer');
 const { fetchedTaskRequests } = require('../../mock-data/taskRequests');
 
 const SITE_URL = 'http://localhost:8000';
-// helper/loadEnv.js file causes API_BASE_URL to be stagin-api on local env url in taskRequest/index.html
-const API_BASE_URL = 'https://staging-api.realdevsquad.com';
+const API_BASE_URL = 'https://api.realdevsquad.com';
 
 describe('Task Requests', () => {
   let browser;

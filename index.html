@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/global.css" />
     <link rel="stylesheet" href="/style.css" />
     <title>Dashboard | Real Dev Squad</title>
+    <script src="/helpers/loadENV.js"></script>
     <script src="/constants.js" defer></script>
     <script src="/utils.js" defer></script>
     <script type="module" src="/script.js" defer></script>
@@ -149,6 +150,13 @@
       </a>
       <a class="action-button" href="/groups/index.html"> Discord Groups </a>
       <a class="action-button" href="/standup/index.html"> Standup Updates</a>
+      <a
+        id="application-button"
+        href="/applications"
+        class="action-button element-display-remove"
+      >
+        Applications
+      </a>
       <div class="button-container element-display-remove" id="sync-repo-div">
         <button id="repo-sync-button" class="action-button">
           <span class="spinner"></span>

@@ -103,10 +103,8 @@ const parseExtensionRequestParams = (uri, nextPageParamsObject) => {
   return nextPageParamsObject;
 };
 
-async function updateExtensionRequest({ id, body, isDev = false }) {
-  const url = `${API_BASE_URL}/extension-requests/${id}${
-    isDev ? `?dev=true` : ''
-  }`;
+async function updateExtensionRequest({ id, body }) {
+  const url = `${API_BASE_URL}/extension-requests/${id}`;
   const res = await fetch(url, {
     credentials: 'include',
     method: 'PATCH',
@@ -120,10 +118,8 @@ async function updateExtensionRequest({ id, body, isDev = false }) {
   }
 }
 
-async function updateExtensionRequestStatus({ id, body, isDev = false }) {
-  const url = `${API_BASE_URL}/extension-requests/${id}/status${
-    isDev ? `?dev=true` : ''
-  }`;
+async function updateExtensionRequestStatus({ id, body }) {
+  const url = `${API_BASE_URL}/extension-requests/${id}/status`;
   const res = await fetch(url, {
     credentials: 'include',
     method: 'PATCH',
@@ -332,10 +328,8 @@ function addErrorElement(container) {
   container.appendChild(errorHeading);
 }
 
-async function getExtensionRequestLogs({ extensionRequestId, isDev = false }) {
-  const url = `${API_BASE_URL}/logs/extensionRequests/?meta.extensionRequestId=${extensionRequestId}${
-    isDev ? `&dev=true` : ''
-  }`;
+async function getExtensionRequestLogs({ extensionRequestId }) {
+  const url = `${API_BASE_URL}/logs/extensionRequests/?meta.extensionRequestId=${extensionRequestId}`;
   const res = await fetch(url, {
     credentials: 'include',
     method: 'GET',
