@@ -123,7 +123,7 @@ function showErrorMessage(
   loaderElement.classList.add('remove-element');
 }
 
-async function getUsersData(page) {
+/*async function getUsersData(page) {
   try {
     const usersRequest = await makeApiCall(
       `${RDS_API_USERS}?size=${USER_FETCH_COUNT}&page=${page}`,
@@ -142,6 +142,28 @@ async function getUsersData(page) {
     throw err;
   }
 }
+*/
+
+const getUsersData = async (page) => {
+  try {
+    // Update API endpoint with filtering and pagination parameters
+    const usersRequest = await makeApiCall(
+      `${RDS_API_USERS}?size=${USER_FETCH_COUNT}&page=${page}`,
+    );
+    let usersDataList = [];
+    if (usersRequest.status === 200) {
+      usersDataList = await usersRequest.json();
+      usersDataList = usersDataList.users;
+    } else {
+      throw new Error(
+        `User list request failed with status: ${usersRequest.status}`,
+      );
+    }
+    return usersDataList;
+  } catch (err) {
+    throw err;
+  }
+};
 
 function generateUserList(
   users,
@@ -328,7 +350,7 @@ function clearFilters() {
   );
 }
 
-async function showUserDataList(
+/*async function showUserDataList(
   page,
   userListElement,
   paginationElement,
@@ -371,7 +393,55 @@ async function showUserDataList(
       loaderElement,
     );
   }
-}
+}*/
+
+const showUserDataList = async (
+  page,
+  userListElement,
+  paginationElement,
+  loaderElement,
+  prevBtn,
+  nextBtn,
+) => {
+  try {
+    // Fetch users data with pagination parameters
+    const userData = await getUsersData(page);
+    if (userData.length) {
+      if (userData.length < USER_FETCH_COUNT) {
+        nextBtn.classList.add('btn-disabled');
+      } else {
+        nextBtn.classList.remove('btn-disabled');
+      }
+      // Modify the data processing and pagination logic as needed
+      let usersDataList = userData.filter(
+        (user) => user.first_name && !user.roles?.archived,
+      );
+      usersDataList = usersDataList.map((user) => ({
+        username: user.username,
+        first_name: user.first_name,
+        last_name: user.last_name ? user.last_name : '',
+        picture: user.picture && user.picture.url ? user.picture.url : '',
+      }));
+      // Update function call to include pagination parameters
+      generateUserList(
+        usersDataList,
+        true,
+        userListElement,
+        paginationElement,
+        loaderElement,
+        prevBtn,
+      );
+    }
+  } catch (err) {
+    console.error(err);
+    showErrorMessage(
+      err.message,
+      userListElement,
+      paginationElement,
+      loaderElement,
+    );
+  }
+};
 
 function addCheckbox(labelText, value, groupName) {
   const group = document.getElementById(groupName);
@@ -589,44 +659,54 @@ applyFilterButton.addEventListener('click', async () => {
   const checkedValuesSkills = getCheckedValues('skills-filter');
   const checkedValuesAvailability = getCheckedValues('availability-filter');
 
-  const queryParams = getFilteredUsersURL(
+  // reset page to 0 when applying filter
+  let page = 0;
+  // number of users per page
+  const size = USER_FETCH_COUNT;
+
+  let queryParams = getFilteredUsersURL(
     checkedValuesSkills,
     checkedValuesAvailability,
   );
 
-  const onboarding31DaysFilter =
-    document.getElementById('ONBOARDING31DAYS').checked;
   try {
     let users;
-    if (onboarding31DaysFilter) {
-      let queryParams = getFilteredUsersURL(
-        checkedValuesSkills,
-        checkedValuesAvailability,
-      );
-
+    // replace onboarding31days in queryParams if present
+    if (queryParams.includes('&state=ONBOARDING31DAYS')) {
       queryParams = replaceOnboarding31days(queryParams);
-      const usersRequest = await makeApiCall(
-        `${RDS_API_USERS}/search${queryParams}`,
-      );
-      const { users: filteredUsers } = await usersRequest.json();
-      users = filteredUsers;
-    } else {
-      let queryParams = getFilteredUsersURL(
-        checkedValuesSkills,
-        checkedValuesAvailability,
-      );
-      const usersRequest = await makeApiCall(
-        `${RDS_API_USERS}/search${queryParams}`,
-      );
-      const { users: filteredUsers } = await usersRequest.json();
-      users = filteredUsers;
     }
 
+    // append pagination parameters to queryParams
+    queryParams += `&page=${page}&size=${size}`;
+
+    // append dev=true to queryParams
+    queryParams += '&dev=true';
+
+    // make API call with updated queryParams
+    const usersRequest = await makeApiCall(
+      `${RDS_API_USERS}/search${queryParams}`,
+    );
+    const { users: filteredUsers } = await usersRequest.json();
+    users = filteredUsers;
+
     manipulateQueryParamsToURL(queryParams);
-    // Display the filtered user list
-    showUserList(users);
+    // display the filtered user list with pagination
+    generateUserList(
+      users,
+      true,
+      userListElement,
+      paginationElement,
+      loaderElement,
+      prevBtn,
+    );
   } catch (err) {
-    throw new Error(`User list request failed with error: ${err}`);
+    console.error(`User list request failed with error: ${err}`);
+    showErrorMessage(
+      `User list request failed with error: ${err}`,
+      userListElement,
+      paginationElement,
+      loaderElement,
+    );
   }
 });
 
