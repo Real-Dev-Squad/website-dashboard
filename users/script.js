@@ -125,7 +125,6 @@ function showErrorMessage(
 
 const getUsersData = async (page) => {
   try {
-    // Update API endpoint with filtering and pagination parameters
     const usersRequest = await makeApiCall(
       `${RDS_API_USERS}?size=${USER_FETCH_COUNT}&page=${page}`,
     );
@@ -338,7 +337,6 @@ const showUserDataList = async (
   nextBtn,
 ) => {
   try {
-    // Fetch users data with pagination parameters
     const userData = await getUsersData(page);
     if (userData.length) {
       if (userData.length < USER_FETCH_COUNT) {
@@ -346,7 +344,6 @@ const showUserDataList = async (
       } else {
         nextBtn.classList.remove('btn-disabled');
       }
-      // Modify the data processing and pagination logic as needed
       let usersDataList = userData.filter(
         (user) => user.first_name && !user.roles?.archived,
       );
@@ -356,7 +353,6 @@ const showUserDataList = async (
         last_name: user.last_name ? user.last_name : '',
         picture: user.picture && user.picture.url ? user.picture.url : '',
       }));
-      // Update function call to include pagination parameters
       generateUserList(
         usersDataList,
         true,
@@ -592,10 +588,7 @@ applyFilterButton.addEventListener('click', async () => {
   displayLoader();
   const checkedValuesSkills = getCheckedValues('skills-filter');
   const checkedValuesAvailability = getCheckedValues('availability-filter');
-
-  // reset page to 0 when applying filter
   let page = 0;
-  // number of users per page
   const size = USER_FETCH_COUNT;
 
   let queryParams = getFilteredUsersURL(
@@ -605,18 +598,14 @@ applyFilterButton.addEventListener('click', async () => {
 
   try {
     let users;
-    // replace onboarding31days in queryParams if present
     if (queryParams.includes('&state=ONBOARDING31DAYS')) {
       queryParams = replaceOnboarding31days(queryParams);
     }
 
-    // append pagination parameters to queryParams
     queryParams += `&page=${page}&size=${size}`;
 
-    // append dev=true to queryParams
     queryParams += '&dev=true';
 
-    // make API call with updated queryParams
     const usersRequest = await makeApiCall(
       `${RDS_API_USERS}/search${queryParams}`,
     );
