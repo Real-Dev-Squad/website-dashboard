@@ -123,27 +123,6 @@ function showErrorMessage(
   loaderElement.classList.add('remove-element');
 }
 
-/*async function getUsersData(page) {
-  try {
-    const usersRequest = await makeApiCall(
-      `${RDS_API_USERS}?size=${USER_FETCH_COUNT}&page=${page}`,
-    );
-    let usersDataList = [];
-    if (usersRequest.status === 200) {
-      usersDataList = await usersRequest.json();
-      usersDataList = usersDataList.users;
-    } else {
-      throw new Error(
-        `User list request failed with status: ${usersRequest.status}`,
-      );
-    }
-    return usersDataList;
-  } catch (err) {
-    throw err;
-  }
-}
-*/
-
 const getUsersData = async (page) => {
   try {
     // Update API endpoint with filtering and pagination parameters
@@ -349,51 +328,6 @@ function clearFilters() {
     nextBtn,
   );
 }
-
-/*async function showUserDataList(
-  page,
-  userListElement,
-  paginationElement,
-  loaderElement,
-  prevBtn,
-  nextBtn,
-) {
-  try {
-    const userData = await getUsersData(page);
-    if (userData.length) {
-      if (userData.length < 100) {
-        nextBtn.classList.add('btn-disabled');
-      } else {
-        nextBtn.classList.remove('btn-disabled');
-      }
-      let usersDataList = userData.filter(
-        (user) => user.first_name && !user.roles?.archived,
-      );
-      usersDataList = usersDataList.map((user) => ({
-        username: user.username,
-        first_name: user.first_name,
-        last_name: user.last_name ? user.last_name : '',
-        picture: user.picture && user.picture.url ? user.picture.url : '',
-      }));
-      generateUserList(
-        usersDataList,
-        true,
-        userListElement,
-        paginationElement,
-        loaderElement,
-        prevBtn,
-      );
-    }
-  } catch (err) {
-    console.error(err);
-    showErrorMessage(
-      err.message,
-      userListElement,
-      paginationElement,
-      loaderElement,
-    );
-  }
-}*/
 
 const showUserDataList = async (
   page,
