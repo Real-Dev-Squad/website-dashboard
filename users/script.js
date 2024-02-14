@@ -623,7 +623,7 @@ applyFilterButton.addEventListener('click', async () => {
       prevBtn,
     );
   } catch (err) {
-    console.error(`User list request failed with error: ${err}`);
+    console.debug(`User list request failed with error: ${err}`);
     showErrorMessage(
       `User list request failed with error: ${err}`,
       userListElement,
