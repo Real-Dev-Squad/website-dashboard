@@ -3,17 +3,11 @@ const { filteredUsersData } = require('../../mock-data/users');
 const { mockUserData } = require('../../mock-data/users/mockdata');
 const API_BASE_URL = 'https://staging-api.realdevsquad.com';
 
-describe('App Component', () => {
+describe('Apply Filter and Pagination Functionality', () => {
   let browser;
   let page;
+
   jest.setTimeout(60000);
-  let config = {
-    launchOptions: {
-      headless: 'new',
-      ignoreHTTPSErrors: true,
-      args: ['--incognito', '--disable-web-security'],
-    },
-  };
 
   const BASE_URL = 'http://localhost:8000';
 
@@ -22,8 +16,13 @@ describe('App Component', () => {
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   };
+
   beforeAll(async () => {
-    browser = await puppeteer.launch(config.launchOptions);
+    browser = await puppeteer.launch({
+      headless: true,
+      ignoreHTTPSErrors: true,
+      args: ['--incognito', '--disable-web-security'],
+    });
     page = await browser.newPage();
 
     await page.setRequestInterception(true);
@@ -49,9 +48,7 @@ describe('App Component', () => {
           headers,
           body: JSON.stringify({
             ...filteredUsersData,
-            users: filteredUsersData.users.filter((user) => user.discordId),
-            ...mockUserData,
-            users: mockUserData.users.filter((user) => user.discordId),
+            users: [...filteredUsersData.users, ...mockUserData.users],
           }),
         });
       } else {
@@ -59,7 +56,7 @@ describe('App Component', () => {
       }
     });
 
-    await page.goto(`${BASE_URL}/users/discord/`); // Replace with your app's URL
+    await page.goto(`${BASE_URL}/users/discord/`);
     await page.waitForNetworkIdle();
   });
 
@@ -72,20 +69,19 @@ describe('App Component', () => {
     let usersSection = await page.$('.users_section');
     let firstUser = await page.$('.user_card');
     let userDetailsSection = await page.$('.user_details_section');
+
     expect(tabsSection).toBeDefined();
     const tabs = await tabsSection.$$('.tab');
     expect(tabs.length).toEqual(2);
-
     expect(usersSection).toBeDefined();
-
     expect(userDetailsSection).toBeDefined();
   });
 
-  it('should update the URL query string and re-render the app', async () => {
-    // Click on the "Linked Accounts" tab
+  it('should update the URL query string when applying filters', async () => {
+    // click on the "Verified" tab
     await page.click('[data_key="verified"]');
 
-    // Get the current URL and make sure the query string has been updated
+    // get the current URL
     const url = await page.url();
     expect(url).toContain('?tab=verified');
   });
