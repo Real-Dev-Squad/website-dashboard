@@ -1,40 +1,29 @@
 const API_BASE_URL = window.API_BASE_URL;
-const oooRequestContainer = document.getElementById('ooo-request-container');
-const filterModal = document.getElementsByClassName(FILTER_MODAL)[0];
-const applyFilterButton = document.getElementById(APPLY_FILTER_BUTTON);
-const clearButton = document.getElementById(CLEAR_BUTTON);
-const filterButton = document.getElementById(FILTER_BUTTON);
-const sortModal = document.getElementsByClassName(SORT_MODAL)[0];
-const containerFilter = document.querySelector(FILTER_CONTAINER);
-const lastElementContainer = document.querySelector(LAST_ELEMENT_CONTAINER);
-const sortButton = document.querySelector(SORT_BUTTON);
-const backDrop = document.querySelector(BACKDROP);
+const oooRequestContainer = document.getElementById(OOO_CONTAINER_ID);
+const searchBtn = document.getElementById(SEARCH_BUTTON_ID);
 const params = new URLSearchParams(window.location.search);
-const isDev = params.get(DEV_FEATURE_FLAG) === 'true';
+const isDev = DEV_FEATURE_FLAG;
 const loader = document.querySelector('.container__body__loader');
 const startLoading = () => loader.classList.remove('hidden');
 const stopLoading = () => loader.classList.add('hidden');
-let pageVersion = 0;
-let nextLink = '';
 let isDataLoading = false;
-let selectedSortButton = null;
+let sortByValue = document.getElementById(SORT_DROPDOWN_ID).value;
+let statusValue = document.getElementById(STATUS_DROPDOWN_ID).value;
 
-const filterStates = {
-  status: Status.PENDING,
-  order: CREATED_TIME,
-  size: DEFAULT_PAGE_SIZE,
-};
+searchBtn.addEventListener('click', async () => {
+  sortByValue = document.getElementById(SORT_DROPDOWN_ID).value;
+  statusValue = document.getElementById(STATUS_DROPDOWN_ID).value;
+  changeFilter();
+  await renderOooRequestCards({ state: statusValue, sort: sortByValue });
+});
 
-const updateFilterStates = (key, value) => {
-  filterStates[key] = value;
-};
-
-async function getOooRequests(query = {}, nextLink) {
-  let finalUrl = API_BASE_URL + (nextLink || '/requests' + getQueryParamsString(query));
-  if(isDev){
-    finalUrl = API_BASE_URL + (nextLink || '/requests?dev=true' + getQueryParamsString(query));
+async function getOooRequests(query = {}) {
+  let finalUrl = API_BASE_URL + '/requests' + getQueryParamsString(query);
+  if (isDev) {
+    finalUrl =
+      API_BASE_URL + '/requests' + getQueryParamsString(query) + '&dev=true';
   }
-  
+
   try {
     const res = await fetch(finalUrl, {
       credentials: 'include',
@@ -79,194 +68,51 @@ function showMessage(type, message) {
 }
 
 const changeFilter = () => {
-  nextLink = '';
   oooRequestContainer.innerHTML = '';
 };
 
-sortButton.addEventListener('click', async (event) => {
-  event.stopPropagation();
-  sortModal.classList.toggle('hidden');
-  backDrop.style.display = 'flex';
-});
-
-backDrop.addEventListener('click', () => {
-  sortModal.classList.add('hidden');
-  filterModal.classList.add('hidden');
-  backDrop.style.display = 'none';
-});
-
-function toggleStatusCheckbox(statusValue) {
-  const element = document.querySelector(
-    `#status-filter input[value=${statusValue}]`,
-  );
-  element.checked = !element.checked;
-}
-function clearCheckboxes(groupName) {
-  const checkboxes = document.querySelectorAll(`input[name="${groupName}"]`);
-  checkboxes.forEach((cb) => {
-    cb.checked = false;
-  });
-}
-function getCheckedValues(groupName) {
-  const checkboxes = document.querySelectorAll(
-    `input[name="${groupName}"]:checked`,
-  );
-  return Array.from(checkboxes).map((cb) => cb.value.toLowerCase());
-}
-
-filterButton.addEventListener('click', (event) => {
-  filterModal.classList.toggle('hidden');
-  backDrop.style.display = 'flex';
-});
-
-applyFilterButton.addEventListener('click', async () => {
-  filterModal.classList.toggle('hidden');
-  const checkedValuesStatus = getCheckedValues('status-filter');
-  changeFilter();
-  if (checkedValuesStatus) {
-    updateFilterStates('status', checkedValuesStatus);
+function createTaskRequestCard(
+  taskRequest,
+  adminUserDetails,
+  requesterUserDetails,
+) {
+  let {
+    id,
+    state,
+    from,
+    until,
+    message,
+    createdAt,
+    lastModifiedBy,
+    reason,
+    updatedAt,
+  } = taskRequest;
+  let showAdminDetailsClass = 'notHidden';
+  let showActionButtonClass = 'notHidden';
+  if (
+    state === 'PENDING' ||
+    lastModifiedBy === undefined ||
+    lastModifiedBy === null
+  ) {
+    showAdminDetailsClass = 'hidden';
   }
-  await renderOooRequestCards(filterStates);
-});
-clearButton.addEventListener('click', async function () {
-  clearCheckboxes('status-filter');
-  filterModal.classList.toggle('hidden');
-  changeFilter();
-  updateFilterStates('status', '');
-  await renderOooRequestCards(filterStates);
-});
-
-function addCheckbox(labelText, value, groupName) {
-  const group = document.getElementById(groupName);
-  const label = document.createElement('label');
-  const checkbox = document.createElement('input');
-  checkbox.type = 'checkbox';
-  checkbox.name = groupName;
-  checkbox.value = value;
-  label.innerHTML = checkbox.outerHTML + '&nbsp;' + labelText;
-  label.classList.add('checkbox-label');
-  label.appendChild(document.createElement('br'));
-  group.appendChild(label);
-}
-function addSortByIcon(name, id, groupName, order) {
-  const group = document.getElementById(groupName);
-
-  const containerAsc = createSortContainer(id, name, order);
-  group.appendChild(containerAsc);
-}
-
-function sortModalButtons() {
-  const assigneeAsc = document.getElementById(ASSIGNEE_COUNT);
-  const assigneeDesc = document.getElementById(ASSIGNEE_DESC);
-  const createTimeAsc = document.getElementById(CREATED_TIME);
-  const createTimeDesc = document.getElementById(CREATED_TIME_DESC);
-
-  const sortModalButtons = [
-    assigneeAsc,
-    assigneeDesc,
-    createTimeAsc,
-    createTimeDesc,
-  ];
-
-  function toggleSortModal() {
-    sortModal.classList.toggle('hidden');
-    backDrop.style.display = 'none';
-  }
-
-  function selectButton(button) {
-    if (selectedSortButton === button) {
-      selectedSortButton.classList.remove('selected');
-      selectedSortButton = null;
-      toggleSortModal();
-    } else {
-      if (selectedSortButton) {
-        selectedSortButton.classList.remove('selected');
-      }
-      selectedSortButton = button;
-      selectedSortButton.classList.add('selected');
-      toggleSortModal();
-    }
-  }
-
-  sortModalButtons.forEach((button) => {
-    if (button) {
-      button.addEventListener('click', async () => {
-        selectButton(button);
-        changeFilter();
-        updateFilterStates('order', button.id);
-        await renderOooRequestCards(filterStates);
-      });
-    }
-  });
-  selectButton(createTimeAsc);
-  toggleSortModal();
-}
-
-function createSortContainer(id, name, sortOrder) {
-  const container = document.createElement('div');
-  container.classList.add('sort-container', sortOrder);
-
-  container.id = id;
-
-  const nameSpan = document.createElement('span');
-  nameSpan.classList.add('sort__button__text');
-  nameSpan.textContent = name;
-  const label = document.createElement('label');
-  label.appendChild(nameSpan);
-
-  label.classList.add('sort-label');
-
-  container.appendChild(label);
-
-  return container;
-}
-
-function populateStatus() {
-  const statusList = [
-    { name: 'Approved', id: 'APPROVED' },
-    { name: 'Pending', id: 'PENDING' },
-    { name: 'Denied', id: 'DENIED' },
-  ];
-
-  statusList.map(({ name, id }) => addCheckbox(name, id, 'status-filter'));
-
-  const sortByList = [
-    {
-      name: 'Newest First',
-      id: 'CREATED_TIME_DESC',
-      order: 'desc',
-    },
-    {
-      name: 'Oldest First',
-      id: 'CREATED_TIME_ASC',
-      order: 'asc',
-    },
-  ];
-
-  sortByList.forEach(({ name, id, order }) =>
-    addSortByIcon(name, id, 'sort_by-filter', order),
-  );
-}
-
-populateStatus();
-sortModalButtons();
-
-function createTaskRequestCard(taskRequest,adminUserDetails,requesterUserDetails) {
-  let { id,state,from,until,message,createdAt,lastModifiedBy,reason,updatedAt} = taskRequest;
-  let showAdminDetailsClass = "notHidden";
-  let showActionButtonClass = "notHidden";
-  if(state === "PENDING" || lastModifiedBy === undefined || lastModifiedBy === null){
-    showAdminDetailsClass = "hidden";
-  }
-  if(state !== "PENDING"){
-    showActionButtonClass = "hidden";
+  if (state !== 'PENDING') {
+    showActionButtonClass = 'hidden';
   }
   const createdDate = convertDateToReadableStringDate(createdAt);
-  const createdDateInAgoFormat = dateDiff(Date.now(),createdAt,(s) => s + ' ago',);
+  const createdDateInAgoFormat = dateDiff(
+    Date.now(),
+    createdAt,
+    (s) => s + ' ago',
+  );
   const fromDate = convertDateToReadableStringDate(from);
   const toDate = convertDateToReadableStringDate(until);
   let updatedDate = convertDateToReadableStringDate(updatedAt);
-  const updatedDateInAgoFormat = dateDiff(Date.now(),updatedAt,(s) => s + ' ago',);
+  const updatedDateInAgoFormat = dateDiff(
+    Date.now(),
+    updatedAt,
+    (s) => s + ' ago',
+  );
 
   const card = createCustomElement({
     tagName: 'div',
@@ -286,7 +132,9 @@ function createTaskRequestCard(taskRequest,adminUserDetails,requesterUserDetails
                 child: [
                   createCustomElement({
                     tagName: 'img',
-                    src: requesterUserDetails?.picture?.url||'https://dashboard.realdevsquad.com/images/avatar.png',
+                    src:
+                      requesterUserDetails?.picture?.url ||
+                      'https://dashboard.realdevsquad.com/images/avatar.png',
                   }),
                 ],
               }),
@@ -296,28 +144,34 @@ function createTaskRequestCard(taskRequest,adminUserDetails,requesterUserDetails
                 child: [
                   createCustomElement({
                     tagName: 'h4',
-                    textContent: getFullNameOfUser(requesterUserDetails) || "NA",
+                    textContent:
+                      getFullNameOfUser(requesterUserDetails) || 'NA',
                   }),
                   createCustomElement({
                     tagName: 'p',
-                    textContent: createdDateInAgoFormat || "NA",
+                    textContent: createdDateInAgoFormat || 'NA',
                     class: 'tooltip-container',
                     child: [
                       createCustomElement({
                         tagName: 'span',
                         class: 'tooltip',
-                        textContent: createdDate
+                        textContent: createdDate,
                       }),
                     ],
                   }),
                 ],
               }),
-            ]
+            ],
           }),
           createCustomElement({
             tagName: 'button',
-            class: ['request__status', `request__status--${state.toLowerCase()}`],
-            textContent: state.charAt(0).toUpperCase() + state.slice(1).toLowerCase() || "NA",
+            class: [
+              'request__status',
+              `request__status--${state.toLowerCase()}`,
+            ],
+            textContent:
+              state.charAt(0).toUpperCase() + state.slice(1).toLowerCase() ||
+              'NA',
           }),
         ],
       }),
@@ -327,7 +181,7 @@ function createTaskRequestCard(taskRequest,adminUserDetails,requesterUserDetails
         child: [
           createCustomElement({
             tagName: 'p',
-            textContent: message || "NA",
+            textContent: message || 'NA',
           }),
           createCustomElement({
             tagName: 'div',
@@ -341,9 +195,8 @@ function createTaskRequestCard(taskRequest,adminUserDetails,requesterUserDetails
                     class: 'request__date__pill',
                     textContent: 'From',
                   }),
-                  ` ${fromDate}` || "NA",
+                  ` ${fromDate}` || 'NA',
                 ],
-                
               }),
               createCustomElement({
                 tagName: 'p',
@@ -353,7 +206,7 @@ function createTaskRequestCard(taskRequest,adminUserDetails,requesterUserDetails
                     class: 'request__date__pill',
                     textContent: 'To',
                   }),
-                  ` ${toDate}` || "NA",
+                  ` ${toDate}` || 'NA',
                 ],
               }),
             ],
@@ -378,7 +231,9 @@ function createTaskRequestCard(taskRequest,adminUserDetails,requesterUserDetails
                 child: [
                   createCustomElement({
                     tagName: 'img',
-                    src: adminUserDetails?.picture?.url || 'https://dashboard.realdevsquad.com/images/avatar.png',
+                    src:
+                      adminUserDetails?.picture?.url ||
+                      'https://dashboard.realdevsquad.com/images/avatar.png',
                   }),
                 ],
               }),
@@ -392,17 +247,18 @@ function createTaskRequestCard(taskRequest,adminUserDetails,requesterUserDetails
                     child: [
                       createCustomElement({
                         tagName: 'h4',
-                        textContent: getFullNameOfUser(adminUserDetails) || "NA",
+                        textContent:
+                          getFullNameOfUser(adminUserDetails) || 'NA',
                       }),
                       createCustomElement({
                         tagName: 'p',
-                        textContent: updatedDateInAgoFormat || "NA",
+                        textContent: updatedDateInAgoFormat || 'NA',
                         class: 'tooltip-container',
                         child: [
                           createCustomElement({
                             tagName: 'span',
                             class: 'tooltip',
-                            textContent: updatedDate
+                            textContent: updatedDate,
                           }),
                         ],
                       }),
@@ -410,11 +266,11 @@ function createTaskRequestCard(taskRequest,adminUserDetails,requesterUserDetails
                   }),
                   createCustomElement({
                     tagName: 'p',
-                    textContent: reason || "No Remark Provided!",
+                    textContent: reason || 'No Remark Provided!',
                   }),
                 ],
               }),
-            ]
+            ],
           }),
         ],
       }),
@@ -426,94 +282,81 @@ function createTaskRequestCard(taskRequest,adminUserDetails,requesterUserDetails
             tagName: 'input',
             class: 'request__remark__input',
             id: `remark-text-${id}`,
-            type: "text",
-            placeholder: "Add Remark If Any..."
+            type: 'text',
+            placeholder: 'Add Remark If Any...',
           }),
           createCustomElement({
             tagName: 'div',
             class: ['action__buttons__container'],
             child: [
-              createCustomElement(
-              {
+              createCustomElement({
                 tagName: 'button',
-                class: ['request__action__btn','accept__btn'],
+                class: ['request__action__btn', 'accept__btn'],
                 id: `${id}`,
-                textContent: "Accept",
-                eventListeners: [{ event: 'click', func: (e) => performAcceptRejectAction(true,e) }],
+                textContent: 'Accept',
+                eventListeners: [
+                  {
+                    event: 'click',
+                    func: (e) => performAcceptRejectAction(true, e),
+                  },
+                ],
               }),
-              createCustomElement(
-                {
-                  tagName: 'button',
-                  class: ['request__action__btn','reject__btn'],
-                  id: `${id}`,
-                  textContent: "Reject",
-                  eventListeners: [{ event: 'click', func: (e) => performAcceptRejectAction(false,e) }],
-                }),
+              createCustomElement({
+                tagName: 'button',
+                class: ['request__action__btn', 'reject__btn'],
+                id: `${id}`,
+                textContent: 'Reject',
+                eventListeners: [
+                  {
+                    event: 'click',
+                    func: (e) => performAcceptRejectAction(false, e),
+                  },
+                ],
+              }),
             ],
-          })
-        ]
+          }),
+        ],
       }),
     ],
   });
   return card;
 }
 
-const intersectionObserver = new IntersectionObserver(async (entries) => {
-  if (!nextLink) {
-    return;
-  }
-  if (entries[0].isIntersecting && !isDataLoading) {
-    await renderOooRequestCards({}, nextLink);
-  }
-});
-
-const addIntersectionObserver = () => {
-  intersectionObserver.observe(lastElementContainer);
-};
-const removeIntersectionObserver = () => {
-  intersectionObserver.unobserve(lastElementContainer);
-};
-
-async function renderOooRequestCards(queries = {}, newLink = '') {
-  pageVersion++;
-  const currentVersion = pageVersion;
-  let  oooRequestResponse;
+async function renderOooRequestCards(queries = {}) {
+  let oooRequestResponse;
   try {
     isDataLoading = true;
     startLoading();
-    oooRequestResponse = await getOooRequests(queries, newLink);
-    if (currentVersion !== pageVersion) {
-      return;
-    }
+    oooRequestResponse = await getOooRequests(queries);
     for (const oooRequest of oooRequestResponse?.data || []) {
       let adminUserDetails;
       let requesterUserDetails = await getUserDetails(oooRequest.requestedBy);
-      if(oooRequest.state !== "PENDING"){
+      if (oooRequest.state !== 'PENDING') {
         adminUserDetails = await getUserDetails(oooRequest.lastModifiedBy);
       }
-      oooRequestContainer.appendChild(createTaskRequestCard(oooRequest, adminUserDetails, requesterUserDetails));
+      oooRequestContainer.appendChild(
+        createTaskRequestCard(
+          oooRequest,
+          adminUserDetails,
+          requesterUserDetails,
+        ),
+      );
     }
   } catch (error) {
     console.error(error);
     showMessage('ERROR', ErrorMessages.SERVER_ERROR);
   } finally {
-    if (currentVersion !== pageVersion) return;
     stopLoading();
     isDataLoading = false;
-    if (oooRequestContainer.innerHTML === '' || oooRequestResponse === undefined || oooRequestResponse?.data?.length === 0) {
+    if (
+      oooRequestContainer.innerHTML === '' ||
+      oooRequestResponse === undefined ||
+      oooRequestResponse?.data?.length === 0
+    ) {
       showMessage('INFO', 'No OOO requests found!');
     }
   }
 }
-
-async function render() {
-  toggleStatusCheckbox(Status.PENDING.toUpperCase());
-
-  await renderOooRequestCards(filterStates);
-  addIntersectionObserver();
-}
-
-render();
 
 async function getUserDetails(id) {
   if (!id) return;
@@ -532,10 +375,10 @@ async function getUserDetails(id) {
 
 async function acceptRejectRequest(currState, id, remark) {
   let url = `${API_BASE_URL}/requests/${id}`;
-  if(isDev){
+  if (isDev) {
     url = `${API_BASE_URL}/requests/${id}?dev=true`;
   }
-  try{
+  try {
     const res = await fetch(url, {
       credentials: 'include',
       method: 'PUT',
@@ -577,19 +420,24 @@ async function acceptRejectRequest(currState, id, remark) {
   return data;
 }
 
-
-async function performAcceptRejectAction(isAccepted,e) {
+async function performAcceptRejectAction(isAccepted, e) {
   e.preventDefault();
   const requestId = e.target.id;
   let remark = document.getElementById(`remark-text-${requestId}`).value;
-  if(remark === undefined || remark === ""){
+  if (remark === undefined || remark === '') {
     remark = null;
   }
-  const response = await acceptRejectRequest(isAccepted ? 'APPROVED' : 'REJECTED', requestId, remark);
-  console.log(requestId)
-  console.log(remark)
-  if(response){
+  const response = await acceptRejectRequest(
+    isAccepted ? 'APPROVED' : 'REJECTED',
+    requestId,
+    remark,
+  );
+  console.log(requestId);
+  console.log(remark);
+  if (response) {
     changeFilter();
-    await renderOooRequestCards(filterStates);
+    await renderOooRequestCards({ state: statusValue, sort: sortByValue });
   }
 }
+
+renderOooRequestCards({ state: statusValue, sort: sortByValue });

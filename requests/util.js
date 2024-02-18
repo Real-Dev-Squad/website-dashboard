@@ -24,61 +24,40 @@ function createCustomElement(domObjectMap) {
   return el;
 }
 
-function getQueryParamsString(taskRequestStates) {
-  let filterQueries = {};
-  let sortQueries = {};
-
-  if (taskRequestStates.status) {
-    filterQueries.status = taskRequestStates.status;
+function getQueryParamsString(query) {
+  let queryParam = 'type=OOO';
+  if (
+    query.state !== undefined &&
+    query.state !== null &&
+    query.state !== 'ALL'
+  ) {
+    queryParam += `&state=${query.state}`;
   }
-  if (taskRequestStates.requestType) {
-    filterQueries['request-type'] = taskRequestStates.requestType;
-  }
-  if (taskRequestStates.order) {
-    sortQueries = Order[taskRequestStates.order];
-  }
-
-  const queryString = generateRqlQuery(filterQueries, sortQueries);
-
-  const urlParams = new URLSearchParams();
-  if (taskRequestStates.size) {
-    urlParams.append('size', taskRequestStates.size);
-  }
-  if (queryString) {
-    urlParams.append('q', queryString);
-  }
-  if (taskRequestStates.dev) {
-    urlParams.append('dev', true);
-  }
-  return '?' + urlParams.toString();
+  return '?' + queryParam.toString();
 }
-
-const addSpinner = (container) => {
-  const spinner = createCustomElement({
-    tagName: 'div',
-    className: 'spinner',
-  });
-
-  container.append(spinner);
-
-  function removeSpinner() {
-    spinner.remove();
-  }
-
-  return removeSpinner;
-};
 
 function convertDateToReadableStringDate(date) {
-  if(date !== undefined && date !== null){
-    return new Date(date).getDate() + " " + new Date(date).toLocaleString('default', { month: 'short' }) + " " + new Date(date).getFullYear();
+  if (date !== undefined && date !== null) {
+    return (
+      new Date(date).getDate() +
+      ' ' +
+      new Date(date).toLocaleString('default', { month: 'short' }) +
+      ' ' +
+      new Date(date).getFullYear()
+    );
   }
-  return "NA";
+  return 'NA';
 }
 
-
-function getFullNameOfUser(user){
-  if(user === undefined || user === null){
-    return "NA";
+function getFullNameOfUser(user) {
+  if (user === undefined || user === null) {
+    return 'NA';
   }
-  return user?.first_name?.charAt(0).toUpperCase() + user?.first_name?.slice(1).toLowerCase() + " " + user?.last_name?.charAt(0).toUpperCase() + user?.last_name?.slice(1).toLowerCase(); 
+  return (
+    user?.first_name?.charAt(0).toUpperCase() +
+    user?.first_name?.slice(1).toLowerCase() +
+    ' ' +
+    user?.last_name?.charAt(0).toUpperCase() +
+    user?.last_name?.slice(1).toLowerCase()
+  );
 }
