@@ -67,3 +67,50 @@ const addSpinner = (container) => {
 
   return removeSpinner;
 };
+
+/**
+ * Parses the query parameters from the URLSearchParams object and organizes them into an object.
+ *
+ * @param {URLSearchParams} searchParams - The URLSearchParams object that needs to be parsed.
+ * @returns {Object.<string, string[]>} An object containing query parameter keys as properties
+ * and arrays of corresponding values.
+ * */
+function parseQueryParams(searchParams) {
+  const queryObject = {};
+
+  searchParams.forEach((value, key) => {
+    if (!queryObject[key]) {
+      queryObject[key] = [];
+    }
+    queryObject[key].push(value);
+  });
+  return queryObject;
+}
+
+function formURLQueryString(queryStates) {
+  const urlParams = new URLSearchParams();
+
+  if (queryStates.order) {
+    let sortQueryString = Order[queryStates.order];
+    const key = Object.keys(sortQueryString)[0];
+    const value = sortQueryString[key];
+    sortQueryString = key + '-' + value;
+    urlParams.append('sort', sortQueryString);
+  }
+  if (queryStates.status) {
+    if (Array.isArray(queryStates.status)) {
+      queryStates.status.forEach((_, index) => {
+        urlParams.append('status', queryStates.status[index]);
+      });
+    } else {
+      urlParams.append('status', queryStates.status);
+    }
+  }
+  if (queryStates.requestType) {
+    queryStates.requestType.forEach((_, index) =>
+      urlParams.append('request-type', queryStates.requestType[index]),
+    );
+  }
+
+  return '?' + urlParams.toString().trim();
+}
