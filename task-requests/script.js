@@ -281,10 +281,9 @@ function sortModalButtons() {
       });
     }
   });
-  if (window.location.search === '') {
-    selectButton(createTimeAsc);
-    toggleSortModal();
-  }
+
+  selectButton(createTimeAsc);
+  toggleSortModal();
 }
 
 function createSortContainer(id, name, sortOrder) {
