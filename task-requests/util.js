@@ -87,7 +87,7 @@ function parseQueryParams(searchParams) {
   return queryObject;
 }
 
-function formURLQueryString(queryStates) {
+function formURLQueryString(queryStates, isDev) {
   const urlParams = new URLSearchParams();
 
   if (queryStates.order) {
@@ -110,6 +110,10 @@ function formURLQueryString(queryStates) {
     queryStates.requestType.forEach((_, index) =>
       urlParams.append('request-type', queryStates.requestType[index]),
     );
+  }
+
+  if (isDev) {
+    urlParams.append('dev', 'true');
   }
 
   return '?' + urlParams.toString().trim();

@@ -28,7 +28,7 @@ const filterStates = {
 
 const updateFilterStates = (key, value) => {
   filterStates[key] = value;
-  const constructedQueryString = formURLQueryString(filterStates);
+  const constructedQueryString = formURLQueryString(filterStates, isDev);
   manipulateURLQueryParams(constructedQueryString);
 };
 
