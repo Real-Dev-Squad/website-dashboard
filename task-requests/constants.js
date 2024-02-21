@@ -48,3 +48,10 @@ const ErrorMessages = {
   NOT_FOUND: 'Task Requests not found',
   SERVER_ERROR: 'Unexpected error occurred',
 };
+
+const Sort = {
+  REQUESTORS_COUNT_ASC: 'requestors-asc',
+  REQUESTORS_COUNT_DESC: 'requestors-desc',
+  CREATED_TIME_DESC: 'created-desc',
+  CREATED_TIME_ASC: 'created-asc',
+};
