@@ -25,7 +25,7 @@
     <div class="header">
       <div class="header__contents">
         <img
-          src="/requests/assets/RDSLogo.png"
+          src="/task-requests/assets/RDSLogo.png"
           alt="RDS logo"
           height="48"
           width="48"
@@ -36,13 +36,14 @@
     <div class="container">
       <div class="container__header">
         <nav>
-          <a href="#" class="selected__tab">Ooo</a>
+          <a href="#" class="selected__tab">OOO</a>
           <a href="#">Task</a>
           <a href="#">Extension</a>
         </nav>
 
         <div class="search__fields__container">
           <div class="dropdown">
+            <span class="arrow__icon" id="sort_arrow_icon">▴</span>
             <select class="dropdown__disabled" id="sort_by">
               <option value="LATEST">Latest First</option>
               <option value="OLDEST">Oldest First</option>
@@ -50,6 +51,7 @@
           </div>
 
           <div class="dropdown">
+            <span class="arrow__icon" id="status_arrow_icon">▴</span>
             <select id="status">
               <option value="ALL">All</option>
               <option value="APPROVED">Approved</option>
@@ -57,15 +59,12 @@
               <option value="PENDING">Pending</option>
             </select>
           </div>
-
-          <button class="search__btn" id="search_button">Search</button>
         </div>
       </div>
 
       <div class="container__body">
-        <div id="ooo-request-container" class="request"></div>
+        <div id="request_container" class="request"></div>
         <div class="container__body__loader hidden">Loading...</div>
-        <div class="virtual"></div>
       </div>
     </div>
   </body>

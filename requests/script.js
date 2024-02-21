@@ -1,21 +1,40 @@
 const API_BASE_URL = window.API_BASE_URL;
-const oooRequestContainer = document.getElementById(OOO_CONTAINER_ID);
-const searchBtn = document.getElementById(SEARCH_BUTTON_ID);
+const requestContainer = document.getElementById(REQUEST_CONTAINER_ID);
 const params = new URLSearchParams(window.location.search);
 const isDev = DEV_FEATURE_FLAG;
 const loader = document.querySelector('.container__body__loader');
 const startLoading = () => loader.classList.remove('hidden');
 const stopLoading = () => loader.classList.add('hidden');
 let isDataLoading = false;
-let sortByValue = document.getElementById(SORT_DROPDOWN_ID).value;
-let statusValue = document.getElementById(STATUS_DROPDOWN_ID).value;
+let statusDropDown = document.getElementById(STATUS_DROPDOWN_ID);
+let sortDropDown = document.getElementById(SORT_DROPDOWN_ID);
+let sortByValue = sortDropDown.value;
+let statusValue = statusDropDown.value;
+let isStatusArrowUp = false;
+let isSortArrowUp = false;
+let statusArrowIcon = document.getElementById('status_arrow_icon');
+let sortArrowIcon = document.getElementById('sort_arrow_icon');
 
-searchBtn.addEventListener('click', async () => {
+statusDropDown.addEventListener('change', async () => {
   sortByValue = document.getElementById(SORT_DROPDOWN_ID).value;
   statusValue = document.getElementById(STATUS_DROPDOWN_ID).value;
   changeFilter();
   await renderOooRequestCards({ state: statusValue, sort: sortByValue });
 });
+
+statusDropDown.addEventListener('click', function () {
+  isStatusArrowUp = !isStatusArrowUp;
+  updateArrowRotation(statusArrowIcon.classList, isStatusArrowUp);
+});
+
+sortDropDown.addEventListener('click', function () {
+  isSortArrowUp = !isSortArrowUp;
+  updateArrowRotation(sortArrowIcon.classList, isSortArrowUp);
+});
+
+function updateArrowRotation(classList, isArrowUp) {
+  classList.toggle('rotate__up', isArrowUp);
+}
 
 async function getOooRequests(query = {}) {
   let finalUrl = API_BASE_URL + '/requests' + getQueryParamsString(query);
@@ -45,7 +64,7 @@ async function getOooRequests(query = {}) {
     }
 
     if (res.status === 404) {
-      showMessage('ERROR', ErrorMessages.NOT_FOUND);
+      showMessage('ERROR', ErrorMessages.OOO_NOT_FOUND);
       return;
     }
 
@@ -57,18 +76,18 @@ async function getOooRequests(query = {}) {
 
 function showMessage(type, message) {
   const p = document.createElement('p');
-  const classes = ['taskRequest__message'];
+  const classes = ['request__message'];
   if (type === 'ERROR') {
     classes.push('taskRequest__message--error');
   }
   p.classList.add(...classes);
   p.textContent = message;
-  oooRequestContainer.innerHTML = '';
-  oooRequestContainer.appendChild(p);
+  requestContainer.innerHTML = '';
+  requestContainer.appendChild(p);
 }
 
 const changeFilter = () => {
-  oooRequestContainer.innerHTML = '';
+  requestContainer.innerHTML = '';
 };
 
 function createTaskRequestCard(
@@ -266,7 +285,7 @@ function createTaskRequestCard(
                   }),
                   createCustomElement({
                     tagName: 'p',
-                    textContent: reason || 'No Remark Provided!',
+                    textContent: reason || '',
                   }),
                 ],
               }),
@@ -334,7 +353,7 @@ async function renderOooRequestCards(queries = {}) {
       if (oooRequest.state !== 'PENDING') {
         adminUserDetails = await getUserDetails(oooRequest.lastModifiedBy);
       }
-      oooRequestContainer.appendChild(
+      requestContainer.appendChild(
         createTaskRequestCard(
           oooRequest,
           adminUserDetails,
@@ -349,7 +368,7 @@ async function renderOooRequestCards(queries = {}) {
     stopLoading();
     isDataLoading = false;
     if (
-      oooRequestContainer.innerHTML === '' ||
+      requestContainer.innerHTML === '' ||
       oooRequestResponse === undefined ||
       oooRequestResponse?.data?.length === 0
     ) {
@@ -373,7 +392,7 @@ async function getUserDetails(id) {
   return data?.user;
 }
 
-async function acceptRejectRequest(currState, id, remark) {
+async function acceptRejectRequest(id, reqBody) {
   let url = `${API_BASE_URL}/requests/${id}`;
   if (isDev) {
     url = `${API_BASE_URL}/requests/${id}?dev=true`;
@@ -385,11 +404,7 @@ async function acceptRejectRequest(currState, id, remark) {
       headers: {
         'Content-type': 'application/json',
       },
-      body: JSON.stringify({
-        type: 'OOO',
-        reason: remark,
-        state: currState,
-      }),
+      body: reqBody,
     });
 
     if (res.ok) {
@@ -408,7 +423,7 @@ async function acceptRejectRequest(currState, id, remark) {
     }
 
     if (res.status === 404) {
-      showMessage('ERROR', ErrorMessages.NOT_FOUND);
+      showMessage('ERROR', ErrorMessages.OOO_NOT_FOUND);
       return;
     }
 
@@ -424,14 +439,18 @@ async function performAcceptRejectAction(isAccepted, e) {
   e.preventDefault();
   const requestId = e.target.id;
   let remark = document.getElementById(`remark-text-${requestId}`).value;
-  if (remark === undefined || remark === '') {
-    remark = null;
+  let body = JSON.stringify({
+    type: 'OOO',
+    reason: remark,
+    state: isAccepted ? 'APPROVED' : 'REJECTED',
+  });
+  if (remark === '' || remark === undefined || remark === null) {
+    body = JSON.stringify({
+      type: 'OOO',
+      state: isAccepted ? 'APPROVED' : 'REJECTED',
+    });
   }
-  const response = await acceptRejectRequest(
-    isAccepted ? 'APPROVED' : 'REJECTED',
-    requestId,
-    remark,
-  );
+  const response = await acceptRejectRequest(requestId, body);
   console.log(requestId);
   console.log(remark);
   if (response) {

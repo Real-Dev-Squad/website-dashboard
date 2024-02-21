@@ -117,6 +117,10 @@ select {
   border-radius: 5px;
   outline: none;
   cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 6rem;
 }
 
 .dropdown__disabled {
@@ -131,6 +135,11 @@ select {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
+}
+
+.request__message {
+  width: 100vw;
+  text-align: center;
 }
 
 /* swapnil code  */
@@ -304,8 +313,7 @@ select {
   margin: 1px 5px 1px 0px;
 }
 
-.request__action__btn,
-.search__btn {
+.request__action__btn {
   background-color: var(--medium-blue-color);
   padding: 0.5rem;
   border-radius: 0.5rem;
@@ -320,8 +328,7 @@ select {
   border: var(--base-light-grey-border);
 }
 
-.request__action__btn:hover,
-.search__btn:hover {
+.request__action__btn:hover {
   background-color: var(--white);
   color: var(--black-color);
 }
@@ -412,6 +419,25 @@ nav a:hover {
 .tooltip-container:hover .tooltip {
   visibility: visible;
   transition: all 1s ease-in-out;
+}
+
+/* arrrow icon css */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.arrow__icon {
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: transform 0.3s ease;
+  font-size: 1.5rem;
+}
+
+.rotate__up {
+  transform: translateY(-50%) rotate(-180deg);
 }
 
 @media screen and (max-width: 440px) {
