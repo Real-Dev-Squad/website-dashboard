@@ -285,3 +285,75 @@ describe('createCustomElement', () => {
     });
   });
 });
+
+describe('urlParams', () => {
+  beforeEach(async () => {
+    await page.goto(`${SITE_URL}/task-requests`);
+    await page.waitForNetworkIdle();
+  });
+
+  it('Should update page url for default filter and sort by', async () => {
+    const url = page.url();
+    expect(url).toBe(
+      `${SITE_URL}/task-requests?sort=created-asc&status=pending`,
+    );
+  });
+
+  it('Should update page url when filter is changed', async () => {
+    await page.click('#filter-button');
+    await page.click('input[value="APPROVED"]');
+    await page.click('input[value="DENIED"]');
+    await page.click('input[value="assignment"]');
+    await page.click('input[value="creation"]');
+    await page.click('#apply-filter-button');
+    await page.waitForNetworkIdle();
+    const url = page.url();
+
+    expect(url).toBe(
+      `${SITE_URL}/task-requests?sort=created-asc&status=approved&status=pending&status=denied&request-type=assignment&request-type=creation`,
+    );
+  });
+
+  it('Should update page url when sort by is changed', async () => {
+    await page.click('.sort-button');
+    await page.click('#REQUESTORS_COUNT_ASC');
+    await page.waitForNetworkIdle();
+    const url = page.url();
+
+    expect(url).toBe(
+      `${SITE_URL}/task-requests?sort=requestors-asc&status=pending`,
+    );
+  });
+
+  it('Should have UI elements in sync with url', async () => {
+    await page.goto(
+      `${SITE_URL}/task-requests?sort=created-desc&status=approved&status=pending&status=denied&request-type=assignment&request-type=creation`,
+    );
+    await page.click('#filter-button');
+    await page.waitForSelector('.filter-modal');
+
+    const approvedFilter = await page.$('input[value="APPROVED"]');
+    const pendingFilter = await page.$('input[value="PENDING"]');
+    const deniedFilter = await page.$('input[value="DENIED"]');
+
+    const isApprovedChecked = await (
+      await approvedFilter.getProperty('checked')
+    ).jsonValue();
+    const isPendingChecked = await (
+      await pendingFilter.getProperty('checked')
+    ).jsonValue();
+    const isDeniedChecked = await (
+      await deniedFilter.getProperty('checked')
+    ).jsonValue();
+
+    expect(isApprovedChecked).toBe(true);
+    expect(isPendingChecked).toBe(true);
+    expect(isDeniedChecked).toBe(true);
+
+    const newestFirst = await page.$('#CREATED_TIME_DESC');
+    const newestFirstClass = await (
+      await newestFirst.getProperty('className')
+    ).jsonValue();
+    expect(newestFirstClass).toContain('selected');
+  });
+});
