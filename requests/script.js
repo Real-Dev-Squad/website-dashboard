@@ -6,14 +6,21 @@ const loader = document.querySelector('.container__body__loader');
 const startLoading = () => loader.classList.remove('hidden');
 const stopLoading = () => loader.classList.add('hidden');
 let isDataLoading = false;
+let oooTabLink = document.getElementById(OOO_TAB_ID);
+let taskTabLink = document.getElementById(TASK_TAB_ID);
+let extensionTabLink = document.getElementById(EXTENSION_TAB_ID);
+let statusDropDownDiv = document.getElementById(STATUS_DROPDOWN_DIV_ID);
+let sortDropDownDiv = document.getElementById(SORT_DROPDOWN_DIV_ID);
 let statusDropDown = document.getElementById(STATUS_DROPDOWN_ID);
 let sortDropDown = document.getElementById(SORT_DROPDOWN_ID);
 let sortByValue = sortDropDown.value;
 let statusValue = statusDropDown.value;
 let isStatusArrowUp = false;
 let isSortArrowUp = false;
-let statusArrowIcon = document.getElementById('status_arrow_icon');
-let sortArrowIcon = document.getElementById('sort_arrow_icon');
+let currentReqType = OOO_REQUEST_TYPE;
+let statusArrowIcon = document.getElementById(STATUS_ARROW_ICON_ID);
+let sortArrowIcon = document.getElementById(SORT_ARROW_ICON_ID);
+let selected__tab__class = 'selected__tab';
 
 statusDropDown.addEventListener('change', async () => {
   sortByValue = document.getElementById(SORT_DROPDOWN_ID).value;
@@ -22,14 +29,62 @@ statusDropDown.addEventListener('change', async () => {
   await renderOooRequestCards({ state: statusValue, sort: sortByValue });
 });
 
-statusDropDown.addEventListener('click', function () {
+statusDropDownDiv.addEventListener('click', function () {
+  event.stopPropagation();
   isStatusArrowUp = !isStatusArrowUp;
   updateArrowRotation(statusArrowIcon.classList, isStatusArrowUp);
 });
 
-sortDropDown.addEventListener('click', function () {
+sortDropDownDiv.addEventListener('click', function () {
+  event.stopPropagation();
   isSortArrowUp = !isSortArrowUp;
   updateArrowRotation(sortArrowIcon.classList, isSortArrowUp);
+});
+
+document.addEventListener('click', function () {
+  makeArrowIconToDefault();
+});
+
+document.addEventListener('visibilitychange', function () {
+  makeArrowIconToDefault();
+});
+
+function makeArrowIconToDefault() {
+  if (isSortArrowUp) {
+    isSortArrowUp = !isSortArrowUp;
+    updateArrowRotation(sortArrowIcon.classList, isSortArrowUp);
+  }
+  if (isStatusArrowUp) {
+    isStatusArrowUp = !isStatusArrowUp;
+    updateArrowRotation(statusArrowIcon.classList, isStatusArrowUp);
+  }
+}
+
+oooTabLink.addEventListener('click', function () {
+  oooTabLink.classList.add(selected__tab__class);
+  taskTabLink.classList.remove(selected__tab__class);
+  extensionTabLink.classList.remove(selected__tab__class);
+  currentReqType = OOO_REQUEST_TYPE;
+  changeFilter();
+  renderOooRequestCards({ state: statusValue, sort: sortByValue });
+});
+
+taskTabLink.addEventListener('click', function () {
+  oooTabLink.classList.remove(selected__tab__class);
+  taskTabLink.classList.add(selected__tab__class);
+  extensionTabLink.classList.remove(selected__tab__class);
+  currentReqType = TASK_REQUEST_TYPE;
+  changeFilter();
+  renderTaskRequestCards({ state: statusValue, sort: sortByValue });
+});
+
+extensionTabLink.addEventListener('click', function () {
+  oooTabLink.classList.remove(selected__tab__class);
+  taskTabLink.classList.remove(selected__tab__class);
+  extensionTabLink.classList.add(selected__tab__class);
+  currentReqType = EXTENSION_REQUEST_TYPE;
+  changeFilter();
+  renderExtensionRequestCards({ state: statusValue, sort: sortByValue });
 });
 
 function updateArrowRotation(classList, isArrowUp) {
@@ -37,10 +92,10 @@ function updateArrowRotation(classList, isArrowUp) {
 }
 
 async function getOooRequests(query = {}) {
-  let finalUrl = API_BASE_URL + '/requests' + getQueryParamsString(query);
+  let finalUrl = API_BASE_URL + '/requests' + getOooQueryParamsString(query);
   if (isDev) {
     finalUrl =
-      API_BASE_URL + '/requests' + getQueryParamsString(query) + '&dev=true';
+      API_BASE_URL + '/requests' + getOooQueryParamsString(query) + '&dev=true';
   }
 
   try {
@@ -377,6 +432,14 @@ async function renderOooRequestCards(queries = {}) {
   }
 }
 
+async function renderTaskRequestCards(queries = {}) {
+  showMessage('INFO', 'This feature is under development');
+}
+
+async function renderExtensionRequestCards(queries = {}) {
+  showMessage('INFO', 'This feature is under development');
+}
+
 async function getUserDetails(id) {
   if (!id) return;
   const url = `${API_BASE_URL}/users?id=${id}`;
@@ -440,13 +503,13 @@ async function performAcceptRejectAction(isAccepted, e) {
   const requestId = e.target.id;
   let remark = document.getElementById(`remark-text-${requestId}`).value;
   let body = JSON.stringify({
-    type: 'OOO',
+    type: currentReqType,
     reason: remark,
     state: isAccepted ? 'APPROVED' : 'REJECTED',
   });
   if (remark === '' || remark === undefined || remark === null) {
     body = JSON.stringify({
-      type: 'OOO',
+      type: currentReqType,
       state: isAccepted ? 'APPROVED' : 'REJECTED',
     });
   }

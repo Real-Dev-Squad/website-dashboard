@@ -24,7 +24,7 @@ function createCustomElement(domObjectMap) {
   return el;
 }
 
-function getQueryParamsString(query) {
+function getOooQueryParamsString(query) {
   let queryParam = 'type=OOO';
   if (
     query.state !== undefined &&

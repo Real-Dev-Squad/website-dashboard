@@ -36,24 +36,24 @@
     <div class="container">
       <div class="container__header">
         <nav>
-          <a href="#" class="selected__tab">OOO</a>
-          <a href="#">Task</a>
-          <a href="#">Extension</a>
+          <a href="#" class="selected__tab" id="ooo_tab_link">OOO</a>
+          <a href="#" id="task_tab_link">Task</a>
+          <a href="#" id="extension_tab_link">Extension</a>
         </nav>
 
         <div class="search__fields__container">
-          <div class="dropdown">
+          <div class="dropdown" id="sort_dropdown_div">
             <span class="arrow__icon" id="sort_arrow_icon">▴</span>
             <select class="dropdown__disabled" id="sort_by">
-              <option value="LATEST">Latest First</option>
+              <option value="LATEST" selected>Latest First</option>
               <option value="OLDEST">Oldest First</option>
             </select>
           </div>
 
-          <div class="dropdown">
+          <div class="dropdown" id="status_dropdown_div">
             <span class="arrow__icon" id="status_arrow_icon">▴</span>
             <select id="status">
-              <option value="ALL">All</option>
+              <option value="ALL" selected>All</option>
               <option value="APPROVED">Approved</option>
               <option value="REJECTED">Rejected</option>
               <option value="PENDING">Pending</option>
