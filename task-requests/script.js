@@ -28,6 +28,8 @@ const filterStates = {
 
 const updateFilterStates = (key, value) => {
   filterStates[key] = value;
+  const constructedQueryString = formURLQueryString(filterStates, isDev);
+  manipulateURLQueryParams(constructedQueryString);
 };
 
 async function getTaskRequests(query = {}, nextLink) {
@@ -119,6 +121,45 @@ backDrop.addEventListener('click', () => {
   backDrop.style.display = 'none';
 });
 
+function updateUIBasedOnQueryParams(parsedQueryObj) {
+  const statusFilters = document.querySelectorAll(
+    `input[name="status-filter"]`,
+  );
+  const requestTypeFilters = document.querySelectorAll(
+    `input[name="request-type-filter"]`,
+  );
+  const sortOptions = document.querySelectorAll('.sort-container');
+
+  if (parsedQueryObj.sort) {
+    sortOptions.forEach((option) => {
+      if (parsedQueryObj.sort.includes(Sort[option.id])) {
+        selectButton(option);
+        updateFilterStates('order', option.id);
+        sortModal.classList.toggle('hidden');
+      }
+    });
+  }
+
+  if (parsedQueryObj.status) {
+    statusFilters.forEach((filter) => {
+      if (parsedQueryObj.status.includes(filter.value.toLowerCase())) {
+        filter.checked = true;
+      }
+    });
+  }
+
+  if (parsedQueryObj['request-type']) {
+    requestTypeFilters.forEach((filter) => {
+      if (parsedQueryObj['request-type'].includes(filter.value)) {
+        filter.checked = true;
+      }
+    });
+  }
+
+  applyFilterButton.click();
+  filterModal.classList.toggle('hidden');
+}
+
 function toggleStatusCheckbox(statusValue) {
   const element = document.querySelector(
     `#status-filter input[value=${statusValue}]`,
@@ -143,6 +184,18 @@ filterButton.addEventListener('click', (event) => {
   backDrop.style.display = 'flex';
 });
 
+function manipulateURLQueryParams(constructedQueryString) {
+  const currentURLInstance = new URL(window.location.href);
+  currentURLInstance.search = '';
+  const currentURL = currentURLInstance.href;
+  const newURLWithQueryParams = `${currentURL}${constructedQueryString}`;
+  window.history.pushState(
+    { path: newURLWithQueryParams },
+    '',
+    newURLWithQueryParams,
+  );
+}
+
 applyFilterButton.addEventListener('click', async () => {
   filterModal.classList.toggle('hidden');
   const checkedValuesStatus = getCheckedValues('status-filter');
@@ -158,9 +211,11 @@ applyFilterButton.addEventListener('click', async () => {
 });
 clearButton.addEventListener('click', async function () {
   clearCheckboxes('status-filter');
+  clearCheckboxes('request-type-filter');
   filterModal.classList.toggle('hidden');
   changeFilter();
   updateFilterStates('status', '');
+  updateFilterStates('requestType', '');
   await renderTaskRequestCards(filterStates);
 });
 
@@ -183,6 +238,26 @@ function addSortByIcon(name, id, groupName, order) {
   group.appendChild(containerAsc);
 }
 
+function toggleSortModal() {
+  sortModal.classList.toggle('hidden');
+  backDrop.style.display = 'none';
+}
+
+function selectButton(button) {
+  if (selectedSortButton === button) {
+    selectedSortButton.classList.remove('selected');
+    selectedSortButton = null;
+    toggleSortModal();
+  } else {
+    if (selectedSortButton) {
+      selectedSortButton.classList.remove('selected');
+    }
+    selectedSortButton = button;
+    selectedSortButton.classList.add('selected');
+    toggleSortModal();
+  }
+}
+
 function sortModalButtons() {
   const assigneeAsc = document.getElementById(ASSIGNEE_COUNT);
   const assigneeDesc = document.getElementById(ASSIGNEE_DESC);
@@ -196,26 +271,6 @@ function sortModalButtons() {
     createTimeDesc,
   ];
 
-  function toggleSortModal() {
-    sortModal.classList.toggle('hidden');
-    backDrop.style.display = 'none';
-  }
-
-  function selectButton(button) {
-    if (selectedSortButton === button) {
-      selectedSortButton.classList.remove('selected');
-      selectedSortButton = null;
-      toggleSortModal();
-    } else {
-      if (selectedSortButton) {
-        selectedSortButton.classList.remove('selected');
-      }
-      selectedSortButton = button;
-      selectedSortButton.classList.add('selected');
-      toggleSortModal();
-    }
-  }
-
   sortModalButtons.forEach((button) => {
     if (button) {
       button.addEventListener('click', async () => {
@@ -226,6 +281,7 @@ function sortModalButtons() {
       });
     }
   });
+
   selectButton(createTimeAsc);
   toggleSortModal();
 }
@@ -410,9 +466,15 @@ async function renderTaskRequestCards(queries = {}, newLink = '') {
 }
 
 async function render() {
-  toggleStatusCheckbox(Status.PENDING.toUpperCase());
-
-  await renderTaskRequestCards(filterStates);
+  if (window.location.search === '') {
+    toggleStatusCheckbox(Status.PENDING.toUpperCase());
+    const constructedQueryString = formURLQueryString(filterStates);
+    manipulateURLQueryParams(constructedQueryString);
+    await renderTaskRequestCards(filterStates);
+  } else {
+    const parsedQuery = parseQueryParams(params);
+    updateUIBasedOnQueryParams(parsedQuery);
+  }
   addIntersectionObserver();
 }
 
