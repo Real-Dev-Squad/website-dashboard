@@ -35,10 +35,6 @@ p {
   padding: 0;
 }
 
-.hidden {
-  display: none;
-}
-
 .header {
   background: var(--color-primary);
   padding: 1rem;
@@ -102,33 +98,6 @@ p {
   flex-wrap: wrap;
 }
 
-.search__fields__container {
-  display: flex;
-  align-items: center;
-}
-
-.dropdown {
-  margin-right: 1rem;
-}
-
-select {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  outline: none;
-  cursor: pointer;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  width: 6rem;
-}
-
-.dropdown__disabled {
-  background-color: var(--light-gray-color);
-  cursor: not-allowed;
-  border: 1px solid var(--dark-gray-color);
-}
-
 /* Filter modal end */
 
 .request {
@@ -152,6 +121,7 @@ select {
   padding: 1rem;
   box-shadow: var(--elevation-1);
   border-radius: 0.5rem;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
 .request__card__footer__requestor__avatar {
@@ -357,6 +327,11 @@ nav a:hover {
   color: var(--black-color);
 }
 
+.disabled__tab {
+  pointer-events: none;
+  color: var(--color-gray);
+}
+
 /* remark, accept reject button css */
 .action__container {
   margin-top: 0.5rem;
@@ -421,27 +396,72 @@ nav a:hover {
   transition: all 1s ease-in-out;
 }
 
-/* arrrow icon css */
-.dropdown {
-  position: relative;
-  display: inline-block;
+/* animation keyframe */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-.arrow__icon {
-  position: absolute;
-  right: 2px;
-  top: 50%;
-  transform: translateY(-50%);
-  transition: transform 0.3s ease;
-  font-size: 1.5rem;
-  cursor: pointer;
-  pointer-events: none;
+/* toast css */
+#toast {
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: bold;
+  border: 1px solid;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
-.rotate__up {
-  transform: translateY(-50%) rotate(-180deg);
+.success {
+  background-color: var(--color-success);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 }
 
+.failure {
+  background-color: var(--color-failure);
+  color: var(--white);
+}
+
+.hidden {
+  display: none !important;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 1px;
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.success .progress-bar {
+  background-color: var(--success-color);
+}
+
+.failure .progress-bar {
+  background-color: var(--failure-color);
+}
+
+.fill {
+  height: 5px;
+  animation: fillAnimation 5s ease backwards;
+}
+
+@keyframes fillAnimation {
+  100% {
+    width: 0%;
+  }
+}
+
+/* media queries */
 @media screen and (max-width: 440px) {
   .container {
     padding: 1.5rem;

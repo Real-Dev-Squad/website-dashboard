@@ -37,31 +37,16 @@
       <div class="container__header">
         <nav>
           <a href="#" class="selected__tab" id="ooo_tab_link">OOO</a>
-          <a href="#" id="task_tab_link">Task</a>
-          <a href="#" id="extension_tab_link">Extension</a>
+          <a href="#" class="disabled__tab" id="task_tab_link">Task</a>
+          <a href="#" class="disabled__tab" id="extension_tab_link"
+            >Extension</a
+          >
         </nav>
-
-        <div class="search__fields__container">
-          <div class="dropdown" id="sort_dropdown_div">
-            <span class="arrow__icon" id="sort_arrow_icon">▴</span>
-            <select class="dropdown__disabled" id="sort_by">
-              <option value="LATEST" selected>Latest First</option>
-              <option value="OLDEST">Oldest First</option>
-            </select>
-          </div>
-
-          <div class="dropdown" id="status_dropdown_div">
-            <span class="arrow__icon" id="status_arrow_icon">▴</span>
-            <select id="status">
-              <option value="ALL" selected>All</option>
-              <option value="APPROVED">Approved</option>
-              <option value="REJECTED">Rejected</option>
-              <option value="PENDING">Pending</option>
-            </select>
-          </div>
+        <div id="toast" class="">
+          <div class="message"></div>
+          <div class="progress-bar"></div>
         </div>
       </div>
-
       <div class="container__body">
         <div id="request_container" class="request"></div>
         <div class="container__body__loader hidden">Loading...</div>

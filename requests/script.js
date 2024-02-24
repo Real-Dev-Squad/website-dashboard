@@ -7,89 +7,17 @@ const startLoading = () => loader.classList.remove('hidden');
 const stopLoading = () => loader.classList.add('hidden');
 let isDataLoading = false;
 let oooTabLink = document.getElementById(OOO_TAB_ID);
-let taskTabLink = document.getElementById(TASK_TAB_ID);
-let extensionTabLink = document.getElementById(EXTENSION_TAB_ID);
-let statusDropDownDiv = document.getElementById(STATUS_DROPDOWN_DIV_ID);
-let sortDropDownDiv = document.getElementById(SORT_DROPDOWN_DIV_ID);
-let statusDropDown = document.getElementById(STATUS_DROPDOWN_ID);
-let sortDropDown = document.getElementById(SORT_DROPDOWN_ID);
-let sortByValue = sortDropDown.value;
-let statusValue = statusDropDown.value;
-let isStatusArrowUp = false;
-let isSortArrowUp = false;
 let currentReqType = OOO_REQUEST_TYPE;
-let statusArrowIcon = document.getElementById(STATUS_ARROW_ICON_ID);
-let sortArrowIcon = document.getElementById(SORT_ARROW_ICON_ID);
 let selected__tab__class = 'selected__tab';
-
-statusDropDown.addEventListener('change', async () => {
-  sortByValue = document.getElementById(SORT_DROPDOWN_ID).value;
-  statusValue = document.getElementById(STATUS_DROPDOWN_ID).value;
-  changeFilter();
-  await renderOooRequestCards({ state: statusValue, sort: sortByValue });
-});
-
-statusDropDownDiv.addEventListener('click', function () {
-  event.stopPropagation();
-  isStatusArrowUp = !isStatusArrowUp;
-  updateArrowRotation(statusArrowIcon.classList, isStatusArrowUp);
-});
-
-sortDropDownDiv.addEventListener('click', function () {
-  event.stopPropagation();
-  isSortArrowUp = !isSortArrowUp;
-  updateArrowRotation(sortArrowIcon.classList, isSortArrowUp);
-});
-
-document.addEventListener('click', function () {
-  makeArrowIconToDefault();
-});
-
-document.addEventListener('visibilitychange', function () {
-  makeArrowIconToDefault();
-});
-
-function makeArrowIconToDefault() {
-  if (isSortArrowUp) {
-    isSortArrowUp = !isSortArrowUp;
-    updateArrowRotation(sortArrowIcon.classList, isSortArrowUp);
-  }
-  if (isStatusArrowUp) {
-    isStatusArrowUp = !isStatusArrowUp;
-    updateArrowRotation(statusArrowIcon.classList, isStatusArrowUp);
-  }
-}
+let statusValue = null;
+let sortByValue = null;
 
 oooTabLink.addEventListener('click', function () {
   oooTabLink.classList.add(selected__tab__class);
-  taskTabLink.classList.remove(selected__tab__class);
-  extensionTabLink.classList.remove(selected__tab__class);
   currentReqType = OOO_REQUEST_TYPE;
   changeFilter();
   renderOooRequestCards({ state: statusValue, sort: sortByValue });
 });
-
-taskTabLink.addEventListener('click', function () {
-  oooTabLink.classList.remove(selected__tab__class);
-  taskTabLink.classList.add(selected__tab__class);
-  extensionTabLink.classList.remove(selected__tab__class);
-  currentReqType = TASK_REQUEST_TYPE;
-  changeFilter();
-  renderTaskRequestCards({ state: statusValue, sort: sortByValue });
-});
-
-extensionTabLink.addEventListener('click', function () {
-  oooTabLink.classList.remove(selected__tab__class);
-  taskTabLink.classList.remove(selected__tab__class);
-  extensionTabLink.classList.add(selected__tab__class);
-  currentReqType = EXTENSION_REQUEST_TYPE;
-  changeFilter();
-  renderExtensionRequestCards({ state: statusValue, sort: sortByValue });
-});
-
-function updateArrowRotation(classList, isArrowUp) {
-  classList.toggle('rotate__up', isArrowUp);
-}
 
 async function getOooRequests(query = {}) {
   let finalUrl = API_BASE_URL + '/requests' + getOooQueryParamsString(query);
@@ -145,7 +73,7 @@ const changeFilter = () => {
   requestContainer.innerHTML = '';
 };
 
-function createTaskRequestCard(
+function createOooRequestCard(
   taskRequest,
   adminUserDetails,
   requesterUserDetails,
@@ -409,7 +337,7 @@ async function renderOooRequestCards(queries = {}) {
         adminUserDetails = await getUserDetails(oooRequest.lastModifiedBy);
       }
       requestContainer.appendChild(
-        createTaskRequestCard(
+        createOooRequestCard(
           oooRequest,
           adminUserDetails,
           requesterUserDetails,
@@ -430,14 +358,6 @@ async function renderOooRequestCards(queries = {}) {
       showMessage('INFO', 'No OOO requests found!');
     }
   }
-}
-
-async function renderTaskRequestCards(queries = {}) {
-  showMessage('INFO', 'This feature is under development');
-}
-
-async function renderExtensionRequestCards(queries = {}) {
-  showMessage('INFO', 'This feature is under development');
 }
 
 async function getUserDetails(id) {
@@ -472,6 +392,7 @@ async function acceptRejectRequest(id, reqBody) {
 
     if (res.ok) {
       const data = await res.json();
+      showToast('Status updated successfully!', 'success');
       return data;
     }
 
@@ -513,13 +434,38 @@ async function performAcceptRejectAction(isAccepted, e) {
       state: isAccepted ? 'APPROVED' : 'REJECTED',
     });
   }
+  changeFilter();
+  startLoading();
   const response = await acceptRejectRequest(requestId, body);
-  console.log(requestId);
-  console.log(remark);
+  stopLoading();
   if (response) {
-    changeFilter();
     await renderOooRequestCards({ state: statusValue, sort: sortByValue });
   }
+}
+
+function showToast(message, type) {
+  if (typeof message === 'string') {
+    toast.innerHTML = `<div class="message">${message}</div>`;
+  }
+  toast.classList.remove('hidden');
+
+  if (type === 'success') {
+    toast.classList.add('success');
+    toast.classList.remove('failure');
+  } else if (type === 'failure') {
+    toast.classList.add('failure');
+    toast.classList.remove('success');
+  }
+
+  const progressBar = document.createElement('div');
+  progressBar.classList.add('progress-bar');
+  progressBar.classList.add('fill');
+  toast.appendChild(progressBar);
+
+  setTimeout(() => {
+    toast.classList.add('hidden');
+    toast.innerHTML = '';
+  }, 5000);
 }
 
 renderOooRequestCards({ state: statusValue, sort: sortByValue });
