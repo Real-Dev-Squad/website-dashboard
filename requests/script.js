@@ -34,23 +34,22 @@ async function getOooRequests(query = {}) {
     if (res.ok) {
       const data = await res.json();
       return data;
+    } else {
+      switch (res.status) {
+        case 401:
+          showMessage('ERROR', ErrorMessages.UNAUTHENTICATED);
+          return;
+        case 403:
+          showMessage('ERROR', ErrorMessages.UNAUTHORIZED);
+          return;
+        case 404:
+          showMessage('ERROR', ErrorMessages.OOO_NOT_FOUND);
+          return;
+        default:
+          // Handle other status codes here
+          break;
+      }
     }
-
-    if (res.status === 401) {
-      showMessage('ERROR', ErrorMessages.UNAUTHENTICATED);
-      return;
-    }
-
-    if (res.status === 403) {
-      showMessage('ERROR', ErrorMessages.UNAUTHORIZED);
-      return;
-    }
-
-    if (res.status === 404) {
-      showMessage('ERROR', ErrorMessages.OOO_NOT_FOUND);
-      return;
-    }
-
     showMessage('ERROR', ErrorMessages.SERVER_ERROR);
   } catch (e) {
     console.error(e);
@@ -60,8 +59,10 @@ async function getOooRequests(query = {}) {
 function showMessage(type, message) {
   const p = document.createElement('p');
   const classes = ['request__message'];
-  if (type === 'ERROR') {
-    classes.push('request__message--error');
+  switch (type) {
+    case 'ERROR':
+      classes.push('request__message--error');
+      break;
   }
   p.classList.add(...classes);
   p.textContent = message;
@@ -120,208 +121,223 @@ function createOooRequestCard(
     tagName: 'div',
     class: 'ooo_request__card',
     child: [
-      createCustomElement({
-        tagName: 'div',
-        class: 'requester__info__and__status',
-        child: [
-          createCustomElement({
-            tagName: 'div',
-            class: 'requester__info',
-            child: [
-              createCustomElement({
-                tagName: 'div',
-                class: 'request__card__footer__requestor__avatar',
-                child: [
-                  createCustomElement({
-                    tagName: 'img',
-                    src:
-                      requesterUserDetails?.picture?.url ||
-                      'https://dashboard.realdevsquad.com/images/avatar.png',
-                  }),
-                ],
-              }),
-              createCustomElement({
-                tagName: 'div',
-                class: 'requester__name',
-                child: [
-                  createCustomElement({
-                    tagName: 'h4',
-                    textContent:
-                      getFullNameOfUser(requesterUserDetails) || 'NA',
-                  }),
-                  createCustomElement({
-                    tagName: 'p',
-                    textContent: createdDateInAgoFormat || 'NA',
-                    class: 'tooltip-container',
-                    child: [
-                      createCustomElement({
-                        tagName: 'span',
-                        class: 'tooltip',
-                        textContent: createdDate,
-                      }),
-                    ],
-                  }),
-                ],
-              }),
-            ],
-          }),
-          createCustomElement({
-            tagName: 'button',
-            class: [
-              'request__status',
-              `request__status--${state.toLowerCase()}`,
-            ],
-            textContent:
-              state.charAt(0).toUpperCase() + state.slice(1).toLowerCase() ||
-              'NA',
-          }),
-        ],
-      }),
-      createCustomElement({
-        tagName: 'div',
-        class: 'request__content',
-        child: [
-          createCustomElement({
-            tagName: 'p',
-            textContent: message || 'NA',
-          }),
-          createCustomElement({
-            tagName: 'div',
-            class: 'request__timeline',
-            child: [
-              createCustomElement({
-                tagName: 'p',
-                child: [
-                  createCustomElement({
-                    tagName: 'span',
-                    class: 'request__date__pill',
-                    textContent: 'From',
-                  }),
-                  ` ${fromDate}` || 'NA',
-                ],
-              }),
-              createCustomElement({
-                tagName: 'p',
-                child: [
-                  createCustomElement({
-                    tagName: 'span',
-                    class: 'request__date__pill',
-                    textContent: 'To',
-                  }),
-                  ` ${toDate}` || 'NA',
-                ],
-              }),
-            ],
-          }),
-        ],
-      }),
-      createCustomElement({
-        tagName: 'hr',
-        class: 'horizontal__line__saperator',
-      }),
-      createCustomElement({
-        tagName: 'div',
-        class: ['admin__info__and__status', showAdminDetailsClass],
-        child: [
-          createCustomElement({
-            tagName: 'div',
-            class: 'admin__info',
-            child: [
-              createCustomElement({
-                tagName: 'div',
-                class: 'admin__card__footer__requestor__avatar',
-                child: [
-                  createCustomElement({
-                    tagName: 'img',
-                    src:
-                      adminUserDetails?.picture?.url ||
-                      'https://dashboard.realdevsquad.com/images/avatar.png',
-                  }),
-                ],
-              }),
-              createCustomElement({
-                tagName: 'div',
-                class: 'admin__name__and__remark',
-                child: [
-                  createCustomElement({
-                    tagName: 'div',
-                    class: 'admin__name',
-                    child: [
-                      createCustomElement({
-                        tagName: 'h4',
-                        textContent:
-                          getFullNameOfUser(adminUserDetails) || 'NA',
-                      }),
-                      createCustomElement({
-                        tagName: 'p',
-                        textContent: updatedDateInAgoFormat || 'NA',
-                        class: 'tooltip-container',
-                        child: [
-                          createCustomElement({
-                            tagName: 'span',
-                            class: 'tooltip',
-                            textContent: updatedDate,
-                          }),
-                        ],
-                      }),
-                    ],
-                  }),
-                  createCustomElement({
-                    tagName: 'p',
-                    textContent: reason || '',
-                  }),
-                ],
-              }),
-            ],
-          }),
-        ],
-      }),
-      createCustomElement({
-        tagName: 'div',
-        class: ['action__container', showActionButtonClass],
-        child: [
-          createCustomElement({
-            tagName: 'input',
-            class: 'request__remark__input',
-            id: `remark-text-${id}`,
-            type: 'text',
-            placeholder: 'Add Remark If Any...',
-          }),
-          createCustomElement({
-            tagName: 'div',
-            class: ['action__buttons__container'],
-            child: [
-              createCustomElement({
-                tagName: 'button',
-                class: ['request__action__btn', 'accept__btn'],
-                id: `${id}`,
-                textContent: 'Accept',
-                eventListeners: [
-                  {
-                    event: 'click',
-                    func: (e) => performAcceptRejectAction(true, e),
-                  },
-                ],
-              }),
-              createCustomElement({
-                tagName: 'button',
-                class: ['request__action__btn', 'reject__btn'],
-                id: `${id}`,
-                textContent: 'Reject',
-                eventListeners: [
-                  {
-                    event: 'click',
-                    func: (e) => performAcceptRejectAction(false, e),
-                  },
-                ],
-              }),
-            ],
-          }),
-        ],
-      }),
+      generateRequesterInfo(),
+      generateRequestContent(),
+      addHotizontalBreakLine(),
+      generateSuperuserInfo(),
+      generateActionButtonsContainer(),
     ],
   });
   return card;
+
+  function addHotizontalBreakLine() {
+    return createCustomElement({
+      tagName: 'hr',
+      class: 'horizontal__line__saperator',
+    });
+  }
+
+  function generateActionButtonsContainer() {
+    return createCustomElement({
+      tagName: 'div',
+      class: ['action__container', showActionButtonClass],
+      child: [
+        createCustomElement({
+          tagName: 'input',
+          class: 'request__remark__input',
+          id: `remark-text-${id}`,
+          type: 'text',
+          placeholder: 'Add Remark If Any...',
+        }),
+        createCustomElement({
+          tagName: 'div',
+          class: ['action__buttons__container'],
+          child: [
+            createCustomElement({
+              tagName: 'button',
+              class: ['request__action__btn', 'accept__btn'],
+              id: `${id}`,
+              textContent: 'Accept',
+              eventListeners: [
+                {
+                  event: 'click',
+                  func: (e) => performAcceptRejectAction(true, e),
+                },
+              ],
+            }),
+            createCustomElement({
+              tagName: 'button',
+              class: ['request__action__btn', 'reject__btn'],
+              id: `${id}`,
+              textContent: 'Reject',
+              eventListeners: [
+                {
+                  event: 'click',
+                  func: (e) => performAcceptRejectAction(false, e),
+                },
+              ],
+            }),
+          ],
+        }),
+      ],
+    });
+  }
+
+  function generateSuperuserInfo() {
+    return createCustomElement({
+      tagName: 'div',
+      class: ['admin__info__and__status', showAdminDetailsClass],
+      child: [
+        createCustomElement({
+          tagName: 'div',
+          class: 'admin__info',
+          child: [
+            createCustomElement({
+              tagName: 'div',
+              class: 'admin__card__footer__requestor__avatar',
+              child: [
+                createCustomElement({
+                  tagName: 'img',
+                  src:
+                    adminUserDetails?.picture?.url ||
+                    'https://dashboard.realdevsquad.com/images/avatar.png',
+                }),
+              ],
+            }),
+            createCustomElement({
+              tagName: 'div',
+              class: 'admin__name__and__remark',
+              child: [
+                createCustomElement({
+                  tagName: 'div',
+                  class: 'admin__name',
+                  child: [
+                    createCustomElement({
+                      tagName: 'h4',
+                      textContent: getFullNameOfUser(adminUserDetails) || 'NA',
+                    }),
+                    createCustomElement({
+                      tagName: 'p',
+                      textContent: updatedDateInAgoFormat || 'NA',
+                      class: 'tooltip-container',
+                      child: [
+                        createCustomElement({
+                          tagName: 'span',
+                          class: 'tooltip',
+                          textContent: updatedDate,
+                        }),
+                      ],
+                    }),
+                  ],
+                }),
+                createCustomElement({
+                  tagName: 'p',
+                  textContent: reason || '',
+                }),
+              ],
+            }),
+          ],
+        }),
+      ],
+    });
+  }
+
+  function generateRequestContent() {
+    return createCustomElement({
+      tagName: 'div',
+      class: 'request__content',
+      child: [
+        createCustomElement({
+          tagName: 'p',
+          textContent: message || 'NA',
+        }),
+        createCustomElement({
+          tagName: 'div',
+          class: 'request__timeline',
+          child: [
+            createCustomElement({
+              tagName: 'p',
+              child: [
+                createCustomElement({
+                  tagName: 'span',
+                  class: 'request__date__pill',
+                  textContent: 'From',
+                }),
+                ` ${fromDate}` || 'NA',
+              ],
+            }),
+            createCustomElement({
+              tagName: 'p',
+              child: [
+                createCustomElement({
+                  tagName: 'span',
+                  class: 'request__date__pill',
+                  textContent: 'To',
+                }),
+                ` ${toDate}` || 'NA',
+              ],
+            }),
+          ],
+        }),
+      ],
+    });
+  }
+
+  function generateRequesterInfo() {
+    return createCustomElement({
+      tagName: 'div',
+      class: 'requester__info__and__status',
+      child: [
+        createCustomElement({
+          tagName: 'div',
+          class: 'requester__info',
+          child: [
+            createCustomElement({
+              tagName: 'div',
+              class: 'request__card__footer__requestor__avatar',
+              child: [
+                createCustomElement({
+                  tagName: 'img',
+                  src:
+                    requesterUserDetails?.picture?.url ||
+                    'https://dashboard.realdevsquad.com/images/avatar.png',
+                }),
+              ],
+            }),
+            createCustomElement({
+              tagName: 'div',
+              class: 'requester__name',
+              child: [
+                createCustomElement({
+                  tagName: 'h4',
+                  textContent: getFullNameOfUser(requesterUserDetails) || 'NA',
+                }),
+                createCustomElement({
+                  tagName: 'p',
+                  textContent: createdDateInAgoFormat || 'NA',
+                  class: 'tooltip-container',
+                  child: [
+                    createCustomElement({
+                      tagName: 'span',
+                      class: 'tooltip',
+                      textContent: createdDate,
+                    }),
+                  ],
+                }),
+              ],
+            }),
+          ],
+        }),
+        createCustomElement({
+          tagName: 'button',
+          class: ['request__status', `request__status--${state.toLowerCase()}`],
+          textContent:
+            state.charAt(0).toUpperCase() + state.slice(1).toLowerCase() ||
+            'NA',
+        }),
+      ],
+    });
+  }
 }
 
 async function renderOooRequestCards(queries = {}) {
@@ -394,23 +410,24 @@ async function acceptRejectRequest(id, reqBody) {
       const data = await res.json();
       showToast('Status updated successfully!', 'success');
       return data;
+    } else {
+      switch (res.status) {
+        case 401:
+          showToast(ErrorMessages.UNAUTHENTICATED, 'failure');
+          showMessage('ERROR', ErrorMessages.UNAUTHENTICATED);
+          break;
+        case 403:
+          showToast(ErrorMessages.UNAUTHENTICATED, 'failure');
+          showMessage('ERROR', ErrorMessages.UNAUTHORIZED);
+          break;
+        case 404:
+          showToast(ErrorMessages.OOO_NOT_FOUND, 'failure');
+          showMessage('ERROR', ErrorMessages.OOO_NOT_FOUND);
+          break;
+        default:
+          break;
+      }
     }
-
-    if (res.status === 401) {
-      showMessage('ERROR', ErrorMessages.UNAUTHENTICATED);
-      return;
-    }
-
-    if (res.status === 403) {
-      showMessage('ERROR', ErrorMessages.UNAUTHORIZED);
-      return;
-    }
-
-    if (res.status === 404) {
-      showMessage('ERROR', ErrorMessages.OOO_NOT_FOUND);
-      return;
-    }
-
     showMessage('ERROR', ErrorMessages.SERVER_ERROR);
   } catch (e) {
     console.error(e);
