@@ -107,8 +107,9 @@ p {
 }
 
 .request__message {
-  width: 100vw;
+  font-weight: 600;
   text-align: center;
+  width: 90vw;
 }
 
 /* swapnil code  */

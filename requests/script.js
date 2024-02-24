@@ -61,7 +61,7 @@ function showMessage(type, message) {
   const p = document.createElement('p');
   const classes = ['request__message'];
   if (type === 'ERROR') {
-    classes.push('taskRequest__message--error');
+    classes.push('request__message--error');
   }
   p.classList.add(...classes);
   p.textContent = message;
@@ -74,7 +74,7 @@ const changeFilter = () => {
 };
 
 function createOooRequestCard(
-  taskRequest,
+  oooRequest,
   adminUserDetails,
   requesterUserDetails,
 ) {
@@ -88,7 +88,7 @@ function createOooRequestCard(
     lastModifiedBy,
     reason,
     updatedAt,
-  } = taskRequest;
+  } = oooRequest;
   let showAdminDetailsClass = 'notHidden';
   let showActionButtonClass = 'notHidden';
   if (
