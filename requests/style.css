@@ -408,6 +408,7 @@ nav a:hover {
 
 /* toast css */
 #toast {
+  position: absolute;
   padding: 10px;
   border-radius: 5px;
   font-weight: bold;
@@ -419,8 +420,8 @@ nav a:hover {
 }
 
 .success {
-  background-color: var(--color-success);
-  color: var(--white);
+  background-color: var(--color-gray-light);
+  color: var(--black-color);
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -443,7 +444,7 @@ nav a:hover {
 }
 
 .success .progress-bar {
-  background-color: var(--success-color);
+  background-color: var(--blue-color);
 }
 
 .failure .progress-bar {
