@@ -2,7 +2,6 @@ const API_BASE_URL = window.API_BASE_URL;
 const requestContainer = document.getElementById(REQUEST_CONTAINER_ID);
 const params = new URLSearchParams(window.location.search);
 const isDev = params.get('dev') === 'true';
-console.log('is dev : ' + isDev);
 const loader = document.querySelector('.container__body__loader');
 const startLoading = () => loader.classList.remove('hidden');
 const stopLoading = () => loader.classList.add('hidden');

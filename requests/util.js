@@ -84,6 +84,5 @@ function extractQueryParameters(url) {
   for (const [key, value] of searchParams.entries()) {
     parameters[key] = value;
   }
-  console.log(parameters);
   return parameters;
 }
