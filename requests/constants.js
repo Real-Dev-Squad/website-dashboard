@@ -9,6 +9,8 @@ const OOO_REQUEST_TYPE = 'OOO';
 const REQUEST_CONTAINER_ID = 'request_container';
 const OOO_TAB_ID = 'ooo_tab_link';
 
+const DEFAULT_DATE_FORMAT = 'DD MMM YYYY';
+
 const MessageStatus = {
   SUCCESS: 'SUCCESS',
   ERROR: 'ERROR',

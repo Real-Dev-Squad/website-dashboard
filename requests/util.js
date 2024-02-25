@@ -1,4 +1,11 @@
-function createCustomElement(domObjectMap) {
+function createElementFromMap(domObjectMap) {
+  if (
+    !domObjectMap ||
+    typeof domObjectMap !== 'object' ||
+    !domObjectMap.tagName
+  ) {
+    throw new Error('Invalid domObjectMap. tagName is required.');
+  }
   const el = document.createElement(domObjectMap.tagName);
   for (const [key, value] of Object.entries(domObjectMap)) {
     if (key === 'tagName') {
@@ -21,6 +28,7 @@ function createCustomElement(domObjectMap) {
       el[key] = value;
     }
   }
+
   return el;
 }
 
@@ -33,31 +41,38 @@ function getOooQueryParamsString(query) {
   ) {
     queryParam += `&state=${query.state}`;
   }
-  return '?' + queryParam.toString();
+  return `?${queryParam}`;
 }
 
-function convertDateToReadableStringDate(date) {
-  if (date !== undefined && date !== null) {
-    return (
-      new Date(date).getDate() +
-      ' ' +
-      new Date(date).toLocaleString('default', { month: 'short' }) +
-      ' ' +
-      new Date(date).getFullYear()
-    );
+function convertDateToReadableStringDate(date, format) {
+  if (format === undefined || format === null) {
+    format = DEFAULT_DATE_FORMAT;
   }
-  return 'NA';
+  if (date !== undefined && date !== null) {
+    const options = { day: 'numeric', month: 'short', year: 'numeric' };
+    return new Date(date)
+      .toLocaleString('default', options)
+      .replace('DD', new Date(date).getDate())
+      .replace(
+        'MMM',
+        new Date(date).toLocaleString('default', { month: 'short' }),
+      )
+      .replace('YYYY', new Date(date).getFullYear());
+  }
+  return 'N/A';
 }
 
 function getFullNameOfUser(user) {
-  if (user === undefined || user === null) {
-    return 'NA';
+  if (!user || typeof user !== 'object') {
+    return 'N/A';
   }
+  const firstName = user.first_name || 'N/A';
+  const lastName = user.last_name || '';
   return (
-    user?.first_name?.charAt(0).toUpperCase() +
-    user?.first_name?.slice(1).toLowerCase() +
+    firstName.charAt(0).toUpperCase() +
+    firstName.slice(1).toLowerCase() +
     ' ' +
-    user?.last_name?.charAt(0).toUpperCase() +
-    user?.last_name?.slice(1).toLowerCase()
+    lastName.charAt(0).toUpperCase() +
+    lastName.slice(1).toLowerCase()
   );
 }

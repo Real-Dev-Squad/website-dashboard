@@ -102,22 +102,28 @@ function createOooRequestCard(
   if (state !== 'PENDING') {
     showActionButtonClass = 'hidden';
   }
-  const createdDate = convertDateToReadableStringDate(createdAt);
+  const createdDate = convertDateToReadableStringDate(
+    createdAt,
+    DEFAULT_DATE_FORMAT,
+  );
   const createdDateInAgoFormat = dateDiff(
     Date.now(),
     createdAt,
     (s) => s + ' ago',
   );
-  const fromDate = convertDateToReadableStringDate(from);
-  const toDate = convertDateToReadableStringDate(until);
-  let updatedDate = convertDateToReadableStringDate(updatedAt);
+  const fromDate = convertDateToReadableStringDate(from, DEFAULT_DATE_FORMAT);
+  const toDate = convertDateToReadableStringDate(until, DEFAULT_DATE_FORMAT);
+  let updatedDate = convertDateToReadableStringDate(
+    updatedAt,
+    DEFAULT_DATE_FORMAT,
+  );
   const updatedDateInAgoFormat = dateDiff(
     Date.now(),
     updatedAt,
     (s) => s + ' ago',
   );
 
-  const card = createCustomElement({
+  const card = createElementFromMap({
     tagName: 'div',
     class: 'ooo_request__card',
     child: [
@@ -131,29 +137,29 @@ function createOooRequestCard(
   return card;
 
   function addHotizontalBreakLine() {
-    return createCustomElement({
+    return createElementFromMap({
       tagName: 'hr',
       class: 'horizontal__line__saperator',
     });
   }
 
   function generateActionButtonsContainer() {
-    return createCustomElement({
+    return createElementFromMap({
       tagName: 'div',
       class: ['action__container', showActionButtonClass],
       child: [
-        createCustomElement({
+        createElementFromMap({
           tagName: 'input',
           class: 'request__remark__input',
           id: `remark-text-${id}`,
           type: 'text',
           placeholder: 'Add Remark If Any...',
         }),
-        createCustomElement({
+        createElementFromMap({
           tagName: 'div',
           class: ['action__buttons__container'],
           child: [
-            createCustomElement({
+            createElementFromMap({
               tagName: 'button',
               class: ['request__action__btn', 'accept__btn'],
               id: `${id}`,
@@ -165,7 +171,7 @@ function createOooRequestCard(
                 },
               ],
             }),
-            createCustomElement({
+            createElementFromMap({
               tagName: 'button',
               class: ['request__action__btn', 'reject__btn'],
               id: `${id}`,
@@ -184,19 +190,19 @@ function createOooRequestCard(
   }
 
   function generateSuperuserInfo() {
-    return createCustomElement({
+    return createElementFromMap({
       tagName: 'div',
       class: ['admin__info__and__status', showAdminDetailsClass],
       child: [
-        createCustomElement({
+        createElementFromMap({
           tagName: 'div',
           class: 'admin__info',
           child: [
-            createCustomElement({
+            createElementFromMap({
               tagName: 'div',
               class: 'admin__card__footer__requestor__avatar',
               child: [
-                createCustomElement({
+                createElementFromMap({
                   tagName: 'img',
                   src:
                     adminUserDetails?.picture?.url ||
@@ -204,24 +210,24 @@ function createOooRequestCard(
                 }),
               ],
             }),
-            createCustomElement({
+            createElementFromMap({
               tagName: 'div',
               class: 'admin__name__and__remark',
               child: [
-                createCustomElement({
+                createElementFromMap({
                   tagName: 'div',
                   class: 'admin__name',
                   child: [
-                    createCustomElement({
+                    createElementFromMap({
                       tagName: 'h4',
-                      textContent: getFullNameOfUser(adminUserDetails) || 'NA',
+                      textContent: getFullNameOfUser(adminUserDetails) || 'N/A',
                     }),
-                    createCustomElement({
+                    createElementFromMap({
                       tagName: 'p',
-                      textContent: updatedDateInAgoFormat || 'NA',
+                      textContent: updatedDateInAgoFormat || 'N/A',
                       class: 'tooltip-container',
                       child: [
-                        createCustomElement({
+                        createElementFromMap({
                           tagName: 'span',
                           class: 'tooltip',
                           textContent: updatedDate,
@@ -230,7 +236,7 @@ function createOooRequestCard(
                     }),
                   ],
                 }),
-                createCustomElement({
+                createElementFromMap({
                   tagName: 'p',
                   textContent: reason || '',
                 }),
@@ -243,38 +249,38 @@ function createOooRequestCard(
   }
 
   function generateRequestContent() {
-    return createCustomElement({
+    return createElementFromMap({
       tagName: 'div',
       class: 'request__content',
       child: [
-        createCustomElement({
+        createElementFromMap({
           tagName: 'p',
-          textContent: message || 'NA',
+          textContent: message || 'N/A',
         }),
-        createCustomElement({
+        createElementFromMap({
           tagName: 'div',
           class: 'request__timeline',
           child: [
-            createCustomElement({
+            createElementFromMap({
               tagName: 'p',
               child: [
-                createCustomElement({
+                createElementFromMap({
                   tagName: 'span',
                   class: 'request__date__pill',
                   textContent: 'From',
                 }),
-                ` ${fromDate}` || 'NA',
+                ` ${fromDate}` || 'N/A',
               ],
             }),
-            createCustomElement({
+            createElementFromMap({
               tagName: 'p',
               child: [
-                createCustomElement({
+                createElementFromMap({
                   tagName: 'span',
                   class: 'request__date__pill',
                   textContent: 'To',
                 }),
-                ` ${toDate}` || 'NA',
+                ` ${toDate}` || 'N/A',
               ],
             }),
           ],
@@ -284,19 +290,19 @@ function createOooRequestCard(
   }
 
   function generateRequesterInfo() {
-    return createCustomElement({
+    return createElementFromMap({
       tagName: 'div',
       class: 'requester__info__and__status',
       child: [
-        createCustomElement({
+        createElementFromMap({
           tagName: 'div',
           class: 'requester__info',
           child: [
-            createCustomElement({
+            createElementFromMap({
               tagName: 'div',
               class: 'request__card__footer__requestor__avatar',
               child: [
-                createCustomElement({
+                createElementFromMap({
                   tagName: 'img',
                   src:
                     requesterUserDetails?.picture?.url ||
@@ -304,20 +310,20 @@ function createOooRequestCard(
                 }),
               ],
             }),
-            createCustomElement({
+            createElementFromMap({
               tagName: 'div',
               class: 'requester__name',
               child: [
-                createCustomElement({
+                createElementFromMap({
                   tagName: 'h4',
-                  textContent: getFullNameOfUser(requesterUserDetails) || 'NA',
+                  textContent: getFullNameOfUser(requesterUserDetails) || 'N/A',
                 }),
-                createCustomElement({
+                createElementFromMap({
                   tagName: 'p',
-                  textContent: createdDateInAgoFormat || 'NA',
+                  textContent: createdDateInAgoFormat || 'N/A',
                   class: 'tooltip-container',
                   child: [
-                    createCustomElement({
+                    createElementFromMap({
                       tagName: 'span',
                       class: 'tooltip',
                       textContent: createdDate,
@@ -328,12 +334,12 @@ function createOooRequestCard(
             }),
           ],
         }),
-        createCustomElement({
+        createElementFromMap({
           tagName: 'button',
           class: ['request__status', `request__status--${state.toLowerCase()}`],
           textContent:
             state.charAt(0).toUpperCase() + state.slice(1).toLowerCase() ||
-            'NA',
+            'N/A',
         }),
       ],
     });
