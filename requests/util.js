@@ -76,3 +76,14 @@ function getFullNameOfUser(user) {
     lastName.slice(1).toLowerCase()
   );
 }
+
+function extractQueryParameters(url) {
+  const searchParams = new URLSearchParams(url.split('?')[1]);
+  const parameters = {};
+
+  for (const [key, value] of searchParams.entries()) {
+    parameters[key] = value;
+  }
+  console.log(parameters);
+  return parameters;
+}

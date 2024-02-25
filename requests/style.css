@@ -23,6 +23,7 @@
   --medium-blue-color: #6643b5;
   --base-transition: all 0.3s ease-in-out;
   --base-light-grey-border: 1px solid var(--light-gray-color);
+  --color-red-light: #ff7979;
 }
 
 body {
@@ -429,8 +430,11 @@ nav a:hover {
 }
 
 .failure {
-  background-color: var(--color-failure);
-  color: var(--white);
+  background-color: var(--color-red-light);
+  color: var(--black-color);
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 }
 
 .hidden {
@@ -449,7 +453,7 @@ nav a:hover {
 }
 
 .failure .progress-bar {
-  background-color: var(--failure-color);
+  background-color: var(--blue-color);
 }
 
 .fill {

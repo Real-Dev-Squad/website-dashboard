@@ -1,7 +1,8 @@
 const API_BASE_URL = window.API_BASE_URL;
 const requestContainer = document.getElementById(REQUEST_CONTAINER_ID);
 const params = new URLSearchParams(window.location.search);
-const isDev = DEV_FEATURE_FLAG;
+const isDev = params.get('dev') === 'true';
+console.log('is dev : ' + isDev);
 const loader = document.querySelector('.container__body__loader');
 const startLoading = () => loader.classList.remove('hidden');
 const stopLoading = () => loader.classList.add('hidden');
@@ -12,27 +13,33 @@ let selected__tab__class = 'selected__tab';
 let statusValue = null;
 let sortByValue = null;
 
-oooTabLink.addEventListener('click', function () {
+oooTabLink.addEventListener('click', async function () {
+  if (isDataLoading) return;
   oooTabLink.classList.add(selected__tab__class);
   currentReqType = OOO_REQUEST_TYPE;
   changeFilter();
-  renderOooRequestCards({ state: statusValue, sort: sortByValue });
+  await renderOooRequestCards({ state: statusValue, sort: sortByValue });
 });
 
 async function getOooRequests(query = {}) {
   let finalUrl = API_BASE_URL + '/requests' + getOooQueryParamsString(query);
+  let windowUrl = `${window.location.origin}${window.location.pathname}`;
+
   if (isDev) {
     finalUrl =
       API_BASE_URL + '/requests' + getOooQueryParamsString(query) + '&dev=true';
+    windowUrl = windowUrl + '?dev=true';
   }
+
+  window.history.pushState({ path: windowUrl }, '', windowUrl);
 
   try {
     const res = await fetch(finalUrl, {
       credentials: 'include',
     });
 
+    const data = await res.json();
     if (res.ok) {
-      const data = await res.json();
       return data;
     } else {
       switch (res.status) {
@@ -44,6 +51,10 @@ async function getOooRequests(query = {}) {
           return;
         case 404:
           showMessage('ERROR', ErrorMessages.OOO_NOT_FOUND);
+          return;
+        case 400:
+          showMessage('ERROR', data.message);
+          showToast(data.message, 'failure');
           return;
         default:
           // Handle other status codes here
@@ -347,6 +358,7 @@ function createOooRequestCard(
 }
 
 async function renderOooRequestCards(queries = {}) {
+  if (isDataLoading) return;
   let oooRequestResponse;
   try {
     isDataLoading = true;
@@ -411,9 +423,8 @@ async function acceptRejectRequest(id, reqBody) {
       },
       body: reqBody,
     });
-
+    const data = await res.json();
     if (res.ok) {
-      const data = await res.json();
       showToast('Status updated successfully!', 'success');
       return data;
     } else {
@@ -430,16 +441,17 @@ async function acceptRejectRequest(id, reqBody) {
           showToast(ErrorMessages.OOO_NOT_FOUND, 'failure');
           showMessage('ERROR', ErrorMessages.OOO_NOT_FOUND);
           break;
+        case 400:
+          showToast(data.message, 'failure');
+          showMessage('ERROR', data.message);
+          break;
         default:
           break;
       }
     }
-    showMessage('ERROR', ErrorMessages.SERVER_ERROR);
   } catch (e) {
     console.error(e);
   }
-  const data = await res.json();
-  return data;
 }
 
 async function performAcceptRejectAction(isAccepted, e) {
