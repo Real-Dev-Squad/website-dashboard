@@ -56,7 +56,6 @@ async function getOooRequests(query = {}) {
           showToast(data.message, 'failure');
           return;
         default:
-          // Handle other status codes here
           break;
       }
     }
@@ -86,7 +85,7 @@ const changeFilter = () => {
 
 function createOooRequestCard(
   oooRequest,
-  adminUserDetails,
+  superUserDetails,
   requesterUserDetails,
 ) {
   let {
@@ -100,14 +99,14 @@ function createOooRequestCard(
     reason,
     updatedAt,
   } = oooRequest;
-  let showAdminDetailsClass = 'notHidden';
+  let showSuperuserDetailsClass = 'notHidden';
   let showActionButtonClass = 'notHidden';
   if (
     state === 'PENDING' ||
     lastModifiedBy === undefined ||
     lastModifiedBy === null
   ) {
-    showAdminDetailsClass = 'hidden';
+    showSuperuserDetailsClass = 'hidden';
   }
   if (state !== 'PENDING') {
     showActionButtonClass = 'hidden';
@@ -202,7 +201,7 @@ function createOooRequestCard(
   function generateSuperuserInfo() {
     return createElementFromMap({
       tagName: 'div',
-      class: ['admin__info__and__status', showAdminDetailsClass],
+      class: ['admin__info__and__status', showSuperuserDetailsClass],
       child: [
         createElementFromMap({
           tagName: 'div',
@@ -215,7 +214,7 @@ function createOooRequestCard(
                 createElementFromMap({
                   tagName: 'img',
                   src:
-                    adminUserDetails?.picture?.url ||
+                    superUserDetails?.picture?.url ||
                     'https://dashboard.realdevsquad.com/images/avatar.png',
                 }),
               ],
@@ -230,7 +229,7 @@ function createOooRequestCard(
                   child: [
                     createElementFromMap({
                       tagName: 'h4',
-                      textContent: getFullNameOfUser(adminUserDetails) || 'N/A',
+                      textContent: getFullNameOfUser(superUserDetails) || 'N/A',
                     }),
                     createElementFromMap({
                       tagName: 'p',
@@ -364,15 +363,15 @@ async function renderOooRequestCards(queries = {}) {
     startLoading();
     oooRequestResponse = await getOooRequests(queries);
     for (const oooRequest of oooRequestResponse?.data || []) {
-      let adminUserDetails;
+      let superUserDetails;
       let requesterUserDetails = await getUserDetails(oooRequest.requestedBy);
       if (oooRequest.state !== 'PENDING') {
-        adminUserDetails = await getUserDetails(oooRequest.lastModifiedBy);
+        superUserDetails = await getUserDetails(oooRequest.lastModifiedBy);
       }
       requestContainer.appendChild(
         createOooRequestCard(
           oooRequest,
-          adminUserDetails,
+          superUserDetails,
           requesterUserDetails,
         ),
       );
