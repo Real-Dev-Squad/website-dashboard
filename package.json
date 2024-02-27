@@ -7,7 +7,8 @@
     "check": "prettier --check .",
     "fix": "prettier --write .",
     "test": "jest",
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "local-ssl-proxy --source 443 --target 5500 -n dev.realdevsquad.com"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
     "jest-puppeteer": "^8.0.6",
     "jest-puppeteer-istanbul": "^0.5.3",
     "jsdom": "^21.1.1",
+    "local-ssl-proxy": "^2.0.5",
     "pre-commit": "^1.2.2",
     "prettier": "2.3.1",
     "puppeteer": "^20.2.1",
