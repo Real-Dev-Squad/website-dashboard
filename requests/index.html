@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="This web page is for the requests managment functionality in real dev squad's dashboard website. admin can view and take action on the requests raised by the team members."
+    />
+    <meta name="keywords" content="RDS, Request Managment" />
+    <meta name="author" content="Real Dev Squad" />
+    <link rel="icon" href="/images/index.ico" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <title>Requests | Real Dev Squad</title>
+    <link rel="stylesheet" href="/requests/style.css" />
+    <script src="/helpers/loadENV.js"></script>
+    <script src="/requests/constants.js"></script>
+    <script src="/requests/util.js"></script>
+    <script src="/utils.js"></script>
+    <script src="/requests/script.js" defer></script>
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="header__contents">
+        <img
+          src="/task-requests/assets/RDSLogo.png"
+          alt="RDS logo"
+          height="48"
+          width="48"
+        />
+        <a href="/index.html" class="header__contents__navlink">Home</a>
+      </div>
+    </div>
+    <div class="container">
+      <div class="container__header">
+        <nav>
+          <a href="#" class="selected__tab" id="ooo_tab_link">OOO</a>
+          <a href="#" class="disabled__tab" id="task_tab_link">Task</a>
+          <a href="#" class="disabled__tab" id="extension_tab_link"
+            >Extension</a
+          >
+        </nav>
+        <div id="toast" class="hidden">
+          <div class="message"></div>
+          <div class="progress-bar"></div>
+        </div>
+      </div>
+      <div class="container__body">
+        <div id="request_container" class="request"></div>
+        <div class="container__body__loader hidden">Loading...</div>
+      </div>
+    </div>
+  </body>
+</html>
