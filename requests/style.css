@@ -502,3 +502,7 @@ nav a:hover {
     justify-content: center;
   }
 }
+
+.virtual {
+  width: 100%;
+}

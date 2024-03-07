@@ -86,3 +86,19 @@ function extractQueryParameters(url) {
   }
   return parameters;
 }
+
+async function getInDiscordUserList() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/users/search?role=in_discord`, {
+      credentials: 'include',
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+    const data = await res.json();
+    return data.users;
+  } catch (error) {
+    console.log(error);
+  }
+}
