@@ -51,7 +51,6 @@ oooTabLink.addEventListener('click', async function () {
 async function getOooRequests(query = {}) {
   let finalUrl =
     API_BASE_URL + (nextLink || '/requests' + getOooQueryParamsString(query));
-  console.log('🚀 ~ getOooRequests ~ finalUrl:', finalUrl);
   let windowUrl = `${window.location.origin}${window.location.pathname}`;
 
   window.history.pushState({ path: windowUrl }, '', windowUrl);
@@ -385,7 +384,9 @@ async function renderOooRequestCards(queries = {}) {
   try {
     isDataLoading = true;
     startLoading();
-    userDetails = await getInDiscordUserList();
+    if (userDetails.length === 0) {
+      userDetails = await getInDiscordUserList();
+    }
     oooRequestResponse = await getOooRequests(queries);
     for (const oooRequest of oooRequestResponse?.data || []) {
       let superUserDetails;

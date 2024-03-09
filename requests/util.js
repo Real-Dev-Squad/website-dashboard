@@ -33,7 +33,7 @@ function createElementFromMap(domObjectMap) {
 }
 
 function getOooQueryParamsString(query) {
-  let queryParam = 'type=OOO';
+  let queryParam = 'dev=true&type=OOO&size=12';
   if (
     query.state !== undefined &&
     query.state !== null &&
