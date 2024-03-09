@@ -1,15 +1,22 @@
 const API_BASE_URL = window.API_BASE_URL;
 const taskRequestContainer = document.getElementById('task-request-container');
 const containerBody = document.querySelector('.container__body');
+const filtersHeader = document.querySelector(FILTERS_HEADER);
 const filterModal = document.getElementsByClassName(FILTER_MODAL)[0];
 const applyFilterButton = document.getElementById(APPLY_FILTER_BUTTON);
 const clearButton = document.getElementById(CLEAR_BUTTON);
+const clearAllButton = document.getElementById(CLEAR_ALL_BUTTON);
 const filterButton = document.getElementById(FILTER_BUTTON);
 const sortModal = document.getElementsByClassName(SORT_MODAL)[0];
 const containerFilter = document.querySelector(FILTER_CONTAINER);
 const lastElementContainer = document.querySelector(LAST_ELEMENT_CONTAINER);
 const sortButton = document.querySelector(SORT_BUTTON);
 const backDrop = document.querySelector(BACKDROP);
+const sortIcon = document.getElementById(SORT_ICON);
+const ascIcon = document.getElementById(SORT_ASC_ICON);
+const descIcon = document.getElementById(SORT_DESC_ICON);
+const sortText = document.querySelector(SORT_TEXT);
+const badgesContainer = document.querySelector(BADGES);
 const params = new URLSearchParams(window.location.search);
 const isDev = params.get(DEV_FEATURE_FLAG) === 'true';
 const loader = document.querySelector('.container__body__loader');
@@ -30,6 +37,12 @@ const updateFilterStates = (key, value) => {
   filterStates[key] = value;
   const constructedQueryString = formURLQueryString(filterStates, isDev);
   manipulateURLQueryParams(constructedQueryString);
+  if (key === 'order' && isDev) {
+    updateSortIcon();
+  }
+  if ((key === 'status' || key === 'requestType') && isDev) {
+    showBadges();
+  }
 };
 
 async function getTaskRequests(query = {}, nextLink) {
@@ -109,6 +122,60 @@ const changeFilter = () => {
   taskRequestContainer.innerHTML = '';
 };
 
+function handleBadgeDeletion(badgeType, badgeContent) {
+  let newFilterType;
+  if (Array.isArray(filterStates[badgeType])) {
+    newFilterType = filterStates[badgeType].filter(
+      (type) => type !== badgeContent,
+    );
+  } else if (filterStates[badgeType] === badgeContent) {
+    newFilterType = '';
+  }
+  updateFilterStates(badgeType, newFilterType);
+  const checkboxValue =
+    badgeType === 'requestType' ? badgeContent : badgeContent.toUpperCase();
+  uncheckCheckbox(checkboxValue);
+}
+
+function deleteBadge(e, badgeType) {
+  const badgeContent = e.target.textContent;
+  handleBadgeDeletion(badgeType, badgeContent);
+}
+
+function showBadges() {
+  badgesContainer.innerHTML = '';
+  const statuses = filterStates?.status;
+  const requestTypes = filterStates?.requestType;
+
+  if (statuses) {
+    if (Array.isArray(statuses)) {
+      statuses.forEach((status) => {
+        const badge = createBadge(status, 'status');
+        badgesContainer.appendChild(badge);
+      });
+    } else if (statuses) {
+      const badge = createBadge(statuses, 'status');
+      badgesContainer.appendChild(badge);
+    }
+  }
+
+  if (requestTypes && requestTypes.length > 0) {
+    requestTypes.forEach((requestType) => {
+      const badge = createBadge(requestType, 'requestType');
+      badgesContainer.appendChild(badge);
+    });
+  }
+
+  if (
+    (statuses && statuses.length > 0) ||
+    (requestTypes && requestTypes.length > 0)
+  ) {
+    filtersHeader.style.display = 'flex';
+  } else {
+    filtersHeader.style.display = 'none';
+  }
+}
+
 sortButton.addEventListener('click', async (event) => {
   event.stopPropagation();
   sortModal.classList.toggle('hidden');
@@ -159,7 +226,14 @@ function updateUIBasedOnQueryParams(parsedQueryObj) {
   applyFilterButton.click();
   filterModal.classList.toggle('hidden');
 }
-
+function uncheckCheckbox(value) {
+  const element = document.querySelector(`input[value="${value}"]`);
+  if (element) {
+    element.checked = false;
+    applyFilterButton.click();
+    filterModal.classList.toggle('hidden');
+  }
+}
 function toggleStatusCheckbox(statusValue) {
   const element = document.querySelector(
     `#status-filter input[value=${statusValue}]`,
@@ -198,6 +272,7 @@ function manipulateURLQueryParams(constructedQueryString) {
 
 applyFilterButton.addEventListener('click', async () => {
   filterModal.classList.toggle('hidden');
+  backDrop.style.display = 'none';
   const checkedValuesStatus = getCheckedValues('status-filter');
   const checkedValuesRequestType = getCheckedValues('request-type-filter');
   changeFilter();
@@ -209,15 +284,22 @@ applyFilterButton.addEventListener('click', async () => {
   }
   await renderTaskRequestCards(filterStates);
 });
-clearButton.addEventListener('click', async function () {
+
+async function clearAndRender() {
   clearCheckboxes('status-filter');
   clearCheckboxes('request-type-filter');
-  filterModal.classList.toggle('hidden');
   changeFilter();
   updateFilterStates('status', '');
   updateFilterStates('requestType', '');
   await renderTaskRequestCards(filterStates);
+}
+
+clearButton.addEventListener('click', function () {
+  filterModal.classList.toggle('hidden');
+  clearAndRender();
 });
+
+clearAllButton.addEventListener('click', clearAndRender);
 
 function addCheckbox(labelText, value, groupName) {
   const group = document.getElementById(groupName);
@@ -282,8 +364,10 @@ function sortModalButtons() {
     }
   });
 
-  selectButton(createTimeAsc);
-  toggleSortModal();
+  if (!params.get('sort')) {
+    selectButton(createTimeAsc);
+    toggleSortModal();
+  }
 }
 
 function createSortContainer(id, name, sortOrder) {
@@ -352,6 +436,46 @@ function populateStatus() {
 
 populateStatus();
 sortModalButtons();
+
+function updateSortIcon() {
+  const sortObject = Order[filterStates.order];
+  const [sortParameter, sortOrder] = Object.entries(sortObject)[0];
+
+  sortIcon.style.display = 'none';
+  if (sortOrder === 'asc') {
+    descIcon.style.display = 'none';
+    ascIcon.style.display = 'block';
+  } else if (sortOrder === 'desc') {
+    ascIcon.style.display = 'none';
+    descIcon.style.display = 'block';
+  }
+  sortButton.style.padding = '0.5rem';
+  sortText.style.display = 'block';
+  sortText.innerText = sortParameter;
+}
+
+function createBadge(badgeContent, badgeType) {
+  const badge = createCustomElement({
+    tagName: 'div',
+    class: 'badge',
+    eventListeners: [
+      { event: 'click', func: (e) => deleteBadge(e, badgeType) },
+    ],
+    child: [
+      createCustomElement({
+        tagName: 'span',
+        class: 'badge__name',
+        textContent: badgeContent,
+      }),
+      createCustomElement({
+        tagName: 'img',
+        class: 'badge__delete',
+        src: '/images/x-icon-black.svg',
+      }),
+    ],
+  });
+  return badge;
+}
 
 function createTaskRequestCard(taskRequest) {
   let { id, task, status, taskTitle, users } = taskRequest;
@@ -466,10 +590,14 @@ async function renderTaskRequestCards(queries = {}, newLink = '') {
 }
 
 async function render() {
-  if (window.location.search === '') {
+  if (!params.get('sort')) {
     toggleStatusCheckbox(Status.PENDING.toUpperCase());
-    const constructedQueryString = formURLQueryString(filterStates);
+    const constructedQueryString = formURLQueryString(filterStates, isDev);
     manipulateURLQueryParams(constructedQueryString);
+    if (isDev) {
+      updateSortIcon();
+      showBadges();
+    }
     await renderTaskRequestCards(filterStates);
   } else {
     const parsedQuery = parseQueryParams(params);

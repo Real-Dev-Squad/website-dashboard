@@ -34,54 +34,72 @@
       </div>
     </div>
     <div class="container">
+      <div class="backdrop"></div>
+      <div class="filters__header">
+        <h2>Selected filters</h2>
+        <button id="clear-all-button">Clear all</button>
+      </div>
       <div class="sort-filters">
-        <button class="sort-button">
-          <img
-            id="asc-sort-icon"
-            src="/task-requests/assets/sort-menu.svg"
-            alt="sort-icon"
-          />
-        </button>
-        <div class="backdrop"></div>
-        <div
-          class="sort-modal hidden"
-          role="dialog"
-          aria-labelledby="sort-dialog-label"
-        >
-          <div class="sort-head">
-            <h3 id="sort-dialog-label">Sort By</h3>
-          </div>
-          <div class="sorts-container">
-            <form class="modal-form" id="sort_by-filter"></form>
-          </div>
-        </div>
-        <button id="filter-button" class="filter-button">
-          <span class="filter-text">Filters</span>
-
-          <img
-            class="funnel-icon"
-            src="/task-requests/assets/funnel.svg"
-            alt="funnel icon"
-          />
-        </button>
-        <div
-          class="filter-modal hidden"
-          role="dialog"
-          aria-labelledby="filter-dialog-label"
-        >
-          <div class="filter-head">
-            <h3 id="filter-dialog-label">Filters</h3>
-            <button id="clear-button" class="clear-btn">Clear</button>
-          </div>
-          <div class="filters-container">
-            <h2>Status</h2>
-            <form class="modal-form" id="status-filter"></form>
-            <h2>Request type</h2>
-            <form class="modal-form" id="request-type-filter"></form>
-          </div>
-          <button id="apply-filter-button" class="apply-filter-button">
-            Apply Filter
+        <div class="sort-filters__badges"></div>
+        <div class="sort-filters__buttons">
+          <button class="sort-button">
+            <img
+              id="sort-icon"
+              src="/task-requests/assets/sort-menu.svg"
+              alt="sort-icon"
+            />
+            <img
+              id="asc-sort-icon"
+              src="/images/sort-asc.svg"
+              alt="sort-icon"
+            />
+            <img
+              id="desc-sort-icon"
+              src="/images/sort-desc.svg"
+              alt="sort-icon"
+            />
+            <span class="sort-button__text"></span>
           </button>
+          <div
+            class="sort-modal hidden"
+            role="dialog"
+            aria-labelledby="sort-dialog-label"
+          >
+            <div class="sort-head">
+              <h3 id="sort-dialog-label">Sort By</h3>
+            </div>
+            <div class="sorts-container">
+              <form class="modal-form" id="sort_by-filter"></form>
+            </div>
+          </div>
+          <button id="filter-button" class="filter-button">
+            <span class="filter-text">Filters</span>
+
+            <img
+              class="funnel-icon"
+              src="/task-requests/assets/funnel.svg"
+              alt="funnel icon"
+            />
+          </button>
+          <div
+            class="filter-modal hidden"
+            role="dialog"
+            aria-labelledby="filter-dialog-label"
+          >
+            <div class="filter-head">
+              <h3 id="filter-dialog-label">Filters</h3>
+              <button id="clear-button" class="clear-btn">Clear</button>
+            </div>
+            <div class="filters-container">
+              <h2>Status</h2>
+              <form class="modal-form" id="status-filter"></form>
+              <h2>Request type</h2>
+              <form class="modal-form" id="request-type-filter"></form>
+            </div>
+            <button id="apply-filter-button" class="apply-filter-button">
+              Apply Filter
+            </button>
+          </div>
         </div>
       </div>
       <div class="container__body">
