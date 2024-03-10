@@ -144,31 +144,23 @@ function deleteBadge(e, badgeType) {
 
 function showBadges() {
   badgesContainer.innerHTML = '';
-  const statuses = filterStates?.status;
-  const requestTypes = filterStates?.requestType;
+  const filterTypes = ['status', 'requestType'];
 
-  if (statuses) {
-    if (Array.isArray(statuses)) {
-      statuses.forEach((status) => {
-        const badge = createBadge(status, 'status');
+  filterTypes.forEach((filterType) => {
+    const filters = filterStates[filterType];
+
+    if (filters) {
+      const filterArray = Array.isArray(filters) ? filters : [filters];
+      filterArray.forEach((filter) => {
+        const badge = createBadge(filter, filterType);
         badgesContainer.appendChild(badge);
       });
-    } else if (statuses) {
-      const badge = createBadge(statuses, 'status');
-      badgesContainer.appendChild(badge);
     }
-  }
-
-  if (requestTypes && requestTypes.length > 0) {
-    requestTypes.forEach((requestType) => {
-      const badge = createBadge(requestType, 'requestType');
-      badgesContainer.appendChild(badge);
-    });
-  }
+  });
 
   if (
-    (statuses && statuses.length > 0) ||
-    (requestTypes && requestTypes.length > 0)
+    (filterStates?.status && filterStates.status.length > 0) ||
+    (filterStates?.requestType && filterStates.requestType.length > 0)
   ) {
     filtersHeader.style.display = 'flex';
   } else {
