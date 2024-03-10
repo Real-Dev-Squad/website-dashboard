@@ -90,7 +90,7 @@ body {
   display: none;
   gap: 1rem;
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 8px;
 }
 
 .filters__header > h2 {
@@ -101,9 +101,9 @@ body {
 .filters__header > button {
   background: none;
   cursor: pointer;
-  padding: 0.2rem 0.5rem;
-  border: 0.0625rem solid var(--light-gray-color);
-  border-radius: 0.4rem;
+  padding: 3px 8px;
+  border: 1px solid var(--light-gray-color);
+  border-radius: 7px;
 }
 
 .filters__header > button:hover {
@@ -114,7 +114,7 @@ body {
 .sort-filters__badges {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
@@ -122,12 +122,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1rem;
+  gap: 8px;
+  padding: 10px 1rem;
   background-color: var(--light-gray-color);
-  border-radius: 0.4rem;
+  border-radius: 7px;
   cursor: pointer;
-  border: 0.0625rem solid var(--light-gray-color);
+  border: 1px solid var(--light-gray-color);
 }
 
 .badge:hover {
@@ -186,7 +186,7 @@ body {
 .sort-button {
   display: flex;
   align-items: center;
-  column-gap: 0.5rem;
+  column-gap: 8px;
   background-color: var(--light-gray-color);
   border-radius: 0.4rem;
   border: 2.5px solid var(--black-color);
@@ -512,12 +512,12 @@ body {
   }
 
   .badge {
-    gap: 0.25rem;
-    padding: 0.5rem;
+    gap: 4px;
+    padding: 8px;
   }
 
   .badge > span {
-    font-size: 0.875rem;
+    font-size: 14px;
   }
 
   .badge > img {
