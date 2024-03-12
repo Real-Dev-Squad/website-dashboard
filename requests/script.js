@@ -1,16 +1,44 @@
 const API_BASE_URL = window.API_BASE_URL;
 const requestContainer = document.getElementById(REQUEST_CONTAINER_ID);
+const lastElementContainer = document.querySelector(LAST_ELEMENT_CONTAINER);
+
 const params = new URLSearchParams(window.location.search);
 const isDev = params.get('dev') === 'true';
 const loader = document.querySelector('.container__body__loader');
 const startLoading = () => loader.classList.remove('hidden');
 const stopLoading = () => loader.classList.add('hidden');
-let isDataLoading = false;
 let oooTabLink = document.getElementById(OOO_TAB_ID);
 let currentReqType = OOO_REQUEST_TYPE;
 let selected__tab__class = 'selected__tab';
 let statusValue = null;
 let sortByValue = null;
+let userDetails = [];
+let nextLink = '';
+let isDataLoading = false;
+
+function getUserDetails(id) {
+  return userDetails.find((user) => user.id === id);
+}
+
+const intersectionObserver = new IntersectionObserver(async (entries) => {
+  if (!nextLink) {
+    return;
+  }
+  if (entries[0].isIntersecting && !isDataLoading) {
+    await renderOooRequestCards({
+      state: statusValue,
+      sort: sortByValue,
+      next: nextLink,
+    });
+  }
+});
+
+const addIntersectionObserver = () => {
+  intersectionObserver.observe(lastElementContainer);
+};
+const removeIntersectionObserver = () => {
+  intersectionObserver.unobserve(lastElementContainer);
+};
 
 oooTabLink.addEventListener('click', async function () {
   if (isDataLoading) return;
@@ -21,14 +49,9 @@ oooTabLink.addEventListener('click', async function () {
 });
 
 async function getOooRequests(query = {}) {
-  let finalUrl = API_BASE_URL + '/requests' + getOooQueryParamsString(query);
+  let finalUrl =
+    API_BASE_URL + (nextLink || '/requests' + getOooQueryParamsString(query));
   let windowUrl = `${window.location.origin}${window.location.pathname}`;
-
-  if (isDev) {
-    finalUrl =
-      API_BASE_URL + '/requests' + getOooQueryParamsString(query) + '&dev=true';
-    windowUrl = windowUrl + '?dev=true';
-  }
 
   window.history.pushState({ path: windowUrl }, '', windowUrl);
 
@@ -361,6 +384,9 @@ async function renderOooRequestCards(queries = {}) {
   try {
     isDataLoading = true;
     startLoading();
+    if (userDetails.length === 0) {
+      userDetails = await getInDiscordUserList();
+    }
     oooRequestResponse = await getOooRequests(queries);
     for (const oooRequest of oooRequestResponse?.data || []) {
       let superUserDetails;
@@ -390,28 +416,13 @@ async function renderOooRequestCards(queries = {}) {
       showMessage('INFO', 'No OOO requests found!');
     }
   }
-}
 
-async function getUserDetails(id) {
-  if (!id) return;
-  const url = `${API_BASE_URL}/users?id=${id}`;
-  const res = await fetch(url, {
-    credentials: 'include',
-    method: 'GET',
-    headers: {
-      'Content-type': 'application/json',
-    },
-  });
-  const data = await res.json();
-
-  return data?.user;
+  addIntersectionObserver();
+  nextLink = oooRequestResponse?.next;
 }
 
 async function acceptRejectRequest(id, reqBody) {
-  let url = `${API_BASE_URL}/requests/${id}`;
-  if (isDev) {
-    url = `${API_BASE_URL}/requests/${id}?dev=true`;
-  }
+  let url = `${API_BASE_URL}/requests/${id}?dev=true`;
   try {
     const res = await fetch(url, {
       credentials: 'include',

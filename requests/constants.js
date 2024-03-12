@@ -23,3 +23,5 @@ const ErrorMessages = {
   OOO_NOT_FOUND: 'OOO Requests not found',
   SERVER_ERROR: 'Unexpected error occurred',
 };
+
+const LAST_ELEMENT_CONTAINER = '.virtual';

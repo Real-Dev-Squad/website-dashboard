@@ -33,7 +33,7 @@ function createElementFromMap(domObjectMap) {
 }
 
 function getOooQueryParamsString(query) {
-  let queryParam = 'type=OOO';
+  let queryParam = 'dev=true&type=OOO&size=12';
   if (
     query.state !== undefined &&
     query.state !== null &&
@@ -85,4 +85,20 @@ function extractQueryParameters(url) {
     parameters[key] = value;
   }
   return parameters;
+}
+
+async function getInDiscordUserList() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/users/search?role=in_discord`, {
+      credentials: 'include',
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+    const data = await res.json();
+    return data.users;
+  } catch (error) {
+    console.log(error);
+  }
 }
