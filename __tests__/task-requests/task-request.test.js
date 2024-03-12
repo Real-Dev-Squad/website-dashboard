@@ -357,3 +357,164 @@ describe('urlParams', () => {
     expect(newestFirstClass).toContain('selected');
   });
 });
+
+describe('Sort Icon Functionality', () => {
+  beforeEach(async () => {
+    await page.goto(`${SITE_URL}/task-requests/?dev=true`);
+    await page.waitForNetworkIdle();
+  });
+
+  const getSortIconDetails = async (iconId) => {
+    const iconElement = await page.$(`#${iconId}`);
+    const display = await page.evaluate(
+      (el) => window.getComputedStyle(el).display,
+      iconElement,
+    );
+    return display;
+  };
+
+  const getSortParameterDetails = async () => {
+    const sortParameterElement = await page.$('.sort-button__text');
+    const sortParameter = await page.evaluate(
+      (el) => el.textContent,
+      sortParameterElement,
+    );
+    return sortParameter;
+  };
+
+  it('updates sort icon display and sort parameter text when sort by is changed', async () => {
+    let ascSortIconDisplay = await getSortIconDetails('asc-sort-icon');
+    let descSortIconDisplay = await getSortIconDetails('desc-sort-icon');
+    let sortParameter = await getSortParameterDetails();
+
+    expect(ascSortIconDisplay).toBe('block');
+    expect(descSortIconDisplay).toBe('none');
+    expect(sortParameter).toBe('created');
+
+    await page.click('.sort-button');
+    await page.click('#REQUESTORS_COUNT_DESC');
+    await page.waitForNetworkIdle();
+
+    ascSortIconDisplay = await getSortIconDetails('asc-sort-icon');
+    descSortIconDisplay = await getSortIconDetails('desc-sort-icon');
+    sortParameter = await getSortParameterDetails();
+
+    expect(ascSortIconDisplay).toBe('none');
+    expect(descSortIconDisplay).toBe('block');
+    expect(sortParameter).toBe('requestors');
+  });
+
+  it('ensures sort icon display and sort parameter text are in sync with URL parameters', async () => {
+    await page.goto(`${SITE_URL}/task-requests?sort=requestors-desc&dev=true`);
+
+    const ascSortIconDisplay = await getSortIconDetails('asc-sort-icon');
+    const descSortIconDisplay = await getSortIconDetails('desc-sort-icon');
+    const sortParameter = await getSortParameterDetails();
+
+    expect(ascSortIconDisplay).toBe('none');
+    expect(descSortIconDisplay).toBe('block');
+    expect(sortParameter).toBe('requestors');
+  });
+});
+
+describe('badges', () => {
+  const DENIED = 'DENIED';
+  const ASSIGNMENT = 'assignment';
+
+  const getBadgeTexts = async (page) => {
+    const badges = await page.$$('.badge');
+    return Promise.all(
+      badges.map((badge) => page.evaluate((el) => el.textContent, badge)),
+    );
+  };
+  beforeEach(async () => {
+    await page.goto(`${SITE_URL}/task-requests/?dev=true`);
+    await page.waitForNetworkIdle();
+  });
+
+  it('verifies that filters applied by the user are correctly displayed as badges on the screen', async () => {
+    await page.click('#filter-button');
+    await page.click(`input[value="${DENIED}"]`);
+    await page.click(`input[value="${ASSIGNMENT}"]`);
+    await page.click('#apply-filter-button');
+    await page.waitForNetworkIdle();
+
+    const badgeTexts = await getBadgeTexts(page);
+    expect(badgeTexts).toContain(DENIED.toLowerCase());
+    expect(badgeTexts).toContain(ASSIGNMENT);
+  });
+
+  it('verifies that badge is removed when clicked and filters are updated accordingly', async () => {
+    await page.goto(
+      `${SITE_URL}/task-requests/?sort=created-asc&status=pending&status=denied&dev=true`,
+    );
+    await page.waitForNetworkIdle();
+
+    const badges = await page.$$('.badge');
+    let badgeTexts = await getBadgeTexts(page);
+    expect(badgeTexts).toContain(DENIED.toLowerCase());
+    expect(badgeTexts).toContain('pending');
+
+    const deniedBadge = badges[badgeTexts.indexOf(DENIED.toLowerCase())];
+    await deniedBadge.click();
+
+    badgeTexts = await getBadgeTexts(page);
+    expect(badgeTexts).not.toContain(DENIED.toLowerCase());
+
+    const checkbox = await page.$(`input[value="${DENIED}"]`);
+    const isChecked = await page.evaluate((el) => el.checked, checkbox);
+    expect(isChecked).toBe(false);
+  });
+
+  it('verifies that filters header is shown only when at least one badge is present', async () => {
+    await page.goto(`${SITE_URL}/task-requests/?sort=created-asc&dev=true`);
+    await page.waitForNetworkIdle();
+
+    const filtersHeader = await page.$('.filters__header');
+    let displayStyle = await page.evaluate(
+      (el) => window.getComputedStyle(el).display,
+      filtersHeader,
+    );
+    expect(displayStyle).toBe('none');
+
+    await page.click('#filter-button');
+    await page.click(`input[value="${DENIED}"]`);
+    await page.click('#apply-filter-button');
+    await page.waitForNetworkIdle();
+
+    displayStyle = await page.evaluate(
+      (el) => window.getComputedStyle(el).display,
+      filtersHeader,
+    );
+    expect(displayStyle).toBe('flex');
+
+    let badges = await page.$$('.badge');
+    let badgeTexts = await getBadgeTexts(page);
+
+    const deniedBadge = badges[badgeTexts.indexOf(DENIED.toLowerCase())];
+    await deniedBadge.click();
+
+    displayStyle = await page.evaluate(
+      (el) => window.getComputedStyle(el).display,
+      filtersHeader,
+    );
+    expect(displayStyle).toBe('none');
+  });
+
+  it('verifies that badges are displayed based on URL parameters and removes all badges when the Clear all button is clicked', async () => {
+    await page.goto(
+      `${SITE_URL}/task-requests/?sort=created-asc&status=denied&request-type=assignment&dev=true`,
+    );
+    await page.waitForNetworkIdle();
+
+    let badgeTexts = await getBadgeTexts(page);
+    expect(badgeTexts).toContain('denied');
+    expect(badgeTexts).toContain(ASSIGNMENT);
+
+    await page.click('#clear-all-button');
+    await page.waitForNetworkIdle();
+
+    badges = await page.$$('.badge');
+    expect(badges.length).toBe(0);
+  });
+});
