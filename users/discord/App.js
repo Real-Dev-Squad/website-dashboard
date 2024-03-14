@@ -70,8 +70,6 @@ const handleSearchChange = (newSearchTerm) => {
   }
 };
 
-console.log(searchTerm);
-
 export const App = () => {
   if (users.length) {
     return createElement('main', {}, [
