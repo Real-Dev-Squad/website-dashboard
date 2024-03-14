@@ -10,10 +10,11 @@
 
 main {
   display: grid;
-  grid-template-columns: minmax(10rem, 20rem) 1fr;
-  grid-template-rows: auto 1fr;
+  grid-template-columns: minmax(10rem, 20rem)  1fr;
+  grid-template-rows: auto auto 1fr;
   grid-template-areas:
     'tab tab '
+    'search search'
     'aside details';
   height: 100vh;
 }
@@ -73,4 +74,25 @@ main {
   text-align: center;
   font-size: larger;
   padding: 2rem;
+}
+
+.users_section.no_users{
+  padding: 1rem;
+  margin: 1rem 2rem;
+}
+
+.search_section{
+  display:  flex;
+}
+.search_field {
+  width: 14rem;
+  margin: 0.5rem 1rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+
+.search_button{
+  margin: 0.5rem 0rem;
+  width: 4rem;
 }

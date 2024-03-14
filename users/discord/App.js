@@ -3,6 +3,7 @@ import { UsersSection } from './components/UsersSection.js';
 import { UserDetailsSection } from './components/UserDetailsSection.js';
 import { getUsers } from './utils/util.js';
 import { NoUserFound } from './components/NoUserFound.js';
+import {SearchField} from './components/SearchField.js'
 
 const { createElement, rerender } = react;
 
@@ -20,6 +21,8 @@ let activeTab = urlParams.get('tab') ?? 'in_discord';
 
 let showUser = 0;
 usersData[activeTab] = await getUsers(activeTab);
+
+let searchTerm = '';
 
 const handleTabNavigation = async (e) => {
   const selectedTabId = e.target.getAttribute('data_key');
@@ -46,6 +49,7 @@ const handleUserSelected = (e) => {
     showUser = usersData[activeTab]?.findIndex(
       (user) => user.id === selectedUserId,
     );
+    searchTerm = ''; 
     rerender(App(), window['root']);
   }
 };
@@ -53,19 +57,34 @@ const handleUserSelected = (e) => {
 export const App = () => {
   const users = usersData[activeTab] ?? [];
 
-  if (users.length)
+  
+  const filteredUsers = users.filter(user => 
+    user.github_display_name &&  user.github_display_name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+  const handleSearchChange = (newSearchTerm) => {
+    if(newSearchTerm){
+      searchTerm = newSearchTerm;
+      rerender(App(), window['root']);
+    }
+  };
+
+  if (users.length) {
     return createElement('main', {}, [
+      SearchField({ onSearchChange: handleSearchChange }),
       TabsSection({ tabs, activeTab, handleTabNavigation }),
       UsersSection({
-        users,
+        users: searchTerm ? filteredUsers : users,
         showUser,
         handleUserSelected,
       }),
-      UserDetailsSection({ user: users[showUser] ?? {} }),
+      filteredUsers.length > 0 ? UserDetailsSection({ user: users[showUser] ?? {} }) : null,
     ]);
+  }
 
   return createElement('main', {}, [
     TabsSection({ tabs, activeTab, handleTabNavigation }),
     NoUserFound(),
   ]);
 };
+
