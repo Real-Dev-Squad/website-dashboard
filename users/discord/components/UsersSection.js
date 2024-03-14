@@ -1,13 +1,10 @@
 const { createElement } = react;
 
 export const UsersSection = ({ users, showUser, handleUserSelected }) => {
-  console.log(users.length);
   if (users.length === 0) {
-    return createElement(
-      'div',
-      { class: 'users_section no_users' },
-      [createElement('div', {}, ['No users found'])]
-    );
+    return createElement('div', { class: 'users_section no_users' }, [
+      createElement('div', {}, ['No users found']),
+    ]);
   }
 
   return createElement(
@@ -28,8 +25,8 @@ export const UsersSection = ({ users, showUser, handleUserSelected }) => {
             class: 'user_image',
           }),
           createElement('span', {}, [user.first_name + ' ' + user.last_name]),
-        ]
+        ],
       );
-    })
+    }),
   );
 };

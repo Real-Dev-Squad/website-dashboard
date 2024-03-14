@@ -3,7 +3,7 @@ import { UsersSection } from './components/UsersSection.js';
 import { UserDetailsSection } from './components/UserDetailsSection.js';
 import { getUsers } from './utils/util.js';
 import { NoUserFound } from './components/NoUserFound.js';
-import {SearchField} from './components/SearchField.js'
+import { SearchField } from './components/SearchField.js';
 
 const { createElement, rerender } = react;
 
@@ -49,7 +49,7 @@ const handleUserSelected = (e) => {
     showUser = usersData[activeTab]?.findIndex(
       (user) => user.id === selectedUserId,
     );
-    searchTerm = ''; 
+    searchTerm = '';
     rerender(App(), window['root']);
   }
 };
@@ -57,13 +57,14 @@ const handleUserSelected = (e) => {
 export const App = () => {
   const users = usersData[activeTab] ?? [];
 
-  
-  const filteredUsers = users.filter(user => 
-    user.github_display_name &&  user.github_display_name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+  const filteredUsers = users.filter(
+    (user) =>
+      user.github_display_name &&
+      user.github_display_name.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
 
   const handleSearchChange = (newSearchTerm) => {
-    if(newSearchTerm){
+    if (newSearchTerm) {
       searchTerm = newSearchTerm;
       rerender(App(), window['root']);
     }
@@ -78,7 +79,9 @@ export const App = () => {
         showUser,
         handleUserSelected,
       }),
-      filteredUsers.length > 0 ? UserDetailsSection({ user: users[showUser] ?? {} }) : null,
+      filteredUsers.length > 0
+        ? UserDetailsSection({ user: users[showUser] ?? {} })
+        : null,
     ]);
   }
 
@@ -87,4 +90,3 @@ export const App = () => {
     NoUserFound(),
   ]);
 };
-
