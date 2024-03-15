@@ -517,4 +517,19 @@ describe('badges', () => {
     badges = await page.$$('.badge');
     expect(badges.length).toBe(0);
   });
+
+  it('verifies that badge is removed when delete icon is clicked', async () => {
+    await page.goto(
+      `${SITE_URL}/task-requests/?sort=created-asc&status=denied&dev=true`,
+    );
+
+    let badgeTexts = await getBadgeTexts(page);
+    expect(badgeTexts).toContain('denied');
+
+    const deniedBadgeDeleteIcon = await page.$('.badge__delete');
+    await deniedBadgeDeleteIcon.click();
+
+    badgeTexts = await getBadgeTexts(page);
+    expect(badgeTexts).not.toContain('denied');
+  });
 });
