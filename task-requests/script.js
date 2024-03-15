@@ -138,8 +138,11 @@ function handleBadgeDeletion(badgeType, badgeContent) {
 }
 
 function deleteBadge(e, badgeType) {
-  const badgeContent = e.target.textContent;
-  handleBadgeDeletion(badgeType, badgeContent);
+  const badge = e.target.closest('.badge');
+  if (badge) {
+    const badgeContent = badge.querySelector('.badge__name').textContent;
+    handleBadgeDeletion(badgeType, badgeContent);
+  }
 }
 
 function showBadges() {
