@@ -564,12 +564,17 @@ function populateModalContent(index) {
     'data-modal-description-value',
     'proposed-description-value',
   );
-  descriptionValue.innerHTML = marked.parse("### Heading");
 
-  document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOM LOADED")
-    descriptionValue.textContent = marked("### Heading");
-});
+
+  if (userData?.markdown_enabled ?? false)
+  {descriptionValue.innerHTML = marked.parse(userData.description ?? "");}
+
+  else
+  {descriptionValue.textContent = userData.description;}
+
+  document.addEventListener("DOMContentLoaded", (event) => {
+    console.log("DOM fully loaded and parsed");
+  });  
 
   const header = document.createElement('h2');
   header.setAttribute('data-modal-header', 'requestor-details-header');
