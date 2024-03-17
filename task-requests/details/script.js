@@ -564,9 +564,9 @@ function populateModalContent(index) {
     'data-modal-description-value',
     'proposed-description-value',
   );
-  descriptionValue.textContent = "TEST";
+  descriptionValue.innerHTML = marked.parse("### Heading");
 
-  document.addEventListener('DOMContentLoaded', function () {
+  document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM LOADED")
     descriptionValue.textContent = marked("### Heading");
 });
