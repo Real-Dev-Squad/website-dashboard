@@ -564,7 +564,12 @@ function populateModalContent(index) {
     'data-modal-description-value',
     'proposed-description-value',
   );
-  descriptionValue.textContent = userData.description;
+  descriptionValue.textContent = "TEST";
+
+  document.addEventListener('DOMContentLoaded', function () {
+    console.log("DOM LOADED")
+    descriptionValue.textContent = marked("### Heading");
+});
 
   const header = document.createElement('h2');
   header.setAttribute('data-modal-header', 'requestor-details-header');
