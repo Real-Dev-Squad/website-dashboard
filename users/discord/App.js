@@ -79,7 +79,7 @@ export const App = () => {
       }),
       TabsSection({ tabs, activeTab, handleTabNavigation }),
       UsersSection({
-        users: searchTerm ? filteredUsers : users,
+        users: searchTerm.length != 0 ? filteredUsers : users,
         showUser,
         handleUserSelected,
       }),
