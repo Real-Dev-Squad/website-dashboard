@@ -123,9 +123,17 @@ describe('App Component', () => {
     await page.waitForSelector('.user_card');
 
     const userCards = await page.$$('.user_card');
-    const usersMatchingSearch = userCards.length > 0;
+    let searchTermFound = false;
 
-    expect(usersMatchingSearch).toBeTruthy();
+    for (const card of userCards) {
+      const cardContent = await card.evaluate((node) => node.innerText);
+      if (cardContent.toLowerCase().includes('amit')) {
+        searchTermFound = true;
+        break;
+      }
+    }
+
+    expect(searchTermFound).toBeTruthy();
   });
 
   it('should handle empty search results gracefully', async () => {
