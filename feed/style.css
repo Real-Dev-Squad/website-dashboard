@@ -1,0 +1,66 @@
+body{background: #F0F4F9
+}
+.header {
+    background-color: var(--blue-color);
+    text-align: center;
+    color: var(--white-color);
+    letter-spacing: 2px;
+}
+
+#activity_feed_container{
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.spinner {
+    border: 8px solid var(--white-gray);
+    border-radius: 50%;
+    border-top: 8px solid var(--dark-blue);
+    width: 1.5rem;
+    height: 1.5rem;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+    position: absolute;
+    top: 50%;
+    right: 50%;
+}
+
+.activity-feed {
+    border: 1px solid #ddd;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.activity-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.activity-item {
+    margin-bottom: 1rem;
+    display: flex; /* Allow for inline elements with spacing */
+    border: 1.5px ;
+    border-radius: 5px;
+    padding: 10px;
+    background: white;
+}
+
+.activity-item .user {
+    margin-right: 1rem;
+    font-weight: bold;
+}
+
+.activity-item a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.activity-item a:hover {
+    text-decoration: underline;
+}
+
+.activity-item time {
+    font-size: 0.8rem;
+    color: #aaa;
+}
