@@ -100,7 +100,7 @@ describe('App Component', () => {
 
     const updatedUrl = await page.url();
 
-    expect(updatedUrl).not.toEqual(initialUrl);
+    expect(updatedUrl).toContain('search=John+Doe');
   });
 
   it('should display user details when a user card is clicked', async () => {
