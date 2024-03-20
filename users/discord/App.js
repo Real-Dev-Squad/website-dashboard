@@ -1,7 +1,7 @@
 import { TabsSection } from './components/TabsSection.js';
 import { UsersSection } from './components/UsersSection.js';
 import { UserDetailsSection } from './components/UserDetailsSection.js';
-import { getUsers } from './utils/util.js';
+import { getUsers, searchUser } from './utils/util.js';
 import { NoUserFound } from './components/NoUserFound.js';
 import { SearchField } from './components/SearchField.js';
 
@@ -22,8 +22,6 @@ let activeTab = urlParams.get('tab') ?? 'in_discord';
 let showUser = 0;
 usersData[activeTab] = await getUsers(activeTab);
 
-let searchTerm = urlParams.get('search') ?? '';
-
 const handleTabNavigation = async (e) => {
   const selectedTabId = e.target.getAttribute('data_key');
   if (selectedTabId) {
@@ -40,26 +38,25 @@ const handleTabNavigation = async (e) => {
   }
 };
 
+let users = usersData[activeTab] ?? [];
+
+let searchTerm = urlParams.get('search') ?? '';
+
+if (searchTerm) {
+  users = await searchUser(searchTerm);
+  console.log(users);
+}
+
 const handleUserSelected = (e) => {
   const selectedUserId =
     e.target?.getAttribute('data_key') ||
     e.target.parentElement?.getAttribute('data_key');
 
   if (selectedUserId) {
-    showUser = usersData[activeTab]?.findIndex(
-      (user) => user.id === selectedUserId,
-    );
-    searchTerm = '';
+    showUser = users?.findIndex((user) => user.id === selectedUserId);
     rerender(App(), window['root']);
   }
 };
-const users = usersData[activeTab] ?? [];
-
-const filteredUsers = users.filter(
-  (user) =>
-    user.github_display_name &&
-    user.github_display_name.toLowerCase().includes(searchTerm.toLowerCase()),
-);
 
 const handleSearchChange = (newSearchTerm) => {
   if (newSearchTerm) {
@@ -79,11 +76,11 @@ export const App = () => {
       }),
       TabsSection({ tabs, activeTab, handleTabNavigation }),
       UsersSection({
-        users: searchTerm.length != 0 ? filteredUsers : users,
+        users: users,
         showUser,
         handleUserSelected,
       }),
-      filteredUsers.length > 0
+      users.length > 0
         ? UserDetailsSection({ user: users[showUser] ?? {} })
         : null,
     ]);
