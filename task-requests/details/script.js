@@ -565,16 +565,11 @@ function populateModalContent(index) {
     'proposed-description-value',
   );
 
-
-  if (userData?.markdown_enabled ?? false)
-  {descriptionValue.innerHTML = marked.parse(userData.description ?? "");}
-
-  else
-  {descriptionValue.textContent = userData.description;}
-
-  document.addEventListener("DOMContentLoaded", (event) => {
-    console.log("DOM fully loaded and parsed");
-  });  
+  if (userData?.markdownEnabled ?? false) {
+    descriptionValue.innerHTML = marked.parse(userData.description ?? '');
+  } else {
+    descriptionValue.textContent = userData.description;
+  }
 
   const header = document.createElement('h2');
   header.setAttribute('data-modal-header', 'requestor-details-header');
