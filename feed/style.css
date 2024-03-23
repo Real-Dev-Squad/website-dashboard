@@ -1,6 +1,7 @@
 body {
   background: #dbe9f9;
 }
+
 .header {
   background-color: var(--blue-color);
   text-align: center;
@@ -12,19 +13,6 @@ body {
   padding: 10px 0;
   max-width: 800px;
   margin: 0 auto;
-}
-
-.spinner {
-  border: 8px solid var(--white-gray);
-  border-radius: 50%;
-  border-top: 8px solid var(--dark-blue);
-  width: 1.5rem;
-  height: 1.5rem;
-  -webkit-animation: spin 2s linear infinite;
-  animation: spin 2s linear infinite;
-  position: absolute;
-  top: 50%;
-  right: 50%;
 }
 
 .activity-feed {
@@ -47,11 +35,6 @@ body {
   background: white;
   width: 100%;
   flex-direction: column;
-}
-
-.activity-item .user {
-  margin-right: 1rem;
-  font-weight: bold;
 }
 
 .activity-item a {
@@ -108,22 +91,6 @@ body {
   text-align: right;
   font-size: 10px;
   color: gray;
-}
-
-.btn-conatiner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.loadMoreBtn {
-  width: 16rem;
-  cursor: pointer;
-  position: relative;
-  background-color: cornsilk;
-  border: transparent;
-  padding: 10px;
-  margin: 0 10px;
 }
 
 .img_icon {
