@@ -342,7 +342,8 @@ const renderGithubIssue = async () => {
       ],
     }),
   );
-  html = converter.makeHtml(res?.body);
+  const body = DOMPurify.sanitize(res?.body ?? '');
+  html = converter.makeHtml(body);
   taskContainer.appendChild(
     createCustomElement({
       tagName: 'div',
@@ -566,10 +567,17 @@ function populateModalContent(index) {
   );
 
   if (userData?.markdownEnabled ?? false) {
-    const markDown = window.markdownit();
+    converter = new showdown.Converter({
+      tables: true,
+      simplifiedAutoLink: true,
+      tasklists: true,
+      simplifiedAutoLink: true,
+      ghCodeBlocks: true,
+      openLinksInNewWindow: true,
+    });
     const sanitizedDescription = DOMPurify.sanitize(userData.description ?? '');
-    const description = markDown.render(sanitizedDescription ?? '');
-    descriptionValue.innerHTML = description;
+    html = converter.makeHtml(sanitizedDescription);
+    descriptionValue.innerHTML = html;
     descriptionValue.className = 'requestor_description_details';
   } else {
     descriptionValue.textContent = userData.description;
