@@ -1,4 +1,5 @@
 async function getActivityFeedData(query = {}, nextLink) {
+  validateQuery(query);
   let finalUrl =
     API_BASE_URL + (nextLink || '/logs' + generateActivityFeedParams(query));
   const res = await fetch(finalUrl, {
@@ -29,6 +30,7 @@ function getLogTypesFromCategory(category) {
       return `&type=${logType.TASK_REQUESTS}`;
     case CATEGORY.OOO:
       return `&type=${logType.REQUEST_CREATED},${logType.REQUEST_REJECTED},${logType.REQUEST_APPROVED}`;
+    default: return '';
   }
 }
 
@@ -41,10 +43,26 @@ function addEmptyPageMessage(container) {
   container.appendChild(emptyPageMessage);
 }
 
-function addErrorElement(container) {
+function addErrorElement(container, error) {
   const errorHeading = createElement({
-    type: 'h2',
-    innerText: 'Something went wrong, Please reload',
+    type: 'h4',
+    innerText: `Error: An error occurred while fetching logs. Please try again later.`,
+  }); 
+  const errorText = createElement({
+    type: 'p',
+    innerText: `${error}`,
   });
   container.appendChild(errorHeading);
+  container.appendChild(errorText);
+}
+
+
+function validateQuery(queryObject) {
+  const expectedParams = ['category'];
+  for (const param of expectedParams) {
+      if (!(param in queryObject)) {
+          throw new Error(`Missing parameter: ${param}`);
+      }
+  }
+  return true;
 }

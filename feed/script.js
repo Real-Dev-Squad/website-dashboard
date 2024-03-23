@@ -9,6 +9,7 @@ let newLink = '';
 let activityFeedPage = 0;
 let nextLink = '';
 let isDataLoading = false;
+let category = CATEGORY.ALL;
 
 const tabsData = [
   { name: 'All', 'data-type': CATEGORY.ALL, class: 'active' },
@@ -34,7 +35,7 @@ tabs.forEach((tab) => {
   tab.addEventListener('click', async function () {
     tabs.forEach((t) => t.classList.remove('active'));
     this.classList.add('active');
-    const category = this.dataset.type;
+    category = this.dataset.type;
     changeFilter();
     populateActivityFeed({ category });
   });
@@ -47,7 +48,7 @@ const changeFilter = () => {
 
 async function renderFeed() {
   changeFilter();
-  populateActivityFeed({ category: 'all' });
+  populateActivityFeed({ category });
   addIntersectionObserver();
 }
 
@@ -56,7 +57,7 @@ const intersectionObserver = new IntersectionObserver(async (entries) => {
     return;
   }
   if (entries[0].isIntersecting && !isDataLoading) {
-    await populateActivityFeed({}, nextLink);
+    await populateActivityFeed({ category }, nextLink);
   }
 });
 
@@ -99,21 +100,18 @@ function renderActivityItem(data) {
 function formatOOORequests(data) {
   let text = '';
   if (data.type === logType.REQUEST_CREATED)
-    text = `<p><strong>${
-      data?.user || data?.createdBy
-    }</strong> raised an OOO request from <strong>${new Date(
-      data.from,
-    ).toLocaleString()}</strong> until <strong>${new Date(
-      data.until,
-    ).toLocaleString()}</strong></p>`;
+    text = `<p><strong>${data?.user || data?.createdBy
+      }</strong> raised an OOO request from <strong>${new Date(
+        data.from,
+      ).toLocaleString()}</strong> until <strong>${new Date(
+        data.until,
+      ).toLocaleString()}</strong></p>`;
   if (data.status === 'APPROVED')
-    text = `${
-      data?.user || data?.createdBy
-    } approved an extension request for task:`;
+    text = `${data?.user || data?.createdBy
+      } approved an extension request for task:`;
   if (data.status === 'DENIED')
-    text = `${
-      data?.user || data?.createdBy
-    } rejected an extension request for task:`;
+    text = `${data?.user || data?.createdBy
+      } rejected an extension request for task:`;
 
   return `<div>
             <div class="title">
@@ -130,17 +128,14 @@ function formatOOORequests(data) {
 function formatExtensionRequestsLog(data) {
   let text = '';
   if (data.status === 'PENDING')
-    text = `${
-      data?.user || data?.createdBy
-    } raised an extension request for task:`;
+    text = `${data?.user || data?.createdBy
+      } raised an extension request for task:`;
   if (data.status === 'APPROVED')
-    text = `${
-      data?.user || data?.createdBy
-    } approved an extension request for task:`;
+    text = `${data?.user || data?.createdBy
+      } approved an extension request for task:`;
   if (data.status === 'DENIED')
-    text = `${
-      data?.user || data?.createdBy
-    } rejected an extension request for task:`;
+    text = `${data?.user || data?.createdBy
+      } rejected an extension request for task:`;
   return `<div>
             <div class="title">
               <img src="assets/extensionReq.png" class="img_icon">
@@ -148,9 +143,8 @@ function formatExtensionRequestsLog(data) {
            </div>
            <p>
            Task:- 
-          <a href=${STATUS_BASE_URL}/tasks/${data?.taskId}>${
-    data.title || 'Untitled Task'
-  }</a>
+          <a href=${STATUS_BASE_URL}/tasks/${data?.taskId}>${data.title || 'Untitled Task'
+    }</a>
           </p>
           <p class="timestamp">
           ${new Date(data.timestamp * 1000)}
@@ -161,15 +155,13 @@ function formatExtensionRequestsLog(data) {
 function formatTasksLog(data) {
   let text = '';
   if (data.status)
-    text = `${
-      data?.user || data?.createdBy
-    } changed the status of the task to <strong>${data?.status}</strong>`;
+    text = `${data?.user || data?.createdBy
+      } changed the status of the task to <strong>${data?.status}</strong>`;
   if (data.percentCompleted)
     text = text
       ? `${text} and changed the task progress to <strong>${data?.percentCompleted}%`
-      : `${
-          data?.user || data?.createdBy
-        } updated the task progress to <strong>${data?.percentCompleted}%`;
+      : `${data?.user || data?.createdBy
+      } updated the task progress to <strong>${data?.percentCompleted}%`;
 
   return `<div>
             <div class="title">
@@ -177,9 +169,8 @@ function formatTasksLog(data) {
               <p class="">${text}</p>
             </div>
             <p> Task:- 
-                <a href=${STATUS_BASE_URL}/tasks/${data?.taskId}>${
-    data.title || 'Untitled Task'
-  }</a>
+                <a href=${STATUS_BASE_URL}/tasks/${data?.taskId}>${data.title || 'Untitled Task'
+    }</a>
            </p>
             <p class="timestamp">${new Date(data.timestamp * 1000)}</p>
        </div>`;
@@ -202,7 +193,7 @@ async function populateActivityFeed(query = {}, newLink) {
       activityFeedContainer.appendChild(renderedItem);
     }
   } catch (error) {
-    addErrorElement(activityFeedContainer);
+    addErrorElement(activityFeedContainer, error);
   } finally {
     if (currentVersion !== activityFeedPage) return;
     removeLoader('loader');
