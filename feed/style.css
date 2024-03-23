@@ -1,66 +1,160 @@
-body{background: #F0F4F9
+body {
+  background: #dbe9f9;
 }
 .header {
-    background-color: var(--blue-color);
-    text-align: center;
-    color: var(--white-color);
-    letter-spacing: 2px;
+  background-color: var(--blue-color);
+  text-align: center;
+  color: var(--white-color);
+  letter-spacing: 2px;
 }
 
-#activity_feed_container{
-    max-width: 800px;
-    margin: 0 auto;
+#activity_feed_container {
+  padding: 10px 0;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .spinner {
-    border: 8px solid var(--white-gray);
-    border-radius: 50%;
-    border-top: 8px solid var(--dark-blue);
-    width: 1.5rem;
-    height: 1.5rem;
-    -webkit-animation: spin 2s linear infinite;
-    animation: spin 2s linear infinite;
-    position: absolute;
-    top: 50%;
-    right: 50%;
+  border: 8px solid var(--white-gray);
+  border-radius: 50%;
+  border-top: 8px solid var(--dark-blue);
+  width: 1.5rem;
+  height: 1.5rem;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+  position: absolute;
+  top: 50%;
+  right: 50%;
 }
 
 .activity-feed {
-    border: 1px solid #ddd;
-    padding: 1rem;
-    margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  margin-bottom: 1rem;
 }
 
 .activity-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  list-style: none;
+  padding: 0;
 }
 
 .activity-item {
-    margin-bottom: 1rem;
-    display: flex; /* Allow for inline elements with spacing */
-    border: 1.5px ;
-    border-radius: 5px;
-    padding: 10px;
-    background: white;
+  margin-bottom: 0.5rem;
+  display: flex; /* Allow for inline elements with spacing */
+  border: 1.5px;
+  border-radius: 5px;
+  padding: 0 10px;
+  background: white;
+  width: 100%;
+  flex-direction: column;
 }
 
 .activity-item .user {
-    margin-right: 1rem;
-    font-weight: bold;
+  margin-right: 1rem;
+  font-weight: bold;
 }
 
 .activity-item a {
-    color: #007bff;
-    text-decoration: none;
+  color: #007bff;
+  text-decoration: none;
 }
 
 .activity-item a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .activity-item time {
-    font-size: 0.8rem;
-    color: #aaa;
+  font-size: 0.8rem;
+  color: #aaa;
+}
+.tabs-container {
+  margin: 0 auto; /* Center the tabs container horizontally */
+  max-width: 800px; /* Set a maximum width */
+  padding: 15px; /* Add some padding around the tabs */
+}
+
+.tabs {
+  display: flex;
+  justify-content: space-between;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background: #f6faff;
+  border-bottom: 2px solid #ddd;
+}
+
+.tabs li {
+  padding: 15px 25px; /* Adjust padding for desired spacing */
+  font-weight: bold;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.2s ease-in-out;
+  color: #737171;
+}
+
+.tabs li:hover {
+  background-color: #e0e0e0;
+}
+
+.tabs li.active {
+  /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
+  border-bottom: 4px solid rgb(198, 78, 170);
+  font-weight: bold;
+  color: #080707;
+  background-color: #ffffff;
+}
+
+.timestamp {
+  text-align: right;
+  font-size: 10px;
+  color: gray;
+}
+
+.btn-conatiner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loadMoreBtn {
+  width: 16rem;
+  cursor: pointer;
+  position: relative;
+  background-color: cornsilk;
+  border: transparent;
+  padding: 10px;
+  margin: 0 10px;
+}
+
+.img_icon {
+  height: 30px;
+  width: 30px;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Loader Container */
+.loader-text {
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.loader {
+  margin: auto auto;
+}
+
+.loader p {
+  font-weight: 600;
+  font-size: 2em;
+}
+
+.page-message {
+  text-align: center;
+  margin: auto auto;
+  font-weight: 800;
+  font-size: 2em;
 }
