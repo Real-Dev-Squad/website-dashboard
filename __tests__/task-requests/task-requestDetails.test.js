@@ -177,7 +177,7 @@ describe('Task request details page with markdown support in description', () =>
       '[data-modal-description-value="proposed-description-value"]',
       (element) => element.innerHTML,
     );
-    expect(descriptionHtmlValue).toContain('<h3>Heading</h3>');
+    expect(descriptionHtmlValue).toContain('<h3 id="heading">Heading</h3>');
   });
 
   it('Should contain Approve and Reject buttons', async function () {
