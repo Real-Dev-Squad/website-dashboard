@@ -567,7 +567,10 @@ function populateModalContent(index) {
 
   if (userData?.markdownEnabled ?? false) {
     const markDown = window.markdownit();
-    descriptionValue.innerHTML = markDown.render(userData.description ?? '');
+    const description = markDown.render(userData.description ?? '');
+    const sanitizedDescription = DOMPurify.sanitize(description);
+    const textNode = document.createTextNode(sanitizedDescription);
+    descriptionValue.appendChild(textNode);
     descriptionValue.className = 'requestor_description_details';
   } else {
     descriptionValue.textContent = userData.description;
