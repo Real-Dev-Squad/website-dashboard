@@ -566,7 +566,8 @@ function populateModalContent(index) {
   );
 
   if (userData?.markdownEnabled ?? false) {
-    descriptionValue.innerHTML = marked.parse(userData.description ?? '');
+    const markDown = window.markdownit();
+    descriptionValue.innerHTML = markDown.render(userData.description ?? '');
   } else {
     descriptionValue.textContent = userData.description;
   }
