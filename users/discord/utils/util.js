@@ -21,7 +21,7 @@ export const getUsers = async (tab) => {
 };
 
 export const searchUser = async (searchTerm) => {
-  let URL = `${API_BASE_URL}/users?search=${searchTerm}&dev=true`;
+  let URL = `${API_BASE_URL}/users?search=${searchTerm}&dev=true`; // dev=true is a temporary query param
 
   try {
     const response = await fetch(URL, {

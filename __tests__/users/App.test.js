@@ -117,7 +117,7 @@ describe('App Component', () => {
   });
 
   it('should display search results matching the search term', async () => {
-    await page.type('.search_field', 'amit');
+    await page.type('.search_field', 'shu');
     await page.click('.search_button');
 
     await page.waitForSelector('.user_card');
@@ -127,7 +127,7 @@ describe('App Component', () => {
 
     for (const card of userCards) {
       const cardContent = await card.evaluate((node) => node.innerText);
-      if (cardContent.toLowerCase().includes('amit')) {
+      if (cardContent.toLowerCase().includes('shubham')) {
         searchTermFound = true;
         break;
       }
@@ -140,9 +140,10 @@ describe('App Component', () => {
     await page.type('.search_field', 'bdhsbhj'); //represents a string which won't yeild any search result
     await page.click('.search_button');
 
-    await page.waitForSelector('.no_users');
+    await page.waitForSelector('.no_user_found');
 
-    const emptyResultsMessageDisplayed = (await page.$('.no_users')) !== null;
+    const emptyResultsMessageDisplayed =
+      (await page.$('.no_user_found')) !== null;
 
     expect(emptyResultsMessageDisplayed).toBeTruthy();
   });
