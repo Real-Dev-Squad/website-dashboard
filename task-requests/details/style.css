@@ -481,6 +481,32 @@ table tr td {
   text-align: center;
   right: 10%;
   border-radius: 1rem;
+  text-wrap: wrap;
+  word-break: break-word;
+}
+
+.requestor_description_details {
+  background-color: var(--color-light-gray);
+  width: 100%;
+  text-align: left;
+  text-wrap: wrap;
+  word-break: break-word;
+}
+
+.requestor_description_details h1 {
+  font-size: 1.2rem;
+}
+
+.requestor_description_details table th,
+.requestor_description_details table td {
+  border: 1px solid gray;
+  padding: 0.5rem;
+}
+
+.requestor_description_details code,
+.requestor_description_details pre {
+  font-family: consolas, monospace;
+  white-space: normal;
 }
 
 .requestor_details_modal_close {
