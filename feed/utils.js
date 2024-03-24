@@ -64,12 +64,15 @@ function addErrorElement(container, error) {
     type: 'h4',
     innerText: `Error: An error occurred while fetching logs. Please try again later.`,
   });
-  const errorText = createElement({
-    type: 'p',
-    innerText: `${error}`,
-  });
+
   container.appendChild(errorHeading);
-  container.appendChild(errorText);
+  if (error) {
+    const errorText = createElement({
+      type: 'p',
+      innerText: `${error}`,
+    });
+    container.appendChild(errorText);
+  }
 }
 
 function validateQuery(queryObject) {

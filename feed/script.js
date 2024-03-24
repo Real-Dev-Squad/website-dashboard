@@ -86,8 +86,6 @@ function renderActivityItem(data) {
       content = formatTasksLog(data);
       break;
     case logType.REQUEST_CREATED:
-    case logType.REQUEST_APPROVED:
-    case logType.REQUEST_REJECTED:
       content = formatOOORequests(data);
       break;
     case logType.TASK_REQUESTS:
@@ -115,7 +113,7 @@ function formatOOORequests(data) {
   titleDiv.classList.add('title');
 
   const imgIcon = document.createElement('img');
-  imgIcon.setAttribute('src', 'assets/leave.png');
+  imgIcon.setAttribute('src', 'assets/leave.webp');
   imgIcon.classList.add('img_icon');
   titleDiv.appendChild(imgIcon);
 
@@ -196,7 +194,7 @@ function formatExtensionRequestsLog(data) {
     }
   }
 
-  return createLogContainer(data, 'assets/extensionReq.png', actionText);
+  return createLogContainer(data, 'assets/extensionReq.webp', actionText);
 }
 
 function formatTasksLog(data) {
@@ -211,7 +209,7 @@ function formatTasksLog(data) {
     )}</strong>`;
   }
 
-  return createLogContainer(data, 'assets/task.png', actionText);
+  return createLogContainer(data, 'assets/task.webp', actionText);
 }
 
 function createLogContainerForTaskRequests(
@@ -291,7 +289,7 @@ function formatTaskRequestsLog(data) {
 
   return createLogContainerForTaskRequests(
     data,
-    'assets/taskRequests.png',
+    'assets/taskRequests.webp',
     actionText,
     additionalInfo,
   );
@@ -319,7 +317,7 @@ async function populateActivityFeed(query = {}, newLink) {
     if (currentVersion !== activityFeedPage) return;
     removeLoader('loader');
     isDataLoading = false;
-    if (activityFeedContainer.innerHTML === '') {
+    if (activityFeedContainer.textContent.trim() === '') {
       addEmptyPageMessage(activityFeedContainer);
     }
   }
