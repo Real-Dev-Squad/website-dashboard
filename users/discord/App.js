@@ -88,6 +88,12 @@ export const App = () => {
 
   return createElement('main', {}, [
     TabsSection({ tabs, activeTab, handleTabNavigation }),
-    NoUserFound(),
+    createElement('div', { style: { display: 'flex' } }, [
+      SearchField({
+        onSearchChange: handleSearchChange,
+        initialValue: searchTerm,
+      }),
+      NoUserFound(),
+    ]),
   ]);
 };
