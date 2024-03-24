@@ -19,39 +19,47 @@ const tabsData = [
   { name: 'OOO Requests', 'data-type': CATEGORY.OOO },
 ];
 
-tabsData.forEach((tab) => {
+async function renderFeed() {
+  changeFilter();
+  await populateActivityFeed({ category });
+  addIntersectionObserver();
+}
+
+function createTabListItem(tab) {
   const listItem = document.createElement('li');
   listItem.textContent = tab.name;
   listItem.dataset.type = tab['data-type'];
   if (tab.class) {
     listItem.classList.add(tab.class);
   }
+  return listItem;
+}
+
+function handleTabClick(tab) {
+  tabs.forEach((t) => t.classList.remove('active'));
+  tab.classList.add('active');
+  const category = tab.dataset.type;
+  changeFilter();
+  populateActivityFeed({ category });
+}
+
+tabsData.forEach((tab) => {
+  const listItem = createTabListItem(tab);
+  listItem.addEventListener('click', function () {
+    handleTabClick(this);
+  });
   tabsList.appendChild(listItem);
 });
 
+// Select all tabs
 const tabs = document.querySelectorAll('.tabs li');
-
-tabs.forEach((tab) => {
-  tab.addEventListener('click', async function () {
-    tabs.forEach((t) => t.classList.remove('active'));
-    this.classList.add('active');
-    category = this.dataset.type;
-    changeFilter();
-    populateActivityFeed({ category });
-  });
-});
 
 const changeFilter = () => {
   nextLink = '';
   activityFeedContainer.innerHTML = '';
 };
 
-async function renderFeed() {
-  changeFilter();
-  populateActivityFeed({ category });
-  addIntersectionObserver();
-}
-
+// Intersection Observer
 const intersectionObserver = new IntersectionObserver(async (entries) => {
   if (!nextLink) {
     return;
@@ -64,13 +72,6 @@ const intersectionObserver = new IntersectionObserver(async (entries) => {
 const addIntersectionObserver = () => {
   intersectionObserver.observe(lastElementContainer);
 };
-
-const removeIntersectionObserver = () => {
-  intersectionObserver.unobserve(lastElementContainer);
-};
-
-// main entry
-renderFeed();
 
 function renderActivityItem(data) {
   const item = document.createElement('li');
@@ -89,6 +90,9 @@ function renderActivityItem(data) {
     case logType.REQUEST_REJECTED:
       content = formatOOORequests(data);
       break;
+    case logType.TASK_REQUESTS:
+      content = formatTaskRequestsLog(data);
+      break;
     default:
       content = 'Unknown activity type';
   }
@@ -98,82 +102,199 @@ function renderActivityItem(data) {
 }
 
 function formatOOORequests(data) {
-  let text = '';
-  if (data.type === logType.REQUEST_CREATED)
-    text = `<p><strong>${data?.user || data?.createdBy
-      }</strong> raised an OOO request from <strong>${new Date(
-        data.from,
-      ).toLocaleString()}</strong> until <strong>${new Date(
-        data.until,
-      ).toLocaleString()}</strong></p>`;
-  if (data.status === 'APPROVED')
-    text = `${data?.user || data?.createdBy
-      } approved an extension request for task:`;
-  if (data.status === 'DENIED')
-    text = `${data?.user || data?.createdBy
-      } rejected an extension request for task:`;
+  if (data.type !== logType.REQUEST_CREATED) return '';
 
-  return `<div>
-            <div class="title">
-              <img src="assets/leave.png" class="img_icon">
-              <p class="">${text}</p>
-           </div>
-           ${data.message ? `<strong>Reason:</strong> ${data.message}` : ''}
-           <p class="timestamp">
-          ${new Date(data.timestamp * 1000)}
-          </p>
-       </div>`;
+  const user = data?.user || data?.createdBy;
+  const from = formatDate(data.from);
+  const until = formatDate(data.until);
+
+  const containerDiv = document.createElement('div');
+  containerDiv.classList.add('log-container');
+
+  const titleDiv = document.createElement('div');
+  titleDiv.classList.add('title');
+
+  const imgIcon = document.createElement('img');
+  imgIcon.setAttribute('src', 'assets/leave.png');
+  imgIcon.classList.add('img_icon');
+  titleDiv.appendChild(imgIcon);
+
+  const titleText = document.createElement('p');
+  titleText.innerHTML = `<strong>${user}</strong> raised an OOO request from <strong>${from}</strong> until <strong>${until}</strong>`;
+  titleDiv.appendChild(titleText);
+
+  containerDiv.appendChild(titleDiv);
+
+  if (data.message) {
+    const reasonParagraph = document.createElement('p');
+    reasonParagraph.innerHTML = `<strong>Reason:</strong> ${data.message}`;
+    containerDiv.appendChild(reasonParagraph);
+  }
+
+  const timestampParagraph = document.createElement('p');
+  timestampParagraph.classList.add('timestamp');
+  timestampParagraph.textContent = formatDate(data.timestamp);
+  containerDiv.appendChild(timestampParagraph);
+
+  return containerDiv.outerHTML;
+}
+
+function createLogContainer(data, iconSrc, actionText) {
+  const containerDiv = document.createElement('div');
+  containerDiv.classList.add('log-container');
+
+  const titleDiv = document.createElement('div');
+  titleDiv.classList.add('title');
+
+  const imgIcon = document.createElement('img');
+  imgIcon.setAttribute('src', iconSrc);
+  imgIcon.classList.add('img_icon');
+  titleDiv.appendChild(imgIcon);
+
+  const titleText = document.createElement('p');
+  titleText.innerHTML = formatUserAction(data, actionText);
+  titleDiv.appendChild(titleText);
+
+  containerDiv.appendChild(titleDiv);
+
+  const taskParagraph = document.createElement('p');
+  taskParagraph.textContent = 'Task:- ';
+  const taskLinkElement = document.createElement('a');
+  taskLinkElement.setAttribute(
+    'href',
+    `${STATUS_BASE_URL}/tasks/${data?.taskId}`,
+  );
+  taskLinkElement.textContent = data.taskTitle || 'Untitled Task';
+  taskParagraph.appendChild(taskLinkElement);
+  containerDiv.appendChild(taskParagraph);
+
+  const timestampParagraph = document.createElement('p');
+  timestampParagraph.classList.add('timestamp');
+  timestampParagraph.textContent = formatDate(data.timestamp);
+  containerDiv.appendChild(timestampParagraph);
+
+  return containerDiv.outerHTML;
 }
 
 function formatExtensionRequestsLog(data) {
-  let text = '';
-  if (data.status === 'PENDING')
-    text = `${data?.user || data?.createdBy
-      } raised an extension request for task:`;
-  if (data.status === 'APPROVED')
-    text = `${data?.user || data?.createdBy
-      } approved an extension request for task:`;
-  if (data.status === 'DENIED')
-    text = `${data?.user || data?.createdBy
-      } rejected an extension request for task:`;
-  return `<div>
-            <div class="title">
-              <img src="assets/extensionReq.png" class="img_icon">
-              <p class="">${text}</p>
-           </div>
-           <p>
-           Task:- 
-          <a href=${STATUS_BASE_URL}/tasks/${data?.taskId}>${data.title || 'Untitled Task'
-    }</a>
-          </p>
-          <p class="timestamp">
-          ${new Date(data.timestamp * 1000)}
-          </p>
-       </div>`;
+  let actionText = '';
+  if (!data.status) {
+    actionText = describeChange(data);
+  } else {
+    switch (data.status) {
+      case 'PENDING':
+        actionText = 'raised an extension request for a task.';
+        break;
+      case 'APPROVED':
+        actionText = 'approved an extension request for a task.';
+        break;
+      case 'DENIED':
+        actionText = 'rejected an extension request for a task.';
+        break;
+      default:
+        break;
+    }
+  }
+
+  return createLogContainer(data, 'assets/extensionReq.png', actionText);
 }
 
 function formatTasksLog(data) {
-  let text = '';
-  if (data.status)
-    text = `${data?.user || data?.createdBy
-      } changed the status of the task to <strong>${data?.status}</strong>`;
-  if (data.percentCompleted)
-    text = text
-      ? `${text} and changed the task progress to <strong>${data?.percentCompleted}%`
-      : `${data?.user || data?.createdBy
-      } updated the task progress to <strong>${data?.percentCompleted}%`;
+  let actionText = '';
+  if (data.status) {
+    actionText = `changed the status of the task to <strong>${data?.status}</strong>`;
+  } else if (data.percentCompleted) {
+    actionText = `updated the task progress to <strong>${data?.percentCompleted}%</strong>`;
+  } else if (data.endsOn) {
+    actionText = `updated the endsOn to <strong>${formatDate(
+      data.endsOn,
+    )}</strong>`;
+  }
 
-  return `<div>
-            <div class="title">
-              <img src="assets/task.png" class="img_icon">
-              <p class="">${text}</p>
-            </div>
-            <p> Task:- 
-                <a href=${STATUS_BASE_URL}/tasks/${data?.taskId}>${data.title || 'Untitled Task'
-    }</a>
-           </p>
-            <p class="timestamp">${new Date(data.timestamp * 1000)}</p>
-       </div>`;
+  return createLogContainer(data, 'assets/task.png', actionText);
+}
+
+function createLogContainerForTaskRequests(
+  data,
+  iconSrc,
+  actionText,
+  additionalInfo = '',
+) {
+  const containerDiv = document.createElement('div');
+  containerDiv.classList.add('log-container');
+
+  const titleDiv = document.createElement('div');
+  titleDiv.classList.add('title');
+
+  const imgIcon = document.createElement('img');
+  imgIcon.setAttribute('src', iconSrc);
+  imgIcon.classList.add('img_icon');
+  titleDiv.appendChild(imgIcon);
+
+  const titleText = document.createElement('p');
+  titleText.innerHTML = actionText;
+  titleDiv.appendChild(titleText);
+
+  containerDiv.appendChild(titleDiv);
+
+  if (additionalInfo) {
+    const infoParagraph = document.createElement('div');
+    infoParagraph.innerHTML = additionalInfo;
+    containerDiv.appendChild(infoParagraph);
+  }
+
+  const timestampParagraph = document.createElement('p');
+  timestampParagraph.classList.add('timestamp');
+  timestampParagraph.textContent = formatDate(data.timestamp);
+  containerDiv.appendChild(timestampParagraph);
+
+  return containerDiv.outerHTML;
+}
+
+function formatTaskRequestsLog(data) {
+  let actionText = '';
+  switch (data.status) {
+    case 'PENDING':
+      actionText = 'raised a task request.';
+      break;
+    case 'APPROVED':
+      actionText = 'approved a task request.';
+      break;
+    case 'DENIED':
+      actionText = 'rejected a task request.';
+      break;
+    default:
+      break;
+  }
+
+  const githubLink = data.externalIssueHtmlUrl
+    ? formatLinkWithTitle(data.externalIssueHtmlUrl, 'Github Issue')
+    : '';
+  const proposedStartDate = formatDate(data.proposedStartDate / 1000);
+  const proposedDeadline = formatDate(data.proposedDeadline / 1000);
+  const taskLink = data.taskId
+    ? formatLinkWithTitle(
+        `${STATUS_BASE_URL}/tasks/${data?.taskId}`,
+        data.taskTitle || 'Untitled Task',
+      )
+    : formatLinkWithTitle(
+        `/task-requests/details/?id=${data?.taskRequestId}`,
+        data.taskTitle || 'Untitled Task',
+      );
+
+  const additionalInfo = `
+    <p> Proposed Start Date: ${proposedStartDate} </p>
+    <p> Proposed Deadline: ${proposedDeadline} </p>
+    ${githubLink}
+    <p> ${data.taskId ? 'Task' : 'TCR'}: ${truncateWithEllipsis(taskLink)} </p>
+  `;
+
+  return createLogContainerForTaskRequests(
+    data,
+    'assets/taskRequests.png',
+    actionText,
+    additionalInfo,
+  );
 }
 
 async function populateActivityFeed(query = {}, newLink) {
@@ -203,3 +324,6 @@ async function populateActivityFeed(query = {}, newLink) {
     }
   }
 }
+
+// main entry
+renderFeed();

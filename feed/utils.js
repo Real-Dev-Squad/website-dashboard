@@ -13,24 +13,40 @@ async function getActivityFeedData(query = {}, nextLink) {
 }
 
 function generateActivityFeedParams(query) {
-  let queryParam = 'dev=true&format=feed';
-  if (query?.category) queryParam += getLogTypesFromCategory(query?.category);
-  return `?${queryParam}`;
+  const queryParams = {
+    dev: true,
+    format: 'feed',
+    type: getLogTypesFromCategory(query?.category),
+  };
+  const queryString = new URLSearchParams(queryParams).toString();
+  return `?${queryString}`;
 }
 
 function getLogTypesFromCategory(category) {
   switch (category) {
     case CATEGORY.ALL:
-      return '';
+      return [
+        logType.TASK,
+        logType.EXTENSION_REQUESTS,
+        logType.TASK_REQUESTS,
+        logType.REQUEST_CREATED,
+        logType.REQUEST_REJECTED,
+        logType.REQUEST_APPROVED,
+      ].join(',');
     case CATEGORY.TASK:
-      return `&type=${logType.TASK}`;
+      return logType.TASK;
     case CATEGORY.EXTENSION_REQUESTS:
-      return `&type=${logType.EXTENSION_REQUESTS}`;
+      return logType.EXTENSION_REQUESTS;
     case CATEGORY.TASK_REQUESTS:
-      return `&type=${logType.TASK_REQUESTS}`;
+      return logType.TASK_REQUESTS;
     case CATEGORY.OOO:
-      return `&type=${logType.REQUEST_CREATED},${logType.REQUEST_REJECTED},${logType.REQUEST_APPROVED}`;
-    default: return '';
+      return [
+        logType.REQUEST_CREATED,
+        logType.REQUEST_REJECTED,
+        logType.REQUEST_APPROVED,
+      ].join(',');
+    default:
+      return '';
   }
 }
 
@@ -47,7 +63,7 @@ function addErrorElement(container, error) {
   const errorHeading = createElement({
     type: 'h4',
     innerText: `Error: An error occurred while fetching logs. Please try again later.`,
-  }); 
+  });
   const errorText = createElement({
     type: 'p',
     innerText: `${error}`,
@@ -56,13 +72,57 @@ function addErrorElement(container, error) {
   container.appendChild(errorText);
 }
 
-
 function validateQuery(queryObject) {
   const expectedParams = ['category'];
   for (const param of expectedParams) {
-      if (!(param in queryObject)) {
-          throw new Error(`Missing parameter: ${param}`);
-      }
+    if (!(param in queryObject)) {
+      throw new Error(`Missing parameter: ${param}`);
+    }
   }
   return true;
+}
+
+function formatDate(timestamp) {
+  return new Date(timestamp * 1000).toLocaleString();
+}
+
+function formatUserAction(data, actionText) {
+  const user = data?.user;
+  return `<strong>${user}</strong> ${actionText}`;
+}
+
+function formatLinkWithTitle(link, title) {
+  return `<a href=${link}>${title ?? link}</a>`;
+}
+
+function describeChange(data) {
+  const changeTextParts = [];
+
+  if (data.newTitle && data.oldTitle) {
+    changeTextParts.push(`title from "${data.oldTitle}" to "${data.newTitle}"`);
+  }
+
+  if (data.newReason && data.oldReason) {
+    changeTextParts.push(
+      `reason from "${data.oldReason}" to "${data.newReason}"`,
+    );
+  }
+
+  if (data.newEndsOn && data.oldEndsOn) {
+    changeTextParts.push(
+      `endsOn date from "${data.oldEndsOn}" to "${data.newEndsOn}"`,
+    );
+  }
+
+  return changeTextParts.length
+    ? `changed ${changeTextParts.join(', ')}` +
+        ` for a extension request of task.`
+    : '';
+}
+
+function truncateWithEllipsis(text, maxLength = 120) {
+  if (text.length <= maxLength) {
+    return text;
+  }
+  return `${text.slice(0, maxLength)}...`;
 }
