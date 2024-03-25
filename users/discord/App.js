@@ -44,7 +44,6 @@ let searchTerm = urlParams.get('search') ?? '';
 
 if (searchTerm) {
   users = await searchUser(searchTerm);
-  console.log(users);
 }
 
 const handleUserSelected = (e) => {
