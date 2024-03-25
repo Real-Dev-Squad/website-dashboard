@@ -483,6 +483,9 @@ table tr td {
   border-radius: 1rem;
   text-wrap: wrap;
   word-break: break-word;
+  height: 50%;
+  width: 50%;
+  overflow: auto;
 }
 
 .requestor_description_details {
