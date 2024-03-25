@@ -304,7 +304,7 @@ async function populateActivityFeed(query = {}, newLink) {
     isDataLoading = true;
     addLoader(container);
     const activityFeedData = await getActivityFeedData(query, newLink);
-    if(activityFeedData) {
+    if (activityFeedData) {
       nextLink = activityFeedData.next;
       const allActivityFeedData = activityFeedData.data;
       if (currentVersion !== activityFeedPage) {
@@ -335,7 +335,6 @@ async function getActivityFeedData(query = {}, nextLink) {
       'Content-type': 'application/json',
     },
   });
-  console.log(await res.json(), "==>>")
 
   try {
     const res = await fetch(finalUrl, {
@@ -348,13 +347,19 @@ async function getActivityFeedData(query = {}, nextLink) {
     } else {
       switch (res.status) {
         case 401:
-          return showMessage(activityFeedContainer, ERROR_MESSAGE.UNAUTHENTICATED);
+          return showMessage(
+            activityFeedContainer,
+            ERROR_MESSAGE.UNAUTHENTICATED,
+          );
         case 403:
           return showMessage(activityFeedContainer, ERROR_MESSAGE.UNAUTHORIZED);
         case 404:
-          return showMessage(activityFeedContainer, ERROR_MESSAGE.LOGS_NOT_FOUND);
+          return showMessage(
+            activityFeedContainer,
+            ERROR_MESSAGE.LOGS_NOT_FOUND,
+          );
         case 400:
-          showMessage(activityFeedContainer,  data.message);
+          showMessage(activityFeedContainer, data.message);
           return;
         default:
           break;
@@ -364,7 +369,6 @@ async function getActivityFeedData(query = {}, nextLink) {
     console.error(e);
   }
 }
-
 
 // main entry
 renderFeed();
