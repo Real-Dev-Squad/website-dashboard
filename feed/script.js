@@ -111,10 +111,7 @@ function formatOOORequests(data) {
 
   const titleDiv = document.createElement('a');
   titleDiv.classList.add('title');
-  titleDiv.setAttribute(
-    'href',
-    `/requests`,
-  );
+  titleDiv.setAttribute('href', `/requests`);
   const imgIcon = document.createElement('img');
   imgIcon.setAttribute('src', 'assets/leave.webp');
   imgIcon.classList.add('img_icon');
@@ -307,26 +304,67 @@ async function populateActivityFeed(query = {}, newLink) {
     isDataLoading = true;
     addLoader(container);
     const activityFeedData = await getActivityFeedData(query, newLink);
-    nextLink = activityFeedData.next;
-    const allActivityFeedData = activityFeedData.data;
-    if (currentVersion !== activityFeedPage) {
-      return;
-    }
-    for (const data of allActivityFeedData) {
-      const renderedItem = renderActivityItem(data);
-      activityFeedContainer.appendChild(renderedItem);
+    if(activityFeedData) {
+      nextLink = activityFeedData.next;
+      const allActivityFeedData = activityFeedData.data;
+      if (currentVersion !== activityFeedPage) {
+        return;
+      }
+      for (const data of allActivityFeedData) {
+        const renderedItem = renderActivityItem(data);
+        activityFeedContainer.appendChild(renderedItem);
+      }
     }
   } catch (error) {
-    addErrorElement(activityFeedContainer, error);
+    showMessage(activityFeedContainer, error);
   } finally {
     if (currentVersion !== activityFeedPage) return;
     removeLoader('loader');
     isDataLoading = false;
-    if (activityFeedContainer.textContent.trim() === '') {
-      addEmptyPageMessage(activityFeedContainer);
-    }
   }
 }
+
+async function getActivityFeedData(query = {}, nextLink) {
+  validateQuery(query);
+  let finalUrl =
+    API_BASE_URL + (nextLink || '/logs' + generateActivityFeedParams(query));
+  const res = await fetch(finalUrl, {
+    credentials: 'include',
+    method: 'GET',
+    headers: {
+      'Content-type': 'application/json',
+    },
+  });
+  console.log(await res.json(), "==>>")
+
+  try {
+    const res = await fetch(finalUrl, {
+      credentials: 'include',
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      return data;
+    } else {
+      switch (res.status) {
+        case 401:
+          return showMessage(activityFeedContainer, ERROR_MESSAGE.UNAUTHENTICATED);
+        case 403:
+          return showMessage(activityFeedContainer, ERROR_MESSAGE.UNAUTHORIZED);
+        case 404:
+          return showMessage(activityFeedContainer, ERROR_MESSAGE.LOGS_NOT_FOUND);
+        case 400:
+          showMessage(activityFeedContainer,  data.message);
+          return;
+        default:
+          break;
+      }
+    }
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 
 // main entry
 renderFeed();

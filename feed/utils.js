@@ -1,16 +1,3 @@
-async function getActivityFeedData(query = {}, nextLink) {
-  validateQuery(query);
-  let finalUrl =
-    API_BASE_URL + (nextLink || '/logs' + generateActivityFeedParams(query));
-  const res = await fetch(finalUrl, {
-    credentials: 'include',
-    method: 'GET',
-    headers: {
-      'Content-type': 'application/json',
-    },
-  });
-  return await res.json();
-}
 
 function generateActivityFeedParams(query) {
   const queryParams = {
@@ -53,19 +40,14 @@ function addEmptyPageMessage(container) {
   container.appendChild(emptyPageMessage);
 }
 
-function addErrorElement(container, error) {
-  const errorHeading = createElement({
-    type: 'h4',
-    innerText: `Error: An error occurred while fetching logs. Please try again later.`,
-  });
-
-  container.appendChild(errorHeading);
-  if (error) {
-    const errorText = createElement({
-      type: 'p',
-      innerText: `${error}`,
+function showMessage(container, errorMsg) {
+  if(errorMsg) {
+    const errorHeading = createElement({
+      type: 'h4',
+      innerText: errorMsg,
     });
-    container.appendChild(errorText);
+
+    container.appendChild(errorHeading);
   }
 }
 

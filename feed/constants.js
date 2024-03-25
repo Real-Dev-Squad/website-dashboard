@@ -22,3 +22,11 @@ const CATEGORY = {
 };
 
 const LAST_ELEMENT_CONTAINER = '.virtual';
+
+const ERROR_MESSAGE = {
+  UNAUTHENTICATED:
+    'You are unauthenticated to view this section, please login!',
+  UNAUTHORIZED: 'You are unauthorized to view this section',
+  LOGS_NOT_FOUND: 'No logs found',
+  SERVER_ERROR: 'Unexpected error occurred',
+};
