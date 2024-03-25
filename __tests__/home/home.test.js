@@ -315,7 +315,7 @@ describe('Home Page', () => {
     expect(createGoalsButton).toBeTruthy();
   });
 
-  it.only('should display the Activity Feed anchor button', async () => {
+  it('should display the Activity Feed anchor button', async () => {
     const createActivityFeedButton = await page.$('#create-activity-feed');
     expect(createActivityFeedButton).toBeTruthy();
     const createActivityFeedButtonHref = await page.evaluate(
