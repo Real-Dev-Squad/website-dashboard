@@ -109,9 +109,12 @@ function formatOOORequests(data) {
   const containerDiv = document.createElement('div');
   containerDiv.classList.add('log-container');
 
-  const titleDiv = document.createElement('div');
+  const titleDiv = document.createElement('a');
   titleDiv.classList.add('title');
-
+  titleDiv.setAttribute(
+    'href',
+    `/requests`,
+  );
   const imgIcon = document.createElement('img');
   imgIcon.setAttribute('src', 'assets/leave.webp');
   imgIcon.classList.add('img_icon');
@@ -207,6 +210,8 @@ function formatTasksLog(data) {
     actionText = `updated the endsOn to <strong>${formatDate(
       data.endsOn,
     )}</strong>`;
+  } else {
+    actionText = `updated the task`;
   }
 
   return createLogContainer(data, 'assets/task.webp', actionText);
@@ -230,7 +235,7 @@ function createLogContainerForTaskRequests(
   titleDiv.appendChild(imgIcon);
 
   const titleText = document.createElement('p');
-  titleText.innerHTML = actionText;
+  titleText.innerHTML = formatUserAction(data, actionText);
   titleDiv.appendChild(titleText);
 
   containerDiv.appendChild(titleDiv);

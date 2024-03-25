@@ -30,8 +30,6 @@ function getLogTypesFromCategory(category) {
         logType.EXTENSION_REQUESTS,
         logType.TASK_REQUESTS,
         logType.REQUEST_CREATED,
-        logType.REQUEST_REJECTED,
-        logType.REQUEST_APPROVED,
       ].join(',');
     case CATEGORY.TASK:
       return logType.TASK;
@@ -40,11 +38,7 @@ function getLogTypesFromCategory(category) {
     case CATEGORY.TASK_REQUESTS:
       return logType.TASK_REQUESTS;
     case CATEGORY.OOO:
-      return [
-        logType.REQUEST_CREATED,
-        logType.REQUEST_REJECTED,
-        logType.REQUEST_APPROVED,
-      ].join(',');
+      return logType.REQUEST_CREATED;
     default:
       return '';
   }
@@ -95,7 +89,7 @@ function formatUserAction(data, actionText) {
 }
 
 function formatLinkWithTitle(link, title) {
-  return `<a href=${link}>${title ?? link}</a>`;
+  return `<a href=${link} target="_blank">${title ?? link}</a>`;
 }
 
 function describeChange(data) {
@@ -113,7 +107,9 @@ function describeChange(data) {
 
   if (data.newEndsOn && data.oldEndsOn) {
     changeTextParts.push(
-      `endsOn date from "${data.oldEndsOn}" to "${data.newEndsOn}"`,
+      `endsOn date from "${formatDate(data.oldEndsOn)}" to "${formatDate(
+        data.newEndsOn,
+      )}"`,
     );
   }
 
