@@ -1,159 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" href="/images/index.ico" type="image/x-icon" />
-  <link rel="stylesheet" href="/global.css" />
-  <link rel="stylesheet" href="/style.css" />
-  <title>Dashboard | Real Dev Squad</title>
-  <script src="/helpers/loadENV.js"></script>
-  <script src="/constants.js" defer></script>
-  <script src="/utils.js" defer></script>
-  <script type="module" src="/script.js" defer></script>
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/images/index.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/global.css" />
+    <link rel="stylesheet" href="/style.css" />
+    <title>Dashboard | Real Dev Squad</title>
+    <script src="/helpers/loadENV.js"></script>
+    <script src="/constants.js" defer></script>
+    <script src="/utils.js" defer></script>
+    <script type="module" src="/script.js" defer></script>
+  </head>
 
-<body>
-  <nav id="tasksNav">
-    <div class="logo">
-      <a href="/index.html">
-        <img src="images/Real-Dev-Squad@1x.png" alt="logo" />
+  <body>
+    <nav id="tasksNav">
+      <div class="logo">
+        <a href="/index.html">
+          <img src="images/Real-Dev-Squad@1x.png" alt="logo" />
+        </a>
+      </div>
+      <div class="nav-links">
+        <div class="hamburger">
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+        </div>
+        <div class="links">
+          <a href="https://welcome.realdevsquad.com/">Welcome</a>
+          <a href="https://www.realdevsquad.com/events">Events</a>
+          <a href="https://members.realdevsquad.com/">Members</a>
+          <a href="https://status.realdevsquad.com/tasks">Status</a>
+        </div>
+      </div>
+      <div class="sign-in-btn">
+        <button onclick="goToAuthPage()">
+          Sign In <span>With GitHub</span>
+          <img src="images/github.png" class="user-avatar" />
+        </button>
+      </div>
+      <div class="user-info">
+        <span id="user-name"></span>
+        <span>
+          <img id="user-img" src="" alt="" />
+        </span>
+      </div>
+      <div id="dropdown"></div>
+    </nav>
+
+    <section id="sync-buttons" class="element-display-remove">
+      <div class="button-container">
+        <button class="action-button" id="sync-unverified-users">
+          <span class="spinner"></span>
+          Sync Unverified Users
+        </button>
+        <div class="status" id="sync-unverified-users-update"></div>
+      </div>
+
+      <div class="button-container">
+        <button class="action-button" id="sync-external-accounts">
+          <span class="spinner"></span>
+          Sync External Accounts
+        </button>
+        <div class="status" id="sync-external-accounts-update"></div>
+      </div>
+
+      <div class="button-container">
+        <button class="action-button" id="sync-users-status">
+          <span class="spinner"></span>
+          Sync Users Status
+        </button>
+        <div class="status" id="sync-users-status-update"></div>
+      </div>
+
+      <div class="button-container">
+        <button class="action-button" id="sync-idle-users">
+          <span class="spinner"></span>
+          Sync Idle Users On Discord
+        </button>
+        <div class="status" id="sync-idle-users-update"></div>
+      </div>
+
+      <div class="button-container">
+        <button class="action-button" id="sync-idle-7d-Plus-users">
+          <span class="spinner"></span>
+          Sync Idle 7d+ Users On Discord
+        </button>
+        <div class="status" id="sync-idle-7d-Plus-users-update"></div>
+      </div>
+
+      <div class="button-container">
+        <button class="action-button" id="sync-nicknames">
+          <span class="spinner"></span>
+          Sync Users Nicknames
+        </button>
+        <div class="status" id="sync-nicknames-status-update"></div>
+      </div>
+
+      <div class="button-container">
+        <button class="action-button" id="sync-onboarding-31d-plus-users">
+          <span class="spinner"></span>
+          Sync Onboarding 31d+ Users
+        </button>
+        <div class="status" id="sync-onboarding-31d-plus-users-update"></div>
+      </div>
+    </section>
+
+    <section class="buttonSection">
+      <a
+        class="action-button element-display-remove"
+        href="/goal/index.html"
+        id="create-goal"
+      >
+        Create Goals
       </a>
-    </div>
-    <div class="nav-links">
-      <div class="hamburger">
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-      </div>
-      <div class="links">
-        <a href="https://welcome.realdevsquad.com/">Welcome</a>
-        <a href="https://www.realdevsquad.com/events">Events</a>
-        <a href="https://members.realdevsquad.com/">Members</a>
-        <a href="https://status.realdevsquad.com/tasks">Status</a>
-      </div>
-    </div>
-    <div class="sign-in-btn">
-      <button onclick="goToAuthPage()">
-        Sign In <span>With GitHub</span>
-        <img src="images/github.png" class="user-avatar" />
-      </button>
-    </div>
-    <div class="user-info">
-      <span id="user-name"></span>
-      <span>
-        <img id="user-img" src="" alt="" />
-      </span>
-    </div>
-    <div id="dropdown"></div>
-  </nav>
-
-  <section id="sync-buttons" class="element-display-remove">
-    <div class="button-container">
-      <button class="action-button" id="sync-unverified-users">
-        <span class="spinner"></span>
-        Sync Unverified Users
-      </button>
-      <div class="status" id="sync-unverified-users-update"></div>
-    </div>
-
-    <div class="button-container">
-      <button class="action-button" id="sync-external-accounts">
-        <span class="spinner"></span>
-        Sync External Accounts
-      </button>
-      <div class="status" id="sync-external-accounts-update"></div>
-    </div>
-
-    <div class="button-container">
-      <button class="action-button" id="sync-users-status">
-        <span class="spinner"></span>
-        Sync Users Status
-      </button>
-      <div class="status" id="sync-users-status-update"></div>
-    </div>
-
-    <div class="button-container">
-      <button class="action-button" id="sync-idle-users">
-        <span class="spinner"></span>
-        Sync Idle Users On Discord
-      </button>
-      <div class="status" id="sync-idle-users-update"></div>
-    </div>
-
-    <div class="button-container">
-      <button class="action-button" id="sync-idle-7d-Plus-users">
-        <span class="spinner"></span>
-        Sync Idle 7d+ Users On Discord
-      </button>
-      <div class="status" id="sync-idle-7d-Plus-users-update"></div>
-    </div>
-
-    <div class="button-container">
-      <button class="action-button" id="sync-nicknames">
-        <span class="spinner"></span>
-        Sync Users Nicknames
-      </button>
-      <div class="status" id="sync-nicknames-status-update"></div>
-    </div>
-
-    <div class="button-container">
-      <button class="action-button" id="sync-onboarding-31d-plus-users">
-        <span class="spinner"></span>
-        Sync Onboarding 31d+ Users
-      </button>
-      <div class="status" id="sync-onboarding-31d-plus-users-update"></div>
-    </div>
-  </section>
-
-  <section class="buttonSection">
-    <a class="action-button element-display-remove" href="/goal/index.html" id="create-goal">
-      Create Goals
-    </a>
-    <a class="action-button" href="/task/index.html"> Create Tasks </a>
-    <a class="action-button" href="/profile/index.html"> Profile </a>
-    <a id="discord-user-link" class="action-button" href="/users/discord/index.html">
-      Discord Users
-    </a>
-    <a id="user-management-link" class="element-display-remove action-button" href="/users/index.html">
-      User Management
-    </a>
-    <a id="extension-requests-link" class="action-button element-display-remove" href="extension-requests">
-      Extension Requests
-    </a>
-    <a id="task-requests-link" class="action-button element-display-remove" href="task-requests">
-      Task Requests
-    </a>
-    <a href="/online-members/online-members.html" class="action-button">
-      Online Members
-    </a>
-    <a class="action-button" href="/groups/index.html"> Discord Groups </a>
-    <a class="action-button" href="/standup/index.html"> Standup Updates</a>
-    <a class="action-button element-display-remove" href="/feed/index.html" id="create-activity-feed"> Activity Feed</a>
-    <a id="application-button" href="/applications" class="action-button element-display-remove">
-      Applications
-    </a>
-    <div class="button-container element-display-remove" id="sync-repo-div">
-      <button id="repo-sync-button" class="action-button">
-        <span class="spinner"></span>
-        Sync Repo
-      </button>
-      <div class="status" id="sync-repo-status-update"></div>
-      <div id="toast" class="hidden">
-        <div class="message"></div>
-        <div class="progress-bar"></div>
-      </div>
-    </div>
-  </section>
-
-  <footer>
-    <p class="info-repo">
-      The contents of this website are deployed from this
-      <a href="https://github.com/Real-Dev-Squad/website-dashboard" target="_blank" rel="noopener noreferrer">
-        open sourced repo
+      <a class="action-button" href="/task/index.html"> Create Tasks </a>
+      <a class="action-button" href="/profile/index.html"> Profile </a>
+      <a
+        id="discord-user-link"
+        class="action-button"
+        href="/users/discord/index.html"
+      >
+        Discord Users
       </a>
-    </p>
-  </footer>
-</body>
+      <a
+        id="user-management-link"
+        class="element-display-remove action-button"
+        href="/users/index.html"
+      >
+        User Management
+      </a>
+      <a
+        id="extension-requests-link"
+        class="action-button element-display-remove"
+        href="extension-requests"
+      >
+        Extension Requests
+      </a>
+      <a
+        id="task-requests-link"
+        class="action-button element-display-remove"
+        href="task-requests"
+      >
+        Task Requests
+      </a>
+      <a href="/online-members/online-members.html" class="action-button">
+        Online Members
+      </a>
+      <a class="action-button" href="/groups/index.html"> Discord Groups </a>
+      <a class="action-button" href="/standup/index.html"> Standup Updates</a>
+      <a
+        class="action-button element-display-remove"
+        href="/feed/index.html"
+        id="create-activity-feed"
+      >
+        Activity Feed</a
+      >
+      <a
+        id="application-button"
+        href="/applications"
+        class="action-button element-display-remove"
+      >
+        Applications
+      </a>
+      <div class="button-container element-display-remove" id="sync-repo-div">
+        <button id="repo-sync-button" class="action-button">
+          <span class="spinner"></span>
+          Sync Repo
+        </button>
+        <div class="status" id="sync-repo-status-update"></div>
+        <div id="toast" class="hidden">
+          <div class="message"></div>
+          <div class="progress-bar"></div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p class="info-repo">
+        The contents of this website are deployed from this
+        <a
+          href="https://github.com/Real-Dev-Squad/website-dashboard"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          open sourced repo
+        </a>
+      </p>
+    </footer>
+  </body>
 </html>

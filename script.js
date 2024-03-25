@@ -100,12 +100,14 @@ showSuperUserOptions(
 const createGoalButton = document.getElementById('create-goal');
 const repoSyncDiv = document.getElementById('sync-repo-div');
 const repoSyncButton = document.getElementById('repo-sync-button');
-const createActivityFeedButton = document.getElementById('create-activity-feed');
+const createActivityFeedButton = document.getElementById(
+  'create-activity-feed',
+);
 const toast = document.getElementById('toast');
 if (params.get('dev') === 'true') {
   createGoalButton.classList.remove('element-display-remove');
   repoSyncDiv.classList.remove('element-display-remove');
-  createActivityFeedButton.classList.remove('element-display-remove')
+  createActivityFeedButton.classList.remove('element-display-remove');
 }
 
 function addClickEventListener(
