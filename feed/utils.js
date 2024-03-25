@@ -1,4 +1,3 @@
-
 function generateActivityFeedParams(query) {
   const queryParams = {
     dev: true,
@@ -41,7 +40,7 @@ function addEmptyPageMessage(container) {
 }
 
 function showMessage(container, errorMsg) {
-  if(errorMsg) {
+  if (errorMsg) {
     const errorHeading = createElement({
       type: 'h4',
       innerText: errorMsg,
