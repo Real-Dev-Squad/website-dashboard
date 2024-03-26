@@ -102,3 +102,37 @@ async function getInDiscordUserList() {
     console.log(error);
   }
 }
+
+const addSpinner = (container) => {
+  const spinner = createElement({
+    type: 'div',
+    attributes: { class: 'spinner' },
+  });
+
+  container.append(spinner);
+
+  function removeSpinner() {
+    spinner.remove();
+  }
+
+  return removeSpinner;
+};
+
+async function getRequestDetailsById(requestId) {
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}/requests?dev=true&id=${requestId}`,
+      {
+        credentials: 'include',
+        method: 'GET',
+        headers: {
+          'Content-type': 'application/json',
+        },
+      },
+    );
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+}

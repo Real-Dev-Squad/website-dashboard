@@ -478,12 +478,35 @@ async function performAcceptRejectAction(isAccepted, e) {
       state: isAccepted ? 'APPROVED' : 'REJECTED',
     });
   }
-  changeFilter();
-  startLoading();
+  const parentDiv = e.target.closest('.ooo_request__card');
+  parentDiv.classList.add('disabled');
+  const removeSpinner = addSpinner(parentDiv);
+
   const response = await acceptRejectRequest(requestId, body);
-  stopLoading();
+  removeSpinner();
+  parentDiv.classList.remove('disabled');
+
   if (response) {
-    await renderOooRequestCards({ state: statusValue, sort: sortByValue });
+    try {
+      const updatedRequestDetails = (await getRequestDetailsById(requestId))
+        .data[0];
+      const superUserDetails = await getUserDetails(
+        updatedRequestDetails.lastModifiedBy,
+      );
+      const requesterUserDetails = await getUserDetails(
+        updatedRequestDetails.requestedBy,
+      );
+
+      const updatedCard = createOooRequestCard(
+        updatedRequestDetails,
+        superUserDetails,
+        requesterUserDetails,
+      );
+      parentDiv.replaceWith(updatedCard);
+    } catch (error) {
+      console.log(error);
+      showMessage('ERROR', ErrorMessages.SERVER_ERROR);
+    }
   }
 }
 
