@@ -315,6 +315,16 @@ describe('Home Page', () => {
     expect(createGoalsButton).toBeTruthy();
   });
 
+  it('should display the Activity Feed anchor button', async () => {
+    const createActivityFeedButton = await page.$('#create-activity-feed');
+    expect(createActivityFeedButton).toBeTruthy();
+    const createActivityFeedButtonHref = await page.evaluate(
+      (el) => el.getAttribute('href'),
+      createActivityFeedButton,
+    );
+    expect(createActivityFeedButtonHref).toBe('/feed/index.html');
+  });
+
   it('should display the Discord Users anchor button', async () => {
     const discordUsersButton = await page.$('#discord-user-link');
     expect(discordUsersButton).toBeTruthy();
