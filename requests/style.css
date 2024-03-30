@@ -24,6 +24,8 @@
   --base-transition: all 0.3s ease-in-out;
   --base-light-grey-border: 1px solid var(--light-gray-color);
   --color-red-light: #ff7979;
+  --white-gray: #f2f2f3;
+  --dark-blue: #1b1378;
 }
 
 body {
@@ -115,6 +117,7 @@ p {
 
 /* swapnil code  */
 .ooo_request__card {
+  position: relative;
   display: flex;
   flex-direction: column;
   background-color: var(--white);
@@ -370,6 +373,44 @@ nav a:hover {
 .reject__btn:hover {
   background-color: var(--white);
   color: var(--black-color);
+}
+
+.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.spinner {
+  border: 8px solid var(--white-gray);
+  border-radius: 50%;
+  border-top: 8px solid var(--dark-blue);
+  width: 1.5rem;
+  height: 1.5rem;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+  position: absolute;
+  inset: 0;
+  margin: auto;
+}
+
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* tooltip css */
