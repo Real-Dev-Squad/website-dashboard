@@ -1,7 +1,9 @@
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
+
 :root {
   --color-text-primary: hsla(0, 0%, 21%, 1);
   --color-text-secondary: hsla(0, 0%, 21%, 0.5);
@@ -9,10 +11,10 @@
   --color-secondary: hsla(246, 74%, 66%, 1);
   --color-secondary-invert: hsla(0, 0%, 100%, 1);
   --color-secondary-darker: hsla(246, 74%, 60%, 1);
+  --color-primary: rgb(4, 17, 135);
 
   --color-active-tabs-color: rgb(135, 216, 112);
   --color-active-groups-background: rgba(51, 122, 215, 0.69);
-  --color-buttons-background: rgb(4, 17, 135);
   --color-loader-border: rgb(243, 243, 243);
   --color-loader-border-top: rgb(52, 152, 219);
   --color-list-border: rgba(0, 0, 0, 0.2);
@@ -30,13 +32,15 @@
 }
 
 body {
+  font-family: 'Roboto', sans-serif;
   display: flex;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 .container {
-  font-family: 'Roboto', sans-serif;
-  width: clamp(250px, 100%, 800px);
+  width: clamp(350px, 100%, 1000px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -89,7 +93,7 @@ body {
 .card {
   background: var(--color-group-background);
   padding: 24px;
-  width: 200px;
+  width: 300px;
   border-radius: 24px;
   border: 1px solid hsla(219, 100%, 96%, 1);
 }
@@ -174,6 +178,85 @@ body {
 }
 
 /*
+    FOR Navbar
+*/
+
+.navbar {
+  width: 100%;
+  height: 60px;
+  padding: 0 20px;
+  background-color: var(--color-primary);
+  display: flex;
+  justify-content: center;
+}
+
+.navbar__container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: clamp(350px, 100%, 1000px);
+  height: 100%;
+}
+
+.back {
+  background-color: transparent;
+  border: none;
+  padding: 10px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+
+.back__icon {
+  height: 1.2rem;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+}
+
+.profile--loading {
+  height: 2rem;
+  width: 6rem;
+  background-color: var(--color-group-loading-primary);
+  border-radius: 10px;
+}
+
+.profile__name {
+  color: white;
+  font-weight: 400;
+  font-size: 0.8rem;
+}
+
+.profile__avatar {
+  margin-left: 0.5rem;
+  height: 2rem;
+  width: 2rem;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.signin {
+  width: fit-content;
+  padding: 5px;
+  background-color: transparent;
+  color: white;
+  cursor: pointer;
+  border: 2px solid white;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.8rem;
+}
+
+.signin__img {
+  height: 15px;
+  width: 15px;
+  position: relative;
+  top: 1px;
+}
+
+/*
     FOR Message toaster box
 */
 
@@ -206,6 +289,7 @@ body {
   0% {
     opacity: 1;
   }
+
   100% {
     opacity: 0;
   }

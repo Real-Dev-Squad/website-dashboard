@@ -1,5 +1,11 @@
 'use strict';
-import { createCard, createLoadingCard } from './render.js';
+import {
+  createCard,
+  createLoadingCard,
+  createNavbarProfile,
+  createNavbarProfileLoading,
+  createNavbarProfileSignin,
+} from './render.js';
 import {
   addGroupRoleToMember,
   getDiscordGroups,
@@ -75,15 +81,32 @@ const dataStore = new Proxy(
 
 const onCreate = () => {
   renderLoadingCards();
+  renderLoadingNavbarProfile();
+
   getUserSelf()
-    .then((data) => (dataStore.userSelf = data))
-    .then(afterAuthentication);
+    .then((data) => {
+      if (data.statusCode === 401) {
+        renderNavbarProfileSignin();
+        renderNotAuthenticatedPage();
+        return;
+      } else if (data.error) {
+        throw new Error(data);
+      }
+      dataStore.userSelf = data;
+      afterAuthentication();
+    })
+    .catch((err) => {
+      console.error(err);
+      removeLoadingCards();
+    })
+    .finally(() => removeLoadingNavbarProfile());
 
   bindSearchInput();
   bindSearchFocus();
 };
 
 const afterAuthentication = async () => {
+  renderNavbarProfile();
   Promise.all([getDiscordGroups(), getUserGroupRoles()])
     .then(([groups, roleData]) => {
       dataStore.filteredGroupsIds = groups.map((group) => group.id);
@@ -123,6 +146,44 @@ const bindSearchFocus = () => {
 
 // Render functions
 
+const renderNotAuthenticatedPage = () => {
+  const mainContainer = document.querySelector('main');
+  mainContainer.innerHTML = '';
+  const errorElement = document.createElement('h1');
+  errorElement.className = 'error';
+  errorElement.innerText = 'You need to login to view this page';
+  mainContainer.append(errorElement);
+};
+
+const renderNavbarProfileSignin = () => {
+  const profileElement = createNavbarProfileSignin();
+  const profileEl = document.querySelector('.navbar__profile');
+  profileEl.append(profileElement);
+};
+
+const removeLoadingNavbarProfile = () => {
+  const profileEl = document.querySelector('.navbar__profile');
+  const profileLoadingEl = profileEl.querySelector('.profile--loading');
+  profileEl.removeChild(profileLoadingEl);
+};
+
+const renderLoadingNavbarProfile = () => {
+  const profileElement = createNavbarProfileLoading();
+  const profileEl = document.querySelector('.navbar__profile');
+  profileEl.append(profileElement);
+};
+
+const renderNavbarProfile = () => {
+  const profile = dataStore.userSelf;
+  const profileElement = createNavbarProfile({
+    name: profile.username.charAt(0).toUpperCase() + profile.username.slice(1),
+    avatar: profile.picture?.url || 'assets/avatar.svg',
+  });
+
+  const profileEl = document.querySelector('.navbar__profile');
+  profileEl.append(profileElement);
+};
+
 const renderLoadingCards = () => {
   const mainContainer = document.querySelector('.group-container');
   const cardCount = 6;
@@ -134,6 +195,7 @@ const renderLoadingCards = () => {
 
 const removeLoadingCards = () => {
   const mainContainer = document.querySelector('.group-container');
+  if (!mainContainer) return;
   const loadingCards = mainContainer.querySelectorAll('.card--loading');
   loadingCards.forEach((card) => mainContainer.removeChild(card));
 };

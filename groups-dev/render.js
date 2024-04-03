@@ -10,19 +10,26 @@ const createCard = (rawGroup, onClick = () => {}) => {
   cardElement.className = 'card';
   cardElement.id = `group-${group.id}`;
   cardElement.innerHTML = `
-        <h5 class="card__title">${group.title}</h5>
-        <p class="card__description">${group.description}</p>
+        <h5 class="card__title"></h5>
+        <p class="card__description"></p>
         <div class="card__action">
-            <button class="card__btn ${
-              group.isUpdating && 'card__btn--blocked'
-            }">${group.isMember ? 'Remove me' : 'Add me +'}</button>
+            <button class="card__btn"></button>
             <span class="card__count">
-                <span class="card__count-text">${group.count}</span>
+                <span class="card__count-text"></span>
                 <img class="card__count-icon" src="assets/person.svg" alt="Members" />
             </span>
         </div>
     `;
 
+  if (group.isUpdating)
+    cardElement.querySelector('.card__btn').classList.add('card__btn--blocked');
+  cardElement.querySelector('.card__title').textContent = group.title;
+  cardElement.querySelector('.card__description').textContent =
+    group.description;
+  cardElement.querySelector('.card__btn').textContent = group.isMember
+    ? 'Remove me'
+    : 'Add me +';
+  cardElement.querySelector('.card__count-text').textContent = group.count;
   cardElement
     .querySelector('.card__btn')
     .addEventListener('click', () => group.isUpdating || onClick());
@@ -44,4 +51,48 @@ const createLoadingCard = () => {
   return cardElement;
 };
 
-export { createCard, createLoadingCard };
+const createNavbarProfile = (profile) => {
+  const profileElement = document.createElement('div');
+  profileElement.className = 'profile';
+  profileElement.innerHTML = `
+        <h5 class="profile__name"></h5>
+        <img class="profile__avatar" />
+    `;
+
+  profileElement.querySelector(
+    '.profile__name',
+  ).textContent = `Hello, ${profile.name}`;
+  profileElement.querySelector(
+    '.profile__avatar',
+  ).alt = `Avatar of ${profile.name}`;
+  profileElement.querySelector('.profile__avatar').src = profile.avatar;
+
+  return profileElement;
+};
+
+const createNavbarProfileLoading = () => {
+  const profileElement = document.createElement('div');
+  profileElement.className = 'profile profile--loading';
+
+  return profileElement;
+};
+
+const createNavbarProfileSignin = () => {
+  const profileElement = document.createElement('a');
+  profileElement.className = 'signin';
+  profileElement.innerHTML = `
+      <span class="signin__text">Sign In With GitHub</span>
+      <img class="signin__img" src="assets/github.png" />
+    `;
+
+  profileElement.href = `https://github.com/login/oauth/authorize?client_id=23c78f66ab7964e5ef97&}&state=${window.location.href}`;
+  return profileElement;
+};
+
+export {
+  createCard,
+  createLoadingCard,
+  createNavbarProfile,
+  createNavbarProfileLoading,
+  createNavbarProfileSignin,
+};
