@@ -504,6 +504,7 @@ table tr td {
 .requestor_description_details table td {
   border: 1px solid gray;
   padding: 0.5rem;
+  white-space: nowrap;
 }
 
 .requestor_description_details code,
