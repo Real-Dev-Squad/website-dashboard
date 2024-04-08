@@ -494,6 +494,8 @@ table tr td {
   text-align: left;
   text-wrap: wrap;
   word-break: break-word;
+  border: lightgray dotted;
+  padding: 0.5rem;
 }
 
 .requestor_description_details h1 {
