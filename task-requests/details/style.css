@@ -512,6 +512,18 @@ table tr td {
   white-space: normal;
 }
 
+.requestor_description_details img {
+  width: 100%;
+}
+
+.requestor_description_details table {
+  display: block;
+  width: 100%;
+  width: max-content;
+  max-width: 100%;
+  overflow: auto;
+}
+
 .requestor_details_modal_close {
   color: var(--color-gray-shade);
   float: right;
