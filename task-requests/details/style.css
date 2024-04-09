@@ -496,7 +496,9 @@ table tr td {
   word-break: break-word;
   border: lightgray dotted;
   padding: 0.5rem;
+
   margin-left: -0.65rem;
+
 }
 
 .requestor_description_details h1 {
@@ -522,6 +524,7 @@ table tr td {
 
 .requestor_description_details table {
   display: block;
+
   width: max-content;
   max-width: 100%;
   overflow: auto;
