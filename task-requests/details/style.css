@@ -494,6 +494,8 @@ table tr td {
   text-align: left;
   text-wrap: wrap;
   word-break: break-word;
+  border: lightgray dotted;
+  padding: 0.5rem;
 }
 
 .requestor_description_details h1 {
@@ -504,12 +506,25 @@ table tr td {
 .requestor_description_details table td {
   border: 1px solid gray;
   padding: 0.5rem;
+  white-space: nowrap;
 }
 
 .requestor_description_details code,
 .requestor_description_details pre {
   font-family: consolas, monospace;
   white-space: normal;
+}
+
+.requestor_description_details img {
+  width: 100%;
+}
+
+.requestor_description_details table {
+  display: block;
+  width: 100%;
+  width: max-content;
+  max-width: 100%;
+  overflow: auto;
 }
 
 .requestor_details_modal_close {
