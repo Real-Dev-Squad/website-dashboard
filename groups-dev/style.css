@@ -6,7 +6,7 @@
 
 :root {
   --color-text-primary: hsla(0, 0%, 21%, 1);
-  --color-text-secondary: hsla(0, 0%, 21%, 0.5);
+  --color-text-secondary: hsla(0, 0%, 21%, 0.75);
 
   --color-secondary: hsla(246, 74%, 66%, 1);
   --color-secondary-invert: hsla(0, 0%, 100%, 1);
@@ -24,15 +24,46 @@
   --color-group-loading-background: hsla(218, 100%, 98%, 1);
   --color-group-loading-primary: rgb(227, 232, 239);
 
-  --color-group-background: hsla(218, 100%, 98%, 1);
+  --color-group-background: var(--color-white);
   --color-group-count: var(--color-text-secondary);
   --color-group-btn-background: var(--color-secondary);
   --color-group-btn-text: var(--color-secondary-invert);
   --color-group-btn-hover: var(--color-secondary-darker);
 }
 
+.button {
+  border-radius: 10px;
+  padding: 4px 20px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  font-size: 0.8rem;
+}
+
+.button--secondary {
+  background: var(--color-secondary-invert);
+  color: var(--color-secondary);
+  border: 1px solid var(--color-secondary);
+}
+
+.button--secondary:hover {
+  background: var(--color-secondary);
+  color: var(--color-secondary-invert);
+}
+
+.button__icon {
+  margin-left: 6px;
+  height: 1.2em;
+  color: inherit;
+}
+
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Inter', sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-variation-settings: 'slnt' 0;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -40,23 +71,25 @@ body {
 }
 
 .container {
-  width: clamp(350px, 100%, 1000px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  width: clamp(300px, 100%, 1000px);
   padding: 20px;
   color: var(--color-text-primary);
+  display: grid;
+  gap: 4px;
+  grid-template-columns: repeat(4, 1fr);
 }
 
 /* 
     FOR Serach
 */
 .search {
+  grid-column-start: 2;
+  grid-column-end: 4;
   border: 1px solid hsla(0, 0%, 53%, 1);
-  width: clamp(250px, 100%, 600px);
+  width: 100%;
   display: flex;
   align-items: center;
-  border-radius: 10px;
+  border-radius: 30px;
   padding: 12px 16px;
   cursor: text;
 }
@@ -78,29 +111,51 @@ body {
   outline: none;
 }
 
+/* 
+    FOR Create Group
+*/
+
+.create-group {
+  grid-column-start: 4;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+
+.create-group .button {
+  border-radius: 50px;
+  height: 35px;
+}
+
 /*
     FOR Group Card
 */
 
 .group-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  grid-column-start: 1;
+  grid-column-end: 6;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 0.8rem;
   margin-top: 40px;
 }
 
 .card {
+  margin-inline: auto;
   background: var(--color-group-background);
-  padding: 24px;
-  width: 300px;
-  border-radius: 24px;
-  border: 1px solid hsla(219, 100%, 96%, 1);
+  padding: 20px;
+  border-radius: 15px;
+  border: 1px solid hsla(0, 0%, 92%, 1);
+  box-shadow: 1px 2px 4px 0px hsla(0, 0%, 0%, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .card__title {
   font-size: 1.1rem;
-  font-weight: 400;
+  font-weight: 600;
 }
 
 .card__description {
@@ -121,7 +176,7 @@ body {
 .card__btn {
   border: none;
   border-radius: 8px;
-  padding: 7px 20px;
+  padding: 6px 20px;
   background: var(--color-group-btn-background);
   color: var(--color-group-btn-text);
   font-weight: 600;
@@ -134,25 +189,36 @@ body {
   cursor: not-allowed;
 }
 
+.card__btn--inverted {
+  border: 1px solid var(--color-group-btn-background);
+  background: var(--color-group-btn-text);
+  color: var(--color-group-btn-background);
+}
+
+.card__btn--inverted:hover {
+  background: var(--color-group-btn-background);
+  color: var(--color-group-btn-text);
+}
+
 .card__btn:hover {
   background: var(--color-group-btn-hover);
 }
 
 .card__count {
   color: var(--color-group-count);
-  font-size: 1rem;
+  font-size: 0.9rem;
   display: flex;
-  align-items: end;
+  align-items: center;
 }
 
 .card__count-text {
-  font-size: 0.9em;
+  font-size: 0.8em;
 }
 
 .card__count-icon {
-  margin-left: 2px;
+  margin-left: 0.5rem;
   padding-bottom: 0.5px;
-  height: 1.1em;
+  height: 1.2em;
 }
 
 .card--loading {
@@ -292,5 +358,19 @@ body {
 
   100% {
     opacity: 0;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .search {
+    grid-column-start: 1;
+    grid-column-end: 4;
+    border-radius: 10px;
+  }
+
+  .create-group .button {
+    border-radius: 10px;
+    padding: 4px 10px;
+    height: 100%;
   }
 }

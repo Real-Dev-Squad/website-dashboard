@@ -11,7 +11,14 @@
     <script src="/helpers/loadENV.js"></script>
     <script src="/constants.js"></script>
     <script type="module" src="/groups-dev/script.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
   </head>
+
   <body>
     <nav class="navbar">
       <div class="navbar__container">
@@ -26,6 +33,21 @@
       <div class="search">
         <img class="search__icon" src="assets/search.svg" alt="search" />
         <input class="search__input" placeholder="Serach for group" />
+      </div>
+      <div class="create-group">
+        <button class="button button--secondary">
+          <span class="button__text">create grp</span>
+          <svg
+            class="button__icon"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill="currentColor"
+              d="M20.9021 13.0341C20.9995 12.7789 21.0249 12.498 20.9753 12.2271C20.9256 11.9562 20.803 11.7073 20.6231 11.512L15.4799 5.92631C15.3613 5.79294 15.2194 5.68656 15.0626 5.61337C14.9057 5.54019 14.737 5.50166 14.5662 5.50005C14.3955 5.49844 14.2262 5.53377 14.0682 5.60399C13.9102 5.6742 13.7666 5.77789 13.6459 5.909C13.5252 6.04012 13.4297 6.19603 13.365 6.36765C13.3004 6.53926 13.2678 6.72315 13.2693 6.90856C13.2708 7.09398 13.3063 7.27722 13.3737 7.44759C13.4411 7.61796 13.539 7.77205 13.6618 7.90086L16.6114 11.1043H4.2858C3.94478 11.1043 3.61773 11.2514 3.3766 11.5133C3.13547 11.7752 3 12.1303 3 12.5007C3 12.8711 3.13547 13.2262 3.3766 13.4881C3.61773 13.75 3.94478 13.8971 4.2858 13.8971H16.6114L13.6631 17.0991C13.5403 17.228 13.4423 17.382 13.375 17.5524C13.3076 17.7228 13.2721 17.906 13.2706 18.0914C13.2691 18.2769 13.3017 18.4607 13.3663 18.6324C13.431 18.804 13.5264 18.9599 13.6472 19.091C13.7679 19.2221 13.9115 19.3258 14.0695 19.396C14.2275 19.4662 14.3968 19.5016 14.5675 19.4999C14.7383 19.4983 14.907 19.4598 15.0639 19.3866C15.2207 19.3134 15.3626 19.2071 15.4812 19.0737L20.6244 13.488C20.7435 13.358 20.8379 13.2038 20.9021 13.0341Z"
+            />
+          </svg>
+        </button>
       </div>
       <div class="group-container"></div>
     </main>

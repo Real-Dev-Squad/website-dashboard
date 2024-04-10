@@ -3,7 +3,7 @@ const createCard = (rawGroup, onClick = () => {}) => {
     ...rawGroup,
     description:
       rawGroup.description ||
-      'This is a default description. Please ask the role creator or admin to update this group description.',
+      'Please ask the role creator or admin to update this group description.',
   };
 
   const cardElement = document.createElement('div');
@@ -28,7 +28,11 @@ const createCard = (rawGroup, onClick = () => {}) => {
     group.description;
   cardElement.querySelector('.card__btn').textContent = group.isMember
     ? 'Remove me'
-    : 'Add me +';
+    : 'Add me';
+  if (group.isMember)
+    cardElement
+      .querySelector('.card__btn')
+      .classList.add('card__btn--inverted');
   cardElement.querySelector('.card__count-text').textContent = group.count;
   cardElement
     .querySelector('.card__btn')
@@ -41,8 +45,10 @@ const createLoadingCard = () => {
   const cardElement = document.createElement('div');
   cardElement.className = 'card card--loading';
   cardElement.innerHTML = `
-        <h5 class="card__title"></h5>
-        <p class="card__description"></p>
+        <div class="card__body">
+            <h5 class="card__title"></h5>
+            <p class="card__description"></p>
+        </div>
         <div class="card__action">
             <div class="card__btn"></div>
         </div>

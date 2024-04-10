@@ -59,6 +59,9 @@ const handler = {
       case 'discordId':
         obj[prop] = value;
         break;
+      case 'isCreateGroupModalOpen':
+        obj[prop] = value;
+        break;
       default:
         throw new Error('Invalid property set');
     }
@@ -73,6 +76,7 @@ const dataStore = new Proxy(
     filteredGroupsIds: null,
     search: '',
     discordId: null,
+    isCreateGroupModalOpen: false,
   },
   handler,
 );
@@ -111,9 +115,14 @@ const afterAuthentication = async () => {
     .then(([groups, roleData]) => {
       dataStore.filteredGroupsIds = groups.map((group) => group.id);
       dataStore.groups = groups.reduce((acc, group) => {
+        let title = group.rolename
+          .replace('group-', '')
+          .split('-')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
         acc[group.id] = {
           id: group.id,
-          title: group.rolename,
+          title: title,
           count: group.memberCount,
           isMember: group.isMember,
           roleId: group.roleid,
