@@ -310,10 +310,10 @@ async function removeCard(element, elementClass) {
     .addEventListener('finish', () => {
       element.style.overflow = '';
       element.remove();
+      if (extensionRequestsContainer.innerHTML === '') {
+        addEmptyPageMessage(extensionRequestsContainer);
+      }
     });
-  if (extensionRequestsContainer.innerHTML === '') {
-    addEmptyPageMessage(extensionRequestsContainer);
-  }
 }
 
 function addCheckbox(labelText, value, groupName) {
