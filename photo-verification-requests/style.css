@@ -152,7 +152,8 @@
 .photo-verification-button-box > .reject-button {
   background-color: var(--color-red);
 }
-.photo-verification-button-box > .notify-button {
+.photo-verification-button-box > .notify-button,
+.photo-verification-button-box > .refresh-discord-avatar-button {
   background-color: var(--blue-color);
 }
 
