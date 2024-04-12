@@ -1,3 +1,15 @@
+async function refreshDiscordImage(discordId, id) {
+  const res = await refreshDiscordImageRequest(discordId);
+  const card = document.querySelector(`.photo-verification-card--${id}`);
+  const discordImage = card.querySelector(
+    '.photo-verification-image-box__block--discord img',
+  );
+
+  if (res.statusCode === 200) {
+    discordImage.src = res.data.discordAvatarUrl;
+  }
+}
+
 async function approvePhotoVerificationRequest(id, userId, imageType) {
   const res = await modifyPhotoVerificationRequest(
     userId,
@@ -28,10 +40,6 @@ async function rejectPhotoVerificationRequest(id, userId) {
       card.remove();
     }, 2000);
   }
-
-  setTimeout(() => {
-    window.location.reload();
-  }, 4000);
 }
 
 function notifyPhotoVerificationRequest(id) {
@@ -57,7 +65,8 @@ function createPhotoVerificationRequestImageBox(
   imageBox.appendChild(newImageBox);
 
   const discordImageBox = document.createElement('div');
-  discordImageBox.className = 'photo-verification-image-box__block';
+  discordImageBox.className =
+    'photo-verification-image-box__block photo-verification-image-box__block--discord';
   discordImageBox.innerHTML = `<h4>Discord Image</h4><img src="${discordImage}" alt="Discord Image" />`;
   imageBox.appendChild(discordImageBox);
 
@@ -68,6 +77,7 @@ function createPhotoVerificationRequestButtonBox(
   approvePhoto,
   rejectPhoto,
   notifyPhoto,
+  refreshDiscordAvatarPhoto,
   discordImageStatus,
   profileImageStatus,
 ) {
@@ -90,6 +100,7 @@ function createPhotoVerificationRequestButtonBox(
 
   const approveBothButton = document.createElement('button');
   approveBothButton.innerText = 'Approve Both';
+  approveBothButton.className = 'approve-both-button';
   approveBothButton.onclick = () => approvePhoto('both');
   buttonBox.appendChild(approveBothButton);
 
@@ -99,13 +110,19 @@ function createPhotoVerificationRequestButtonBox(
   rejectButton.onclick = rejectPhoto;
   buttonBox.appendChild(rejectButton);
 
+  const refreshDiscordAvatarButton = document.createElement('button');
+  refreshDiscordAvatarButton.innerText = 'Refresh Discord Image';
+  refreshDiscordAvatarButton.onclick = refreshDiscordAvatarPhoto;
+  refreshDiscordAvatarButton.className = 'refresh-discord-avatar-button';
+  buttonBox.appendChild(refreshDiscordAvatarButton);
+
   const notifyButton = document.createElement('button');
   notifyButton.innerText = 'Notify User';
   notifyButton.onclick = notifyPhoto;
   notifyButton.className = 'notify-button';
   notifyButton.disabled = true;
-
   buttonBox.appendChild(notifyButton);
+
   return buttonBox;
 }
 
@@ -169,6 +186,11 @@ function createPhotoVerificationRequestCard(photoVerificationRequest) {
           photoVerificationRequest.userId,
         ),
       () => notifyPhotoVerificationRequest(photoVerificationRequest.id),
+      () =>
+        refreshDiscordImage(
+          photoVerificationRequest.discordId,
+          photoVerificationRequest.id,
+        ),
       photoVerificationRequest.discord.approved,
       photoVerificationRequest.profile.approved,
     ),
@@ -196,6 +218,20 @@ async function getPhotoVerificationRequests(username) {
 async function modifyPhotoVerificationRequest(userId, imageType, status) {
   const response = await fetch(
     `${API_BASE_URL}/users/picture/verify/${userId}/?status=${status}&type=${imageType}`,
+    {
+      credentials: 'include',
+      method: 'PATCH',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    },
+  );
+  return { data: await response.json(), statusCode: response.status };
+}
+
+async function refreshDiscordImageRequest(discordId) {
+  const response = await fetch(
+    `${API_BASE_URL}/discord-actions/avatar/update/${discordId}`,
     {
       credentials: 'include',
       method: 'PATCH',
