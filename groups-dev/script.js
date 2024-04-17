@@ -1,6 +1,7 @@
 'use strict';
 import {
   createCard,
+  createGroupCreationModal,
   createLoadingCard,
   createNavbarProfile,
   createNavbarProfileLoading,
@@ -8,6 +9,7 @@ import {
 } from './render.js';
 import {
   addGroupRoleToMember,
+  createDiscordGroupRole,
   getDiscordGroups,
   getUserGroupRoles,
   getUserSelf,
@@ -53,13 +55,19 @@ const handler = {
         }
         obj[prop] = value;
         break;
+      case 'isGroupCreationModalOpen':
+        obj[prop] = value;
+
+        if (value) {
+          renderGroupCreationModal();
+        } else {
+          removeGroupCreationModal();
+        }
+        break;
       case 'userSelf':
         obj[prop] = value;
         break;
       case 'discordId':
-        obj[prop] = value;
-        break;
-      case 'isCreateGroupModalOpen':
         obj[prop] = value;
         break;
       default:
@@ -107,6 +115,7 @@ const onCreate = () => {
 
   bindSearchInput();
   bindSearchFocus();
+  bindGroupCreationButton();
 };
 
 const afterAuthentication = async () => {
@@ -138,6 +147,14 @@ const afterAuthentication = async () => {
 
 // Bind Functions
 
+const bindGroupCreationButton = () => {
+  const groupCreationBtn = document.querySelector('.create-group');
+
+  groupCreationBtn.addEventListener('click', () => {
+    dataStore.isGroupCreationModalOpen = true;
+  });
+};
+
 const bindSearchInput = () => {
   const searchInput = document.querySelector('.search__input');
   searchInput.addEventListener('input', (e) => {
@@ -154,6 +171,37 @@ const bindSearchFocus = () => {
 };
 
 // Render functions
+
+const renderGroupCreationModal = () => {
+  const container = document.querySelector('body');
+  const backdrop = document.querySelector('.backdrop');
+  const groupCreationModal = backdrop?.querySelector('.create-group-modal');
+
+  if (!groupCreationModal) {
+    const groupCreationModal = createGroupCreationModal(
+      () => {
+        dataStore.isGroupCreationModalOpen = false;
+      },
+      (inputValue) => {
+        return createDiscordGroupRole({
+          rolename: inputValue,
+        }).then(() => {
+          location.reload();
+        });
+      },
+    );
+    container.append(groupCreationModal);
+  }
+};
+
+const removeGroupCreationModal = () => {
+  const container = document.querySelector('body');
+  const backdrop = document.querySelector('.backdrop');
+
+  if (backdrop) {
+    container.removeChild(backdrop);
+  }
+};
 
 const renderNotAuthenticatedPage = () => {
   const mainContainer = document.querySelector('main');
