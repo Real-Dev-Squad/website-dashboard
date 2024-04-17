@@ -1,3 +1,7 @@
+:root {
+  --toastify-text-color-light: #757575;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -123,15 +127,10 @@
   align-items: center;
   justify-content: center;
 }
-.groups-search-input {
-  height: 2rem;
-  width: 90%;
-  padding-left: 2px;
-}
 .groups-list {
   padding: 0.8rem;
   list-style: none;
-  height: 66vh;
+  height: 74vh;
   overflow-y: scroll;
 }
 .groups-list::-webkit-scrollbar {
@@ -147,7 +146,7 @@
   border: 1px solid var(--color-list-border);
   margin-bottom: 0.6rem;
   border-radius: 0.6rem;
-  min-width: 12rem;
+  min-width: 40rem;
 }
 .groups-list li:hover {
   cursor: pointer;
@@ -229,6 +228,7 @@
 
 .btn-add-role {
   margin: 5px;
+  min-width: 40rem;
 }
 
 #no-results-message {
@@ -286,11 +286,6 @@ NOT VERIFIED TEXT ABOVE
   text-align: center;
 }
 
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
 .dropdown-content {
   display: none;
   position: absolute;
@@ -299,16 +294,13 @@ NOT VERIFIED TEXT ABOVE
   overflow: auto;
   border: 1px solid var(--color-group-dropdown-border-color);
   z-index: 1;
+  text-align: justify;
 }
 
 .dropdown-content a {
   padding: 0.75rem 1rem;
   text-decoration: none;
   display: block;
-}
-
-.dropdown a:hover {
-  background-color: var(--color-group-dropdown-border-color);
 }
 
 .show_filter {
@@ -319,7 +311,7 @@ NOT VERIFIED TEXT ABOVE
   cursor: pointer;
 }
 
-.task_filter-button {
+.filter-button {
   width: 5rem;
   height: 2rem;
   border-radius: 0.27rem 0 0 0.27rem;
@@ -335,7 +327,7 @@ NOT VERIFIED TEXT ABOVE
   border: 1px solid var(--color-group-dropdown-border-color);
 }
 
-.task_filter-button:after {
+.filter-button:after {
   content: '';
   border-left: 0.3rem solid transparent;
   border-right: 0.3rem solid transparent;
@@ -343,13 +335,130 @@ NOT VERIFIED TEXT ABOVE
   margin-left: 0.5rem;
 }
 
+.sub_menu {
+  padding-top: 0.6rem;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0 2rem;
+  border-bottom: 1px solid var(--toastify-text-color-light);
+}
+
+.Header_link {
+  padding: 0.6rem;
+  text-decoration: none;
+  font-weight: 700;
+  color: #041484;
+  cursor: pointer;
+  background: none;
+  border: none;
+  position: relative;
+  width: auto;
+}
+
+.Header_link__vertical:after {
+  content: '';
+  position: absolute;
+  height: 1rem;
+  width: 2px;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.467);
+}
+
+.Header_active {
+  color: #e30464;
+}
+
+.groups_container {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  flex-wrap: nowrap;
+  align-items: center;
+  width: 100%;
+}
+
+.search_container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+  min-width: 40rem;
+  height: 2.5rem;
+  border-radius: 5px;
+  border: 1px solid #d0d7de;
+  position: relative;
+}
+
+.tasksearch_search-button-container__sk3_F {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 10rem;
+}
+
+.tasksearch_search-button__EfOo7 {
+  width: 100%;
+  height: 2rem;
+  border-radius: 5px;
+  background-color: #fff;
+  color: #000;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid gray;
+  outline: none;
+}
+
+#sortby_text {
+  height: 2rem;
+  position: relative;
+  border-radius: 5px 0 0 5px;
+  background-color: #fff;
+  color: #000;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 5px;
+}
+
+.filter_container {
+  width: 8rem;
+}
+
+.groups-search-input {
+  width: 100%;
+  height: 2rem;
+  border-radius: 0 5px 5px 0;
+  outline: none;
+  background-image: url(https://img.icons8.com/ios-filled/16/000000/search.png);
+  background-repeat: no-repeat;
+  background-position: 0.5rem;
+  padding: 0.5rem 0.5rem 0.5rem 2rem;
+  background-color: #fff;
+  border: none;
+  border-left: 1px solid #d0d7de;
+}
+
+#sortby_text:after {
+  content: '';
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #000;
+  margin-left: 0.5rem;
+}
+
 @media (max-width: 650px) {
   .btn-add-role {
     position: static;
-  }
-  .manage-groups {
-    flex-direction: column-reverse;
-    padding: 1.2rem;
+    min-width: 21rem;
   }
   .manage-groups main {
     padding: unset;
@@ -357,9 +466,17 @@ NOT VERIFIED TEXT ABOVE
   }
 
   .groups-list {
-    height: 54vh;
+    height: 75vh;
   }
+
   .group-name {
     font-size: large;
+  }
+  .groups-list li {
+    min-width: auto;
+  }
+
+  .search_container {
+    min-width: 80%;
   }
 }
