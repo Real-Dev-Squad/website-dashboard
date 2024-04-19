@@ -97,7 +97,7 @@ describe('Tests the Photo Verification Screen', () => {
         });
       } else if (
         url ===
-        `https://api.realdevsquad.com/discord-actions/avatar/update/${photoVerificationRequestsListPending.data[0].discordId}`
+        `https://api.realdevsquad.com/discord-actions/avatar/photo-verification-update/${photoVerificationRequestsListPending.data[0].discordId}`
       ) {
         interceptedRequest.respond({
           status: 200,

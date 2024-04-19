@@ -231,7 +231,7 @@ async function modifyPhotoVerificationRequest(userId, imageType, status) {
 
 async function refreshDiscordImageRequest(discordId) {
   const response = await fetch(
-    `${API_BASE_URL}/discord-actions/avatar/update/${discordId}`,
+    `${API_BASE_URL}/discord-actions/avatar/photo-verification-update/${discordId}`,
     {
       credentials: 'include',
       method: 'PATCH',
