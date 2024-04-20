@@ -172,6 +172,16 @@ const bindSearchFocus = () => {
 
 // Render functions
 
+function showToaster(message) {
+  const toaster = document.querySelector('.toast__message');
+  toaster.innerText = message;
+  toaster.classList.add('toast--show');
+
+  setTimeout(() => {
+    toaster.classList.remove('toast--show');
+  }, 3000);
+}
+
 const renderGroupCreationModal = () => {
   const container = document.querySelector('body');
   const backdrop = document.querySelector('.backdrop');
@@ -186,7 +196,11 @@ const renderGroupCreationModal = () => {
         return createDiscordGroupRole({
           rolename: inputValue,
         }).then(() => {
-          location.reload();
+          showToaster('Group created successfully');
+          dataStore.isGroupCreationModalOpen = false;
+
+          // Future improvement: Use a more robust way to refresh the data
+          setTimeout(() => location.reload(), 2500);
         });
       },
     );
@@ -278,6 +292,7 @@ const renderGroupById = (id) => {
         .then(() =>
           updateGroup(id, { isMember: false, count: group.count - 1 }),
         )
+        .catch((err) => showToaster(err.message))
         .finally(() => updateGroup(id, { isUpdating: false }));
     } else {
       addGroupRoleToMember({
@@ -285,6 +300,7 @@ const renderGroupById = (id) => {
         userid: dataStore.discordId,
       })
         .then(() => updateGroup(id, { isMember: true, count: group.count + 1 }))
+        .catch((err) => showToaster(err.message))
         .finally(() => updateGroup(id, { isUpdating: false }));
     }
   }

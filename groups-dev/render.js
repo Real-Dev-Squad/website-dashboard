@@ -138,6 +138,7 @@ const createGroupCreationModal = (onClose = () => {}, onSubmit = () => {}) => {
   modalElement.querySelector('#close-button').onclick = onClose;
   modalElement.querySelector('#clear-input').onclick = () => {
     inputField.value = '';
+    toggleSubmitButton({ enabled: false });
   };
 
   function getInput() {

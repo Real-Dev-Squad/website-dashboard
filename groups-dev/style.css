@@ -131,7 +131,7 @@ body {
 
 .group-creation-modal {
   height: 380px;
-  width: 350px;
+  width: clamp(300px, 100%, 350px);
   background-color: var(--color-white);
   border-radius: 8px;
   display: flex;
@@ -206,6 +206,7 @@ body {
 
           color: hsla(220, 9%, 46%, 0.5);
         }
+
         #clear-input {
           padding: 0.7rem 1rem;
           border: none;
@@ -223,6 +224,9 @@ body {
       line-height: 21px;
       border-radius: 8px;
       background: hsla(221, 79%, 48%, 1);
+      text-align: center;
+      display: table-cell;
+      vertical-align: middle;
     }
 
     .submit__button--disabled {
@@ -458,14 +462,14 @@ body {
     FOR Message toaster box
 */
 
-.toaster-container {
+.toast {
   position: fixed;
   top: 20px;
   right: 20px;
   width: 300px;
 }
 
-.toaster-message {
+.toast__message {
   padding: 15px;
   background-color: #4caf50;
   color: white;
@@ -474,21 +478,26 @@ body {
   display: none;
 }
 
-.hidden {
-  display: none;
-}
-
-.show {
+.toast--show {
   display: block;
-  animation: fadeOut 2s forwards;
+  animation: slideInFromRight 3s forwards;
 }
 
-@keyframes fadeOut {
+@keyframes slideInFromRight {
   0% {
+    transform: translateX(100%);
     opacity: 1;
   }
-
+  30% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  70% {
+    transform: translateX(0);
+    opacity: 1;
+  }
   100% {
+    transform: translateX(0) translateY(-100%);
     opacity: 0;
   }
 }
@@ -504,5 +513,6 @@ body {
     border-radius: 10px;
     padding: 4px 10px;
     height: 100%;
+    gap: 0;
   }
 }
