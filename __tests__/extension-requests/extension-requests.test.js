@@ -373,7 +373,7 @@ describe('Tests the Extension Requests Screen', () => {
           body: JSON.stringify({
             message: 'Extension Requests returned successfully!',
             allExtensionRequests: [
-              extensionRequestsListPending.allExtensionRequests[1],
+              extensionRequestsListPending?.allExtensionRequests?.[5] ?? {},
             ],
           }),
         });
