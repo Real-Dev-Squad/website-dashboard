@@ -1,11 +1,15 @@
 'use strict';
 import {
-  createCard,
-  createGroupCreationModal,
-  createLoadingCard,
-  createNavbarProfile,
-  createNavbarProfileLoading,
-  createNavbarProfileSignin,
+  removeGroupCreationModal,
+  removeLoadingCards,
+  removeLoadingNavbarProfile,
+  renderGroupById,
+  renderGroupCreationModal,
+  renderLoadingCards,
+  renderLoadingNavbarProfile,
+  renderNavbarProfile,
+  renderNavbarProfileSignin,
+  renderNotAuthenticatedPage,
 } from './render.js';
 import {
   addGroupRoleToMember,
@@ -31,7 +35,12 @@ const handler = {
             (ng) => JSON.stringify(oldGroups?.[ng.id]) !== JSON.stringify(ng),
           )
           .filter((ng) => dataStore.filteredGroupsIds.includes(ng.id));
-        diffGroups.forEach((group) => renderGroupById(group.id));
+        diffGroups.forEach((group) =>
+          renderGroupById({
+            group,
+            cardOnClick: () => groupCardOnAction(group.id),
+          }),
+        );
         break;
       case 'filteredGroupsIds':
         const oldFilteredGroupsIds = obj.filteredGroupsIds;
@@ -39,7 +48,9 @@ const handler = {
 
         if (oldFilteredGroupsIds == null) break;
         // Optimization possible: Only rerender groups that have been added/removed
-        renderAllGroups();
+        renderAllGroups({
+          cardOnClick: groupCardOnAction,
+        });
         break;
       case 'search':
         if (value === '') {
@@ -59,7 +70,20 @@ const handler = {
         obj[prop] = value;
 
         if (value) {
-          renderGroupCreationModal();
+          renderGroupCreationModal({
+            onClose: () => (dataStore.isGroupCreationModalOpen = false),
+            onSubmit: (inputValue) => {
+              return createDiscordGroupRole({
+                rolename: inputValue,
+              }).then(() => {
+                showToaster('Group created successfully');
+                dataStore.isGroupCreationModalOpen = false;
+
+                // Future improvement: Use a more robust way to refresh the data
+                setTimeout(() => location.reload(), 2500);
+              });
+            },
+          });
         } else {
           removeGroupCreationModal();
         }
@@ -117,9 +141,8 @@ const onCreate = () => {
   bindSearchFocus();
   bindGroupCreationButton();
 };
-
 const afterAuthentication = async () => {
-  renderNavbarProfile();
+  renderNavbarProfile({ profile: dataStore.userSelf });
   Promise.all([getDiscordGroups(), getUserGroupRoles()])
     .then(([groups, roleData]) => {
       dataStore.filteredGroupsIds = groups.map((group) => group.id);
@@ -170,7 +193,7 @@ const bindSearchFocus = () => {
   });
 };
 
-// Render functions
+// Helper functions
 
 function showToaster(message) {
   const toaster = document.querySelector('.toast__message');
@@ -182,142 +205,44 @@ function showToaster(message) {
   }, 3000);
 }
 
-const renderGroupCreationModal = () => {
-  const container = document.querySelector('body');
-  const backdrop = document.querySelector('.backdrop');
-  const groupCreationModal = backdrop?.querySelector('.create-group-modal');
+function updateGroup(id, group) {
+  dataStore.groups = {
+    ...dataStore.groups,
+    [id]: {
+      ...dataStore.groups[id],
+      ...group,
+    },
+  };
+}
 
-  if (!groupCreationModal) {
-    const groupCreationModal = createGroupCreationModal(
-      () => {
-        dataStore.isGroupCreationModalOpen = false;
-      },
-      (inputValue) => {
-        return createDiscordGroupRole({
-          rolename: inputValue,
-        }).then(() => {
-          showToaster('Group created successfully');
-          dataStore.isGroupCreationModalOpen = false;
-
-          // Future improvement: Use a more robust way to refresh the data
-          setTimeout(() => location.reload(), 2500);
-        });
-      },
-    );
-    container.append(groupCreationModal);
-  }
-};
-
-const removeGroupCreationModal = () => {
-  const container = document.querySelector('body');
-  const backdrop = document.querySelector('.backdrop');
-
-  if (backdrop) {
-    container.removeChild(backdrop);
-  }
-};
-
-const renderNotAuthenticatedPage = () => {
-  const mainContainer = document.querySelector('main');
-  mainContainer.innerHTML = '';
-  const errorElement = document.createElement('h1');
-  errorElement.className = 'error';
-  errorElement.innerText = 'You need to login to view this page';
-  mainContainer.append(errorElement);
-};
-
-const renderNavbarProfileSignin = () => {
-  const profileElement = createNavbarProfileSignin();
-  const profileEl = document.querySelector('.navbar__profile');
-  profileEl.append(profileElement);
-};
-
-const removeLoadingNavbarProfile = () => {
-  const profileEl = document.querySelector('.navbar__profile');
-  const profileLoadingEl = profileEl.querySelector('.profile--loading');
-  profileEl.removeChild(profileLoadingEl);
-};
-
-const renderLoadingNavbarProfile = () => {
-  const profileElement = createNavbarProfileLoading();
-  const profileEl = document.querySelector('.navbar__profile');
-  profileEl.append(profileElement);
-};
-
-const renderNavbarProfile = () => {
-  const profile = dataStore.userSelf;
-  const profileElement = createNavbarProfile({
-    name: profile.username.charAt(0).toUpperCase() + profile.username.slice(1),
-    avatar: profile.picture?.url || 'assets/avatar.svg',
-  });
-
-  const profileEl = document.querySelector('.navbar__profile');
-  profileEl.append(profileElement);
-};
-
-const renderLoadingCards = () => {
-  const mainContainer = document.querySelector('.group-container');
-  const cardCount = 6;
-  for (let i = 0; i < cardCount; i++) {
-    const card = createLoadingCard();
-    mainContainer.append(card);
-  }
-};
-
-const removeLoadingCards = () => {
-  const mainContainer = document.querySelector('.group-container');
-  if (!mainContainer) return;
-  const loadingCards = mainContainer.querySelectorAll('.card--loading');
-  loadingCards.forEach((card) => mainContainer.removeChild(card));
-};
-
-const renderGroupById = (id) => {
+function groupCardOnAction(id) {
   const group = dataStore.groups[id];
-  const card = createCard(group, cardOnClick);
-
-  function updateGroup(id, group) {
-    dataStore.groups = {
-      ...dataStore.groups,
-      [id]: {
-        ...dataStore.groups[id],
-        ...group,
-      },
-    };
-  }
-
-  function cardOnClick() {
-    updateGroup(id, { isUpdating: true });
-    if (group.isMember) {
-      removeRoleFromMember(group.roleId, dataStore.discordId)
-        .then(() =>
-          updateGroup(id, { isMember: false, count: group.count - 1 }),
-        )
-        .catch((err) => showToaster(err.message))
-        .finally(() => updateGroup(id, { isUpdating: false }));
-    } else {
-      addGroupRoleToMember({
-        roleid: group.roleId,
-        userid: dataStore.discordId,
-      })
-        .then(() => updateGroup(id, { isMember: true, count: group.count + 1 }))
-        .catch((err) => showToaster(err.message))
-        .finally(() => updateGroup(id, { isUpdating: false }));
-    }
-  }
-
-  const mainContainer = document.querySelector('.group-container');
-  const groupElement = document.getElementById(`group-${id}`);
-  if (groupElement) {
-    mainContainer.replaceChild(card, groupElement);
+  updateGroup(id, { isUpdating: true });
+  if (group.isMember) {
+    removeRoleFromMember(group.roleId, dataStore.discordId)
+      .then(() => updateGroup(id, { isMember: false, count: group.count - 1 }))
+      .catch((err) => showToaster(err.message))
+      .finally(() => updateGroup(id, { isUpdating: false }));
   } else {
-    mainContainer.append(card);
+    addGroupRoleToMember({
+      roleid: group.roleId,
+      userid: dataStore.discordId,
+    })
+      .then(() => updateGroup(id, { isMember: true, count: group.count + 1 }))
+      .catch((err) => showToaster(err.message))
+      .finally(() => updateGroup(id, { isUpdating: false }));
   }
-};
+}
 
-function renderAllGroups() {
+function renderAllGroups({ cardOnClick }) {
   const mainContainer = document.querySelector('.group-container');
   mainContainer.innerHTML = '';
-  dataStore.filteredGroupsIds.forEach((id) => renderGroupById(id));
+  dataStore.filteredGroupsIds.forEach((id) =>
+    renderGroupById({
+      id,
+      cardOnClick,
+    }),
+  );
 }
 
 onCreate();
