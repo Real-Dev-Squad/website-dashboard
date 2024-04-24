@@ -239,7 +239,7 @@ function renderAllGroups({ cardOnClick }) {
   mainContainer.innerHTML = '';
   dataStore.filteredGroupsIds.forEach((id) =>
     renderGroupById({
-      id,
+      group: dataStore.groups[id],
       cardOnClick,
     }),
   );

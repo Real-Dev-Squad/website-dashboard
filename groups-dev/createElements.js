@@ -138,7 +138,7 @@ const createGroupCreationModal = (onClose = () => {}, onSubmit = () => {}) => {
   modalElement.querySelector('#close-button').onclick = onClose;
   modalElement.querySelector('#clear-input').onclick = () => {
     inputField.value = '';
-    toggleSubmitButton({ enabled: false });
+    toggle({ enabled: false });
   };
 
   function getInput() {
@@ -150,10 +150,10 @@ const createGroupCreationModal = (onClose = () => {}, onSubmit = () => {}) => {
     const shouldDisableSubmit =
       inputValue.length === 0 || inputValue.includes('group');
 
-    toggleSubmitButton({ enabled: !shouldDisableSubmit });
+    toggle({ enabled: !shouldDisableSubmit });
   });
 
-  function toggleSubmitButton({ enabled }) {
+  function toggle({ enabled }) {
     if (enabled) {
       submitButton.classList.remove('submit__button--disabled');
     } else {
@@ -170,9 +170,9 @@ const createGroupCreationModal = (onClose = () => {}, onSubmit = () => {}) => {
       throw new Error('Invalid group name');
     }
 
-    toggleSubmitButton({ enabled: false });
+    toggle({ enabled: false });
     onSubmit(inputField.value).then(() => {
-      toggleSubmitButton({ enabled: true });
+      toggle({ enabled: true });
     });
   };
 
