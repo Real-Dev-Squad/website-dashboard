@@ -949,7 +949,7 @@ describe('Tests the Extension Requests Screen', () => {
     for (const card of extensionCardsList) {
       let approveButton = await card.$('.approve-button');
       await approveButton.click();
-      await page.waitForTimeout(2500);
+      await page.waitForTimeout(1700);
     }
 
     extensionRequestsElement = await page.$('.extension-requests');
