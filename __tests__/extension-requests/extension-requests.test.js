@@ -372,9 +372,11 @@ describe('Tests the Extension Requests Screen', () => {
           },
           body: JSON.stringify({
             message: 'Extension Requests returned successfully!',
-            allExtensionRequests: [
-              extensionRequestsListPending?.allExtensionRequests?.[1] ?? {},
-            ],
+            allExtensionRequests:
+              extensionRequestsListPending?.allExtensionRequests.length > 0
+                ? [extensionRequestsListPending?.allExtensionRequests?.[1]]
+                : [],
+            // [],
           }),
         });
       } else {
@@ -945,6 +947,21 @@ describe('Tests the Extension Requests Screen', () => {
 
     extensionRequestsElement = await page.$('.extension-requests');
     let extensionCardsList = await page.$$('.extension-card');
+
+    if (extensionCardsList.length == 0) {
+      const extensionRequestContainerText = await page.evaluate(
+        (element) => element.innerText,
+        extensionRequestsElement,
+      );
+
+      expect(extensionRequestContainerText).toBe(
+        'No extension requests to show!',
+      );
+
+      return;
+    }
+
+    expect(extensionCardsList.length).toBe(1);
 
     for (const card of extensionCardsList) {
       let approveButton = await card.$('.approve-button');
