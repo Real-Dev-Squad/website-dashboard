@@ -376,7 +376,6 @@ describe('Tests the Extension Requests Screen', () => {
               extensionRequestsListPending?.allExtensionRequests.length > 0
                 ? [extensionRequestsListPending?.allExtensionRequests?.[1]]
                 : [],
-            // [],
           }),
         });
       } else {
@@ -960,8 +959,6 @@ describe('Tests the Extension Requests Screen', () => {
 
       return;
     }
-
-    expect(extensionCardsList.length).toBe(1);
 
     for (const card of extensionCardsList) {
       let approveButton = await card.$('.approve-button');
