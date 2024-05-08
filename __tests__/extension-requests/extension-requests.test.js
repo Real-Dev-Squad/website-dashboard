@@ -358,6 +358,26 @@ describe('Tests the Extension Requests Screen', () => {
           },
           body: JSON.stringify(extensionRequestsListUserSearch),
         });
+      } else if (
+        url ===
+        'https://api.realdevsquad.com/extension-requests?order=asc&size=1&q=status%3APENDING'
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify({
+            message: 'Extension Requests returned successfully!',
+            allExtensionRequests:
+              extensionRequestsListPending?.allExtensionRequests.length > 0
+                ? [extensionRequestsListPending?.allExtensionRequests?.[1]]
+                : [],
+          }),
+        });
       } else {
         interceptedRequest.continue();
       }
@@ -918,5 +938,45 @@ describe('Tests the Extension Requests Screen', () => {
       (icon) => window.getComputedStyle(icon).display,
     );
     expect(ascSortIconDisplayStyle).toBe('block');
+  });
+
+  it('Should show empty message if all extension requests have been addressed', async () => {
+    await page.goto(`${baseUrl}/?order=asc&size=1&q=status%3APENDING`);
+    await page.waitForNetworkIdle();
+
+    extensionRequestsElement = await page.$('.extension-requests');
+    let extensionCardsList = await page.$$('.extension-card');
+
+    if (extensionCardsList.length == 0) {
+      const extensionRequestContainerText = await page.evaluate(
+        (element) => element.innerText,
+        extensionRequestsElement,
+      );
+
+      expect(extensionRequestContainerText).toBe(
+        'No extension requests to show!',
+      );
+
+      return;
+    }
+
+    for (const card of extensionCardsList) {
+      let approveButton = await card.$('.approve-button');
+      await approveButton.click();
+      await page.waitForTimeout(1700);
+    }
+
+    extensionRequestsElement = await page.$('.extension-requests');
+    extensionCardsList = await extensionRequestsElement.$$('.extension-card');
+
+    const extensionRequestContainerText = await page.evaluate(
+      (element) => element.innerText,
+      extensionRequestsElement,
+    );
+
+    expect(extensionCardsList.length).toBe(0);
+    expect(extensionRequestContainerText).toBe(
+      'No extension requests to show!',
+    );
   });
 });
