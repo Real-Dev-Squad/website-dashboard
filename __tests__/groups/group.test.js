@@ -5,12 +5,9 @@ const { discordGroups, GroupRoleData } = require('../../mock-data/groups');
 const BASE_URL = 'https://api.realdevsquad.com';
 const PAGE_URL = 'http://localhost:8000';
 
-describe('Discord Groups Page', () => {
+describe.only('Discord Groups Page', () => {
   let browser;
   let page;
-  let createGroup;
-  let createGroupBtn;
-  let alertMessage;
   jest.setTimeout(60000);
 
   beforeAll(async () => {
@@ -149,285 +146,97 @@ describe('Discord Groups Page', () => {
     expect(pageTitle).toBe('Discord Groups | Real Dev Squad');
   });
 
-  test('Add role button should be disabled for unverified users', async () => {
-    const isButtonDisabled = await page.$eval(
-      '.btn-add-role',
-      (button) => button.disabled,
-    );
-    expect(isButtonDisabled).toBe(true);
+  test('Should display cards', async () => {
+    await page.waitForSelector('.card');
+    const cards = await page.$$('.card');
+
+    expect(cards.length).toBeGreaterThan(0);
   });
 
-  test('User not verified message should be visible for unverified users', async () => {
-    const isMessageVisible = await page.$eval(
-      '.not-verified-tag',
-      (message) => !message.classList.contains('hidden'),
+  test('Should display card details', async () => {
+    const card = await page.$('.card');
+    const groupTitle = await card.$eval('.card__title', (el) => el.textContent);
+    const groupDescription = await card.$eval(
+      '.card__description',
+      (el) => el.textContent,
     );
-    expect(isMessageVisible).toBe(false);
+    const groupCount = await card.$eval('.card__count', (el) => el.textContent);
+
+    expect(groupTitle).toBeTruthy();
+    expect(groupDescription).toBeTruthy();
+    expect(groupCount).toBeTruthy();
   });
 
-  test('Group list should contain the correct number of items', async () => {
-    const groupListLength = await page.$$eval(
-      '.group-role',
-      (list) => list.length,
-    );
-    expect(groupListLength).toBe(3);
+  test('Should display card with a button with text "Add me" or "Remove me"', async () => {
+    const card = await page.$('.card');
+    const buttonText = await card.$eval('.card__btn', (el) => el.textContent);
+
+    expect(buttonText).toMatch(/Add me|Remove me/);
   });
 
-  test('Should not display an error message if the role name contains "group"', async () => {
-    createGroup = await page.$('.create-groups-tab');
-    await createGroup.click();
-    await page.type('.new-group-input', 'demo-role');
+  test('Should display search bar', async () => {
+    const searchEl = await page.$('.search');
 
-    createGroupBtn = await page.$('#create-button');
+    expect(searchEl).toBeTruthy();
+  });
+
+  test('Should display group creation button', async () => {
+    const createGroupBtn = await page.$('.create-group');
+
+    expect(createGroupBtn).toBeTruthy();
+  });
+
+  test('Should display group creation modal on group creation button click', async () => {
+    const createGroupBtn = await page.$('.create-group');
+
     await createGroupBtn.click();
-
-    await page.waitForNetworkIdle();
-    await expect(alertMessage).toContain('Group created successfully');
-  });
-
-  test('Should show add button as user not part of the group', async () => {
-    const group = await page.$('.group-role');
-    await group.click();
-
-    // Wait for the btn-add-role and click it
-    const addRoleBtn = await page.$('.btn-add-role');
-    await addRoleBtn.click();
-
-    // Now, check the text content of the button
-    const buttonText = await addRoleBtn.evaluate((node) => node.textContent);
-    expect(buttonText).toBe('Add me to this group');
-  });
-
-  test('Should show remove button as user is part of the group', async () => {
-    await page.$$eval('.group-role', (elements) => {
-      elements[1].click();
-    });
-    // Wait for the btn-add-role and click it
-    const addRoleBtn = await page.$('.btn-add-role');
-    await addRoleBtn.click();
-
-    // Now, check the text content of the button
-    const buttonText = await addRoleBtn.evaluate((node) => node.textContent);
-    expect(buttonText).toBe('Remove me from this group');
-  });
-
-  test('Should show role deleted', async () => {
-    await page.$$eval('.group-role', (elements) => {
-      elements[1].click();
-    });
-    // Wait for the btn-add-role and click it
-    const addRoleBtn = await page.$('.btn-add-role');
-    await addRoleBtn.click();
-
-    await page.waitForNetworkIdle();
-    const toast = await page.$('.toaster-container');
-    expect(toast).toBeTruthy();
-  });
-
-  test('Should display an error message if the role name contains "group"', async () => {
-    createGroup = await page.$('.create-groups-tab');
-    await createGroup.click();
-    await page.type('.new-group-input', 'mygroup');
-    createGroupBtn = await page.$('#create-button');
-    await createGroupBtn.click();
-    await expect(alertMessage).toContain("Roles cannot contain 'group'.");
-  });
-
-  test('Filter groups based on search input', async () => {
-    const searchInput = await page.$('#search-groups');
-    await searchInput.type('DSA');
-
-    const filteredGroupNames = await page.$$eval('.group-role', (elements) => {
-      return elements
-        .map((element) => element.querySelector('.group-name').textContent)
-        .filter((name) => name.includes('DSA'));
-    });
-
-    expect(filteredGroupNames).toEqual(
-      expect.arrayContaining(['DSA', 'DSA-Coding-Group']),
+    const groupCreationModal = await page.waitForSelector(
+      '.group-creation-modal',
     );
+
+    expect(groupCreationModal).toBeTruthy();
   });
 
-  test('should display a message no results found if group not exists', async () => {
-    const searchInput = await page.$('#search-groups');
-
-    await searchInput.type('dummy');
-
-    await page.waitForNetworkIdle();
-
-    const noResultFoundHeading = await page.$('#no-results-message');
-    const noResultFoundHeadingText = await (
-      await noResultFoundHeading.getProperty('innerText')
-    ).jsonValue();
-
-    expect(noResultFoundHeadingText).toEqual('No results found.');
-  });
-
-  test('should not have group keyword in group list', async () => {
-    const renderedGroupNames = await page.$$eval('.group-name', (elements) => {
-      return elements.map((element) => element.innerText);
-    });
-    renderedGroupNames.forEach((groupName) =>
-      expect(/^group.*/.test(groupName)).toBe(false),
+  test('Should display group creation modal with input fields', async () => {
+    const groupCreationModal = await page.$('.group-creation-modal');
+    const groupTitle = await groupCreationModal.$(
+      `.input__field[name="title"]`,
     );
+    const submitBtn = await groupCreationModal.$('.submit__button');
+
+    expect(groupTitle).toBeTruthy();
+    expect(submitBtn).toBeTruthy();
   });
 
-  test('should show count beside groupname', async () => {
-    const memberCounts = await page.$$eval('.group-name', (elements) => {
-      return elements.map((element) =>
-        element.getAttribute('data-member-count'),
-      );
-    });
-    expect(memberCounts).toEqual(['3', '200', '0']);
-  });
-
-  test("should show proper group creator's image", async () => {
-    const creatorImageSrcAndAltText = await page.$$eval(
-      '.created-by--avatar',
-      (elements) => {
-        return elements.map((element) => [
-          element.getAttribute('src'),
-          element.getAttribute('alt'),
-        ]);
-      },
+  test('Should group creation modal have clear button to clear title', async () => {
+    const groupCreationModal = await page.$('.group-creation-modal');
+    const groupTitle = await groupCreationModal.$(
+      `.input__field[name="title"]`,
     );
-    const expectedImageSrcAndAltText = discordGroups.groups.map((group) => [
-      group.image,
-      "group's creator image",
-    ]);
-    expect(creatorImageSrcAndAltText).toEqual(expectedImageSrcAndAltText);
+    const clearBtn = await groupCreationModal.$('#clear-input');
+
+    await groupTitle.type('Test Group');
+    await clearBtn.click();
+
+    const titleValue = await groupTitle.evaluate((el) => el.value);
+
+    expect(titleValue).toBe('');
   });
 
-  test("should show proper group creator's name", async () => {
-    const createdByLines = await page.$$eval('.created-by', (elements) => {
-      return elements.map((element) => element.innerText);
-    });
-    const expectedCreatedByLines = discordGroups.groups.map(
-      (group) => `created by ${group.firstName} ${group.lastName}`,
-    );
-    expect(expectedCreatedByLines).toEqual(createdByLines);
+  test('Should display group creation modal with close button', async () => {
+    const groupCreationModal = await page.$('.group-creation-modal');
+    const closeBtn = await groupCreationModal.$('#close-button');
+
+    expect(closeBtn).toBeTruthy();
   });
 
-  test('should update the URL when input field has changed', async () => {
-    manageGroup = await page.$('.manage-groups-tab');
-    await manageGroup.click();
-    const searchInput = await page.$('#search-groups');
-    await searchInput.type('DSA');
-    await new Promise((resolve) => setTimeout(resolve, 1000)); //wait for debouncer
-    const url = await page.url();
-    const searchParams = decodeURIComponent(url.split('?')[1]);
-    expect(searchParams).toMatch('DSA');
-  });
+  test('Should close group creation modal on close button click', async () => {
+    const groupCreationModal = await page.$('.group-creation-modal');
+    const closeBtn = await groupCreationModal.$('#close-button');
 
-  test('should update input field and filter group list with search value in URL', async () => {
-    await page.goto(`${PAGE_URL}/groups/?dev=true&DSA`);
-    manageGroup = await page.$('.manage-groups-tab');
-    await manageGroup.click();
-    const searchInput = await page.$('#search-groups');
-    const inputValue = await page.evaluate(
-      (element) => element.value,
-      searchInput,
-    );
-    expect(inputValue).toMatch('DSA');
+    await closeBtn.click();
+    const groupCreationModalClosed = await page.$('.group-creation-modal');
 
-    const filteredGroupNames = await page.$$eval('.group-role', (elements) => {
-      return elements
-        .map((element) => element.querySelector('.group-name').textContent)
-        .filter((name) => name.includes('DSA'));
-    });
-
-    expect(filteredGroupNames).toEqual(
-      expect.arrayContaining(['DSA', 'DSA-Coding-Group']),
-    );
-  });
-
-  test('should select the group from URL and have active-group class', async () => {
-    await page.goto(`${PAGE_URL}/groups?DSA`);
-    const activeGroup = await page.$('.active-group');
-    const groupName = await page.evaluate(
-      (element) => element.innerText,
-      activeGroup,
-    );
-    expect(groupName).toMatch('DSA');
-  });
-  test('On click on "Popular within dev" will result group with most member at the top', async () => {
-    await page.goto(`${PAGE_URL}/groups?dev=true`);
-    await page.waitForNetworkIdle();
-
-    const groupsBeforeSort = await page.$$eval('.group-name', (elements) => {
-      return elements.map((element) =>
-        element.getAttribute('data-member-count'),
-      );
-    });
-    await page.$$eval('#dropdown_main', (el) => {
-      el[0].click();
-    });
-
-    await page.$$eval('[data-list="1"]', (el) => {
-      el[0].click();
-    });
-    const groupsAfterSort = await page.$$eval('.group-name', (elements) => {
-      return elements.map((element) =>
-        element.getAttribute('data-member-count'),
-      );
-    });
-    const manualSortedGroup = groupsBeforeSort.sort((a, b) => b - a);
-    expect(groupsAfterSort).toEqual(manualSortedGroup);
-  });
-  test('On click on "Recently created" will result in latest created group at the top', async () => {
-    await page.goto(`${PAGE_URL}/groups?dev=true`);
-    await page.waitForNetworkIdle();
-
-    const groupNameCreateDateLookup = {};
-    discordGroups.groups.forEach((group) => {
-      const grpName = group.rolename.split('-').slice(1).join('-');
-      groupNameCreateDateLookup[grpName] = group.date._seconds;
-    });
-    const groupsBeforeSort = await page.$$eval('.group-name', (elements) => {
-      return elements.map((element) => element.innerText);
-    });
-
-    await page.$$eval('#dropdown_main', (el) => {
-      el[0].click();
-    });
-    await page.$$eval('[data-list="2"]', (el) => {
-      el[0].click();
-    });
-    const groupAfterSort = await page.$$eval('.group-name', (elements) => {
-      return elements.map((element) => element.innerText);
-    });
-    const manualSortedGroup = groupsBeforeSort.sort(
-      (a, b) => groupNameCreateDateLookup[b] - groupNameCreateDateLookup[a],
-    );
-    expect(groupAfterSort).toEqual(manualSortedGroup);
-  });
-  test('On click on "Recently used" will result in recently used group at the top', async () => {
-    await page.goto(`${PAGE_URL}/groups?dev=true`);
-    await page.waitForNetworkIdle();
-
-    const groupNameCreateDateLookup = {};
-    discordGroups.groups.forEach((group) => {
-      const grpName = group.rolename.split('-').slice(1).join('-');
-      groupNameCreateDateLookup[grpName] = group.lastUsedOn
-        ? group.lastUsedOn._seconds
-        : 0;
-    });
-    const groupsBeforeSort = await page.$$eval('.group-name', (elements) => {
-      return elements.map((element) => element.innerText);
-    });
-
-    await page.$$eval('#dropdown_main', (el) => {
-      el[0].click();
-    });
-    await page.$$eval('[data-list="3"]', (el) => {
-      el[0].click();
-    });
-    const groupAfterSort = await page.$$eval('.group-name', (elements) => {
-      return elements.map((element) => element.innerText);
-    });
-    const manualSortedGroup = groupsBeforeSort.sort(
-      (a, b) => groupNameCreateDateLookup[b] - groupNameCreateDateLookup[a],
-    );
-    expect(groupAfterSort).toEqual(manualSortedGroup);
+    expect(groupCreationModalClosed).toBeFalsy();
   });
 });
