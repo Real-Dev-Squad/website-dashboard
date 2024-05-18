@@ -120,7 +120,7 @@ const onCreate = () => {
   renderLoadingNavbarProfile();
 
   getUserSelf()
-    .then((data) => {
+    .then(async (data) => {
       if (data.statusCode === 401) {
         renderNavbarProfileSignin();
         renderNotAuthenticatedPage();
@@ -129,13 +129,19 @@ const onCreate = () => {
         throw new Error(data);
       }
       dataStore.userSelf = data;
-      afterAuthentication();
+      await afterAuthentication();
     })
     .catch((err) => {
+      if (err.message) {
+        showToaster(err.message);
+      }
+
       console.error(err);
-      removeLoadingCards();
     })
-    .finally(() => removeLoadingNavbarProfile());
+    .finally(() => {
+      removeLoadingCards();
+      removeLoadingNavbarProfile();
+    });
 
   bindSearchInput();
   bindSearchFocus();
@@ -143,8 +149,8 @@ const onCreate = () => {
 };
 const afterAuthentication = async () => {
   renderNavbarProfile({ profile: dataStore.userSelf });
-  Promise.all([getDiscordGroups(), getUserGroupRoles()])
-    .then(([groups, roleData]) => {
+  await Promise.all([getDiscordGroups(), getUserGroupRoles()]).then(
+    ([groups, roleData]) => {
       dataStore.filteredGroupsIds = groups.map((group) => group.id);
       dataStore.groups = groups.reduce((acc, group) => {
         let title = group.rolename
@@ -164,8 +170,8 @@ const afterAuthentication = async () => {
         return acc;
       }, {});
       dataStore.discordId = roleData.userId;
-    })
-    .then(() => removeLoadingCards());
+    },
+  );
 };
 
 // Bind Functions
