@@ -11,70 +11,41 @@
     <script src="/helpers/loadENV.js"></script>
     <script src="/constants.js"></script>
     <script type="module" src="/groups/script.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
   </head>
+
   <body>
-    <h3 class="not-verified-tag hidden">
-      Cannot use RDS Discord features as you are not verified
-    </h3>
-    <div class="container">
-      <div class="backdrop hidden">
-        <div class="loader"></div>
+    <nav class="navbar">
+      <div class="navbar__container">
+        <a class="back" href="/">
+          <img src="assets/left-arrow.svg" class="back__icon" alt="Back" />
+        </a>
+        <div class="navbar__spacer"></div>
+        <div class="navbar__profile"></div>
       </div>
-      <nav class="groups-tab">
-        <div class="manage-groups-tab active-tab tab">Manage Groups</div>
-        <div class="create-groups-tab tab">Create Groups</div>
-      </nav>
-      <div class="manage-groups">
-        <aside class="groups">
-          <div class="groups-search">
-            <input
-              type="text"
-              class="groups-search-input"
-              id="search-groups"
-              placeholder="Search for groups"
-            />
-          </div>
-          <ul class="groups-list"></ul>
-        </aside>
-        <main>
-          <div class="dropdown hidden" id="dropdown_container">
-            <button class="task_filter-button" id="sortby_text">Sort by</button>
-            <div id="dropdown_main" class="dropdown-content">
-              <a data-list="1">Popular within dev</a>
-              <a data-list="2">Recently created</a>
-              <a data-list="3">Recently used</a>
-            </div>
-          </div>
-          <button class="btn btn-add-role" disabled>
-            Add me to this group
-          </button>
-          <h2 id="no-results-message">No results found.</h2>
-        </main>
-      </div>
-      <div class="toaster-container">
-        <div id="toaster" class="toaster-message hidden"></div>
-      </div>
-      <div class="create-group hidden">
-        <div class="group-fields">
-          <label for="new-group" class="label-for-new-group"
-            >Create Group Role (Role name should not contain 'group')</label
-          >
-          <div class="group-input-container">
-            <span class="group-tag">@group-</span>
-            <input
-              type="text"
-              placeholder="demo-discord-role"
-              id="new-group"
-              class="input-field new-group-input"
-            />
-          </div>
-          <div>
-            <button id="create-button" class="btn btn-create-group">
-              Create
-            </button>
-          </div>
+    </nav>
+    <main class="container">
+      <section class="group-header">
+        <div class="search">
+          <img class="search__icon" src="assets/search.svg" alt="search" />
+          <input class="search__input" placeholder="Serach for group" />
         </div>
-      </div>
-    </div>
+        <div class="create-group">
+          <button class="button">
+            <span class="button__text">Create grp</span>
+            <img src="assets/plus.svg" class="button__icon" />
+          </button>
+        </div>
+      </section>
+      <div class="group-container"></div>
+    </main>
   </body>
+  <div class="toast">
+    <div class="toast__message"></div>
+  </div>
 </html>
