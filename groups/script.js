@@ -129,6 +129,7 @@ const onCreate = () => {
         throw new Error(data);
       }
       dataStore.userSelf = data;
+      removeLoadingNavbarProfile();
       await afterAuthentication();
     })
     .catch((err) => {
@@ -140,7 +141,6 @@ const onCreate = () => {
     })
     .finally(() => {
       removeLoadingCards();
-      removeLoadingNavbarProfile();
     });
 
   bindSearchInput();

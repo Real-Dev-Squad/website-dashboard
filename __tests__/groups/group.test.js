@@ -5,7 +5,7 @@ const { discordGroups, GroupRoleData } = require('../../mock-data/groups');
 const BASE_URL = 'https://api.realdevsquad.com';
 const PAGE_URL = 'http://localhost:8000';
 
-describe.only('Discord Groups Page', () => {
+describe('Discord Groups Page', () => {
   let browser;
   let page;
   jest.setTimeout(60000);
