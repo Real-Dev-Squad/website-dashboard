@@ -1,436 +1,254 @@
 'use strict';
 import {
-  CANNOT_CONTAIN_GROUP,
-  DEV_FEATURE_FLAG,
-  NO_SPACES_ALLOWED,
-  SortByFields,
-} from './constants.js';
+  removeGroupCreationModal,
+  removeLoadingCards,
+  removeLoadingNavbarProfile,
+  renderGroupById,
+  renderGroupCreationModal,
+  renderLoadingCards,
+  renderLoadingNavbarProfile,
+  renderNavbarProfile,
+  renderNavbarProfileSignin,
+  renderNotAuthenticatedPage,
+} from './render.js';
 import {
-  removeGroupKeywordFromDiscordRoleName,
-  getDiscordGroups,
   addGroupRoleToMember,
-  removeRoleFromMember,
   createDiscordGroupRole,
-  getUserSelf,
+  getDiscordGroups,
   getUserGroupRoles,
-  getSearchValueFromURL,
+  getUserSelf,
+  removeRoleFromMember,
 } from './utils.js';
-const groupTabs = document.querySelector('.groups-tab');
-const tabs = document.querySelectorAll('.groups-tab div');
-const sections = document.querySelectorAll('.manage-groups, .create-group');
-const loader = document.querySelector('.backdrop');
-const userIsNotVerifiedText = document.querySelector('.not-verified-tag');
-const params = new URLSearchParams(window.location.search);
-const searchValue = getSearchValueFromURL();
-const isDev = params.get(DEV_FEATURE_FLAG) === 'true';
-const dropdownContainer = document.getElementById('dropdown_container');
 
-//Dropdown
-const dropdownMain = document.getElementById('dropdown_main');
-const dropdownTxt = document.getElementById('sortby_text');
-function toggleDropDown() {
-  dropdownMain.classList.toggle('show_filter');
-}
-dropdownTxt.addEventListener('click', toggleDropDown);
-if (isDev) {
-  dropdownContainer.classList.remove('hidden');
-  dropdownMain.addEventListener('click', onDropdownClick);
-}
-// const paragraphElement = null, paragraphContent = '';
+const handler = {
+  set: (obj, prop, value) => {
+    switch (prop) {
+      case 'groups':
+        const oldGroups = obj.groups;
+        const newGroups = value;
 
-const searchInput = document.getElementById('search-groups');
-//Let searchInput has searchValue as it is independent to API calls mentioned below
-if (searchValue) {
-  searchInput.value = searchValue;
-}
-//User Data
-const userSelfData = await getUserSelf();
-let UserGroupData = await getUserGroupRoles();
+        obj[prop] = value;
 
-/**
- * Create DOM for "created by author" line under groupName
- *
- */
-const createAuthorDetailsDOM = (firstName, lastName, imageUrl) => {
-  const container = document.createElement('div');
-  container.classList.add('created-by--container');
+        // Rerender only the groups that have changed
+        const diffGroups = Object.values(newGroups)
+          .filter(
+            (ng) => JSON.stringify(oldGroups?.[ng.id]) !== JSON.stringify(ng),
+          )
+          .filter((ng) => dataStore.filteredGroupsIds.includes(ng.id));
+        diffGroups.forEach((group) =>
+          renderGroupById({
+            group,
+            cardOnClick: () => groupCardOnAction(group.id),
+          }),
+        );
+        break;
+      case 'filteredGroupsIds':
+        const oldFilteredGroupsIds = obj.filteredGroupsIds;
+        obj[prop] = value;
 
-  if (imageUrl) {
-    const userAvatar = document.createElement('img');
-    userAvatar.classList.add('created-by--avatar');
-    userAvatar.src = imageUrl;
-    userAvatar.setAttribute('alt', "group's creator image");
-    container.appendChild(userAvatar);
-  }
+        if (oldFilteredGroupsIds == null) break;
+        // Optimization possible: Only rerender groups that have been added/removed
+        renderAllGroups({
+          cardOnClick: groupCardOnAction,
+        });
+        break;
+      case 'search':
+        if (value === '') {
+          if (dataStore.groups == null) break;
+          dataStore.filteredGroupsIds = Object.values(dataStore.groups).map(
+            (group) => group.id,
+          );
+        } else {
+          const search = value.toLowerCase();
+          dataStore.filteredGroupsIds = Object.values(dataStore.groups)
+            .filter((group) => group.title.toLowerCase().includes(search))
+            .map((group) => group.id);
+        }
+        obj[prop] = value;
+        break;
+      case 'isGroupCreationModalOpen':
+        obj[prop] = value;
 
-  if (firstName || lastName) {
-    const createdBy = document.createElement('span');
-    createdBy.classList.add('created-by');
-    createdBy.textContent = `created by ${firstName ?? ''} ${lastName ?? ''}`;
-    container.appendChild(createdBy);
-  }
+        if (value) {
+          renderGroupCreationModal({
+            onClose: () => (dataStore.isGroupCreationModalOpen = false),
+            onSubmit: (inputValue) => {
+              return createDiscordGroupRole({
+                rolename: inputValue,
+              }).then(() => {
+                showToaster('Group created successfully');
+                dataStore.isGroupCreationModalOpen = false;
 
-  return container;
-};
-
-/**
- * GET SELF DATA
- */
-const IsUserVerified = !!userSelfData.discordId;
-const IsUserArchived = userSelfData.roles.archived;
-if (!IsUserVerified || IsUserArchived) {
-  userIsNotVerifiedText.classList.remove('hidden');
-}
-const memberAddRoleBody = {
-  userid: userSelfData?.discordId,
-  roleid: '',
-};
-
-/**
- *
- * FOR RENDERING GROUP ROLES IN 'MANAGE ROLES' TAB
- */
-const groupsData = await getDiscordGroups();
-const groupRoles = document.querySelector('.groups-list');
-
-const renderGroups = () => {
-  groupRoles.innerHTML = null;
-  groupsData?.forEach((item) => {
-    const group = document.createElement('li');
-    group.setAttribute('id', item.roleid);
-    group.classList.add('group-role');
-    const formattedRoleName = removeGroupKeywordFromDiscordRoleName(
-      item.rolename,
-    );
-
-    //If searchValue present, filter out the list
-    if (searchValue) {
-      group.style.display = formattedRoleName
-        .toUpperCase()
-        .includes(searchValue.toUpperCase())
-        ? ''
-        : 'none';
+                // Future improvement: Use a more robust way to refresh the data
+                setTimeout(() => location.reload(), 2500);
+              });
+            },
+          });
+        } else {
+          removeGroupCreationModal();
+        }
+        break;
+      case 'userSelf':
+        obj[prop] = value;
+        break;
+      case 'discordId':
+        obj[prop] = value;
+        break;
+      default:
+        throw new Error('Invalid property set');
     }
-
-    const groupname = document.createElement('p');
-    groupname.classList.add('group-name');
-    groupname.setAttribute('id', `name-${item.roleid}`);
-
-    if (item.memberCount !== null && item.memberCount !== undefined) {
-      groupname.setAttribute('data-member-count', item.memberCount);
-    }
-
-    groupname.textContent = formattedRoleName;
-
-    const createdBy = createAuthorDetailsDOM(
-      item.firstName,
-      item.lastName,
-      item.image,
-    );
-
-    group.appendChild(groupname);
-    group.appendChild(createdBy);
-    groupRoles.appendChild(group);
-  });
+    return true;
+  },
 };
 
-const giveABForCompariosn = (a, b, field) => {
-  let data = [0, 0];
-  switch (field) {
-    case 'date._seconds':
-      data[0] = a.date._seconds;
-      data[1] = b.date._seconds;
-      break;
-    case 'memberCount':
-      data[0] = a.memberCount || 0;
-      data[1] = b.memberCount || 0;
-      break;
-    case 'lastUsedOn._seconds':
-      if (a.lastUsedOn) {
-        data[0] = a.lastUsedOn._seconds;
+const dataStore = new Proxy(
+  {
+    userSelf: null,
+    groups: null,
+    filteredGroupsIds: null,
+    search: '',
+    discordId: null,
+    isCreateGroupModalOpen: false,
+  },
+  handler,
+);
+
+// Lifecycle functions
+
+const onCreate = () => {
+  renderLoadingCards();
+  renderLoadingNavbarProfile();
+
+  getUserSelf()
+    .then(async (data) => {
+      if (data.statusCode === 401) {
+        renderNavbarProfileSignin();
+        renderNotAuthenticatedPage();
+        return;
+      } else if (data.error) {
+        throw new Error(data);
       }
-      if (b.lastUsedOn) {
-        data[1] = b.lastUsedOn._seconds;
+      dataStore.userSelf = data;
+      removeLoadingNavbarProfile();
+      await afterAuthentication();
+    })
+    .catch((err) => {
+      if (err.message) {
+        showToaster(err.message);
       }
-      break;
-    default:
-      data = [0, 0];
-  }
-  return data;
-};
 
-function onDropdownClick(ev) {
-  const clickedOptionsId = ev.target.dataset.list;
-  const fieldToSortBy = SortByFields.find(
-    (field) => field.id === clickedOptionsId,
-  );
-  groupsData.sort((firstObj, secondObj) => {
-    const [a, b] = giveABForCompariosn(
-      firstObj,
-      secondObj,
-      fieldToSortBy.fieldName,
-    );
-    if (a > b) {
-      return -1;
-    } else if (b < a) {
-      return 1;
-    }
-    return 0;
-  });
-  renderGroups();
-}
-
-renderGroups();
-/**
- * FOR RENDERING TABS
- * I.E. MANAGE ROLES, CREATE GROUP
- */
-tabs?.forEach((tab, index) => {
-  tab.addEventListener('click', (e) => {
-    sections.forEach((section) => {
-      section.classList.add('hidden');
+      console.error(err);
+    })
+    .finally(() => {
+      removeLoadingCards();
     });
-    sections[index].classList.remove('hidden');
-  });
-});
 
-/**
- * FOR CHANGING TABS
- */
-groupTabs.addEventListener('click', (e) => {
-  tabs.forEach((tab) => {
-    tab.classList?.remove('active-tab');
-  });
-  if (e.target.nodeName !== 'NAV') e.target?.classList?.add('active-tab');
-});
-function isRoleIdInData(data, targetRoleId) {
-  // Use the some() method to check if any element in data.groups has a matching roleId
-  return data.groups.some((group) => group.roleId === targetRoleId);
-}
-
-/**
- * FOR SELECTING A GROUP
- */
-const pathname = window.location.pathname;
-const groupRolesList = document.querySelectorAll('.group-role');
-groupRoles?.addEventListener('click', function (event) {
-  groupRolesList.forEach((groupItem) => {
-    groupItem.classList?.remove('active-group');
-  });
-  const groupListItem = event.target?.closest('li');
-  if (groupListItem) {
-    const groupName = `${groupListItem.querySelector('p').textContent}`;
-    const newURL = `${window.location.pathname}?${groupName}`;
-    window.history.pushState({}, '', newURL);
-    groupListItem.classList.add('active-group');
-    memberAddRoleBody.roleid = groupListItem.id;
-    if (IsUserVerified) {
-      buttonAddRole.removeEventListener('click', addrole);
-      updateButtonState();
-    }
-  }
-});
-// Function to update the button state based on user's group roles
-function updateButtonState() {
-  const isRoleIdPresent = isRoleIdInData(
-    UserGroupData,
-    memberAddRoleBody.roleid,
+  bindSearchInput();
+  bindSearchFocus();
+  bindGroupCreationButton();
+};
+const afterAuthentication = async () => {
+  renderNavbarProfile({ profile: dataStore.userSelf });
+  await Promise.all([getDiscordGroups(), getUserGroupRoles()]).then(
+    ([groups, roleData]) => {
+      dataStore.filteredGroupsIds = groups.map((group) => group.id);
+      dataStore.groups = groups.reduce((acc, group) => {
+        let title = group.rolename
+          .replace('group-', '')
+          .split('-')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
+        acc[group.id] = {
+          id: group.id,
+          title: title,
+          count: group.memberCount,
+          isMember: group.isMember,
+          roleId: group.roleid,
+          description: group.description,
+          isUpdating: false,
+        };
+        return acc;
+      }, {});
+      dataStore.discordId = roleData.userId;
+    },
   );
-  buttonAddRole.textContent = isRoleIdPresent
-    ? 'Remove me from this group'
-    : 'Add me to this group';
-  buttonAddRole.disabled = false;
+};
 
-  isRoleIdPresent
-    ? (buttonAddRole.removeEventListener('click', addrole),
-      buttonAddRole.addEventListener('click', removeRoleHandler))
-    : (buttonAddRole.removeEventListener('click', removeRoleHandler),
-      buttonAddRole.addEventListener('click', addrole));
-}
+// Bind Functions
 
-function debounce(func, delay) {
-  let timeoutId;
-  return function (...args) {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
-    timeoutId = setTimeout(() => {
-      func.apply(this, args);
-    }, delay);
-  };
-}
+const bindGroupCreationButton = () => {
+  const groupCreationBtn = document.querySelector('.create-group');
+
+  groupCreationBtn.addEventListener('click', () => {
+    dataStore.isGroupCreationModalOpen = true;
+  });
+};
+
+const bindSearchInput = () => {
+  const searchInput = document.querySelector('.search__input');
+  searchInput.addEventListener('input', (e) => {
+    dataStore.search = e.target.value;
+  });
+};
+
+const bindSearchFocus = () => {
+  const search = document.querySelector('.search');
+  const searchInput = document.querySelector('.search__input');
+  search.addEventListener('click', () => {
+    searchInput.focus();
+  });
+};
+
+// Helper functions
 
 function showToaster(message) {
-  const toaster = document.getElementById('toaster');
+  const toaster = document.querySelector('.toast__message');
   toaster.innerText = message;
-  toaster.classList.add('show');
-  toaster.classList.remove('hidden');
+  toaster.classList.add('toast--show');
 
   setTimeout(() => {
-    toaster.classList.remove('show');
-    toaster.classList.add('hidden');
+    toaster.classList.remove('toast--show');
   }, 3000);
 }
 
-searchInput.addEventListener(
-  'input',
-  debounce(() => {
-    loader.classList.remove('hidden');
-    searchInput.disabled = true; //Disable user input when loader is active
-    const devFeatureFlag = isDev ? '&dev=true' : '';
-    const newURL = `${window.location.pathname}?${searchInput.value}${devFeatureFlag}`;
-    window.history.pushState({}, '', newURL);
-    const searchValue = searchInput.value.toUpperCase();
-    const groupRoles = document.querySelectorAll('.group-role');
-    let foundResults = false;
-    groupRoles.forEach((groupRole) => {
-      const paragraphElement = groupRole.getElementsByTagName('p')[0];
-      const paragraphContent = paragraphElement.textContent;
-      const displayValue =
-        paragraphContent.toUpperCase().indexOf(searchValue) > -1 ? '' : 'none';
-      groupRole.style.display = displayValue;
-
-      if (displayValue === '') {
-        foundResults = true;
-      }
-      loader.classList.add('hidden');
-    });
-    const noResultsMessage = document.getElementById('no-results-message');
-    noResultsMessage.style.display = foundResults ? 'none' : 'block';
-    loader.classList.add('hidden');
-    searchInput.disabled = false;
-  }, 500), //Reduced debounce for improved user experience
-);
-
-/**
- * TO ASSIGN YOURSELF A ROLE
- */
-const buttonAddRole = document.querySelector('.btn-add-role');
-async function addrole() {
-  if (memberAddRoleBody?.userid && memberAddRoleBody?.roleid !== '') {
-    loader.classList.remove('hidden');
-
-    try {
-      // Add the role to the member
-      const res = await addGroupRoleToMember(memberAddRoleBody);
-
-      const groupNameElement = document.getElementById(
-        `name-${memberAddRoleBody.roleid}`,
-      );
-      const currentCount = groupNameElement.getAttribute('data-member-count');
-      if (currentCount !== null && currentCount !== undefined) {
-        groupNameElement.setAttribute('data-member-count', +currentCount + 1);
-      }
-      // After adding the role, re-fetch the user group data to update it
-      UserGroupData = await getUserGroupRoles();
-
-      // Update the button state with the refreshed data
-      updateButtonState();
-      showToaster(res.message);
-    } catch (err) {
-      showToaster(err.message);
-    } finally {
-      loader.classList.add('hidden');
-    }
-  }
-}
-
-/**
- * TO REMOVE YOURSELF OF A ROLE
- */
-
-async function removeRoleHandler() {
-  if (memberAddRoleBody?.userid && memberAddRoleBody?.roleid !== '') {
-    loader.classList.remove('hidden');
-
-    try {
-      // Remove the role from the member
-      const res = await removeRoleFromMember(
-        memberAddRoleBody.roleid,
-        memberAddRoleBody.userid,
-      );
-      showToaster(res.message);
-      UserGroupData = await getUserGroupRoles();
-      updateButtonState();
-    } catch (err) {
-      showToaster(err.message);
-    } finally {
-      loader.classList.add('hidden');
-    }
-  }
-}
-
-/**
- *
- * Create group roles section
- */
-const createGroupButton = document.querySelector('.btn-create-group');
-const inputNewGroupRole = document.querySelector('.new-group-input');
-
-if (!IsUserVerified) {
-  createGroupButton.disabled = true;
-}
-
-/**
- *
- * Check if group role is valid
- */
-
-const isValidGroupRole = (rolename) => {
-  const error = {
-    valid: true,
-    message: '',
+function updateGroup(id, group) {
+  dataStore.groups = {
+    ...dataStore.groups,
+    [id]: {
+      ...dataStore.groups[id],
+      ...group,
+    },
   };
-  if (rolename.includes('group')) {
-    error.valid = false;
-    error.message = CANNOT_CONTAIN_GROUP;
-  }
-  if (rolename.split(' ').length > 1) {
-    error.valid = false;
-    error.message = NO_SPACES_ALLOWED;
-  }
-  return error;
-};
+}
 
-/**
- * CREATING A NEW GROUP ROLE
- */
-createGroupButton.addEventListener('click', async () => {
-  const inputValue = inputNewGroupRole?.value.trim();
-  if (inputValue === '') return;
-
-  const isValidRole = isValidGroupRole(inputValue);
-  if (!isValidRole.valid) {
-    alert(isValidRole.message);
-    return;
-  }
-
-  loader?.classList?.remove('hidden');
-
-  const groupRoleBody = { rolename: inputValue };
-  createDiscordGroupRole(groupRoleBody)
-    .then((res) => alert(res.message))
-    .catch((err) => alert(err.message))
-    .finally(() => {
-      inputNewGroupRole.value = '';
-      loader.classList.add('hidden');
-      location.reload();
-    });
-});
-
-/**
- * TO SELECT A GROUP ROLE
- */
-
-if (searchValue) {
-  const groupName = searchValue;
-  const paragraphs = document.querySelectorAll('p');
-
-  const groupElement = Array.from(paragraphs).find((paragraph) =>
-    paragraph.textContent.includes(groupName),
-  );
-
-  if (groupElement) {
-    groupElement.parentElement.click();
+function groupCardOnAction(id) {
+  const group = dataStore.groups[id];
+  updateGroup(id, { isUpdating: true });
+  if (group.isMember) {
+    removeRoleFromMember(group.roleId, dataStore.discordId)
+      .then(() => updateGroup(id, { isMember: false, count: group.count - 1 }))
+      .catch((err) => showToaster(err.message))
+      .finally(() => updateGroup(id, { isUpdating: false }));
+  } else {
+    addGroupRoleToMember({
+      roleid: group.roleId,
+      userid: dataStore.discordId,
+    })
+      .then(() => updateGroup(id, { isMember: true, count: group.count + 1 }))
+      .catch((err) => showToaster(err.message))
+      .finally(() => updateGroup(id, { isUpdating: false }));
   }
 }
+
+function renderAllGroups({ cardOnClick }) {
+  const mainContainer = document.querySelector('.group-container');
+  mainContainer.innerHTML = '';
+  dataStore.filteredGroupsIds.forEach((id) =>
+    renderGroupById({
+      group: dataStore.groups[id],
+      cardOnClick,
+    }),
+  );
+}
+
+onCreate();
