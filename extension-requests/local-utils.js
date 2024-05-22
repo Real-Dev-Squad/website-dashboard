@@ -289,12 +289,13 @@ function dateString(milliseconds) {
 
 const fullDateString = (timestamp) => {
   const options = {
-    weekday: 'short',
+    weekday: 'long',
     year: 'numeric',
-    month: 'long',
+    month: 'short',
     day: 'numeric',
     hour: 'numeric',
     minute: 'numeric',
+    timeZoneName: 'short',
     hour12: true,
   };
   return new Intl.DateTimeFormat('en-US', options).format(new Date(timestamp));
