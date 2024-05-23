@@ -60,7 +60,7 @@ describe('Task request details page', () => {
       '[data-modal-start-date-value="proposed-start-date-value"]',
       (element) => element.textContent,
     );
-    expect(proposedStartDateValue).toBe('30-10-2023');
+    expect(proposedStartDateValue).toBe('Monday, 30 Oct 2023');
 
     const proposedEndDateHeading = await page.$eval(
       '[data-modal-end-date-text="proposed-end-date-text"]',
@@ -72,7 +72,7 @@ describe('Task request details page', () => {
       '[data-modal-end-date-value="proposed-end-date-value"]',
       (element) => element.textContent,
     );
-    expect(proposedEndDateValue).toBe('5-11-2023');
+    expect(proposedEndDateValue).toBe('Sunday, 5 Nov 2023');
 
     const descriptionTextHeading = await page.$eval(
       '[data-modal-description-text="proposed-description-text"]',
@@ -153,7 +153,7 @@ describe('Task request details page with markdown support in description', () =>
       '[data-modal-start-date-value="proposed-start-date-value"]',
       (element) => element.textContent,
     );
-    expect(proposedStartDateValue).toBe('30-10-2023');
+    expect(proposedStartDateValue).toBe('Monday, 30 Oct 2023');
 
     const proposedEndDateHeading = await page.$eval(
       '[data-modal-end-date-text="proposed-end-date-text"]',
@@ -165,7 +165,7 @@ describe('Task request details page with markdown support in description', () =>
       '[data-modal-end-date-value="proposed-end-date-value"]',
       (element) => element.textContent,
     );
-    expect(proposedEndDateValue).toBe('5-11-2023');
+    expect(proposedEndDateValue).toBe('Sunday, 5 Nov 2023');
 
     const descriptionTextHeading = await page.$eval(
       '[data-modal-description-text="proposed-description-text"]',
