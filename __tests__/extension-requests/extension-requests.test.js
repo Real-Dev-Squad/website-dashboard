@@ -663,18 +663,21 @@ describe('Tests the Extension Requests Screen', () => {
     expect(extensionCardsAfter.length).toBe(4);
   });
 
-  it('Checks whether the timestamp are sorted', async () => {
+  it('Checks whether the timestamps are sorted', async () => {
     const extensionCards = await page.$$('.extension-card');
 
     const requestDaysArray = [];
     for (const card of extensionCards) {
       const requestedDays = await card.$eval(
         '.requested-day > .tooltip',
-        (requestDays) => requestDays.textContent,
+        (requestDays) => new Date(requestDays.textContent.slice(5)),
       );
-      requestDaysArray.push(requestedDays.slice(5));
+      requestDaysArray.push(requestedDays);
     }
-    const sortedRequestDaysArray = [...requestDaysArray].sort();
+
+    const sortedRequestDaysArray = requestDaysArray
+      .slice()
+      .sort((a, b) => a - b);
     expect(requestDaysArray).toEqual(sortedRequestDaysArray);
   });
 

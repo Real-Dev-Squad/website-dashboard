@@ -4,10 +4,18 @@ function getHumanReadableDate(timeStamp) {
   }
   const date = new Date(timeStamp);
 
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
+  const options = {
+    weekday: 'long',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  };
+  const parts = date.toLocaleDateString('en-US', options).split(', ');
 
-  const formattedDate = `${day}-${month}-${year}`;
+  const [weekday, monthDay, year] = parts;
+  const [month, day] = monthDay.split(' ');
+
+  const formattedDate = `${weekday}, ${day} ${month} ${year}`;
+
   return formattedDate;
 }
