@@ -48,6 +48,8 @@ const renderNavbarProfileSignin = () => {
 const removeLoadingNavbarProfile = () => {
   const profileEl = document.querySelector('.navbar__profile');
   const profileLoadingEl = profileEl.querySelector('.profile--loading');
+
+  if (!profileLoadingEl) return;
   profileEl.removeChild(profileLoadingEl);
 };
 

@@ -140,6 +140,7 @@ const onCreate = () => {
       console.error(err);
     })
     .finally(() => {
+      removeLoadingNavbarProfile();
       removeLoadingCards();
     });
 
@@ -246,7 +247,7 @@ function renderAllGroups({ cardOnClick }) {
   dataStore.filteredGroupsIds.forEach((id) =>
     renderGroupById({
       group: dataStore.groups[id],
-      cardOnClick,
+      cardOnClick: () => cardOnClick(id),
     }),
   );
 }
