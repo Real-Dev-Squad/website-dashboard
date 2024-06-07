@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/global.css" />
     <link rel="stylesheet" href="/style.css" />
     <title>Dashboard | Real Dev Squad</title>
+    <script src="/navbar.global.js" async></script>
     <script src="/helpers/loadENV.js"></script>
     <script src="/constants.js" defer></script>
     <script src="/utils.js" defer></script>
@@ -15,39 +16,7 @@
   </head>
 
   <body>
-    <nav id="tasksNav">
-      <div class="logo">
-        <a href="/index.html">
-          <img src="images/Real-Dev-Squad@1x.png" alt="logo" />
-        </a>
-      </div>
-      <div class="nav-links">
-        <div class="hamburger">
-          <div class="line"></div>
-          <div class="line"></div>
-          <div class="line"></div>
-        </div>
-        <div class="links">
-          <a href="https://welcome.realdevsquad.com/">Welcome</a>
-          <a href="https://www.realdevsquad.com/events">Events</a>
-          <a href="https://members.realdevsquad.com/">Members</a>
-          <a href="https://status.realdevsquad.com/tasks">Status</a>
-        </div>
-      </div>
-      <div class="sign-in-btn">
-        <button onclick="goToAuthPage()">
-          Sign In <span>With GitHub</span>
-          <img src="images/github.png" class="user-avatar" />
-        </button>
-      </div>
-      <div class="user-info">
-        <span id="user-name"></span>
-        <span>
-          <img id="user-img" src="" alt="" />
-        </span>
-      </div>
-      <div id="dropdown"></div>
-    </nav>
+    <nav id="tasksNav"></nav>
 
     <section id="sync-buttons" class="element-display-remove">
       <div class="button-container">
