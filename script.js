@@ -318,19 +318,20 @@ addClickEventListener(
   'POST',
 );
 
-const hamburgerDiv = document.querySelector('.hamburger');
-const navLinks = document.querySelector('.links');
-let toggle = true;
-
-hamburgerDiv.addEventListener('click', function () {
-  if (toggle) {
-    navLinks.classList.add('active');
-    toggle = false;
-  } else {
-    navLinks.classList.remove('active');
-    toggle = true;
-  }
-});
+setTimeout(() => {
+  const hamburgerDiv = document.querySelector('.hamburger');
+  const navLinks = document.querySelector('.links');
+  let toggle = true;
+  hamburgerDiv.addEventListener('click', function () {
+    if (toggle) {
+      navLinks.classList.add('active');
+      toggle = false;
+    } else {
+      navLinks.classList.remove('active');
+      toggle = true;
+    }
+  });
+}, 1000);
 
 let navActive = document.querySelector('.nav-links');
 
