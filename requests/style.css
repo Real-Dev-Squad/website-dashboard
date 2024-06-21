@@ -333,7 +333,6 @@ nav a:hover {
 }
 
 .disabled__tab {
-  pointer-events: none;
   color: var(--color-gray);
 }
 

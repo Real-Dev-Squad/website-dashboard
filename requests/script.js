@@ -8,6 +8,7 @@ const loader = document.querySelector('.container__body__loader');
 const startLoading = () => loader.classList.remove('hidden');
 const stopLoading = () => loader.classList.add('hidden');
 let oooTabLink = document.getElementById(OOO_TAB_ID);
+let taskTabLink = document.getElementById(TASK_TAB_ID);
 let currentReqType = OOO_REQUEST_TYPE;
 let selected__tab__class = 'selected__tab';
 let statusValue = null;
@@ -44,9 +45,20 @@ oooTabLink.addEventListener('click', async function () {
   if (isDataLoading) return;
   oooTabLink.classList.add(selected__tab__class);
   currentReqType = OOO_REQUEST_TYPE;
+  taskTabLink.className = "disabled__tab";
   changeFilter();
   await renderOooRequestCards({ state: statusValue, sort: sortByValue });
 });
+
+taskTabLink.addEventListener('click', async function() {
+  taskTabLink.className = "selected__tab";
+  oooTabLink.className = "disabled__tab";
+  if(isDataLoading) return;
+  taskTabLink.classList.add(selected__tab__class);
+  currentReqType = TASK_TAB_ID;
+  changeFilter();
+  await renderOooRequestCards({ state: statusValue, sort: sortByValue});
+})
 
 async function getOooRequests(query = {}) {
   let finalUrl =
