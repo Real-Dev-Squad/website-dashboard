@@ -138,23 +138,25 @@ const createGroupCreationModal = (onClose = () => {}, onSubmit = () => {}) => {
             <button type="submit" class="submit__button submit__button--disabled button">Create</button>
         </form>
     `;
-  const inputField = modalElement.querySelector('.input__field');
+  const titleField = modalElement.querySelector('#title .input__field');
+  const descriptionField = modalElement.querySelector(
+    '#description .input__field',
+  );
   const submitButton = modalElement.querySelector('.submit__button');
   modalElement.onclick = (e) => e.stopPropagation();
   modalElement.querySelector('#close-button').onclick = onClose;
   modalElement.querySelector('#clear-input').onclick = () => {
-    inputField.value = '';
+    titleField.value = '';
     toggle({ enabled: false });
   };
 
-  function getInput() {
-    return inputField.value.trim().toLowerCase();
+  function getTitle() {
+    return titleField.value.trim().toLowerCase();
   }
 
-  inputField.addEventListener('input', () => {
-    const inputValue = getInput();
-    const shouldDisableSubmit =
-      inputValue.length === 0 || inputValue.includes('group');
+  titleField.addEventListener('input', () => {
+    const title = getTitle();
+    const shouldDisableSubmit = title.length === 0 || title.includes('group');
 
     toggle({ enabled: !shouldDisableSubmit });
   });
@@ -171,13 +173,17 @@ const createGroupCreationModal = (onClose = () => {}, onSubmit = () => {}) => {
 
   form.onsubmit = (e) => {
     e.preventDefault();
-    const inputValue = getInput();
-    if (inputValue.length === 0 || inputValue.includes('group')) {
+    const title = getTitle();
+    const description = descriptionField.value.trim();
+    if (title.length === 0 || title.includes('group')) {
       throw new Error('Invalid group name');
     }
 
     toggle({ enabled: false });
-    onSubmit(inputField.value).then(() => {
+    onSubmit({
+      title,
+      description,
+    }).then(() => {
       toggle({ enabled: true });
     });
   };
