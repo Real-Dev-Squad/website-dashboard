@@ -109,7 +109,7 @@ const createGroupCreationModal = (onClose = () => {}, onSubmit = () => {}) => {
           </span>
         </div>
         <form class="form">
-            <div class="input">
+            <div class="input" id="title">
               <label for="title" class="input__label">@group</label>
               <div class="input__container">
                 <input
@@ -121,6 +121,16 @@ const createGroupCreationModal = (onClose = () => {}, onSubmit = () => {}) => {
                 <button type="button" id="clear-input">
                   <img src="assets/close.svg" alt="Clear" />
                 </button>
+              </div>
+            </div>
+            <div class="input" id="description">
+              <label for="description" class="input__label">Description</label>
+              <div class="input__container">
+                <textarea
+                  class="input__field"
+                  name="description"
+                  placeholder="This group is for..." 
+                ></textarea>
               </div>
             </div>
 
