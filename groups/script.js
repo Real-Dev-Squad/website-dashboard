@@ -72,9 +72,10 @@ const handler = {
         if (value) {
           renderGroupCreationModal({
             onClose: () => (dataStore.isGroupCreationModalOpen = false),
-            onSubmit: (inputValue) => {
+            onSubmit: ({ title, description }) => {
               return createDiscordGroupRole({
-                rolename: inputValue,
+                rolename: title,
+                ...(description && { description }),
               }).then(() => {
                 showToaster('Group created successfully');
                 dataStore.isGroupCreationModalOpen = false;

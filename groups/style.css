@@ -31,8 +31,14 @@
   --color-group-btn-hover: var(--color-secondary-darker);
 }
 
-input:focus {
+input:focus,
+button:focus,
+textarea:focus {
   outline: none;
+}
+
+textarea {
+  resize: none;
 }
 
 .button {
@@ -130,7 +136,7 @@ body {
 */
 
 .group-creation-modal {
-  height: 380px;
+  height: 450px;
   width: clamp(300px, 100%, 350px);
   background-color: var(--color-white);
   border-radius: 8px;
@@ -170,11 +176,13 @@ body {
     flex-direction: column;
     flex-grow: 1;
     margin: 1rem 2rem 2rem 2rem;
+    gap: 1rem;
 
     .input {
       display: flex;
       align-items: center;
       gap: 8px;
+      flex-grow: 1;
 
       .input__label {
         font-size: 0.9rem;
@@ -188,36 +196,52 @@ body {
         background: rgb(245, 246, 246);
         border-radius: 8px;
         flex-grow: 1;
+      }
 
-        .input__field {
-          padding-left: 1rem;
-          width: calc(100% - 1rem);
-          box-sizing: border-box;
-          flex-grow: 1;
-          border: none;
-          background-color: transparent;
+      .input__field {
+        padding: 0.7rem;
+        box-sizing: border-box;
+        flex-grow: 1;
+        border: none;
+        background-color: transparent;
+      }
+
+      .input__field::placeholder {
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 17.5px;
+        text-align: left;
+        color: hsla(220, 9%, 46%, 0.5);
+      }
+
+      #clear-input {
+        padding: 0.7rem 1rem;
+        border: none;
+        display: grid;
+        place-content: center;
+        background-color: transparent;
+
+        img {
+          height: 1.1rem;
         }
+      }
+    }
 
-        .input__field::placeholder {
-          font-size: 14px;
-          font-weight: 400;
-          line-height: 17.5px;
-          text-align: left;
+    #description {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0px;
 
-          color: hsla(220, 9%, 46%, 0.5);
-        }
+      .input__container {
+        width: 100%;
+      }
 
-        #clear-input {
-          padding: 0.7rem 1rem;
-          border: none;
-          display: grid;
-          place-content: center;
-          background-color: transparent;
+      .input__label {
+        color: rgb(90, 96, 107);
+      }
 
-          img {
-            height: 1.1rem;
-          }
-        }
+      .input__field {
+        height: 100px;
       }
     }
 

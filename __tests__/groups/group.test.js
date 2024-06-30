@@ -202,9 +202,13 @@ describe('Discord Groups Page', () => {
     const groupTitle = await groupCreationModal.$(
       `.input__field[name="title"]`,
     );
+    const groupDescription = await groupCreationModal.$(
+      `.input__field[name="description"]`,
+    );
     const submitBtn = await groupCreationModal.$('.submit__button');
 
     expect(groupTitle).toBeTruthy();
+    expect(groupDescription).toBeTruthy();
     expect(submitBtn).toBeTruthy();
   });
 
