@@ -13,7 +13,7 @@ const EXTENSION_CONTAINER_ID = 'extension_container';
 const OOO_TAB_ID = 'ooo_tab_link';
 const TASK_TAB_ID = 'task_tab_link';
 const EXTENSION_TAB_ID = 'extension_tab_link';
-const SEARCH_FILTER_CONTAINER = 'search_filter_container'
+const SEARCH_FILTER_CONTAINER = 'search_filter_container';
 const DEFAULT_DATE_FORMAT = 'DD MMM YYYY';
 
 const MessageStatus = {
@@ -30,7 +30,6 @@ const ErrorMessages = {
 };
 
 const LAST_ELEMENT_CONTAINER = '.virtual';
-
 
 const DEFAULT_AVATAR = '/images/avatar.png';
 const EXTERNAL_LINK_ICON = '/images/external-link.svg';

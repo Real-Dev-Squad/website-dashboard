@@ -97,12 +97,14 @@ function getExtensionQueryParamsString(query) {
     }
   }
   for (const key in query) {
-    if (query.hasOwnProperty(key) && !['order', 'size', 'status'].includes(key)) {
+    if (
+      query.hasOwnProperty(key) &&
+      !['order', 'size', 'status'].includes(key)
+    ) {
       params.append(key, query[key]);
     }
   }
   return `?${params.toString()}`;
-
 }
 const Order = {
   DESCENDING: 'desc',

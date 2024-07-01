@@ -51,17 +51,17 @@ const removeIntersectionObserver = () => {
 oooTabLink.addEventListener('click', async function () {
   oooTabLink.classList.add(selected__tab__class);
   currentReqType = OOO_REQUEST_TYPE;
-  taskTabLink.className = "disabled__tab";
-  extensionTabLink.className = "disabled__tab";
+  taskTabLink.className = 'disabled__tab';
+  extensionTabLink.className = 'disabled__tab';
   changeFilter();
   searchFilterContainer.style.display = 'none';
   await renderOooRequestCards({ state: statusValue, sort: sortByValue });
 });
 
 taskTabLink.addEventListener('click', async function () {
-  taskTabLink.className = "selected__tab";
-  oooTabLink.className = "disabled__tab";
-  extensionTabLink.className = "disabled__tab";
+  taskTabLink.className = 'selected__tab';
+  oooTabLink.className = 'disabled__tab';
+  extensionTabLink.className = 'disabled__tab';
   taskTabLink.classList.add(selected__tab__class);
   currentReqType = TASK_REQUEST_TYPE;
   changeFilter();
@@ -70,9 +70,9 @@ taskTabLink.addEventListener('click', async function () {
 });
 
 extensionTabLink.addEventListener('click', async function () {
-  taskTabLink.className = "disabled__tab";
-  oooTabLink.className = "disabled__tab";
-  extensionTabLink.className = "selected__tab";
+  taskTabLink.className = 'disabled__tab';
+  oooTabLink.className = 'disabled__tab';
+  extensionTabLink.className = 'selected__tab';
   extensionTabLink.classList.add(selected__tab__class);
   currentReqType = EXTENSION_REQUEST_TYPE;
   changeFilter();
@@ -88,7 +88,6 @@ async function getOooRequests(query = {}) {
   let finalUrl =
     API_BASE_URL + (nextLink || '/requests' + getOooQueryParamsString(query));
   let windowUrl = `${window.location.origin}${window.location.pathname}`;
-
   window.history.pushState({ path: windowUrl }, '', windowUrl);
 
   try {
@@ -446,7 +445,7 @@ async function renderOooRequestCards(queries = {}) {
   } finally {
     stopLoading();
     isDataLoading = false;
-    if(currentReqType !== OOO_REQUEST_TYPE) return;
+    if (currentReqType !== OOO_REQUEST_TYPE) return;
     if (
       requestContainer.innerHTML === '' ||
       oooRequestResponse === undefined ||
@@ -461,13 +460,14 @@ async function renderOooRequestCards(queries = {}) {
 }
 
 // Function to get extension requests
-async function getExtensionRequests(query = {}) {  
-  if(requestController){
+async function getExtensionRequests(query = {}) {
+  if (requestController) {
     requestController.abort();
     requestController = new AbortController();
   }
   let finalUrl =
-    API_BASE_URL + (nextLink || '/extension-requests' + getExtensionQueryParamsString(query));
+    API_BASE_URL +
+    (nextLink || '/extension-requests' + getExtensionQueryParamsString(query));
   let windowUrl = `${window.location.origin}${window.location.pathname}`;
 
   window.history.pushState({ path: windowUrl }, '', windowUrl);
@@ -498,8 +498,7 @@ async function getExtensionRequests(query = {}) {
           break;
       }
     }
-    console.log(currentReqType !== EXTENSION_REQUEST_TYPE);
-    if(currentReqType !== EXTENSION_REQUEST_TYPE) return;
+    if (currentReqType !== EXTENSION_REQUEST_TYPE) return;
     showMessage('ERROR', ErrorMessages.SERVER_ERROR);
   } catch (e) {
     console.error(e);
@@ -508,7 +507,6 @@ async function getExtensionRequests(query = {}) {
     isDataLoading = false;
   }
 }
-
 
 async function acceptRejectRequest(id, reqBody) {
   let url = `${API_BASE_URL}/requests/${id}?dev=true`;
@@ -626,24 +624,24 @@ function showToast(message, type) {
 
 async function checkUrlAndLoadFunction() {
   const currentUrl = window.location.href;
-  const hashIndex = currentUrl.indexOf("#");
-  let hashValue = "";
-  let queryParamsString = "";
+  const hashIndex = currentUrl.indexOf('#');
+  let hashValue = '';
+  let queryParamsString = '';
   if (hashIndex !== -1) {
-      const hashPart = currentUrl.substring(hashIndex + 1);
-      const queryIndex = hashPart.indexOf("?");
-      if (queryIndex !== -1) {
-          hashValue = hashPart.substring(0, queryIndex);
-          queryParamsString = hashPart.substring(queryIndex + 1);
-      } else {
-          hashValue = hashPart;
-      }
+    const hashPart = currentUrl.substring(hashIndex + 1);
+    const queryIndex = hashPart.indexOf('?');
+    if (queryIndex !== -1) {
+      hashValue = hashPart.substring(0, queryIndex);
+      queryParamsString = hashPart.substring(queryIndex + 1);
+    } else {
+      hashValue = hashPart;
+    }
   }
   parseExtensionRequestParams(queryParamsString, filterStates);
-  if (hashValue === "extension") {
-    taskTabLink.className = "disabled__tab";
-    oooTabLink.className = "disabled__tab";
-    extensionTabLink.className = "selected__tab";
+  if (hashValue === 'extension') {
+    taskTabLink.className = 'disabled__tab';
+    oooTabLink.className = 'disabled__tab';
+    extensionTabLink.className = 'selected__tab';
     if (isDataLoading) return;
     extensionTabLink.classList.add(selected__tab__class);
     currentReqType = EXTENSION_REQUEST_TYPE;
