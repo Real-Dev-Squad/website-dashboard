@@ -1,7 +1,7 @@
 const API_BASE_URL = window.API_BASE_URL;
 const requestContainer = document.getElementById(REQUEST_CONTAINER_ID);
 const lastElementContainer = document.querySelector(LAST_ELEMENT_CONTAINER);
-
+const searchFilterContainer = document.getElementById(SEARCH_FILTER_CONTAINER);
 const params = new URLSearchParams(window.location.search);
 const isDev = params.get('dev') === 'true';
 const loader = document.querySelector('.container__body__loader');
@@ -9,6 +9,7 @@ const startLoading = () => loader.classList.remove('hidden');
 const stopLoading = () => loader.classList.add('hidden');
 let oooTabLink = document.getElementById(OOO_TAB_ID);
 let taskTabLink = document.getElementById(TASK_TAB_ID);
+let extensionTabLink = document.getElementById(EXTENSION_TAB_ID);
 let currentReqType = OOO_REQUEST_TYPE;
 let selected__tab__class = 'selected__tab';
 let statusValue = null;
@@ -16,6 +17,8 @@ let sortByValue = null;
 let userDetails = [];
 let nextLink = '';
 let isDataLoading = false;
+let requestController = new AbortController();
+let extensionRequestController = new AbortController();
 
 function getUserDetails(id) {
   return userDetails.find((user) => user.id === id);
@@ -26,11 +29,15 @@ const intersectionObserver = new IntersectionObserver(async (entries) => {
     return;
   }
   if (entries[0].isIntersecting && !isDataLoading) {
-    await renderOooRequestCards({
-      state: statusValue,
-      sort: sortByValue,
-      next: nextLink,
-    });
+    if (currentReqType === OOO_REQUEST_TYPE) {
+      await renderOooRequestCards({
+        state: statusValue,
+        sort: sortByValue,
+        next: nextLink,
+      });
+    } else if (currentReqType === EXTENSION_REQUEST_TYPE) {
+      await populateExtensionRequests({}, nextLink);
+    }
   }
 });
 
@@ -42,25 +49,42 @@ const removeIntersectionObserver = () => {
 };
 
 oooTabLink.addEventListener('click', async function () {
-  if (isDataLoading) return;
   oooTabLink.classList.add(selected__tab__class);
   currentReqType = OOO_REQUEST_TYPE;
   taskTabLink.className = "disabled__tab";
+  extensionTabLink.className = "disabled__tab";
   changeFilter();
+  searchFilterContainer.style.display = 'none';
   await renderOooRequestCards({ state: statusValue, sort: sortByValue });
 });
 
-taskTabLink.addEventListener('click', async function() {
+taskTabLink.addEventListener('click', async function () {
   taskTabLink.className = "selected__tab";
   oooTabLink.className = "disabled__tab";
-  if(isDataLoading) return;
+  extensionTabLink.className = "disabled__tab";
   taskTabLink.classList.add(selected__tab__class);
-  currentReqType = TASK_TAB_ID;
+  currentReqType = TASK_REQUEST_TYPE;
   changeFilter();
-  await renderOooRequestCards({ state: statusValue, sort: sortByValue});
-})
+  searchFilterContainer.style.display = 'none';
+  await renderOooRequestCards({ state: statusValue, sort: sortByValue });
+});
+
+extensionTabLink.addEventListener('click', async function () {
+  taskTabLink.className = "disabled__tab";
+  oooTabLink.className = "disabled__tab";
+  extensionTabLink.className = "selected__tab";
+  extensionTabLink.classList.add(selected__tab__class);
+  currentReqType = EXTENSION_REQUEST_TYPE;
+  changeFilter();
+  searchFilterContainer.style.display = 'flex';
+  render();
+});
 
 async function getOooRequests(query = {}) {
+  if (extensionRequestController) {
+    extensionRequestController.abort();
+    extensionRequestController = new AbortController();
+  }
   let finalUrl =
     API_BASE_URL + (nextLink || '/requests' + getOooQueryParamsString(query));
   let windowUrl = `${window.location.origin}${window.location.pathname}`;
@@ -70,6 +94,7 @@ async function getOooRequests(query = {}) {
   try {
     const res = await fetch(finalUrl, {
       credentials: 'include',
+      signal: requestController.signal,
     });
 
     const data = await res.json();
@@ -116,6 +141,8 @@ function showMessage(type, message) {
 
 const changeFilter = () => {
   requestContainer.innerHTML = '';
+  nextLink = '';
+  extensionRequestsContainer.innerHTML = '';
 };
 
 function createOooRequestCard(
@@ -389,7 +416,6 @@ function createOooRequestCard(
     });
   }
 }
-
 async function renderOooRequestCards(queries = {}) {
   if (isDataLoading) return;
   let oooRequestResponse;
@@ -420,6 +446,7 @@ async function renderOooRequestCards(queries = {}) {
   } finally {
     stopLoading();
     isDataLoading = false;
+    if(currentReqType !== OOO_REQUEST_TYPE) return;
     if (
       requestContainer.innerHTML === '' ||
       oooRequestResponse === undefined ||
@@ -432,6 +459,56 @@ async function renderOooRequestCards(queries = {}) {
   addIntersectionObserver();
   nextLink = oooRequestResponse?.next;
 }
+
+// Function to get extension requests
+async function getExtensionRequests(query = {}) {  
+  if(requestController){
+    requestController.abort();
+    requestController = new AbortController();
+  }
+  let finalUrl =
+    API_BASE_URL + (nextLink || '/extension-requests' + getExtensionQueryParamsString(query));
+  let windowUrl = `${window.location.origin}${window.location.pathname}`;
+
+  window.history.pushState({ path: windowUrl }, '', windowUrl);
+  try {
+    const res = await fetch(finalUrl, {
+      credentials: 'include',
+      signal: extensionRequestController.signal,
+    });
+    const data = await res.json();
+    if (res.ok) {
+      return data;
+    } else {
+      switch (res.status) {
+        case 401:
+          showMessage('ERROR', ErrorMessages.UNAUTHENTICATED);
+          return;
+        case 403:
+          showMessage('ERROR', ErrorMessages.UNAUTHORIZED);
+          return;
+        case 404:
+          showMessage('ERROR', 'Extension requests not found');
+          return;
+        case 400:
+          showMessage('ERROR', data.message);
+          showToast(data.message, 'failure');
+          return;
+        default:
+          break;
+      }
+    }
+    console.log(currentReqType !== EXTENSION_REQUEST_TYPE);
+    if(currentReqType !== EXTENSION_REQUEST_TYPE) return;
+    showMessage('ERROR', ErrorMessages.SERVER_ERROR);
+  } catch (e) {
+    console.error(e);
+  } finally {
+    stopLoading();
+    isDataLoading = false;
+  }
+}
+
 
 async function acceptRejectRequest(id, reqBody) {
   let url = `${API_BASE_URL}/requests/${id}?dev=true`;
@@ -547,4 +624,35 @@ function showToast(message, type) {
   }, 5000);
 }
 
-renderOooRequestCards({ state: statusValue, sort: sortByValue });
+async function checkUrlAndLoadFunction() {
+  const currentUrl = window.location.href;
+  const hashIndex = currentUrl.indexOf("#");
+  let hashValue = "";
+  let queryParamsString = "";
+  if (hashIndex !== -1) {
+      const hashPart = currentUrl.substring(hashIndex + 1);
+      const queryIndex = hashPart.indexOf("?");
+      if (queryIndex !== -1) {
+          hashValue = hashPart.substring(0, queryIndex);
+          queryParamsString = hashPart.substring(queryIndex + 1);
+      } else {
+          hashValue = hashPart;
+      }
+  }
+  parseExtensionRequestParams(queryParamsString, filterStates);
+  if (hashValue === "extension") {
+    taskTabLink.className = "disabled__tab";
+    oooTabLink.className = "disabled__tab";
+    extensionTabLink.className = "selected__tab";
+    if (isDataLoading) return;
+    extensionTabLink.classList.add(selected__tab__class);
+    currentReqType = EXTENSION_REQUEST_TYPE;
+    changeFilter();
+    searchFilterContainer.style.display = 'flex';
+    render();
+  } else {
+    renderOooRequestCards({ state: statusValue, sort: sortByValue });
+  }
+}
+
+window.onload = checkUrlAndLoadFunction;

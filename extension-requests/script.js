@@ -94,6 +94,7 @@ const initializeUserStatusMap = (userStatusList) => {
 };
 
 const updateUIBasedOnFilterStates = () => {
+  console.log(filterStates);
   const states = { ...filterStates };
   states.assignee = assigneeUsernamesList;
   if (states.assignee && states.assignee.length > 0) {
@@ -126,6 +127,11 @@ const updateUIBasedOnFilterStates = () => {
 const render = async () => {
   addTooltipToSortButton();
   if (window.location.search) {
+    console.log(
+      {window:window.location.search,
+        filterStates
+       }
+    );
     parseExtensionRequestParams(window.location.search, filterStates);
     const usersList = await processUsernames(filterStates.assignee);
     const userIdList = usersList.userIdList;
