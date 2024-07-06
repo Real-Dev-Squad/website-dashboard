@@ -1,7 +1,7 @@
 const navbar = document.getElementById('tasksNav');
+const params = new URLSearchParams(window.location.search);
 
 const addNavbartoPage = () => {
-  console.log('navbar?.innerHTML?.length===>', navbar?.innerHTML?.length);
   navbar.innerHTML = `
         <div class="logo">
             <a href="/index.html">
@@ -35,8 +35,32 @@ const addNavbartoPage = () => {
         </div>
         <div id="dropdown"></div>
     `;
+
+  const hamburgerDiv = document.querySelector('.hamburger');
+  const navLinks = document.querySelector('.links');
+  let toggle = true;
+  hamburgerDiv.addEventListener('click', function () {
+    if (toggle) {
+      navLinks.classList.add('active');
+      toggle = false;
+    } else {
+      navLinks.classList.remove('active');
+      toggle = true;
+    }
+  });
 };
 
 setTimeout(() => {
   addNavbartoPage();
-}, 1000);
+}, 0);
+
+let navActive = document.querySelector('.nav-links');
+
+if (params.get('dev') === 'true') {
+  document.addEventListener('click', function (event) {
+    if (!navActive.contains(event.target)) {
+      navLinks.classList.remove('active');
+      toggle = true;
+    }
+  });
+}
