@@ -49,4 +49,9 @@ describe('Tests the navbar and its components on various pages', () => {
     await page.goto(`${baseUrl}/profile`);
     await testNavbar(page);
   });
+
+  it('Renders the navbar correctly on the Discord users page', async () => {
+    await page.goto(`${baseUrl}/users/discord`);
+    await testNavbar(page);
+  });
 });
