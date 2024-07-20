@@ -12,11 +12,16 @@ input[type='submit'] {
   --lightblue-color: #0d6efd;
   --lightgray-color: #d7d6d6;
 }
+body {
+  margin: 0;
+}
 
 #tasksNav {
   background-color: var(--blue-color);
   padding: 10px;
   display: flex;
+  margin: 0;
+  justify-content: start;
 }
 
 img {
