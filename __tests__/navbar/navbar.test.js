@@ -39,4 +39,9 @@ describe('Tests the navbar and its components on various pages', () => {
   it('Renders the navbar correctly on the home page', async () => {
     await testNavbar(page);
   });
+
+  it('Renders the navbar correctly on the tasks page', async () => {
+    await page.goto(`${baseUrl}/task`);
+    await testNavbar(page);
+  });
 });
