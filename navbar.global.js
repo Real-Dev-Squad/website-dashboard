@@ -1,5 +1,5 @@
 const navbar = document.getElementById('tasksNav');
-const params = new URLSearchParams(window.location.search);
+const navbarParams = new URLSearchParams(window.location.search);
 
 const addNavbartoPage = () => {
   navbar.innerHTML = `
@@ -56,7 +56,7 @@ setTimeout(() => {
 
 let navActive = document.querySelector('.nav-links');
 
-if (params.get('dev') === 'true') {
+if (navbarParams.get('dev') === 'true') {
   document.addEventListener('click', function (event) {
     if (!navActive.contains(event.target)) {
       navLinks.classList.remove('active');

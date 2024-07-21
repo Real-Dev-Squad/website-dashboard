@@ -401,7 +401,7 @@ describe('Tests the Extension Requests Screen', () => {
     await browser.close();
   });
   it('Checks the UI elements on Extension requests listing page', async () => {
-    title = await page.$('.header h1');
+    title = await page.$('#pageTitle');
     searchBar = await page.$('#search');
     filterButton = await page.$('#filter-button');
     extensionCardsList = await page.$$('.extension-card');
