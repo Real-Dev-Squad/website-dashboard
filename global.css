@@ -24,14 +24,18 @@ body {
   justify-content: start;
 }
 
-img {
-  height: 100%;
-  width: 100%;
+#pageTitle {
+  text-align: center;
 }
 
 .logo {
   height: 50px;
   width: 50px;
+}
+
+.logo img {
+  height: 100%;
+  width: 100%;
 }
 
 .nav-links {

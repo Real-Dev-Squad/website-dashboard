@@ -8,10 +8,6 @@
   color: var(--white-color);
 }
 
-#pageTitle {
-  text-align: center;
-}
-
 main {
   display: grid;
   grid-template-columns: minmax(10rem, 20rem) 1fr;
