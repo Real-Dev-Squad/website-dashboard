@@ -15,7 +15,6 @@ main {
   grid-template-areas:
     'tab tab '
     'aside details';
-  height: 100vh;
 }
 
 .users_section {

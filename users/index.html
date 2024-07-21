@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="/users/style.css" />
     <script src="/helpers/loadENV.js"></script>
     <script src="/constants.js"></script>
+    <script src="/navbar.global.js" async></script>
+    <script src="/userLogin.js" async></script>
     <script src="/utils.js"></script>
     <script src="/users/constants.js" defer></script>
     <script src="/users/utils.js" defer></script>
@@ -17,9 +19,8 @@
   </head>
 
   <body>
-    <header class="header">
-      <h1>User Management</h1>
-    </header>
+    <nav id="tasksNav"></nav>
+    <h1 id="pageTitle">User Management</h1>
     <section id="main-section">
       <div class="search-filter">
         <div id="search">

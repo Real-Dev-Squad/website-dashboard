@@ -447,6 +447,8 @@ describe('Home Page', () => {
       },
     ];
 
+    await page.waitForTimeout(1500);
+
     const userName = await page.$eval(
       '#user-name',
       (element) => element.textContent,
