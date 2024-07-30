@@ -1,6 +1,7 @@
 const userManagementLink = document.getElementById(USER_MANAGEMENT_LINK);
 const discordUserLink = document.getElementById('discord-user-link');
 const extensionRequestsLink = document.getElementById(EXTENSION_REQUESTS_LINK);
+const activityfeedlink = document.getElementById('activity-feed-link');
 const syncUsersStatusButton = document.getElementById(SYNC_USERS_STATUS);
 const UpdatedstatusMessage = 'All repos uptodate';
 const syncExternalAccountsButton = document.getElementById(
@@ -95,20 +96,17 @@ showSuperUserOptions(
   extensionRequestsLink,
   discordUserLink,
   taskRequestsLink,
+  activityfeedlink,
 );
 
 const createGoalButton = document.getElementById('create-goal');
 const repoSyncDiv = document.getElementById('sync-repo-div');
 const repoSyncButton = document.getElementById('repo-sync-button');
-const createActivityFeedButton = document.getElementById(
-  'create-activity-feed',
-);
 const requestPageButton = document.getElementById('requests-link');
 const toast = document.getElementById('toast');
 if (params.get('dev') === 'true') {
   createGoalButton.classList.remove('element-display-remove');
   repoSyncDiv.classList.remove('element-display-remove');
-  createActivityFeedButton.classList.remove('element-display-remove');
   requestPageButton.classList.remove('element-display-remove');
 }
 
