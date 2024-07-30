@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/photo-verification-requests/style.css" />
+    <title>Photo Verification Requests</title>
+  </head>
+
+  <body>
+    <header class="header">
+      <h1>Photo Verification Requests</h1>
+    </header>
+
+    <div class="search-filter">
+      <div id="search">
+        <input id="user-search" type="text" placeholder="Enter username" />
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="photo-verification-requests"></div>
+      <div class="virtual"></div>
+    </div>
+
+    <script src="/helpers/loadENV.js"></script>
+    <script src="/utils.js"></script>
+    <script src="/photo-verification-requests/local-utils.js"></script>
+    <script src="/photo-verification-requests/script.js"></script>
+  </body>
+</html>
