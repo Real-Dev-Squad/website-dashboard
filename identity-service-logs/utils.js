@@ -203,7 +203,17 @@ async function getUserCount() {
   }
 }
 
-async function getSelfUser() {
+function showToaster(message) {
+  const toaster = document.querySelector('.toast__message');
+  toaster.innerText = message;
+  toaster.classList.add('toast--show');
+
+  setTimeout(() => {
+    toaster.classList.remove('toast--show');
+  }, 3000);
+}
+
+async function getIsSuperUser() {
   try {
     const res = await fetch(`${API_BASE_URL}/users/self`, {
       method: 'GET',
@@ -213,15 +223,27 @@ async function getSelfUser() {
       },
     });
 
-    const self_user = await res.json();
-    if (self_user?.statusCode !== 200) {
-      alert('You are not loggedin. Please login!');
-      window.location.href = '/index.html';
+    if (res.status === 500) {
+      showToaster('Something went wrong. Internal Server Error!');
+      setTimeout(() => {
+        window.location.href = '/index.html';
+      }, 3000);
+      return;
     }
-    return self_user;
+
+    if (res.status === 401) {
+      showToaster('You are not logged-in. Please login!');
+      setTimeout(() => {
+        window.location.href = '/index.html';
+      }, 3000);
+      return;
+    }
+
+    const self_user = await res.json();
+    return { isSuperUser: self_user?.roles[SUPER_USER] };
   } catch (err) {
     console.error('Error in fetching self user ' + err);
-    return {};
+    return { error: err, isSuperUser: false };
   }
 }
 
@@ -323,4 +345,4 @@ async function fillData(identityLogs, next, prev) {
   }
 }
 
-export { getIdentityLogs, getSelfUser, fillData, getUserCount };
+export { getIdentityLogs, getIsSuperUser, fillData, getUserCount };

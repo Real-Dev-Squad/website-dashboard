@@ -172,6 +172,53 @@ nav h1::before {
   transition-delay: 400ms;
 }
 
+/*
+    FOR Message toaster box
+*/
+
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 300px;
+}
+
+.toast__message {
+  padding: 15px;
+  background-color: #9c3838;
+  color: white;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  display: none;
+}
+
+.toast--show {
+  display: block;
+  animation: slideInFromRight 3s forwards;
+}
+
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(100%);
+    opacity: 1;
+  }
+
+  30% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  70% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateX(0) translateY(-100%);
+    opacity: 0;
+  }
+}
+
 .dateContainer {
   position: relative;
 }
