@@ -124,7 +124,11 @@ async function getOooRequests(query = {}) {
   }
   const finalUrl =
     API_BASE_URL + (nextLink || '/requests' + getOooQueryParamsString(query));
-  window.history.pushState({}, '', window.location.origin + window.location.pathname);
+  window.history.pushState(
+    {},
+    '',
+    window.location.origin + window.location.pathname,
+  );
 
   return fetchData(finalUrl, requestController);
 }
@@ -137,7 +141,11 @@ async function getExtensionRequests(query = {}) {
   const finalUrl =
     API_BASE_URL +
     (nextLink || '/extension-requests' + getExtensionQueryParamsString(query));
-  window.history.pushState({}, '', window.location.origin + window.location.pathname);
+  window.history.pushState(
+    {},
+    '',
+    window.location.origin + window.location.pathname,
+  );
 
   return fetchData(finalUrl, extensionRequestController);
 }
