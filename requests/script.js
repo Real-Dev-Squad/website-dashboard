@@ -98,7 +98,7 @@ async function fetchData(url, controller) {
           showMessage('ERROR', ErrorMessages.UNAUTHORIZED);
           break;
         case 404:
-          showMessage('ERROR', 'Data not found');
+          showMessage('ERROR', ErrorMessages.OOO_NOT_FOUND);
           break;
         case 400:
           showMessage('ERROR', data.message);
