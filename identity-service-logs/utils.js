@@ -214,6 +214,10 @@ async function getSelfUser() {
     });
 
     const self_user = await res.json();
+    if (self_user?.statusCode !== 200) {
+      alert('You are not loggedin. Please login!');
+      window.location.href = '/index.html';
+    }
     return self_user;
   } catch (err) {
     console.error('Error in fetching self user ' + err);
