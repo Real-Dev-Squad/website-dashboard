@@ -2,14 +2,14 @@ import { SUPER_USER } from './constants.js';
 
 import {
   getIdentityLogs,
-  getSelfUser,
+  getIsSuperUser,
   fillData,
   getUserCount,
 } from './utils.js';
 
-const self_user = await getSelfUser();
+const { isSuperUser } = await getIsSuperUser();
 
-if (self_user?.roles[SUPER_USER]) {
+if (isSuperUser) {
   const {
     verifiedUsersCount,
     blockedUsersCount,
