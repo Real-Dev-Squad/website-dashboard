@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/images/index.ico" type="image/x-icon" />
+    <title>Identity Service Logs | Real Dev Squad</title>
+    <link rel="stylesheet" href="/global.css" />
+    <link rel="stylesheet" href="/identity-service-logs/style.css" />
+    <script src="/helpers/loadENV.js"></script>
+    <script src="/constants.js"></script>
+    <script type="module" src="/identity-service-logs/script.js" defer></script>
+  </head>
+
+  <body>
+    <div id="cover-spin"></div>
+    <nav>
+      <h1>Identity Service Logs</h1>
+    </nav>
+
+    <div class="toast">
+      <div class="toast__message"></div>
+    </div>
+
+    <div class="stats">
+      <div>Verified Users: <span id="verified" class="stats-value"></span></div>
+      <div>Blocked Users: <span id="blocked" class="stats-value"></span></div>
+      <div>
+        Total Developers: <span id="developers" class="stats-value"></span>
+      </div>
+      <div>
+        Verified Developers:
+        <span id="verifiedDevelopers" class="stats-value"></span>
+      </div>
+      <div>
+        Blocked Developers:
+        <span id="blockedDevelopers" class="stats-value"></span>
+      </div>
+      <div>
+        Developers Left: <span id="developersLeft" class="stats-value"></span>
+      </div>
+    </div>
+
+    <p id="loader">Loading...</p>
+
+    <footer id="footer">
+      <p class="info-repo">
+        The contents of this website are deployed from this
+        <a
+          href="https://github.com/Real-Dev-Squad/website-dashboard"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          open sourced repo
+        </a>
+      </p>
+    </footer>
+  </body>
+</html>
