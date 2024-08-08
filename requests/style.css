@@ -333,7 +333,6 @@ nav a:hover {
 }
 
 .disabled__tab {
-  pointer-events: none;
   color: var(--color-gray);
 }
 
@@ -546,4 +545,8 @@ nav a:hover {
 
 .virtual {
   width: 100%;
+}
+
+#search_filter_container {
+  display: none;
 }
