@@ -80,12 +80,22 @@ extensionTabLink.addEventListener('click', async function () {
   render();
 });
 
-async function fetchData(url, controller) {
+async function getOooRequests(query = {}) {
+  if (extensionRequestController) {
+    extensionRequestController.abort();
+    extensionRequestController = new AbortController();
+  }
+  let finalUrl =
+    API_BASE_URL + (nextLink || '/requests' + getOooQueryParamsString(query));
+  let windowUrl = `${window.location.origin}${window.location.pathname}`;
+  window.history.pushState({ path: windowUrl }, '', windowUrl);
+
   try {
-    const res = await fetch(url, {
+    const res = await fetch(finalUrl, {
       credentials: 'include',
-      signal: controller.signal,
+      signal: requestController.signal,
     });
+
     const data = await res.json();
     if (res.ok) {
       return data;
@@ -93,61 +103,25 @@ async function fetchData(url, controller) {
       switch (res.status) {
         case 401:
           showMessage('ERROR', ErrorMessages.UNAUTHENTICATED);
-          break;
+          return;
         case 403:
           showMessage('ERROR', ErrorMessages.UNAUTHORIZED);
-          break;
+          return;
         case 404:
           showMessage('ERROR', ErrorMessages.OOO_NOT_FOUND);
-          break;
+          return;
         case 400:
           showMessage('ERROR', data.message);
           showToast(data.message, 'failure');
-          break;
+          return;
         default:
-          showMessage('ERROR', ErrorMessages.SERVER_ERROR);
           break;
       }
-      return null;
     }
+    showMessage('ERROR', ErrorMessages.SERVER_ERROR);
   } catch (e) {
     console.error(e);
-    showMessage('ERROR', ErrorMessages.SERVER_ERROR);
-    return null;
   }
-}
-
-async function getOooRequests(query = {}) {
-  if (extensionRequestController) {
-    extensionRequestController.abort();
-    extensionRequestController = new AbortController();
-  }
-  const finalUrl =
-    API_BASE_URL + (nextLink || '/requests' + getOooQueryParamsString(query));
-  window.history.pushState(
-    {},
-    '',
-    window.location.origin + window.location.pathname,
-  );
-
-  return fetchData(finalUrl, requestController);
-}
-
-async function getExtensionRequests(query = {}) {
-  if (requestController) {
-    requestController.abort();
-    requestController = new AbortController();
-  }
-  const finalUrl =
-    API_BASE_URL +
-    (nextLink || '/extension-requests' + getExtensionQueryParamsString(query));
-  window.history.pushState(
-    {},
-    '',
-    window.location.origin + window.location.pathname,
-  );
-
-  return fetchData(finalUrl, extensionRequestController);
 }
 
 function showMessage(type, message) {
@@ -483,6 +457,55 @@ async function renderOooRequestCards(queries = {}) {
 
   addIntersectionObserver();
   nextLink = oooRequestResponse?.next;
+}
+
+// Function to get extension requests
+async function getExtensionRequests(query = {}) {
+  if (requestController) {
+    requestController.abort();
+    requestController = new AbortController();
+  }
+  let finalUrl =
+    API_BASE_URL +
+    (nextLink || '/extension-requests' + getExtensionQueryParamsString(query));
+  let windowUrl = `${window.location.origin}${window.location.pathname}`;
+
+  window.history.pushState({ path: windowUrl }, '', windowUrl);
+  try {
+    const res = await fetch(finalUrl, {
+      credentials: 'include',
+      signal: extensionRequestController.signal,
+    });
+    const data = await res.json();
+    if (res.ok) {
+      return data;
+    } else {
+      switch (res.status) {
+        case 401:
+          showMessage('ERROR', ErrorMessages.UNAUTHENTICATED);
+          return;
+        case 403:
+          showMessage('ERROR', ErrorMessages.UNAUTHORIZED);
+          return;
+        case 404:
+          showMessage('ERROR', 'Extension requests not found');
+          return;
+        case 400:
+          showMessage('ERROR', data.message);
+          showToast(data.message, 'failure');
+          return;
+        default:
+          break;
+      }
+    }
+    if (currentReqType !== EXTENSION_REQUEST_TYPE) return;
+    showMessage('ERROR', ErrorMessages.SERVER_ERROR);
+  } catch (e) {
+    console.error(e);
+  } finally {
+    stopLoading();
+    isDataLoading = false;
+  }
 }
 
 async function acceptRejectRequest(id, reqBody) {
