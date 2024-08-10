@@ -24,12 +24,14 @@ describe('Tests the navbar and its components on various pages', () => {
       args: ['--incognito', '--disable-web-security'],
       devtools: false,
     });
-    page = await browser.newPage();
   });
 
   beforeEach(async () => {
-    await page.goto(`${baseUrl}`);
-    await page.waitForNetworkIdle();
+    page = await browser.newPage();
+  });
+
+  afterEach(async () => {
+    await page.close();
   });
 
   afterAll(async () => {
@@ -37,6 +39,7 @@ describe('Tests the navbar and its components on various pages', () => {
   });
 
   it('Renders the navbar correctly on the home page', async () => {
+    await page.goto(`${baseUrl}`);
     await testNavbar(page);
   });
 
