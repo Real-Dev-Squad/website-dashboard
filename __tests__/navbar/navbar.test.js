@@ -69,4 +69,9 @@ describe('Tests the navbar and its components on various pages', () => {
     await page.goto(`${baseUrl}/task-requests`);
     await testNavbar(page);
   });
+
+  it('Renders the navbar correctly on the Online Members page', async () => {
+    await page.goto(`${baseUrl}/online-members/online-members.html`);
+    await testNavbar(page);
+  });
 });
