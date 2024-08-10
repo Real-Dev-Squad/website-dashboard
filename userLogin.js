@@ -97,4 +97,4 @@ async function handleUserSignin() {
   } catch (error) {}
 }
 
-setTimeout(() => handleUserSignin(), 1000);
+addNavbartoPage().then(handleUserSignin);

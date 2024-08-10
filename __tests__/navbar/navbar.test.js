@@ -64,4 +64,9 @@ describe('Tests the navbar and its components on various pages', () => {
     await page.goto(`${baseUrl}/extension-requests`);
     await testNavbar(page);
   });
+
+  it('Renders the navbar correctly on the Task Requests page', async () => {
+    await page.goto(`${baseUrl}/task-requests`);
+    await testNavbar(page);
+  });
 });

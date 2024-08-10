@@ -1,7 +1,7 @@
-const navbar = document.getElementById('tasksNav');
-const navbarParams = new URLSearchParams(window.location.search);
+const navbar = document?.getElementById('tasksNav');
+const navbarParams = new URLSearchParams(window?.location?.search);
 
-const addNavbartoPage = () => {
+const addNavbartoPage = async () => {
   navbar.innerHTML = `
         <div class="logo">
             <a href="/index.html">
@@ -39,7 +39,8 @@ const addNavbartoPage = () => {
   const hamburgerDiv = document.querySelector('.hamburger');
   const navLinks = document.querySelector('.links');
   let toggle = true;
-  hamburgerDiv.addEventListener('click', function () {
+
+  hamburgerDiv?.addEventListener('click', function () {
     if (toggle) {
       navLinks.classList.add('active');
       toggle = false;
@@ -48,19 +49,15 @@ const addNavbartoPage = () => {
       toggle = true;
     }
   });
+
+  if (navbarParams?.get('dev') === 'true') {
+    let navActive = document?.querySelector('.nav-links');
+    const navLinks = document?.querySelector('.links');
+    document?.addEventListener('click', function (event) {
+      if (!navActive?.contains(event.target)) {
+        navLinks?.classList?.remove('active');
+        toggle = true;
+      }
+    });
+  }
 };
-
-setTimeout(() => {
-  addNavbartoPage();
-}, 0);
-
-let navActive = document.querySelector('.nav-links');
-
-if (navbarParams.get('dev') === 'true') {
-  document.addEventListener('click', function (event) {
-    if (!navActive.contains(event.target)) {
-      navLinks.classList.remove('active');
-      toggle = true;
-    }
-  });
-}
