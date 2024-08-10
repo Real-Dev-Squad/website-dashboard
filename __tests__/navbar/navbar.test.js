@@ -84,4 +84,9 @@ describe('Tests the navbar and its components on various pages', () => {
     await page.goto(`${baseUrl}/identity-service-logs/index.html`);
     await testNavbar(page);
   });
+
+  it('Renders the navbar correctly on the Requests page', async () => {
+    await page.goto(`${baseUrl}/requests/index.html`);
+    await testNavbar(page);
+  });
 });
