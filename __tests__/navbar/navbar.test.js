@@ -75,8 +75,13 @@ describe('Tests the navbar and its components on various pages', () => {
     await testNavbar(page);
   });
 
-  it('Renders the navbar correctly on the Standup Updated page', async () => {
+  it('Renders the navbar correctly on the Standup Updates page', async () => {
     await page.goto(`${baseUrl}/standup/index.html`);
+    await testNavbar(page);
+  });
+
+  it('Renders the navbar correctly on the Identity Service Logs page', async () => {
+    await page.goto(`${baseUrl}/identity-service-logs/index.html`);
     await testNavbar(page);
   });
 });
