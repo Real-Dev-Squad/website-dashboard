@@ -359,9 +359,27 @@ describe('urlParams', () => {
 });
 
 describe('Sort Icon Functionality', () => {
+  let browser;
+  let page;
+
+  beforeAll(async () => {
+    browser = await puppeteer.launch({
+      headless: 'new',
+      ignoreHTTPSErrors: true,
+      args: ['--incognito', '--disable-web-security'],
+      devtools: false,
+    });
+
+    page = await browser.newPage();
+  });
+
   beforeEach(async () => {
     await page.goto(`${SITE_URL}/task-requests/?dev=true`);
     await page.waitForNetworkIdle();
+  });
+
+  afterAll(async () => {
+    await browser.close();
   });
 
   const getSortIconDetails = async (iconId) => {
@@ -420,6 +438,8 @@ describe('Sort Icon Functionality', () => {
 describe('badges', () => {
   const DENIED = 'DENIED';
   const ASSIGNMENT = 'assignment';
+  let browser;
+  let page;
 
   const getBadgeTexts = async (page) => {
     const badges = await page.$$('.badge');
@@ -427,9 +447,25 @@ describe('badges', () => {
       badges.map((badge) => page.evaluate((el) => el.textContent, badge)),
     );
   };
+
+  beforeAll(async () => {
+    browser = await puppeteer.launch({
+      headless: 'new',
+      ignoreHTTPSErrors: true,
+      args: ['--incognito', '--disable-web-security'],
+      devtools: false,
+    });
+
+    page = await browser.newPage();
+  });
+
   beforeEach(async () => {
     await page.goto(`${SITE_URL}/task-requests/?dev=true`);
     await page.waitForNetworkIdle();
+  });
+
+  afterAll(async () => {
+    await browser.close();
   });
 
   it('verifies that filters applied by the user are correctly displayed as badges on the screen', async () => {
