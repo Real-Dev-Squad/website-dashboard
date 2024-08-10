@@ -89,4 +89,9 @@ describe('Tests the navbar and its components on various pages', () => {
     await page.goto(`${baseUrl}/requests/index.html`);
     await testNavbar(page);
   });
+
+  it('Renders the navbar correctly on the Activity Feed page', async () => {
+    await page.goto(`${baseUrl}/feed/index.html`);
+    await testNavbar(page);
+  });
 });
