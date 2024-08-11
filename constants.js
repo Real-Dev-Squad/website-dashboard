@@ -4,6 +4,7 @@ const REPO_SYNC_API_URL =
 const USER_MANAGEMENT_LINK = 'user-management-link';
 const EXTENSION_REQUESTS_LINK = 'extension-requests-link';
 const TASK_REQUESTS_LINK = 'task-requests-link';
+const CREATE_ACTIVITY_FEED = 'activity-feed-link';
 const SYNC_USERS_STATUS = 'sync-users-status';
 const SYNC_IDLE_USERS = 'sync-idle-users';
 const SYNC_EXTERNAL_ACCOUNTS = 'sync-external-accounts';

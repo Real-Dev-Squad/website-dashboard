@@ -316,7 +316,7 @@ describe('Home Page', () => {
   });
 
   it('should display the Activity Feed anchor button', async () => {
-    const createActivityFeedButton = await page.$('#create-activity-feed');
+    const createActivityFeedButton = await page.$('#activity-feed-link');
     expect(createActivityFeedButton).toBeTruthy();
     const createActivityFeedButtonHref = await page.evaluate(
       (el) => el.getAttribute('href'),
