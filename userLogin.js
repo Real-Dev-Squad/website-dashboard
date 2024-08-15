@@ -97,4 +97,12 @@ async function handleUserSignin() {
   } catch (error) {}
 }
 
-addNavbartoPage().then(handleUserSignin);
+const initializePageListener = () => {
+  addNavbartoPage().then(handleUserSignin);
+};
+
+window.addEventListener('load', initializePageListener);
+
+window.addEventListener('beforeunload', () => {
+  window.removeEventListener('load', initializePageListener);
+});

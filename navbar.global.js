@@ -1,7 +1,6 @@
-const navbar = document?.getElementById('tasksNav');
-const navbarParams = new URLSearchParams(window?.location?.search);
-
 const addNavbartoPage = async () => {
+  const navbar = document?.getElementById('tasksNav');
+  const navbarParams = new URLSearchParams(window?.location?.search);
   navbar.innerHTML = `
         <div class="logo">
             <a href="/index.html">
