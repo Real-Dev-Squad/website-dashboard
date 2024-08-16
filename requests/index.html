@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="This web page is for the requests managment functionality in real dev squad's dashboard website. admin can view and take action on the requests raised by the team members."
+      content="This web page is for the requests management functionality in real dev squad's dashboard website. Admins can view and take action on the requests raised by the team members."
     />
-    <meta name="keywords" content="RDS, Request Managment" />
+    <meta name="keywords" content="RDS, Request Management" />
     <meta name="author" content="Real Dev Squad" />
     <link rel="icon" href="/images/index.ico" type="image/x-icon" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -17,19 +17,13 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;800&display=swap"
       rel="stylesheet"
     />
-
     <title>Requests | Real Dev Squad</title>
     <link rel="stylesheet" href="/requests/style.css" />
-    <link rel="stylesheet" href="/extension-requests/style.css" />
     <script src="/helpers/loadENV.js"></script>
     <script src="/requests/constants.js"></script>
     <script src="/requests/util.js"></script>
     <script src="/utils.js"></script>
     <script src="/requests/script.js" defer></script>
-    <script
-      src="/requests/extension-requests/extensionRequests.js"
-      defer
-    ></script>
   </head>
 
   <body>
@@ -58,48 +52,8 @@
           <div class="progress-bar"></div>
         </div>
       </div>
-      <div class="search-filter" id="search_filter_container">
-        <div id="search">
-          <input
-            id="assignee-search"
-            type="text"
-            placeholder="Enter usernames"
-          />
-        </div>
-        <button class="sort-button tooltip-container">
-          <img id="asc-sort-icon" src="/images/sort-asc.svg" alt="sort-icon" />
-          <img
-            id="desc-sort-icon"
-            src="/images/sort-desc.svg"
-            alt="sort-icon"
-          />
-        </button>
-        <button
-          id="filter-button"
-          class="filter-button"
-          aria-label="Open filters"
-        >
-          <span class="filter-text">Filters</span>
-
-          <img class="funnel-icon" src="/images/funnel.svg" alt="funnel icon" />
-        </button>
-        <div class="filter-modal hidden">
-          <div class="filter-head">
-            <h3>Filters</h3>
-            <button id="clear-button" class="clear-btn">Clear</button>
-          </div>
-          <div class="filters-container">
-            <h2>Status</h2>
-            <form class="modal-form" id="status-filter"></form>
-          </div>
-          <button id="apply-filter-button" class="apply-filter-button">
-            Apply Filter
-          </button>
-        </div>
-      </div>
       <div class="container__body">
         <div id="request_container" class="request"></div>
-        <div class="extension-requests"></div>
         <div class="container__body__loader hidden">Loading...</div>
         <div class="virtual"></div>
       </div>
