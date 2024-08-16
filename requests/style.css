@@ -88,6 +88,10 @@ p {
   text-align: center;
   font-size: 1.5rem;
   margin: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 8rem;
 }
 .container__body {
   margin-top: 2.5rem;
