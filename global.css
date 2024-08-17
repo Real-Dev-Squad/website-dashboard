@@ -2,3 +2,249 @@ button,
 input[type='submit'] {
   cursor: pointer;
 }
+
+:root {
+  --black-color: black;
+  --white-color: white;
+  --blue-color: #1d1283;
+  --success-color: green;
+  --failure-color: #f44336;
+  --lightblue-color: #0d6efd;
+  --lightgray-color: #d7d6d6;
+}
+body {
+  margin: 0;
+}
+
+#tasksNav {
+  background-color: var(--blue-color);
+  padding: 10px;
+  display: flex;
+  margin: 0;
+  justify-content: start;
+  width: 100%;
+}
+
+#pageTitle {
+  text-align: center;
+}
+
+.logo {
+  height: 50px;
+  width: 50px;
+}
+
+.logo img {
+  height: 100%;
+  width: 100%;
+}
+
+.nav-links {
+  display: flex;
+}
+
+.nav-links .active {
+  top: 80px;
+  left: 0;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  padding: 10px;
+}
+
+.nav-links .hamburger {
+  display: none;
+  order: 1;
+  margin: auto;
+  cursor: pointer;
+}
+
+.nav-links .hamburger .line {
+  width: 25px;
+  margin: 5px;
+  border: 2px solid var(--white-color);
+}
+
+.nav-links .links {
+  margin: auto;
+}
+
+.nav-links .links a {
+  text-decoration: none;
+  color: var(--white-color);
+  padding: 20px;
+}
+
+.sign-in-btn {
+  display: flex;
+  justify-content: center;
+  order: 3;
+}
+
+.sign-in-btn button {
+  position: absolute;
+  right: 10px;
+  margin: 10px;
+  height: 30px;
+  width: fit-content;
+  padding: 5px;
+  background-color: var(--blue-color);
+  color: var(--white-color);
+  cursor: pointer;
+  border: 2px solid var(--white-color);
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.sign-in-btn button img {
+  height: 15px;
+  width: 15px;
+  position: relative;
+  top: 1px;
+}
+
+#dropdown {
+  display: none;
+  position: absolute;
+  width: 8rem;
+  right: 1.5rem;
+  top: 2.5rem;
+  z-index: 100;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0.25rem 0;
+  background-color: var(--white-color);
+  border-radius: 0.63rem;
+  font-size: 0.75rem;
+  box-shadow: rgba(60, 64, 67, 0.3) 0 0.06rem 0.13rem 0,
+    rgba(60, 64, 67, 0.15) 0 0.13rem 0.38rem 0.13rem;
+}
+
+#signout-option {
+  cursor: pointer;
+}
+
+#dropdown.active {
+  display: flex;
+}
+
+.dropdown-list {
+  list-style-type: none;
+  padding-left: 0;
+  margin-left: 0;
+  cursor: pointer;
+  color: var(--lightblue-color);
+  font-weight: 700;
+}
+.dropdown-item {
+  padding: 0.75rem 1.75rem;
+}
+.dropdown-item:hover {
+  background-color: var(--lightgray-color);
+  transition: background-color 0.31s ease-in-out;
+}
+.dropdown-link {
+  display: block;
+  width: 100%;
+  text-decoration: none;
+  color: var(--lightblue-color);
+}
+
+.user-info {
+  display: none;
+  position: absolute;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: var(--white-color);
+  order: 3;
+  font-size: smaller;
+  font-weight: bold;
+}
+.user-info.active {
+  display: flex;
+  right: 0.5rem;
+}
+
+.user-info img {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 100%;
+}
+
+@media screen and (max-width: 970px) {
+  #tasksNav {
+    justify-content: space-between;
+  }
+
+  .sign-in-btn button {
+    position: static;
+  }
+
+  .sign-in-btn span {
+    display: none;
+  }
+  .logo {
+    order: 2;
+  }
+
+  .nav-links .hamburger {
+    display: inline-block;
+  }
+
+  .nav-links .links {
+    display: none;
+  }
+
+  .nav-links .active {
+    font-family: 'Roboto', sans-serif;
+    width: 7.5rem;
+    top: 3.2rem;
+    left: 1.2rem;
+    z-index: 100;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    padding: 0.25rem 0;
+    background-color: var(--white-color);
+    border-radius: 0.63rem;
+    min-height: 12rem;
+    overflow: hidden;
+    font-size: 0.75rem;
+    box-shadow: rgba(60, 64, 67, 0.3) 0 0.06rem 0.13rem 0,
+      rgba(60, 64, 67, 0.15) 0 0.13rem 0.38rem 0.13rem;
+  }
+
+  .nav-links .links a {
+    padding: 0.75rem 1.75rem;
+    font-weight: 700;
+    color: #0d6efd;
+    cursor: pointer;
+    background-color: var(--white-color);
+    list-style-type: none;
+  }
+
+  .a,
+  ::after,
+  ::before {
+    box-sizing: border-box;
+  }
+
+  .nav-links .links a:hover {
+    background-color: var(--lightgray-color);
+    transition: background-color 0.31s ease-in-out;
+  }
+  .user-info {
+    position: inherit;
+  }
+  .logo {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .logo {
+    display: none;
+  }
+}
