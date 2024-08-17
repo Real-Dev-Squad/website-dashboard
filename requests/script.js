@@ -8,6 +8,7 @@ const loader = document.querySelector('.container__body__loader');
 const startLoading = () => loader.classList.remove('hidden');
 const stopLoading = () => loader.classList.add('hidden');
 let oooTabLink = document.getElementById(OOO_TAB_ID);
+let extensionTabLink = document.getElementById(EXTENSION_TAB_ID);
 let currentReqType = OOO_REQUEST_TYPE;
 let selected__tab__class = 'selected__tab';
 let statusValue = null;
@@ -25,7 +26,7 @@ const intersectionObserver = new IntersectionObserver(async (entries) => {
     return;
   }
   if (entries[0].isIntersecting && !isDataLoading) {
-    await renderOooRequestCards({
+    await renderRequestCards({
       state: statusValue,
       sort: sortByValue,
       next: nextLink,
@@ -42,18 +43,35 @@ const removeIntersectionObserver = () => {
 
 oooTabLink.addEventListener('click', async function () {
   if (isDataLoading) return;
-  oooTabLink.classList.add(selected__tab__class);
   currentReqType = OOO_REQUEST_TYPE;
+  nextLink = '';
+  oooTabLink.classList.add(selected__tab__class);
+  extensionTabLink.classList.remove(selected__tab__class);
   changeFilter();
-  await renderOooRequestCards({ state: statusValue, sort: sortByValue });
+  updateUrlWithQuery(currentReqType);
+  await renderRequestCards({ state: statusValue, sort: sortByValue });
 });
+
+extensionTabLink.addEventListener('click', async function () {
+  if (isDataLoading) return;
+  currentReqType = EXTENSION_REQUEST_TYPE;
+  nextLink = '';
+  extensionTabLink.classList.add(selected__tab__class);
+  oooTabLink.classList.remove(selected__tab__class);
+  changeFilter();
+  updateUrlWithQuery(currentReqType);
+  await renderRequestCards({ state: statusValue, sort: sortByValue });
+});
+
+function updateUrlWithQuery(type) {
+  const url = new URL(window.location);
+  url.searchParams.set('type', type.toLowerCase());
+  window.history.pushState({ path: url.toString() }, '', url.toString());
+}
 
 async function getOooRequests(query = {}) {
   let finalUrl =
     API_BASE_URL + (nextLink || '/requests' + getOooQueryParamsString(query));
-  let windowUrl = `${window.location.origin}${window.location.pathname}`;
-
-  window.history.pushState({ path: windowUrl }, '', windowUrl);
 
   try {
     const res = await fetch(finalUrl, {
@@ -88,6 +106,44 @@ async function getOooRequests(query = {}) {
   }
 }
 
+async function getExtensionRequests(query = {}) {
+  let finalUrl =
+    API_BASE_URL +
+    (nextLink || '/requests' + getExtensionQueryParamsString(query));
+
+  try {
+    const res = await fetch(finalUrl, {
+      credentials: 'include',
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      return data;
+    } else {
+      switch (res.status) {
+        case 401:
+          showMessage('ERROR', ErrorMessages.UNAUTHENTICATED);
+          return;
+        case 403:
+          showMessage('ERROR', ErrorMessages.UNAUTHORIZED);
+          return;
+        case 404:
+          showMessage('ERROR', ErrorMessages.EXTENSION_NOT_FOUND);
+          return;
+        case 400:
+          showMessage('ERROR', data.message);
+          showToast(data.message, 'failure');
+          return;
+        default:
+          break;
+      }
+    }
+    showMessage('ERROR', ErrorMessages.SERVER_ERROR);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 function showMessage(type, message) {
   const p = document.createElement('p');
   const classes = ['request__message'];
@@ -106,11 +162,7 @@ const changeFilter = () => {
   requestContainer.innerHTML = '';
 };
 
-function createOooRequestCard(
-  oooRequest,
-  superUserDetails,
-  requesterUserDetails,
-) {
+function createRequestCard(request, superUserDetails, requesterUserDetails) {
   let {
     id,
     state,
@@ -121,7 +173,7 @@ function createOooRequestCard(
     lastModifiedBy,
     reason,
     updatedAt,
-  } = oooRequest;
+  } = request;
   let showSuperuserDetailsClass = 'notHidden';
   let showActionButtonClass = 'notHidden';
   if (
@@ -161,17 +213,17 @@ function createOooRequestCard(
     child: [
       generateRequesterInfo(),
       generateRequestContent(),
-      addHotizontalBreakLine(),
+      addHorizontalBreakLine(),
       generateSuperuserInfo(),
       generateActionButtonsContainer(),
     ],
   });
   return card;
 
-  function addHotizontalBreakLine() {
+  function addHorizontalBreakLine() {
     return createElementFromMap({
       tagName: 'hr',
-      class: 'horizontal__line__saperator',
+      class: 'horizontal__line__separator',
     });
   }
 
@@ -378,28 +430,28 @@ function createOooRequestCard(
   }
 }
 
-async function renderOooRequestCards(queries = {}) {
+async function renderRequestCards(queries = {}) {
   if (isDataLoading) return;
-  let oooRequestResponse;
+  let requestResponse;
   try {
     isDataLoading = true;
     startLoading();
     if (userDetails.length === 0) {
       userDetails = await getInDiscordUserList();
     }
-    oooRequestResponse = await getOooRequests(queries);
-    for (const oooRequest of oooRequestResponse?.data || []) {
+    requestResponse =
+      currentReqType === OOO_REQUEST_TYPE
+        ? await getOooRequests(queries)
+        : await getExtensionRequests(queries);
+
+    for (const request of requestResponse?.data || []) {
       let superUserDetails;
-      let requesterUserDetails = await getUserDetails(oooRequest.requestedBy);
-      if (oooRequest.state !== 'PENDING') {
-        superUserDetails = await getUserDetails(oooRequest.lastModifiedBy);
+      let requesterUserDetails = await getUserDetails(request.requestedBy);
+      if (request.state !== 'PENDING') {
+        superUserDetails = await getUserDetails(request.lastModifiedBy);
       }
       requestContainer.appendChild(
-        createOooRequestCard(
-          oooRequest,
-          superUserDetails,
-          requesterUserDetails,
-        ),
+        createRequestCard(request, superUserDetails, requesterUserDetails),
       );
     }
   } catch (error) {
@@ -410,15 +462,15 @@ async function renderOooRequestCards(queries = {}) {
     isDataLoading = false;
     if (
       requestContainer.innerHTML === '' ||
-      oooRequestResponse === undefined ||
-      oooRequestResponse?.data?.length === 0
+      requestResponse === undefined ||
+      requestResponse?.data?.length === 0
     ) {
-      showMessage('INFO', 'No OOO requests found!');
+      showMessage('INFO', `No ${currentReqType.toLowerCase()} requests found!`);
     }
   }
 
   addIntersectionObserver();
-  nextLink = oooRequestResponse?.next;
+  nextLink = requestResponse?.next;
 }
 
 async function acceptRejectRequest(id, reqBody) {
@@ -497,7 +549,7 @@ async function performAcceptRejectAction(isAccepted, e) {
         updatedRequestDetails.requestedBy,
       );
 
-      const updatedCard = createOooRequestCard(
+      const updatedCard = createRequestCard(
         updatedRequestDetails,
         superUserDetails,
         requesterUserDetails,
@@ -535,4 +587,4 @@ function showToast(message, type) {
   }, 5000);
 }
 
-renderOooRequestCards({ state: statusValue, sort: sortByValue });
+renderRequestCards({ state: statusValue, sort: sortByValue });
