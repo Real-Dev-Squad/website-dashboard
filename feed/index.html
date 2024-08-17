@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/global.css" />
     <link rel="stylesheet" href="/feed/style.css" />
     <link rel="stylesheet" href="/style.css" />
     <title>Activity Feed | Real Dev Squad</title>
+    <script src="/navbar.global.js" async></script>
+    <script src="/userLogin.js" async></script>
     <script src="/helpers/loadENV.js"></script>
     <script src="/feed/constants.js"></script>
     <script src="/constants.js"></script>
@@ -15,9 +18,8 @@
     <script src="/feed/script.js" defer></script>
   </head>
   <body>
-    <header class="header">
-      <h1>Activity Feed</h1>
-    </header>
+    <nav id="tasksNav"></nav>
+    <h1 id="pageTitle">Activity Feed</h1>
     <nav class="tabs-container">
       <ul class="tabs"></ul>
       <div class="container">
