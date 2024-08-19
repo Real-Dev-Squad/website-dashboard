@@ -287,12 +287,7 @@ async function renderApplicationById(id) {
   isDataLoading = true;
 
   try {
-    const data = await getApplicationById(id);
-
-    const application = data.application;
-
-    isDataLoading = false;
-    changeLoaderVisibility({ hide: true });
+    const application = await getApplicationById(id);
 
     if (!application) {
       return noApplicationFoundText.classList.remove('hidden');
@@ -302,8 +297,10 @@ async function renderApplicationById(id) {
     applicationContainer.appendChild(applicationCard);
   } catch (error) {
     console.error('Error fetching application by user ID:', error);
-    changeLoaderVisibility({ hide: true });
     noApplicationFoundText.classList.remove('hidden');
+  } finally {
+    isDataLoading = false;
+    changeLoaderVisibility({ hide: true });
   }
 }
 

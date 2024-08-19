@@ -1,4 +1,7 @@
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL =
+  window.location.hostname === 'localhost'
+    ? 'https://staging-api.realdevsquad.com'
+    : window.API_BASE_URL;
 const toast = document.getElementById('toast');
 
 function createElement({ type, attributes = {}, innerText }) {
@@ -53,9 +56,7 @@ async function getApplicationById(applicationId) {
     }
 
     const data = await res.json();
-
-    console.log('data', data);
-    return data;
+    return data.application;
   } catch (error) {
     throw error;
   }
