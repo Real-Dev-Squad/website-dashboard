@@ -1,7 +1,4 @@
-const BASE_URL =
-  window.location.hostname === 'localhost'
-    ? 'https://staging-api.realdevsquad.com'
-    : window.API_BASE_URL;
+const BASE_URL = 'http://localhost:3000';
 const toast = document.getElementById('toast');
 
 function createElement({ type, attributes = {}, innerText }) {
@@ -37,6 +34,30 @@ async function getApplications({ applicationStatus, size = 5, next = '' }) {
     console.error(error);
     const errorMessage = error?.message || 'Something went wrong!';
     showToast({ message: errorMessage, type: 'error' });
+  }
+}
+
+async function getApplicationById(applicationId) {
+  try {
+    const res = await fetch(`${BASE_URL}/applications/${applicationId}`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw error;
+    }
+
+    const data = await res.json();
+
+    console.log('data', data);
+    return data;
+  } catch (error) {
+    throw error;
   }
 }
 
@@ -104,6 +125,7 @@ function showToast({ message, type }) {
 export {
   createElement,
   getApplications,
+  getApplicationById,
   updateApplication,
   getIsSuperUser,
   showToast,
