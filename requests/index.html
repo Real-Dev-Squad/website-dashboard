@@ -18,7 +18,10 @@
       rel="stylesheet"
     />
     <title>Requests | Real Dev Squad</title>
+    <link rel="stylesheet" href="/global.css" />
     <link rel="stylesheet" href="/requests/style.css" />
+    <script src="/navbar.global.js" async></script>
+    <script src="/userLogin.js" async></script>
     <script src="/helpers/loadENV.js"></script>
     <script src="/requests/constants.js"></script>
     <script src="/requests/util.js"></script>
@@ -27,17 +30,7 @@
   </head>
 
   <body>
-    <div class="header">
-      <div class="header__contents">
-        <img
-          src="/task-requests/assets/RDSLogo.png"
-          alt="RDS logo"
-          height="48"
-          width="48"
-        />
-        <a href="/index.html" class="header__contents__navlink">Home</a>
-      </div>
-    </div>
+    <nav id="tasksNav"></nav>
     <div class="container">
       <div class="container__header">
         <nav>
