@@ -44,6 +44,18 @@ function getOooQueryParamsString(query) {
   return `?${queryParam}`;
 }
 
+function getExtensionQueryParamsString(query) {
+  let queryParam = 'dev=true&type=EXTENSION&size=12';
+  if (
+    query.state !== undefined &&
+    query.state !== null &&
+    query.state !== 'ALL'
+  ) {
+    queryParam += `&state=${query.state}`;
+  }
+  return `?${queryParam}`;
+}
+
 function convertDateToReadableStringDate(date, format) {
   if (format === undefined || format === null) {
     format = DEFAULT_DATE_FORMAT;
@@ -104,9 +116,9 @@ async function getInDiscordUserList() {
 }
 
 const addSpinner = (container) => {
-  const spinner = createElement({
-    type: 'div',
-    attributes: { class: 'spinner' },
+  const spinner = createElementFromMap({
+    tagName: 'div',
+    class: 'spinner',
   });
 
   container.append(spinner);

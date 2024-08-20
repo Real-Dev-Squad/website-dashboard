@@ -4,6 +4,7 @@ import {
   getIsSuperUser,
   showToast,
   updateApplication,
+  getApplicationById,
 } from './utils.js';
 let nextLink;
 let isDataLoading = false;
@@ -271,8 +272,33 @@ async function renderApplicationCards(next, status, isInitialRender) {
   });
 }
 
+async function renderApplicationById(id) {
+  noApplicationFoundText.classList.add('hidden');
+  changeLoaderVisibility({ hide: false });
+  isDataLoading = true;
+
+  try {
+    const application = await getApplicationById(id);
+
+    if (!application) {
+      return noApplicationFoundText.classList.remove('hidden');
+    }
+
+    const applicationCard = createApplicationCard({ application });
+    applicationContainer.appendChild(applicationCard);
+    applicationContainer.classList.add('center');
+  } catch (error) {
+    console.error('Error fetching application by user ID:', error);
+    noApplicationFoundText.classList.remove('hidden');
+  } finally {
+    isDataLoading = false;
+    changeLoaderVisibility({ hide: true });
+  }
+}
+
 (async function renderCardsInitial() {
   changeLoaderVisibility({ hide: false });
+
   const isSuperUser = await getIsSuperUser();
   if (!isSuperUser) {
     const unAuthorizedText = createElement({
@@ -284,8 +310,19 @@ async function renderApplicationCards(next, status, isInitialRender) {
     changeLoaderVisibility({ hide: true });
     return;
   }
-  await renderApplicationCards('', status, true);
-  addIntersectionObserver();
+
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const applicationId = urlParams.get('id');
+
+  if (applicationId) {
+    await renderApplicationById(applicationId);
+  } else {
+    await renderApplicationCards('', status, true);
+    addIntersectionObserver();
+  }
+
+  changeLoaderVisibility({ hide: true });
 })();
 
 const intersectionObserver = new IntersectionObserver(async (entries) => {

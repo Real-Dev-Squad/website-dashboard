@@ -88,6 +88,10 @@ p {
   text-align: center;
   font-size: 1.5rem;
   margin: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 8rem;
 }
 .container__body {
   margin-top: 2.5rem;
@@ -333,7 +337,6 @@ nav a:hover {
 }
 
 .disabled__tab {
-  pointer-events: none;
   color: var(--color-gray);
 }
 
@@ -546,4 +549,8 @@ nav a:hover {
 
 .virtual {
   width: 100%;
+}
+
+#search_filter_container {
+  display: none;
 }
