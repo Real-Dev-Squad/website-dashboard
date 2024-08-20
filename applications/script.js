@@ -268,11 +268,6 @@ async function renderApplicationCards(next, status, isInitialRender) {
 
     applicationContainer.innerHTML = '';
 
-    if (applications.length === 1) {
-      applicationContainer.classList.add('center');
-    } else {
-      applicationContainer.classList.remove('center');
-    }
     applications.forEach((application) => {
       const applicationCard = createApplicationCard({ application });
       applicationContainer.appendChild(applicationCard);
@@ -299,6 +294,7 @@ async function renderApplicationById(id) {
 
     const applicationCard = createApplicationCard({ application });
     applicationContainer.appendChild(applicationCard);
+    applicationContainer.classList.add('center');
   } catch (error) {
     console.error('Error fetching application by user ID:', error);
     noApplicationFoundText.classList.remove('hidden');
