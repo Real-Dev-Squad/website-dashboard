@@ -1,7 +1,4 @@
-const BASE_URL =
-  window.location.hostname === 'localhost'
-    ? 'https://staging-api.realdevsquad.com'
-    : window.API_BASE_URL;
+const BASE_URL = 'http://localhost:3000';
 const toast = document.getElementById('toast');
 
 function createElement({ type, attributes = {}, innerText }) {
