@@ -268,8 +268,6 @@ async function renderApplicationCards(next, status, isInitialRender) {
 
     applicationContainer.innerHTML = '';
     applications.forEach((application) => {
-      console.log('applications', application);
-
       const applicationCard = createApplicationCard({ application });
       applicationContainer.appendChild(applicationCard);
     });
