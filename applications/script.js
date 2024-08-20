@@ -267,6 +267,12 @@ async function renderApplicationCards(next, status, isInitialRender) {
       return noApplicationFoundText.classList.remove('hidden');
 
     applicationContainer.innerHTML = '';
+
+    if (applications.length === 1) {
+      applicationContainer.classList.add('center');
+    } else {
+      applicationContainer.classList.remove('center');
+    }
     applications.forEach((application) => {
       const applicationCard = createApplicationCard({ application });
       applicationContainer.appendChild(applicationCard);

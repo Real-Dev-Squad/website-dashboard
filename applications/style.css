@@ -145,9 +145,13 @@ body {
 .application-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: space-between;
   padding-bottom: 10px;
-  gap: 35px;
+  gap: 25px;
+}
+
+.application-container.center {
+  justify-content: center; 
 }
 
 .application-card {
