@@ -131,8 +131,7 @@ describe('Applications page', () => {
     expect(applicationCards.length).toBe(5);
   });
 
-  // Watch this test later as need to fix whole test file
-  it.skip('should load more applications on going to the bottom of the page', async function () {
+  it('should load more applications on going to the bottom of the page', async function () {
     let applicationCards = await page.$$('.application-card');
     expect(applicationCards.length).toBe(5);
     await page.evaluate(() => {
