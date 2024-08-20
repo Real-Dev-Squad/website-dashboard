@@ -253,31 +253,23 @@ async function renderApplicationCards(next, status, isInitialRender) {
   noApplicationFoundText.classList.add('hidden');
   changeLoaderVisibility({ hide: false });
   isDataLoading = true;
-
-  try {
-    const data = await getApplications({ applicationStatus: status, next });
-    isDataLoading = false;
-    changeLoaderVisibility({ hide: true });
-
-    const applications = data.applications;
-    nextLink = data.next;
-
-    if (isInitialRender) filterButton.classList.remove('hidden');
-    if (!applications.length)
-      return noApplicationFoundText.classList.remove('hidden');
-
-    applicationContainer.innerHTML = '';
-
-    applications.forEach((application) => {
-      const applicationCard = createApplicationCard({ application });
-      applicationContainer.appendChild(applicationCard);
+  const data = await getApplications({
+    applicationStatus: status,
+    next,
+  });
+  isDataLoading = false;
+  changeLoaderVisibility({ hide: true });
+  const applications = data.applications;
+  nextLink = data.next;
+  if (isInitialRender) filterButton.classList.remove('hidden');
+  if (!applications.length)
+    return noApplicationFoundText.classList.remove('hidden');
+  applications.forEach((application) => {
+    const applicationCard = createApplicationCard({
+      application,
     });
-  } catch (error) {
-    console.error('Error fetching applications:', error);
-    isDataLoading = false;
-    changeLoaderVisibility({ hide: true });
-    noApplicationFoundText.classList.remove('hidden');
-  }
+    applicationContainer.appendChild(applicationCard);
+  });
 }
 
 async function renderApplicationById(id) {
@@ -322,8 +314,6 @@ async function renderApplicationById(id) {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const applicationId = urlParams.get('id');
-
-  console.log(applicationId, 'Application ID:', applicationId);
 
   if (applicationId) {
     await renderApplicationById(applicationId);
