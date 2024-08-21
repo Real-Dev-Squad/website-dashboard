@@ -523,7 +523,7 @@ describe('Home Page', () => {
       (el) => el.getAttribute('href'),
       applicationButton,
     );
-    expect(applicationButtonHref).toBe('applications/index.html');
+    expect(applicationButtonHref).toBe('/applications/index.html');
     const applicationButtonText = await page.evaluate(
       (el) => el.innerText,
       applicationButton,
