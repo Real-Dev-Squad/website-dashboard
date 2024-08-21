@@ -71,12 +71,6 @@ function changeFilter() {
   filterModal.classList.add('hidden');
   backDrop.style.display = 'none';
   applicationContainer.innerHTML = '';
-
-  const selectedFilterOption = document.querySelector(
-    'input[name="status"]:checked',
-  );
-  status = selectedFilterOption ? selectedFilterOption.value : 'all';
-  renderApplicationCards(nextLink, status);
 }
 
 function closeApplicationDetails() {
