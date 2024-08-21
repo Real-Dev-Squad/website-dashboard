@@ -192,14 +192,14 @@ function openApplicationDetails(application) {
     applicationAcceptButton.disabled = true;
     applicationAcceptButton.style.cursor = 'not-allowed';
     applicationAcceptButton.classList.add('disable-button');
-  }else{
-  applicationRejectButton.disabled = false;
-  applicationRejectButton.style.cursor = 'pointer';
-  applicationRejectButton.classList.remove('disable-button');
-  
-  applicationAcceptButton.disabled = false;
-  applicationAcceptButton.style.cursor = 'pointer';
-  applicationAcceptButton.classList.remove('disable-button');
+  } else {
+    applicationRejectButton.disabled = false;
+    applicationRejectButton.style.cursor = 'pointer';
+    applicationRejectButton.classList.remove('disable-button');
+
+    applicationAcceptButton.disabled = false;
+    applicationAcceptButton.style.cursor = 'pointer';
+    applicationAcceptButton.classList.remove('disable-button');
   }
 }
 
