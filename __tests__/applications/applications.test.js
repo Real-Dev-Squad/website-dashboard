@@ -142,7 +142,7 @@ describe('Applications page', () => {
     });
     await page.waitForNetworkIdle();
     applicationCards = await page.$$('.application-card');
-    expect(applicationCards.length).toBe(10);
+    expect(applicationCards.length).toBe(12);
   });
 
   it('should open application details modal for application, when user click on view details on any card', async function () {
