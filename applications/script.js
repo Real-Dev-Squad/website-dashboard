@@ -51,7 +51,11 @@ function updateUserApplication({ isAccepted }) {
 
   payload['status'] = status;
 
-  if (applicationTextarea.value) payload.feedback = applicationTextarea.value;
+  if (applicationTextarea.value) {
+    payload.feedback = applicationTextarea.value;
+  } else {
+    payload.feedback = applicationTextarea.getAttribute('value') || '';
+  }
 
   updateApplication({
     applicationId: currentApplicationId,
@@ -178,6 +182,7 @@ function openApplicationDetails(application) {
       class: 'application-textarea',
       placeHolder: 'Add Feedback here',
     },
+    innerText: application.feedback || '',
   });
 
   applicationSection.appendChild(applicationSectionTitle);
