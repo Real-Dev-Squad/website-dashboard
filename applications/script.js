@@ -339,6 +339,8 @@ async function renderApplicationById(id) {
     changeLoaderVisibility({ hide: true });
     return;
   }
+  const urlParams = new URLSearchParams(window.location.search);
+  status = urlParams.get('status') || 'all';
 
   if (applicationId) {
     await renderApplicationById(applicationId);
@@ -380,8 +382,14 @@ applyFilterButton.addEventListener('click', () => {
   const selectedFilterOption = document.querySelector(
     'input[name="status"]:checked',
   );
+
+  const selectedStatus = selectedFilterOption.value;
+
+  const newUrl = `${window.location.pathname}?status=${selectedStatus}`;
+  window.history.pushState({ path: newUrl }, '', newUrl);
+
   changeFilter();
-  status = selectedFilterOption.value;
+  status = selectedStatus;
   renderApplicationCards(nextLink, status);
 });
 
