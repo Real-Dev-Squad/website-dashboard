@@ -31,6 +31,11 @@ const applyFilterButton = document.getElementById('apply-filter-button');
 const applicationContainer = document.querySelector('.application-container');
 const clearButton = document.getElementById('clear-button');
 const lastElementContainer = document.getElementById('page_bottom_element');
+
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+let applicationId = urlParams.get('id');
+
 let currentApplicationId;
 
 let status = 'all';
@@ -52,11 +57,10 @@ function updateUserApplication({ isAccepted }) {
     applicationPayload: payload,
   })
     .then((res) => {
-      closeApplicationDetails();
       showToast({ type: 'success', message: res.message });
+      setTimeout(() => closeApplicationDetails(), 1000);
     })
     .catch((error) => {
-      closeApplicationDetails();
       showToast({ type: 'error', message: error.message });
     });
 }
@@ -66,12 +70,22 @@ function changeFilter() {
   filterModal.classList.add('hidden');
   backDrop.style.display = 'none';
   applicationContainer.innerHTML = '';
+
+  const selectedFilterOption = document.querySelector(
+    'input[name="status"]:checked',
+  );
+  status = selectedFilterOption ? selectedFilterOption.value : 'all';
+  renderApplicationCards(nextLink, status);
 }
 
 function closeApplicationDetails() {
   applicationDetailsModal.classList.add('hidden');
   backDropBlur.style.display = 'none';
   document.body.style.overflow = 'auto';
+
+  if (applicationId) {
+    window.location.href = '/applications';
+  }
 }
 
 function openApplicationDetails(application) {
@@ -174,6 +188,29 @@ function openApplicationDetails(application) {
   applicationSection.appendChild(applicationSectionTitle);
   applicationSection.appendChild(applicationTextArea);
   applicationDetailsMain.appendChild(applicationSection);
+
+  if (application.status === 'pending') {
+    applicationAcceptButton.classList.remove('hidden');
+    applicationAcceptButton.disabled = false;
+    applicationAcceptButton.style.cursor = 'pointer';
+    applicationRejectButton.classList.remove('hidden');
+    applicationRejectButton.disabled = false;
+    applicationRejectButton.style.cursor = 'pointer';
+  } else if (application.status === 'accepted') {
+    applicationAcceptButton.classList.remove('hidden');
+    applicationAcceptButton.disabled = true;
+    applicationAcceptButton.style.cursor = 'not-allowed';
+    applicationRejectButton.classList.remove('hidden');
+    applicationRejectButton.disabled = false;
+    applicationRejectButton.style.cursor = 'pointer';
+  } else {
+    applicationAcceptButton.classList.remove('hidden');
+    applicationAcceptButton.disabled = false;
+    applicationAcceptButton.style.cursor = 'pointer';
+    applicationRejectButton.classList.remove('hidden');
+    applicationRejectButton.disabled = true;
+    applicationRejectButton.style.cursor = 'not-allowed';
+  }
 }
 
 function clearFilter() {
@@ -271,6 +308,28 @@ async function renderApplicationCards(next, status, isInitialRender) {
   });
 }
 
+async function renderApplicationById(id) {
+  noApplicationFoundText.classList.add('hidden');
+  changeLoaderVisibility({ hide: false });
+  isDataLoading = true;
+
+  try {
+    const application = await getApplicationById(id);
+
+    if (!application) {
+      return noApplicationFoundText.classList.remove('hidden');
+    }
+
+    openApplicationDetails(application);
+  } catch (error) {
+    console.error('Error fetching application by user ID:', error);
+    noApplicationFoundText.classList.remove('hidden');
+  } finally {
+    isDataLoading = false;
+    changeLoaderVisibility({ hide: true });
+  }
+}
+
 (async function renderCardsInitial() {
   changeLoaderVisibility({ hide: false });
   const isSuperUser = await getIsSuperUser();
@@ -284,8 +343,15 @@ async function renderApplicationCards(next, status, isInitialRender) {
     changeLoaderVisibility({ hide: true });
     return;
   }
-  await renderApplicationCards('', status, true);
-  addIntersectionObserver();
+
+  if (applicationId) {
+    await renderApplicationById(applicationId);
+  } else {
+    await renderApplicationCards('', status, true);
+    addIntersectionObserver();
+  }
+
+  changeLoaderVisibility({ hide: true });
 })();
 
 const intersectionObserver = new IntersectionObserver(async (entries) => {
