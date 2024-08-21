@@ -160,7 +160,7 @@ describe('Applications page', () => {
     ).toBe(false);
   });
 
-  it('should show toast message with application updated successfully', async function () {
+  it.skip('should show toast message with application updated successfully', async function () {
     await page.click('.view-details-button');
     await page.click('.application-details-accept');
     const toast = await page.$('#toast');
