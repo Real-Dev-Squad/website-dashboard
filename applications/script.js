@@ -4,6 +4,7 @@ import {
   getIsSuperUser,
   showToast,
   updateApplication,
+  getApplicationById,
 } from './utils.js';
 let nextLink;
 let isDataLoading = false;
@@ -332,6 +333,7 @@ async function renderApplicationById(id) {
 
 (async function renderCardsInitial() {
   changeLoaderVisibility({ hide: false });
+
   const isSuperUser = await getIsSuperUser();
   if (!isSuperUser) {
     const unAuthorizedText = createElement({

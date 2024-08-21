@@ -40,6 +40,28 @@ async function getApplications({ applicationStatus, size = 5, next = '' }) {
   }
 }
 
+async function getApplicationById(applicationId) {
+  try {
+    const res = await fetch(`${BASE_URL}/applications/${applicationId}`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw error;
+    }
+
+    const data = await res.json();
+    return data.application;
+  } catch (error) {
+    throw error;
+  }
+}
+
 async function getIsSuperUser() {
   try {
     const res = await fetch(`${BASE_URL}/users/self`, {
@@ -104,6 +126,7 @@ function showToast({ message, type }) {
 export {
   createElement,
   getApplications,
+  getApplicationById,
   updateApplication,
   getIsSuperUser,
   showToast,
