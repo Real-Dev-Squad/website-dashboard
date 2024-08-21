@@ -30,16 +30,16 @@ describe('Applications page', () => {
 
     page.on('request', (request) => {
       if (
-        request.url() === `${API_BASE_URL}/applications?size=5` ||
+        request.url() === `${API_BASE_URL}/applications?size=6` ||
         request.url() ===
-          `${API_BASE_URL}/applications?next=YwTi6zFNI3GlDsZVjD8C&size=5`
+          `${API_BASE_URL}/applications?next=YwTi6zFNI3GlDsZVjD8C&size=6`
       ) {
         request.respond({
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({
             applications: fetchedApplications,
-            next: '/applications?next=YwTi6zFNI3GlDsZVjD8C&size=5',
+            next: '/applications?next=YwTi6zFNI3GlDsZVjD8C&size=6',
           }),
           headers: {
             'Access-Control-Allow-Origin': '*',
@@ -48,7 +48,7 @@ describe('Applications page', () => {
           },
         });
       } else if (
-        request.url() === `${API_BASE_URL}/applications?size=5&status=accepted`
+        request.url() === `${API_BASE_URL}/applications?size=6&status=accepted`
       ) {
         request.respond({
           status: 200,
@@ -72,7 +72,7 @@ describe('Applications page', () => {
           body: JSON.stringify(superUserForAudiLogs),
         });
       } else if (
-        request.url() === `${API_BASE_URL}/applications/lavEduxsb2C5Bl4s289P`
+        request.url() === `${API_BASE_URL}/applications/lavEduxsb2C6Bl4s289P`
       ) {
         request.respond({
           status: 200,
@@ -109,7 +109,7 @@ describe('Applications page', () => {
     expect(title).toBeTruthy();
     expect(filterButton).toBeTruthy();
     expect(applicationCards).toBeTruthy();
-    expect(applicationCards.length).toBe(5);
+    expect(applicationCards.length).toBe(6);
   });
 
   it('should load and render the accepted application requests when accept is selected from filter, and after clearing the filter it should again show all the applications', async function () {
@@ -128,12 +128,12 @@ describe('Applications page', () => {
 
     await page.waitForNetworkIdle();
     applicationCards = await page.$$('.application-card');
-    expect(applicationCards.length).toBe(5);
+    expect(applicationCards.length).toBe(6);
   });
 
   it('should load more applications on going to the bottom of the page', async function () {
     let applicationCards = await page.$$('.application-card');
-    expect(applicationCards.length).toBe(5);
+    expect(applicationCards.length).toBe(6);
     await page.evaluate(() => {
       const element = document.querySelector('#page_bottom_element');
       if (element) {
