@@ -395,6 +395,10 @@ body {
   background: var(--color-red-variant1);
 }
 
+.disable-button {
+  opacity: 0.2;
+}
+
 @keyframes slideIn {
   from {
     right: -300px;

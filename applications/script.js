@@ -184,27 +184,14 @@ function openApplicationDetails(application) {
   applicationSection.appendChild(applicationTextArea);
   applicationDetailsMain.appendChild(applicationSection);
 
-  if (application.status === 'pending') {
-    applicationAcceptButton.classList.remove('hidden');
-    applicationAcceptButton.disabled = false;
-    applicationAcceptButton.style.cursor = 'pointer';
-    applicationRejectButton.classList.remove('hidden');
-    applicationRejectButton.disabled = false;
-    applicationRejectButton.style.cursor = 'pointer';
-  } else if (application.status === 'accepted') {
-    applicationAcceptButton.classList.remove('hidden');
-    applicationAcceptButton.disabled = true;
-    applicationAcceptButton.style.cursor = 'not-allowed';
-    applicationRejectButton.classList.remove('hidden');
-    applicationRejectButton.disabled = false;
-    applicationRejectButton.style.cursor = 'pointer';
-  } else {
-    applicationAcceptButton.classList.remove('hidden');
-    applicationAcceptButton.disabled = false;
-    applicationAcceptButton.style.cursor = 'pointer';
-    applicationRejectButton.classList.remove('hidden');
+  if (application.status === 'rejected') {
     applicationRejectButton.disabled = true;
     applicationRejectButton.style.cursor = 'not-allowed';
+    applicationRejectButton.classList.add('disable-button');
+  } else if (application.status === 'accepted') {
+    applicationAcceptButton.disabled = true;
+    applicationAcceptButton.style.cursor = 'not-allowed';
+    applicationAcceptButton.classList.add('disable-button');
   }
 }
 
