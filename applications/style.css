@@ -202,6 +202,12 @@ body {
   line-height: normal;
 }
 
+.hide-overflow {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .application-card .user-intro {
   color: var(--color-gray);
   font-size: 16px;
