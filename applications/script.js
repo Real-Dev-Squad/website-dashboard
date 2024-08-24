@@ -220,6 +220,7 @@ function openApplicationDetails(application, renderById) {
 
 function clearFilter() {
   if (status === 'all') return;
+  window.history.replaceState(null, '', '/applications');
   changeFilter();
   const selectedFilterOption = document.querySelector(
     'input[name="status"]:checked',
@@ -351,6 +352,10 @@ async function renderApplicationById(id) {
   }
   const urlParams = new URLSearchParams(window.location.search);
   status = urlParams.get('status') || 'all';
+
+  if (status !== 'all') {
+    document.querySelector(`input[name="status"]#${status}`).checked = true;
+  }
 
   if (applicationId) {
     await renderApplicationById(applicationId);
