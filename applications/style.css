@@ -240,6 +240,10 @@ body {
   margin: 30px;
 }
 
+.loader.hidden {
+  display: none;
+}
+
 #page_bottom_element {
   width: 100%;
   height: 20px;
@@ -372,6 +376,10 @@ body {
   font-size: 32px;
   margin-top: 20px;
   font-weight: 600;
+}
+
+.no_applications_found.hidden {
+  display: none;
 }
 
 .close-button-icon {
