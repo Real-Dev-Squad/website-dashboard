@@ -147,6 +147,7 @@ body {
   flex-wrap: wrap;
   justify-content: space-between;
   padding-bottom: 10px;
+  padding-top: 32px;
   gap: 25px;
 }
 
@@ -157,7 +158,7 @@ body {
 .application-card {
   border-radius: 15px;
   box-shadow: var(--elevation-1);
-  padding: 15px;
+  padding: 24px;
   width: 44%;
   display: flex;
   flex-direction: column;
@@ -186,6 +187,7 @@ body {
 
   font-weight: 700;
   line-height: normal;
+  padding-bottom: 8px;
 }
 
 .application-card .user-info .company-name {
@@ -279,7 +281,7 @@ body {
 .application-details .application-details-main {
   height: 90%;
   overflow-y: auto;
-  padding: 15px;
+  padding: 15px 30px;
   display: flex;
   flex-direction: column;
   gap: 25px;
