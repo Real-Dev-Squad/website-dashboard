@@ -79,13 +79,25 @@ function closeApplicationDetails() {
   applicationDetailsModal.classList.add('hidden');
   backDropBlur.style.display = 'none';
   document.body.style.overflow = 'auto';
-
-  if (applicationId) {
-    window.location.href = '/applications';
+  const isFirstRender = window.history.state === null;
+  if (isFirstRender) {
+    window.history.replaceState(null, '', '/applications');
+  } else {
+    window.history.back();
   }
 }
 
-function openApplicationDetails(application) {
+function openApplicationDetails(application, renderById) {
+  if (!renderById) {
+    const currentUrlParams = new URLSearchParams(window.location.search);
+    currentUrlParams.append('id', application.id);
+    const applicationByIdUrl = '/applications/?' + currentUrlParams.toString();
+    window.history.pushState(
+      { path: applicationByIdUrl },
+      '',
+      applicationByIdUrl,
+    );
+  }
   currentApplicationId = application.id;
   applicationDetailsMain.innerHTML = '';
   backDropBlur.style.display = 'flex';
@@ -313,7 +325,7 @@ async function renderApplicationById(id) {
       return noApplicationFoundText.classList.remove('hidden');
     }
 
-    openApplicationDetails(application);
+    openApplicationDetails(application, true);
   } catch (error) {
     console.error('Error fetching application by user ID:', error);
     noApplicationFoundText.classList.remove('hidden');
@@ -342,10 +354,9 @@ async function renderApplicationById(id) {
 
   if (applicationId) {
     await renderApplicationById(applicationId);
-  } else {
-    await renderApplicationCards('', status, true);
-    addIntersectionObserver();
   }
+  await renderApplicationCards('', status, true, applicationId);
+  addIntersectionObserver();
 
   changeLoaderVisibility({ hide: true });
 })();
