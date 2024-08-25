@@ -53,8 +53,6 @@ function updateUserApplication({ isAccepted }) {
 
   if (applicationTextarea.value) {
     payload.feedback = applicationTextarea.value;
-  } else {
-    payload.feedback = applicationTextarea.getAttribute('value') || '';
   }
 
   updateApplication({
