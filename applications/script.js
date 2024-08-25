@@ -80,11 +80,7 @@ function closeApplicationDetails() {
   backDropBlur.style.display = 'none';
   document.body.style.overflow = 'auto';
   const isFirstRender = window.history.state === null;
-  if (isFirstRender) {
-    window.history.replaceState(null, '', '/applications');
-  } else {
-    window.history.back();
-  }
+  window.history.replaceState(window.history.state, '', '/applications');
 }
 
 function openApplicationDetails(application, renderById) {
@@ -92,11 +88,7 @@ function openApplicationDetails(application, renderById) {
     const currentUrlParams = new URLSearchParams(window.location.search);
     currentUrlParams.append('id', application.id);
     const applicationByIdUrl = '/applications/?' + currentUrlParams.toString();
-    window.history.pushState(
-      { path: applicationByIdUrl },
-      '',
-      applicationByIdUrl,
-    );
+    window.history.replaceState(window.history.state, '', applicationByIdUrl);
   }
   currentApplicationId = application.id;
   applicationDetailsMain.innerHTML = '';
@@ -220,7 +212,7 @@ function openApplicationDetails(application, renderById) {
 
 function clearFilter() {
   if (status === 'all') return;
-  window.history.replaceState(null, '', '/applications');
+  window.history.replaceState(window.history.state, '', '/applications');
   changeFilter();
   const selectedFilterOption = document.querySelector(
     'input[name="status"]:checked',
@@ -400,7 +392,7 @@ applyFilterButton.addEventListener('click', () => {
   const selectedStatus = selectedFilterOption.value;
 
   const newUrl = `${window.location.pathname}?status=${selectedStatus}`;
-  window.history.pushState({ path: newUrl }, '', newUrl);
+  window.history.replaceState(window.history.state, '', newUrl);
 
   changeFilter();
   status = selectedStatus;
