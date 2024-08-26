@@ -82,7 +82,6 @@ function closeApplicationDetails() {
   applicationDetailsModal.classList.add('hidden');
   backDropBlur.style.display = 'none';
   document.body.style.overflow = 'auto';
-  const isFirstRender = window.history.state === null;
   window.history.replaceState(window.history.state, '', '/applications');
 }
 
