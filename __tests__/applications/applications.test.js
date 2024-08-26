@@ -129,6 +129,10 @@ describe('Applications page', () => {
     await page.waitForNetworkIdle();
     applicationCards = await page.$$('.application-card');
     expect(applicationCards.length).toBe(6);
+    const urlAfterClearingStatusFilter = new URL(page.url());
+    expect(
+      urlAfterClearingStatusFilter.searchParams.get('status') === null,
+    ).toBe(true, 'status query param is not removed from url');
   });
 
   it('should load more applications on going to the bottom of the page', async function () {
@@ -158,6 +162,39 @@ describe('Applications page', () => {
         el.classList.contains('hidden'),
       ),
     ).toBe(false);
+    const urlAfterOpeningModal = new URL(page.url());
+    expect(urlAfterOpeningModal.searchParams.get('id') !== null).toBe(true);
+  });
+
+  it('should close application details modal, when user clicks the close button', async function () {
+    const applicationDetailsModal = await page.$('.application-details');
+    await page.click('.view-details-button');
+    await applicationDetailsModal.$eval('.application-close-button', (node) =>
+      node.click(),
+    );
+    expect(
+      await applicationDetailsModal.evaluate((el) =>
+        el.classList.contains('hidden'),
+      ),
+    ).toBe(true);
+    const urlAfterClosingModal = new URL(page.url());
+    expect(urlAfterClosingModal.searchParams.get('id') === null).toBe(
+      true,
+      'id query param is not removed from url',
+    );
+  });
+
+  it('should load all applications behind the modal on applications/?id= page load', async function () {
+    await page.click('.view-details-button');
+    await page.reload();
+    await page.waitForNetworkIdle();
+    const applicationDetailsModal = await page.$('.application-details');
+    await applicationDetailsModal.$eval('.application-close-button', (node) =>
+      node.click(),
+    );
+    const applicationCards = await page.$$('.application-card');
+    expect(applicationCards).toBeTruthy();
+    expect(applicationCards.length).toBe(6);
   });
 
   it.skip('should show toast message with application updated successfully', async function () {

@@ -82,13 +82,17 @@ function closeApplicationDetails() {
   applicationDetailsModal.classList.add('hidden');
   backDropBlur.style.display = 'none';
   document.body.style.overflow = 'auto';
-
-  if (applicationId) {
-    window.location.href = '/applications';
-  }
+  const isFirstRender = window.history.state === null;
+  window.history.replaceState(window.history.state, '', '/applications');
 }
 
-function openApplicationDetails(application) {
+function openApplicationDetails(application, renderById) {
+  if (!renderById) {
+    const currentUrlParams = new URLSearchParams(window.location.search);
+    currentUrlParams.append('id', application.id);
+    const applicationByIdUrl = '/applications/?' + currentUrlParams.toString();
+    window.history.replaceState(window.history.state, '', applicationByIdUrl);
+  }
   currentApplicationId = application.id;
   applicationDetailsMain.innerHTML = '';
   backDropBlur.style.display = 'flex';
@@ -211,6 +215,7 @@ function openApplicationDetails(application) {
 
 function clearFilter() {
   if (status === 'all') return;
+  window.history.replaceState(window.history.state, '', '/applications');
   changeFilter();
   const selectedFilterOption = document.querySelector(
     'input[name="status"]:checked',
@@ -244,13 +249,13 @@ function createApplicationCard({ application }) {
 
   const companyNameText = createElement({
     type: 'p',
-    attributes: { class: 'company-name' },
+    attributes: { class: 'company-name hide-overflow' },
     innerText: `Company name: ${application.professional.institution}`,
   });
 
   const skillsText = createElement({
     type: 'p',
-    attributes: { class: 'skills' },
+    attributes: { class: 'skills hide-overflow' },
     innerText: `Skills: ${application.professional.skills}`,
   });
 
@@ -260,7 +265,7 @@ function createApplicationCard({ application }) {
 
   const introductionText = createElement({
     type: 'p',
-    attributes: { class: 'user-intro' },
+    attributes: { class: 'user-intro hide-overflow' },
     innerText: application.intro.introduction.slice(0, 200),
   });
 
@@ -316,7 +321,7 @@ async function renderApplicationById(id) {
       return noApplicationFoundText.classList.remove('hidden');
     }
 
-    openApplicationDetails(application);
+    openApplicationDetails(application, true);
   } catch (error) {
     console.error('Error fetching application by user ID:', error);
     noApplicationFoundText.classList.remove('hidden');
@@ -343,12 +348,15 @@ async function renderApplicationById(id) {
   const urlParams = new URLSearchParams(window.location.search);
   status = urlParams.get('status') || 'all';
 
+  if (status !== 'all') {
+    document.querySelector(`input[name="status"]#${status}`).checked = true;
+  }
+
   if (applicationId) {
     await renderApplicationById(applicationId);
-  } else {
-    await renderApplicationCards('', status, true);
-    addIntersectionObserver();
   }
+  await renderApplicationCards('', status, true, applicationId);
+  addIntersectionObserver();
 
   changeLoaderVisibility({ hide: true });
 })();
@@ -387,7 +395,7 @@ applyFilterButton.addEventListener('click', () => {
   const selectedStatus = selectedFilterOption.value;
 
   const newUrl = `${window.location.pathname}?status=${selectedStatus}`;
-  window.history.pushState({ path: newUrl }, '', newUrl);
+  window.history.replaceState(window.history.state, '', newUrl);
 
   changeFilter();
   status = selectedStatus;
