@@ -60,6 +60,9 @@ function updateUserApplication({ isAccepted }) {
     applicationPayload: payload,
   })
     .then((res) => {
+      const updatedFeedback = payload.feedback || '';
+      applicationTextarea.value = updatedFeedback;
+
       showToast({ type: 'success', message: res.message });
       setTimeout(() => closeApplicationDetails(), 1000);
     })
