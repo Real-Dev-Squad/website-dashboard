@@ -13,7 +13,7 @@ function createElement({ type, attributes = {}, innerText }) {
   return element;
 }
 
-async function getApplications({ applicationStatus, size = 5, next = '' }) {
+async function getApplications({ applicationStatus, size = 6, next = '' }) {
   let url;
 
   if (next) url = `${BASE_URL}${next}`;

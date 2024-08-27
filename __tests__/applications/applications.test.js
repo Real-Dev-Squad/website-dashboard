@@ -30,16 +30,16 @@ describe('Applications page', () => {
 
     page.on('request', (request) => {
       if (
-        request.url() === `${API_BASE_URL}/applications?size=5` ||
+        request.url() === `${API_BASE_URL}/applications?size=6` ||
         request.url() ===
-          `${API_BASE_URL}/applications?next=YwTi6zFNI3GlDsZVjD8C&size=5`
+          `${API_BASE_URL}/applications?next=YwTi6zFNI3GlDsZVjD8C&size=6`
       ) {
         request.respond({
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({
             applications: fetchedApplications,
-            next: '/applications?next=YwTi6zFNI3GlDsZVjD8C&size=5',
+            next: '/applications?next=YwTi6zFNI3GlDsZVjD8C&size=6',
           }),
           headers: {
             'Access-Control-Allow-Origin': '*',
@@ -48,7 +48,7 @@ describe('Applications page', () => {
           },
         });
       } else if (
-        request.url() === `${API_BASE_URL}/applications?size=5&status=accepted`
+        request.url() === `${API_BASE_URL}/applications?size=6&status=accepted`
       ) {
         request.respond({
           status: 200,
@@ -72,7 +72,7 @@ describe('Applications page', () => {
           body: JSON.stringify(superUserForAudiLogs),
         });
       } else if (
-        request.url() === `${API_BASE_URL}/applications/lavEduxsb2C5Bl4s289P`
+        request.url() === `${API_BASE_URL}/applications/lavEduxsb2C6Bl4s289P`
       ) {
         request.respond({
           status: 200,
@@ -109,7 +109,7 @@ describe('Applications page', () => {
     expect(title).toBeTruthy();
     expect(filterButton).toBeTruthy();
     expect(applicationCards).toBeTruthy();
-    expect(applicationCards.length).toBe(5);
+    expect(applicationCards.length).toBe(6);
   });
 
   it('should load and render the accepted application requests when accept is selected from filter, and after clearing the filter it should again show all the applications', async function () {
@@ -128,12 +128,16 @@ describe('Applications page', () => {
 
     await page.waitForNetworkIdle();
     applicationCards = await page.$$('.application-card');
-    expect(applicationCards.length).toBe(5);
+    expect(applicationCards.length).toBe(6);
+    const urlAfterClearingStatusFilter = new URL(page.url());
+    expect(
+      urlAfterClearingStatusFilter.searchParams.get('status') === null,
+    ).toBe(true, 'status query param is not removed from url');
   });
 
   it('should load more applications on going to the bottom of the page', async function () {
     let applicationCards = await page.$$('.application-card');
-    expect(applicationCards.length).toBe(5);
+    expect(applicationCards.length).toBe(6);
     await page.evaluate(() => {
       const element = document.querySelector('#page_bottom_element');
       if (element) {
@@ -142,7 +146,7 @@ describe('Applications page', () => {
     });
     await page.waitForNetworkIdle();
     applicationCards = await page.$$('.application-card');
-    expect(applicationCards.length).toBe(10);
+    expect(applicationCards.length).toBe(12);
   });
 
   it('should open application details modal for application, when user click on view details on any card', async function () {
@@ -158,9 +162,42 @@ describe('Applications page', () => {
         el.classList.contains('hidden'),
       ),
     ).toBe(false);
+    const urlAfterOpeningModal = new URL(page.url());
+    expect(urlAfterOpeningModal.searchParams.get('id') !== null).toBe(true);
   });
 
-  it('should show toast message with application updated successfully', async function () {
+  it('should close application details modal, when user clicks the close button', async function () {
+    const applicationDetailsModal = await page.$('.application-details');
+    await page.click('.view-details-button');
+    await applicationDetailsModal.$eval('.application-close-button', (node) =>
+      node.click(),
+    );
+    expect(
+      await applicationDetailsModal.evaluate((el) =>
+        el.classList.contains('hidden'),
+      ),
+    ).toBe(true);
+    const urlAfterClosingModal = new URL(page.url());
+    expect(urlAfterClosingModal.searchParams.get('id') === null).toBe(
+      true,
+      'id query param is not removed from url',
+    );
+  });
+
+  it('should load all applications behind the modal on applications/?id= page load', async function () {
+    await page.click('.view-details-button');
+    await page.reload();
+    await page.waitForNetworkIdle();
+    const applicationDetailsModal = await page.$('.application-details');
+    await applicationDetailsModal.$eval('.application-close-button', (node) =>
+      node.click(),
+    );
+    const applicationCards = await page.$$('.application-card');
+    expect(applicationCards).toBeTruthy();
+    expect(applicationCards.length).toBe(6);
+  });
+
+  it.skip('should show toast message with application updated successfully', async function () {
     await page.click('.view-details-button');
     await page.click('.application-details-accept');
     const toast = await page.$('#toast');

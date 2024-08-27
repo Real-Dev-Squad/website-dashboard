@@ -32,6 +32,10 @@ const applyFilterButton = document.getElementById('apply-filter-button');
 const applicationContainer = document.querySelector('.application-container');
 const clearButton = document.getElementById('clear-button');
 const lastElementContainer = document.getElementById('page_bottom_element');
+
+const urlParams = new URLSearchParams(window.location.search);
+let applicationId = urlParams.get('id');
+
 let currentApplicationId;
 
 let status = 'all';
@@ -46,18 +50,22 @@ function updateUserApplication({ isAccepted }) {
 
   payload['status'] = status;
 
-  if (applicationTextarea.value) payload.feedback = applicationTextarea.value;
+  if (applicationTextarea.value) {
+    payload.feedback = applicationTextarea.value;
+  }
 
   updateApplication({
     applicationId: currentApplicationId,
     applicationPayload: payload,
   })
     .then((res) => {
-      closeApplicationDetails();
+      const updatedFeedback = payload.feedback || '';
+      applicationTextarea.value = updatedFeedback;
+
       showToast({ type: 'success', message: res.message });
+      setTimeout(() => closeApplicationDetails(), 1000);
     })
     .catch((error) => {
-      closeApplicationDetails();
       showToast({ type: 'error', message: error.message });
     });
 }
@@ -73,6 +81,7 @@ function closeApplicationDetails() {
   applicationDetailsModal.classList.add('hidden');
   backDropBlur.style.display = 'none';
   document.body.style.overflow = 'auto';
+  removeQueryParamInUrl('id');
 }
 
 function openApplicationDetails(application) {
@@ -170,15 +179,35 @@ function openApplicationDetails(application) {
       class: 'application-textarea',
       placeHolder: 'Add Feedback here',
     },
+    innerText: application.feedback || '',
   });
 
   applicationSection.appendChild(applicationSectionTitle);
   applicationSection.appendChild(applicationTextArea);
   applicationDetailsMain.appendChild(applicationSection);
+
+  if (application.status === 'rejected') {
+    applicationRejectButton.disabled = true;
+    applicationRejectButton.style.cursor = 'not-allowed';
+    applicationRejectButton.classList.add('disable-button');
+  } else if (application.status === 'accepted') {
+    applicationAcceptButton.disabled = true;
+    applicationAcceptButton.style.cursor = 'not-allowed';
+    applicationAcceptButton.classList.add('disable-button');
+  } else {
+    applicationRejectButton.disabled = false;
+    applicationRejectButton.style.cursor = 'pointer';
+    applicationRejectButton.classList.remove('disable-button');
+
+    applicationAcceptButton.disabled = false;
+    applicationAcceptButton.style.cursor = 'pointer';
+    applicationAcceptButton.classList.remove('disable-button');
+  }
 }
 
 function clearFilter() {
   if (status === 'all') return;
+  removeQueryParamInUrl('status');
   changeFilter();
   const selectedFilterOption = document.querySelector(
     'input[name="status"]:checked',
@@ -191,6 +220,23 @@ function clearFilter() {
 function changeLoaderVisibility({ hide }) {
   if (hide) loader.classList.add('hidden');
   else loader.classList.remove('hidden');
+}
+
+function addQueryParamInUrl(queryParamKey, queryParamVal) {
+  const currentUrlParams = new URLSearchParams(window.location.search);
+  currentUrlParams.append(queryParamKey, queryParamVal);
+  const updatedUrl = '/applications/?' + currentUrlParams.toString();
+  window.history.replaceState(window.history.state, '', updatedUrl);
+}
+
+function removeQueryParamInUrl(queryParamKey) {
+  const currentUrlParams = new URLSearchParams(window.location.search);
+  currentUrlParams.delete(queryParamKey);
+  let updatedUrl = '/applications/';
+  if (currentUrlParams.size > 0) {
+    updatedUrl += '?' + currentUrlParams.toString();
+  }
+  window.history.replaceState(window.history.state, '', updatedUrl);
 }
 
 function createApplicationCard({ application }) {
@@ -212,13 +258,13 @@ function createApplicationCard({ application }) {
 
   const companyNameText = createElement({
     type: 'p',
-    attributes: { class: 'company-name' },
+    attributes: { class: 'company-name hide-overflow' },
     innerText: `Company name: ${application.professional.institution}`,
   });
 
   const skillsText = createElement({
     type: 'p',
-    attributes: { class: 'skills' },
+    attributes: { class: 'skills hide-overflow' },
     innerText: `Skills: ${application.professional.skills}`,
   });
 
@@ -228,7 +274,7 @@ function createApplicationCard({ application }) {
 
   const introductionText = createElement({
     type: 'p',
-    attributes: { class: 'user-intro' },
+    attributes: { class: 'user-intro hide-overflow' },
     innerText: application.intro.introduction.slice(0, 200),
   });
 
@@ -238,9 +284,10 @@ function createApplicationCard({ application }) {
     innerText: 'View Details',
   });
 
-  viewDetailsButton.addEventListener('click', () =>
-    openApplicationDetails(application),
-  );
+  viewDetailsButton.addEventListener('click', () => {
+    addQueryParamInUrl('id', application.id);
+    openApplicationDetails(application);
+  });
 
   applicationCard.appendChild(userInfoContainer);
   applicationCard.appendChild(introductionText);
@@ -283,10 +330,7 @@ async function renderApplicationById(id) {
     if (!application) {
       return noApplicationFoundText.classList.remove('hidden');
     }
-
-    const applicationCard = createApplicationCard({ application });
-    applicationContainer.appendChild(applicationCard);
-    applicationContainer.classList.add('center');
+    openApplicationDetails(application);
   } catch (error) {
     console.error('Error fetching application by user ID:', error);
     noApplicationFoundText.classList.remove('hidden');
@@ -310,17 +354,18 @@ async function renderApplicationById(id) {
     changeLoaderVisibility({ hide: true });
     return;
   }
+  const urlParams = new URLSearchParams(window.location.search);
+  status = urlParams.get('status') || 'all';
 
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  const applicationId = urlParams.get('id');
+  if (status !== 'all') {
+    document.querySelector(`input[name="status"]#${status}`).checked = true;
+  }
 
   if (applicationId) {
     await renderApplicationById(applicationId);
-  } else {
-    await renderApplicationCards('', status, true);
-    addIntersectionObserver();
   }
+  await renderApplicationCards('', status, true, applicationId);
+  addIntersectionObserver();
 
   changeLoaderVisibility({ hide: true });
 })();
@@ -355,8 +400,11 @@ applyFilterButton.addEventListener('click', () => {
   const selectedFilterOption = document.querySelector(
     'input[name="status"]:checked',
   );
+
+  const selectedStatus = selectedFilterOption.value;
+  addQueryParamInUrl('status', selectedStatus);
   changeFilter();
-  status = selectedFilterOption.value;
+  status = selectedStatus;
   renderApplicationCards(nextLink, status);
 });
 
