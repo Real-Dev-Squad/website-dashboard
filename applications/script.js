@@ -81,16 +81,10 @@ function closeApplicationDetails() {
   applicationDetailsModal.classList.add('hidden');
   backDropBlur.style.display = 'none';
   document.body.style.overflow = 'auto';
-  window.history.replaceState(window.history.state, '', '/applications');
+  removeQueryParamInUrl('id');
 }
 
-function openApplicationDetails(application, renderById) {
-  if (!renderById) {
-    const currentUrlParams = new URLSearchParams(window.location.search);
-    currentUrlParams.append('id', application.id);
-    const applicationByIdUrl = '/applications/?' + currentUrlParams.toString();
-    window.history.replaceState(window.history.state, '', applicationByIdUrl);
-  }
+function openApplicationDetails(application) {
   currentApplicationId = application.id;
   applicationDetailsMain.innerHTML = '';
   backDropBlur.style.display = 'flex';
@@ -213,7 +207,7 @@ function openApplicationDetails(application, renderById) {
 
 function clearFilter() {
   if (status === 'all') return;
-  window.history.replaceState(window.history.state, '', '/applications');
+  removeQueryParamInUrl('status');
   changeFilter();
   const selectedFilterOption = document.querySelector(
     'input[name="status"]:checked',
@@ -226,6 +220,23 @@ function clearFilter() {
 function changeLoaderVisibility({ hide }) {
   if (hide) loader.classList.add('hidden');
   else loader.classList.remove('hidden');
+}
+
+function addQueryParamInUrl(queryParamKey, queryParamVal) {
+  const currentUrlParams = new URLSearchParams(window.location.search);
+  currentUrlParams.append(queryParamKey, queryParamVal);
+  const updatedUrl = '/applications/?' + currentUrlParams.toString();
+  window.history.replaceState(window.history.state, '', updatedUrl);
+}
+
+function removeQueryParamInUrl(queryParamKey) {
+  const currentUrlParams = new URLSearchParams(window.location.search);
+  currentUrlParams.delete(queryParamKey);
+  let updatedUrl = '/applications/';
+  if (currentUrlParams.size > 0) {
+    updatedUrl += '?' + currentUrlParams.toString();
+  }
+  window.history.replaceState(window.history.state, '', updatedUrl);
 }
 
 function createApplicationCard({ application }) {
@@ -273,9 +284,10 @@ function createApplicationCard({ application }) {
     innerText: 'View Details',
   });
 
-  viewDetailsButton.addEventListener('click', () =>
-    openApplicationDetails(application),
-  );
+  viewDetailsButton.addEventListener('click', () => {
+    addQueryParamInUrl('id', application.id);
+    openApplicationDetails(application);
+  });
 
   applicationCard.appendChild(userInfoContainer);
   applicationCard.appendChild(introductionText);
@@ -318,8 +330,7 @@ async function renderApplicationById(id) {
     if (!application) {
       return noApplicationFoundText.classList.remove('hidden');
     }
-
-    openApplicationDetails(application, true);
+    openApplicationDetails(application);
   } catch (error) {
     console.error('Error fetching application by user ID:', error);
     noApplicationFoundText.classList.remove('hidden');
@@ -391,10 +402,7 @@ applyFilterButton.addEventListener('click', () => {
   );
 
   const selectedStatus = selectedFilterOption.value;
-
-  const newUrl = `${window.location.pathname}?status=${selectedStatus}`;
-  window.history.replaceState(window.history.state, '', newUrl);
-
+  addQueryParamInUrl('status', selectedStatus);
   changeFilter();
   status = selectedStatus;
   renderApplicationCards(nextLink, status);
