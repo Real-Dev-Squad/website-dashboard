@@ -33,8 +33,7 @@ const applicationContainer = document.querySelector('.application-container');
 const clearButton = document.getElementById('clear-button');
 const lastElementContainer = document.getElementById('page_bottom_element');
 
-const queryString = window.location.search;
-const urlParams = new URLSearchParams(queryString);
+const urlParams = new URLSearchParams(window.location.search);
 let applicationId = urlParams.get('id');
 
 let currentApplicationId;
