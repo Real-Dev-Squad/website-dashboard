@@ -224,6 +224,9 @@ function changeLoaderVisibility({ hide }) {
 
 function addQueryParamInUrl(queryParamKey, queryParamVal) {
   const currentUrlParams = new URLSearchParams(window.location.search);
+  if (currentUrlParams.has(queryParamKey)) {
+    currentUrlParams.delete(queryParamKey);
+  }
   currentUrlParams.append(queryParamKey, queryParamVal);
   const updatedUrl = '/applications/?' + currentUrlParams.toString();
   window.history.replaceState(window.history.state, '', updatedUrl);
