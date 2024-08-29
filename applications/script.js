@@ -32,6 +32,12 @@ const applyFilterButton = document.getElementById('apply-filter-button');
 const applicationContainer = document.querySelector('.application-container');
 const clearButton = document.getElementById('clear-button');
 const lastElementContainer = document.getElementById('page_bottom_element');
+const applicationDetailsAcceptedMsg = document.querySelector(
+  '.application-details-accepted-msg',
+);
+const applicationDetailsRejectedMsg = document.querySelector(
+  '.application-details-rejected-msg',
+);
 
 const urlParams = new URLSearchParams(window.location.search);
 let applicationId = urlParams.get('id');
@@ -187,21 +193,30 @@ function openApplicationDetails(application) {
   applicationDetailsMain.appendChild(applicationSection);
 
   if (application.status === 'rejected') {
-    applicationRejectButton.disabled = true;
-    applicationRejectButton.style.cursor = 'not-allowed';
-    applicationRejectButton.classList.add('disable-button');
+    applicationAcceptButton.classList.add('hidden');
+    applicationRejectButton.classList.add('hidden');
+
+    applicationDetailsAcceptedMsg.classList.add('hidden');
+    applicationDetailsRejectedMsg.classList.remove('hidden');
   } else if (application.status === 'accepted') {
-    applicationAcceptButton.disabled = true;
-    applicationAcceptButton.style.cursor = 'not-allowed';
-    applicationAcceptButton.classList.add('disable-button');
+    applicationAcceptButton.classList.add('hidden');
+    applicationRejectButton.classList.add('hidden');
+
+    applicationDetailsAcceptedMsg.classList.remove('hidden');
+    applicationDetailsRejectedMsg.classList.add('hidden');
   } else {
     applicationRejectButton.disabled = false;
     applicationRejectButton.style.cursor = 'pointer';
     applicationRejectButton.classList.remove('disable-button');
+    applicationRejectButton.classList.remove('hidden');
 
+    applicationAcceptButton.classList.remove('hidden');
     applicationAcceptButton.disabled = false;
     applicationAcceptButton.style.cursor = 'pointer';
     applicationAcceptButton.classList.remove('disable-button');
+
+    applicationDetailsAcceptedMsg.classList.add('hidden');
+    applicationDetailsRejectedMsg.classList.add('hidden');
   }
 }
 
