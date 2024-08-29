@@ -1,5 +1,3 @@
-import { SUPER_USER } from './constants.js';
-
 import {
   getIdentityLogs,
   getIsSuperUser,

@@ -3,6 +3,7 @@ import {
   TYPE_NAME,
   BACKGROUND_COLOR,
   TYPE_DESCRIPTION,
+  SUPER_USER,
 } from './constants.js';
 
 async function getIdentityLogs(query) {
