@@ -32,11 +32,9 @@ const applyFilterButton = document.getElementById('apply-filter-button');
 const applicationContainer = document.querySelector('.application-container');
 const clearButton = document.getElementById('clear-button');
 const lastElementContainer = document.getElementById('page_bottom_element');
-const applicationDetailsAcceptedMsg = document.querySelector(
-  '.application-details-accepted-msg',
-);
-const applicationDetailsRejectedMsg = document.querySelector(
-  '.application-details-rejected-msg',
+
+const applicationDetailsActionsContainer = document.querySelector(
+  '.application-details-actions',
 );
 
 const urlParams = new URLSearchParams(window.location.search);
@@ -87,6 +85,18 @@ function closeApplicationDetails() {
   applicationDetailsModal.classList.add('hidden');
   backDropBlur.style.display = 'none';
   document.body.style.overflow = 'auto';
+  const applicationAcceptedMsg = document.querySelector(
+    '.application-details-accepted-msg',
+  );
+  const applicationRejectedMsg = document.querySelector(
+    '.application-details-rejected-msg',
+  );
+  if (applicationAcceptedMsg) {
+    applicationAcceptedMsg.remove();
+  }
+  if (applicationRejectedMsg) {
+    applicationRejectedMsg.remove();
+  }
   removeQueryParamInUrl('id');
 }
 
@@ -195,15 +205,25 @@ function openApplicationDetails(application) {
   if (application.status === 'rejected') {
     applicationAcceptButton.classList.add('hidden');
     applicationRejectButton.classList.add('hidden');
-
-    applicationDetailsAcceptedMsg.classList.add('hidden');
-    applicationDetailsRejectedMsg.classList.remove('hidden');
+    const applicationDetailsRejectedMsg = createElement({
+      type: 'p',
+      attributes: {
+        class: 'application-details-rejected-msg',
+      },
+      innerText: 'Application is already rejected',
+    });
+    applicationDetailsActionsContainer.append(applicationDetailsRejectedMsg);
   } else if (application.status === 'accepted') {
     applicationAcceptButton.classList.add('hidden');
     applicationRejectButton.classList.add('hidden');
-
-    applicationDetailsAcceptedMsg.classList.remove('hidden');
-    applicationDetailsRejectedMsg.classList.add('hidden');
+    const applicationDetailsAcceptedMsg = createElement({
+      type: 'p',
+      attributes: {
+        class: 'application-details-accepted-msg',
+      },
+      innerText: 'Application was already accepted',
+    });
+    applicationDetailsActionsContainer.append(applicationDetailsAcceptedMsg);
   } else {
     applicationRejectButton.disabled = false;
     applicationRejectButton.style.cursor = 'pointer';
@@ -214,9 +234,6 @@ function openApplicationDetails(application) {
     applicationAcceptButton.disabled = false;
     applicationAcceptButton.style.cursor = 'pointer';
     applicationAcceptButton.classList.remove('disable-button');
-
-    applicationDetailsAcceptedMsg.classList.add('hidden');
-    applicationDetailsRejectedMsg.classList.add('hidden');
   }
 }
 
