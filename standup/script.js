@@ -109,15 +109,15 @@ function processStandupData(standupItems) {
 }
 
 function createTableHeaderElement() {
-  const tableHeaderElement = createElement({
+  const tableHeaderElement = createStandupElement({
     type: 'thead',
     classList: ['table-header'],
   });
-  const headerRowElement = createElement({
+  const headerRowElement = createStandupElement({
     type: 'tr',
     classList: ['table-header'],
   });
-  const headerCellElement = createElement({
+  const headerCellElement = createStandupElement({
     type: 'th',
     classList: ['user', 'date', 'table-head'],
   });
@@ -129,7 +129,7 @@ function createTableHeaderElement() {
     date = new Date(date.getTime() - oneDay)
   ) {
     if (!isSunday(date)) {
-      const dateCellElement = createElement({
+      const dateCellElement = createStandupElement({
         type: 'th',
         classList: ['dates'],
         scope: 'row',
@@ -159,20 +159,26 @@ function createTableHeaderElement() {
 }
 
 function createTableRowElement({ userName, imageUrl, userStandupData }) {
-  const rowElement = createElement({ type: 'tr', classList: ['table-row'] });
-  const userCellElement = createElement({ type: 'td', classList: ['user'] });
+  const rowElement = createStandupElement({
+    type: 'tr',
+    classList: ['table-row'],
+  });
+  const userCellElement = createStandupElement({
+    type: 'td',
+    classList: ['user'],
+  });
   userCellElement.scope = 'row';
-  const userContainerElement = createElement({
+  const userContainerElement = createStandupElement({
     type: 'div',
     classList: ['user-list-item'],
   });
-  const userImageElement = createElement({
+  const userImageElement = createStandupElement({
     type: 'img',
     classList: ['user-image'],
   });
   userImageElement.src = imageUrl || dummyPicture;
   userImageElement.alt = userName;
-  const userNameElement = createElement({
+  const userNameElement = createStandupElement({
     type: 'p',
     classList: ['user-name'],
   });
@@ -190,31 +196,31 @@ function createTableRowElement({ userName, imageUrl, userStandupData }) {
   const month = userStandupData.month;
   const year = userStandupData.year;
   for (let i = 0; i < standupStatus.length; i++) {
-    const statusCellElement = createElement({
+    const statusCellElement = createStandupElement({
       type: 'td',
       classList: ['status'],
     });
     statusCellElement.textContent = standupStatus[i];
-    const tooltipElement = createElement({
+    const tooltipElement = createStandupElement({
       type: 'div',
       classList: ['tooltiptext'],
       style: {
         visibility: 'visible',
       },
     });
-    const completedTextElement = createElement({
+    const completedTextElement = createStandupElement({
       type: 'p',
       classList: ['today-standup', 'tooltip-text'],
     });
-    const yesterdayStandupElement = createElement({
+    const yesterdayStandupElement = createStandupElement({
       type: 'p',
       classList: ['yesterday-standup', 'tooltip-text'],
     });
-    const blockersElement = createElement({
+    const blockersElement = createStandupElement({
       type: 'p',
       classList: ['blockers', 'tooltip-text'],
     });
-    const noStandupTextElement = createElement({
+    const noStandupTextElement = createStandupElement({
       type: 'p',
       classList: ['no-standup-text'],
     });
