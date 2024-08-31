@@ -343,14 +343,15 @@ body {
   display: flex;
   align-items: flex-start;
   height: 8%;
-  justify-content: space-around;
+  align-items: center;
   padding: 10px;
   padding-bottom: 16px;
+  padding-left: 30px;
+  padding-right: 30px;
 }
 
 .application-details .application-details-actions .application-details-reject,
 .application-details .application-details-actions .application-details-accept {
-  width: 44%;
   cursor: pointer;
   border: none;
   height: 95%;
@@ -362,11 +363,37 @@ body {
 }
 
 .application-details .application-details-actions .application-details-reject {
-  background: var(--red-color);
+  color: var(--red-color);
+  height: auto;
+  background-color: white;
+  margin-left: auto;
+  margin-right: auto;
+  text-decoration: underline;
 }
 
 .application-details .application-details-actions .application-details-accept {
   background: var(--color-primary);
+  width: 50%;
+}
+
+.application-details-actions .hidden {
+  display: none;
+}
+
+.application-details-accepted-msg,
+.application-details-rejected-msg {
+  font-weight: bold;
+  font-size: 18px;
+  width: 100%;
+  text-align: center;
+}
+
+.application-details-accepted-msg {
+  color: var(--color-green);
+}
+
+.application-details-rejected-msg {
+  color: var(--red-color);
 }
 
 .unauthorized-text {
