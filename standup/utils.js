@@ -14,7 +14,7 @@ async function makeApiCall(url, method, body, credentials, headers, options) {
   }
 }
 
-function createElement({ type, classList }) {
+function createStandupElement({ type, classList }) {
   const element = document.createElement(type);
   element.classList.add(...classList);
   return element;
@@ -46,25 +46,25 @@ function createSidebarPanelElement(
   currentMonthName,
   currentYear,
 ) {
-  const standupHeadElement = createElement({
+  const standupHeadElement = createStandupElement({
     type: 'h4',
     classList: ['standup-head'],
   });
   standupHeadElement.innerHTML = `Standup for ${day} ${currentMonthName} ${currentYear}`;
-  const sidebarPanelElement = createElement({
+  const sidebarPanelElement = createStandupElement({
     type: 'div',
     classList: ['sidebar-panel', 'sidebar'],
   });
   sidebarPanelElement.id = 'standupSidebar';
-  const completedElement = createElement({
+  const completedElement = createStandupElement({
     type: 'div',
     classList: ['completed'],
   });
-  const plannedElement = createElement({
+  const plannedElement = createStandupElement({
     type: 'div',
     classList: ['planned'],
   });
-  const blockersElement = createElement({
+  const blockersElement = createStandupElement({
     type: 'div',
     classList: ['blockers'],
   });
