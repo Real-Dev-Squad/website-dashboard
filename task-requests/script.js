@@ -60,22 +60,25 @@ async function getTaskRequests(query = {}, nextLink) {
 
     if (res.status === 401) {
       showMessage('ERROR', ErrorMessages.UNAUTHENTICATED);
-      return;
+      return { data: [] };
     }
 
     if (res.status === 403) {
       showMessage('ERROR', ErrorMessages.UNAUTHORIZED);
-      return;
+      return { data: [] };
     }
 
     if (res.status === 404) {
       showMessage('ERROR', ErrorMessages.NOT_FOUND);
-      return;
+      return { data: [] };
     }
 
     showMessage('ERROR', ErrorMessages.SERVER_ERROR);
+    return { data: [] };
   } catch (e) {
     console.error(e);
+    showMessage('ERROR', ErrorMessages.SERVER_ERROR);
+    return { data: [] };
   }
 }
 
