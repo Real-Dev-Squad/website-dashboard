@@ -362,15 +362,18 @@ body {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
+  justify-items: center;
 }
 .taskRequest__message {
-  line-height: 1.25rem;
+  line-height: 1.2;
   font-weight: 600;
   text-align: center;
   font-size: 1.5rem;
   width: 100%;
   position: absolute;
+  word-wrap: break-word;
 }
+
 .taskRequest__message--error {
   color: var(--color-error);
   font-weight: 600;
@@ -481,6 +484,10 @@ body {
 
   .funnel-icon {
     margin: auto;
+  }
+
+  .taskRequest__message--error {
+    position: static;
   }
 }
 
