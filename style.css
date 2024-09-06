@@ -99,8 +99,9 @@ footer {
 }
 
 .action-button {
+  width: 350px;
   color: var(--black-color);
-  font-weight: 500;
+  font-weight: 1000;
   font-size: larger;
   background-color: var(--white-color);
   border: 2px solid var(--black-color);
@@ -117,6 +118,14 @@ footer {
   color: var(--white-color);
   background-color: var(--blue-color);
   border-color: var(--blue-color);
+}
+
+
+.description{
+  margin-top: 5px;
+  font-weight: 50;
+  font-size:medium;
+
 }
 
 #sync-buttons.element-display-remove {
