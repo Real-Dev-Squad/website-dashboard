@@ -245,11 +245,27 @@ footer {
   display: none !important;
 }
 
-@media only screen and (max-width: 600px) {
+/* @media only screen and (max-width: 600px) {
   .buttonSection {
     flex-direction: column;
   }
   .action-button {
     text-align: center;
+  }
+} */
+
+
+@media only screen and (max-width: 600px) {
+
+  .buttonSection{
+    flex-direction: column;
+    height: auto;
+    padding: 15px;
+  }
+  .action-button{
+    text-align: center;
+    width: 100%;
+    padding: 10px;
+    font-size: medium
   }
 }
