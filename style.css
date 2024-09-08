@@ -120,12 +120,10 @@ footer {
   border-color: var(--blue-color);
 }
 
-
-.description{
+.description {
   margin-top: 5px;
   font-weight: 50;
-  font-size:medium;
-
+  font-size: medium;
 }
 
 #sync-buttons.element-display-remove {
@@ -254,18 +252,16 @@ footer {
   }
 } */
 
-
 @media only screen and (max-width: 600px) {
-
-  .buttonSection{
+  .buttonSection {
     flex-direction: column;
     height: auto;
     padding: 15px;
   }
-  .action-button{
+  .action-button {
     text-align: center;
     width: 100%;
     padding: 10px;
-    font-size: medium
+    font-size: medium;
   }
 }
