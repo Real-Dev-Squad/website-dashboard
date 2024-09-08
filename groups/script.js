@@ -18,7 +18,12 @@ import {
   getUserGroupRoles,
   getUserSelf,
   removeRoleFromMember,
+  getDiscordGroupIdsFromSearch,
+  getParamValueFromURL,
+  setParamValueInURL,
 } from './utils.js';
+
+const groupSearchParamsKey = 'name';
 
 const handler = {
   set: (obj, prop, value) => {
@@ -53,16 +58,17 @@ const handler = {
         });
         break;
       case 'search':
+        setParamValueInURL(groupSearchParamsKey, value);
         if (value === '') {
           if (dataStore.groups == null) break;
           dataStore.filteredGroupsIds = Object.values(dataStore.groups).map(
             (group) => group.id,
           );
         } else {
-          const search = value.toLowerCase();
-          dataStore.filteredGroupsIds = Object.values(dataStore.groups)
-            .filter((group) => group.title.toLowerCase().includes(search))
-            .map((group) => group.id);
+          dataStore.filteredGroupsIds = getDiscordGroupIdsFromSearch(
+            Object.values(dataStore.groups),
+            value,
+          );
         }
         obj[prop] = value;
         break;
@@ -107,7 +113,7 @@ const dataStore = new Proxy(
     userSelf: null,
     groups: null,
     filteredGroupsIds: null,
-    search: '',
+    search: getParamValueFromURL(groupSearchParamsKey),
     discordId: null,
     isCreateGroupModalOpen: false,
   },
@@ -171,6 +177,10 @@ const afterAuthentication = async () => {
         };
         return acc;
       }, {});
+      dataStore.filteredGroupsIds = getDiscordGroupIdsFromSearch(
+        Object.values(dataStore.groups),
+        dataStore.search,
+      );
       dataStore.discordId = roleData.userId;
     },
   );
@@ -188,6 +198,7 @@ const bindGroupCreationButton = () => {
 
 const bindSearchInput = () => {
   const searchInput = document.querySelector('.search__input');
+  searchInput.value = dataStore.search;
   searchInput.addEventListener('input', (e) => {
     dataStore.search = e.target.value;
   });

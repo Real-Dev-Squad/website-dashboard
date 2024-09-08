@@ -126,20 +126,38 @@ function removeGroupKeywordFromDiscordRoleName(groupName) {
   return groupName;
 }
 
-//Function to parse only search value from URL
-function getSearchValueFromURL() {
-  const params = new URLSearchParams(window.location.search);
-
-  let searchValue = null;
-
-  for (const [key, value] of params.entries()) {
-    if (value === '') {
-      searchValue = key;
-      break;
-    }
-  }
-  return searchValue;
+function getDiscordGroupIdsFromSearch(groups, multipleGroupSearch) {
+  if (!multipleGroupSearch) return groups.map((group) => group.id);
+  const multipleGroupSearchSeparator = ',';
+  const searchGroups = multipleGroupSearch
+    .split(multipleGroupSearchSeparator)
+    .map((group) => group.trim().toLowerCase());
+  const matchGroups = groups.filter((group) =>
+    searchGroups.some((searchGroup) =>
+      group.title.toLowerCase().includes(searchGroup),
+    ),
+  );
+  return matchGroups.map((group) => group.id);
 }
+
+// Function to return the a parameter value from the URL
+function getParamValueFromURL(paramKey) {
+  const params = new URLSearchParams(window.location.search);
+  return params.get(paramKey);
+}
+
+// Function to set a parameter value in the URL
+function setParamValueInURL(paramKey, paramValue) {
+  const params = new URLSearchParams(window.location.search);
+  if (paramValue === '') params.delete(paramKey);
+  else params.set(paramKey, paramValue);
+  window.history.replaceState(
+    {},
+    '',
+    window.location.pathname + (params.toString() && `?${params}`),
+  );
+}
+
 export {
   getUserGroupRoles,
   getMembers,
@@ -149,5 +167,7 @@ export {
   addGroupRoleToMember,
   removeRoleFromMember,
   removeGroupKeywordFromDiscordRoleName,
-  getSearchValueFromURL,
+  getDiscordGroupIdsFromSearch,
+  getParamValueFromURL,
+  setParamValueInURL,
 };
