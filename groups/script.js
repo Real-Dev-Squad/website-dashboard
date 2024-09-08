@@ -59,17 +59,10 @@ const handler = {
         break;
       case 'search':
         setParamValueInURL(groupSearchParamsKey, value);
-        if (value === '') {
-          if (dataStore.groups == null) break;
-          dataStore.filteredGroupsIds = Object.values(dataStore.groups).map(
-            (group) => group.id,
-          );
-        } else {
-          dataStore.filteredGroupsIds = getDiscordGroupIdsFromSearch(
-            Object.values(dataStore.groups),
-            value,
-          );
-        }
+        dataStore.filteredGroupsIds = getDiscordGroupIdsFromSearch(
+          Object.values(dataStore.groups),
+          value,
+        );
         obj[prop] = value;
         break;
       case 'isGroupCreationModalOpen':
