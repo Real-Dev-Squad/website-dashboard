@@ -24,7 +24,7 @@ const extensionRequestsList = {
       title: 'A new title',
     },
   ],
-  next: '/extension-requests&size=5&order=asc',
+  next: '/extension-requests&size=5&order=desc',
 };
 
 const extensionRequestsListPendingDescending = {
@@ -143,7 +143,7 @@ const extensionRequestsListPending = {
       title: 'A different title 2',
     },
   ],
-  next: '/extension-requests?order=asc&size=5&q=status%3APENDING',
+  next: '/extension-requests?order=desc&size=5&q=status%3APENDING',
 };
 
 const extensionRequestsListApproved = {
@@ -172,7 +172,7 @@ const extensionRequestsListApproved = {
       title: 'test title',
     },
   ],
-  next: '/extension-requests?q=status%3AAPPROVED&size=5&order=asc',
+  next: '/extension-requests?q=status%3AAPPROVED&size=5&order=desc',
 };
 
 const extensionRequestResponse = {

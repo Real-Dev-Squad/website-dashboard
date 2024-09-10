@@ -46,9 +46,9 @@ describe('Tests the Extension Requests Screen', () => {
       const url = interceptedRequest.url();
       if (
         url ===
-          'https://api.realdevsquad.com/extension-requests?order=asc&size=5&q=status%3APENDING' ||
+          'https://api.realdevsquad.com/extension-requests?order=desc&size=5&q=status%3APENDING' ||
         url ===
-          'https://api.realdevsquad.com/extension-requests?dev=true&order=asc'
+          'https://api.realdevsquad.com/extension-requests?dev=true&order=desc'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -96,7 +96,7 @@ describe('Tests the Extension Requests Screen', () => {
             'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
-          body: JSON.stringify(extensionRequestsListPendingDescending),
+          body: JSON.stringify(extensionRequestsListPendingDescending),  //<-------------------
         });
       } else if (
         url === 'https://api.realdevsquad.com/users?search=sunny&size=1'
@@ -196,7 +196,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?order=asc&size=5&q=status%3APENDING%2Cassignee%3AiODXB6gfsjaZB9p0XlBw'
+        'https://api.realdevsquad.com/extension-requests?order=desc&size=5&q=status%3APENDING%2Cassignee%3AiODXB6gfsjaZB9p0XlBw'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -210,7 +210,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?order=asc&size=5&q=status%3APENDING%2Cassignee%3AiODXB6gfsjaZB9p0XlBw%2B7yzVDl8s1ORNCtH9Ps7K'
+        'https://api.realdevsquad.com/extension-requests?order=desc&size=5&q=status%3APENDING%2Cassignee%3AiODXB6gfsjaZB9p0XlBw%2B7yzVDl8s1ORNCtH9Ps7K'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -278,9 +278,9 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-          'https://api.realdevsquad.com/extension-requests?order=asc&size=5&q=status%3AAPPROVED%2BPENDING%2BDENIED' ||
+          'https://api.realdevsquad.com/extension-requests?order=desc&size=5&q=status%3AAPPROVED%2BPENDING%2BDENIED' ||
         url ===
-          'https://api.realdevsquad.com/extension-requests?dev=true&order=asc&q=status%3AAPPROVED%2BDENIED'
+          'https://api.realdevsquad.com/extension-requests?dev=true&order=desc&q=status%3AAPPROVED%2BDENIED'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -346,7 +346,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?order=asc&size=5&q=status%3AAPPROVED%2Cassignee%3AiODXB6gfsjaZB9p0XlBw%2B7yzVDl8s1ORNCtH9Ps7K'
+        'https://api.realdevsquad.com/extension-requests?order=desc&size=5&q=status%3AAPPROVED%2Cassignee%3AiODXB6gfsjaZB9p0XlBw%2B7yzVDl8s1ORNCtH9Ps7K'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -360,7 +360,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?order=asc&size=1&q=status%3APENDING'
+        'https://api.realdevsquad.com/extension-requests?order=desc&size=1&q=status%3APENDING'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -681,7 +681,7 @@ describe('Tests the Extension Requests Screen', () => {
     expect(requestDaysArray).toEqual(sortedRequestDaysArray);
   });
 
-  it('Checks whether the cards displayed in descending order when sort icon is clicked', async () => {
+  it('Checks whether the cards displayed in descending order when sort icon is clicked', async () => {     // <-----------
     const sortButton = await page.$('.sort-button');
 
     await sortButton.click();
@@ -916,12 +916,12 @@ describe('Tests the Extension Requests Screen', () => {
     await page.waitForNetworkIdle();
     const url = page.url();
     expect(url).toBe(
-      `${baseUrl}?order=asc&size=5&q=status%3AAPPROVED%2Cassignee%3Asunny%2Brandhir`,
+      `${baseUrl}?order=desc&size=5&q=status%3AAPPROVED%2Cassignee%3Asunny%2Brandhir`,
     );
   });
   it('Should have UI elements in sync with url', async () => {
     await page.goto(
-      `${baseUrl}/?order=asc&size=5&q=status%3AAPPROVED%2Cassignee%3Asunny%2Brandhir`,
+      `${baseUrl}/?order=desc&size=5&q=status%3AAPPROVED%2Cassignee%3Asunny%2Brandhir`,
     );
     const filterButton = await page.$('#filter-button');
     await filterButton.click();
@@ -936,15 +936,15 @@ describe('Tests the Extension Requests Screen', () => {
     );
     expect(searchText).toBe('sunny,randhir');
     await page.waitForSelector('.sort-button');
-    const ascSortIconDisplayStyle = await page.$eval(
-      '#asc-sort-icon',
+    const descSortIconDisplayStyle = await page.$eval(
+      '#desc-sort-icon',
       (icon) => window.getComputedStyle(icon).display,
     );
-    expect(ascSortIconDisplayStyle).toBe('block');
+    expect(descSortIconDisplayStyle).toBe('block');
   });
 
   it('Should show empty message if all extension requests have been addressed', async () => {
-    await page.goto(`${baseUrl}/?order=asc&size=1&q=status%3APENDING`);
+    await page.goto(`${baseUrl}/?order=desc&size=1&q=status%3APENDING`);
     await page.waitForNetworkIdle();
 
     extensionRequestsElement = await page.$('.extension-requests');
