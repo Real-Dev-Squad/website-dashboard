@@ -4,7 +4,7 @@ const {
   extensionRequestsListPending,
   extensionRequestsListApproved,
   extensionRequestResponse,
-  extensionRequestsListPendingDescending,
+  extensionRequestsListPendingAscending,
   extensionRequestsListUserSearch,
   extensionRequestListForAuditLogs,
 } = require('../../mock-data/extension-requests');
@@ -86,7 +86,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?order=desc&size=5&q=status%3APENDING'
+        'https://api.realdevsquad.com/extension-requests?order=asc&size=5&q=status%3APENDING'
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -96,7 +96,7 @@ describe('Tests the Extension Requests Screen', () => {
             'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
-          body: JSON.stringify(extensionRequestsListPendingDescending),  //<-------------------
+          body: JSON.stringify(extensionRequestsListPendingAscending),
         });
       } else if (
         url === 'https://api.realdevsquad.com/users?search=sunny&size=1'
@@ -677,11 +677,11 @@ describe('Tests the Extension Requests Screen', () => {
 
     const sortedRequestDaysArray = requestDaysArray
       .slice()
-      .sort((a, b) => a - b);
+      .sort((a, b) => b - a);
     expect(requestDaysArray).toEqual(sortedRequestDaysArray);
   });
 
-  it('Checks whether the cards displayed in descending order when sort icon is clicked', async () => {     // <-----------
+  it('Checks whether the cards displayed in ascending order when sort icon is clicked', async () => {
     const sortButton = await page.$('.sort-button');
 
     await sortButton.click();
@@ -697,7 +697,7 @@ describe('Tests the Extension Requests Screen', () => {
       requestDaysArray.push(requestedDays.slice(5));
     }
 
-    const sortedRequestDaysArray = [...requestDaysArray].sort().reverse();
+    const sortedRequestDaysArray = [...requestDaysArray].sort();
 
     expect(requestDaysArray).toEqual(sortedRequestDaysArray);
   });

@@ -27,18 +27,29 @@ const extensionRequestsList = {
   next: '/extension-requests&size=5&order=desc',
 };
 
-const extensionRequestsListPendingDescending = {
+const extensionRequestsListPendingAscending = {
   message: 'Extension Requests returned successfully!',
   allExtensionRequests: [
     {
+      assignee: 'sunny',
+      id: 'lGQ3AjUlgNB6Jd8jXaEC',
+      newEndsOn: 1690528980,
+      oldEndsOn: 1689954609.948,
+      reason: 'test reason',
+      status: 'PENDING',
+      taskId: 'PYj79ki2agB0q5JN3kUf',
+      timestamp: 1691734400.045, // Oldest timestamp
+      title: 'A title',
+    },
+    {
       assignee: 'randhir',
-      id: 'QISvF7kAmnD9vXHwwIs8',
+      id: 'QISvF7kAmnD9vXHwwIsG',
       newEndsOn: 1690528980,
       oldEndsOn: 1689954609.948,
       reason: 'b',
       status: 'PENDING',
       taskId: 'PYj79ki2agB0q5JN3kUf',
-      timestamp: 1691993520.03,
+      timestamp: 1691820785.341,
       title: 'A new title',
     },
     {
@@ -54,25 +65,14 @@ const extensionRequestsListPendingDescending = {
     },
     {
       assignee: 'randhir',
-      id: 'QISvF7kAmnD9vXHwwIsG',
+      id: 'QISvF7kAmnD9vXHwwIs8',
       newEndsOn: 1690528980,
       oldEndsOn: 1689954609.948,
       reason: 'b',
       status: 'PENDING',
       taskId: 'PYj79ki2agB0q5JN3kUf',
-      timestamp: 1691820785.341,
+      timestamp: 1691993520.03, // Most recent timestamp
       title: 'A new title',
-    },
-    {
-      assignee: 'sunny',
-      id: 'lGQ3AjUlgNB6Jd8jXaEC',
-      newEndsOn: 1690528980,
-      oldEndsOn: 1689954609.948,
-      reason: 'test reason',
-      status: 'PENDING',
-      taskId: 'PYj79ki2agB0q5JN3kUf',
-      timestamp: 1691734400.045,
-      title: 'A title',
     },
   ],
   next: '/extension-requests?order=desc&size=5&q=status%3APENDING',
@@ -223,7 +223,7 @@ module.exports = {
   extensionRequestsListApproved,
   extensionRequestsListPending,
   extensionRequestResponse,
-  extensionRequestsListPendingDescending,
+  extensionRequestsListPendingAscending,
   extensionRequestsListUserSearch,
   extensionRequestListForAuditLogs,
 };
