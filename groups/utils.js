@@ -128,9 +128,9 @@ function removeGroupKeywordFromDiscordRoleName(groupName) {
 
 function getDiscordGroupIdsFromSearch(groups, multipleGroupSearch) {
   if (!multipleGroupSearch) return groups.map((group) => group.id);
-  const multipleGroupSearchSeparator = ',';
+  const GROUP_SEARCH_SEPARATOR = ',';
   const searchGroups = multipleGroupSearch
-    .split(multipleGroupSearchSeparator)
+    .split(GROUP_SEARCH_SEPARATOR)
     .map((group) => group.trim().toLowerCase());
   const matchGroups = groups.filter((group) =>
     searchGroups.some((searchGroup) =>
@@ -140,13 +140,11 @@ function getDiscordGroupIdsFromSearch(groups, multipleGroupSearch) {
   return matchGroups.map((group) => group.id);
 }
 
-// Function to return the a parameter value from the URL
 function getParamValueFromURL(paramKey) {
   const params = new URLSearchParams(window.location.search);
   return params.get(paramKey);
 }
 
-// Function to set a parameter value in the URL
 function setParamValueInURL(paramKey, paramValue) {
   const params = new URLSearchParams(window.location.search);
   if (paramValue === '') params.delete(paramKey);

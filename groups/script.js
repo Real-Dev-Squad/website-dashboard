@@ -23,7 +23,15 @@ import {
   setParamValueInURL,
 } from './utils.js';
 
-const groupSearchParamsKey = 'name';
+const QUERY_PARAM_KEY = {
+  DEV_FEATURE_FLAG: 'dev',
+  GROUP_SEARCH: 'name',
+};
+
+const featureFlags = {
+  isMultipleGroupSharingEnabled:
+    getParamValueFromURL(QUERY_PARAM_KEY.DEV_FEATURE_FLAG) === 'true',
+};
 
 const handler = {
   set: (obj, prop, value) => {
@@ -58,11 +66,25 @@ const handler = {
         });
         break;
       case 'search':
-        setParamValueInURL(groupSearchParamsKey, value);
-        dataStore.filteredGroupsIds = getDiscordGroupIdsFromSearch(
-          Object.values(dataStore.groups),
-          value,
-        );
+        if (featureFlags.isMultipleGroupSharingEnabled) {
+          setParamValueInURL(QUERY_PARAM_KEY.GROUP_SEARCH, value);
+          dataStore.filteredGroupsIds = getDiscordGroupIdsFromSearch(
+            Object.values(dataStore.groups),
+            value,
+          );
+        } else {
+          if (value === '') {
+            if (dataStore.groups == null) break;
+            dataStore.filteredGroupsIds = Object.values(dataStore.groups).map(
+              (group) => group.id,
+            );
+          } else {
+            const search = value.toLowerCase();
+            dataStore.filteredGroupsIds = Object.values(dataStore.groups)
+              .filter((group) => group.title.toLowerCase().includes(search))
+              .map((group) => group.id);
+          }
+        }
         obj[prop] = value;
         break;
       case 'isGroupCreationModalOpen':
@@ -106,7 +128,9 @@ const dataStore = new Proxy(
     userSelf: null,
     groups: null,
     filteredGroupsIds: null,
-    search: getParamValueFromURL(groupSearchParamsKey),
+    search: featureFlags.isMultipleGroupSharingEnabled
+      ? getParamValueFromURL(QUERY_PARAM_KEY.GROUP_SEARCH)
+      : '',
     discordId: null,
     isCreateGroupModalOpen: false,
   },
@@ -170,10 +194,12 @@ const afterAuthentication = async () => {
         };
         return acc;
       }, {});
-      dataStore.filteredGroupsIds = getDiscordGroupIdsFromSearch(
-        Object.values(dataStore.groups),
-        dataStore.search,
-      );
+      if (featureFlags.isMultipleGroupSharingEnabled) {
+        dataStore.filteredGroupsIds = getDiscordGroupIdsFromSearch(
+          Object.values(dataStore.groups),
+          dataStore.search,
+        );
+      }
       dataStore.discordId = roleData.userId;
     },
   );
@@ -191,7 +217,9 @@ const bindGroupCreationButton = () => {
 
 const bindSearchInput = () => {
   const searchInput = document.querySelector('.search__input');
-  searchInput.value = dataStore.search;
+  if (featureFlags.isMultipleGroupSharingEnabled) {
+    searchInput.value = dataStore.search;
+  }
   searchInput.addEventListener('input', (e) => {
     dataStore.search = e.target.value;
   });
