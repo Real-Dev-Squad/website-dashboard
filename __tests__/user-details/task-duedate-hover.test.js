@@ -182,7 +182,7 @@ describe('Tasks On User Management Page', () => {
 
   it('Scroll of task should work', async () => {
     await page.goto(
-      'http://localhost:8000/users/details/index.html?username=ajeyakrishna',
+      'http://localhost:8000/users/details/index.html?username=sunny-s',
     );
     await page.waitForNetworkIdle();
     const taskDiv = await page.$$('.accordion-tasks');
@@ -213,12 +213,12 @@ describe('Tasks On User Management Page', () => {
     await page.waitForNetworkIdle();
 
     let renderedTasks = await userTasksDevDiv.$$('.user-task');
-    expect(Array.from(renderedTasks).length).toBe(12);
+    expect(Array.from(renderedTasks).length).toBe(15);
   });
 
   it('New task card should have all the detail fields', async () => {
     await page.goto(
-      'http://localhost:8000/users/details/index.html?username=ajeyakrishna',
+      'http://localhost:8000/users/details/index.html?username=sunny-s',
     );
     await page.waitForNetworkIdle();
     const taskDiv = await page.$$('.accordion-tasks');
@@ -287,7 +287,7 @@ describe('Tasks On User Management Page', () => {
     );
 
     expect(fourthTaskHTML).toContain('<div class="task-title">');
-    expect(fourthTaskHTML).toContain('<progress');
+    expect(fourthTaskHTML).not.toContain('<progress');
     expect(fourthTaskHTML).toContain('<div class="detail-block eta">');
     expect(fourthTaskHTML).toContain('<div class="detail-block status">');
     expect(fourthTaskHTML).toContain('<div class="detail-block startedOn">');
