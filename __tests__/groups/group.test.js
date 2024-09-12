@@ -254,7 +254,7 @@ describe('Discord Groups Page', () => {
         (el) => el.textContent,
       );
     });
-    
+
     expect(displayedGroups).toEqual(['First Daaa', 'DSA Coding Group']);
   });
 });
