@@ -182,7 +182,7 @@ describe('Tasks On User Management Page', () => {
 
   it('Scroll of task should work', async () => {
     await page.goto(
-      'http://localhost:8000/users/details/index.html?username=ajeyakrishna',
+      'http://localhost:8000/users/details/index.html?username=ankush',
     );
     await page.waitForNetworkIdle();
     const taskDiv = await page.$$('.accordion-tasks');
@@ -213,12 +213,12 @@ describe('Tasks On User Management Page', () => {
     await page.waitForNetworkIdle();
 
     let renderedTasks = await userTasksDevDiv.$$('.user-task');
-    expect(Array.from(renderedTasks).length).toBe(12);
+    expect(Array.from(renderedTasks).length).toBe(15);
   });
 
   it('New task card should have all the detail fields', async () => {
     await page.goto(
-      'http://localhost:8000/users/details/index.html?username=ajeyakrishna',
+      'http://localhost:8000/users/details/index.html?username=ankush',
     );
     await page.waitForNetworkIdle();
     const taskDiv = await page.$$('.accordion-tasks');
@@ -236,7 +236,7 @@ describe('Tasks On User Management Page', () => {
     );
 
     expect(firstTaskHTML).toContain('<div class="task-title">');
-    expect(firstTaskHTML).not.toContain('<progress');
+    expect(firstTaskHTML).toContain('<progress');
     expect(firstTaskHTML).toContain('<div class="detail-block eta">');
     expect(firstTaskHTML).toContain('<div class="detail-block status">');
     expect(firstTaskHTML).toContain('<div class="detail-block startedOn">');
@@ -251,7 +251,7 @@ describe('Tasks On User Management Page', () => {
     );
 
     expect(secondTaskHTML).toContain('<div class="task-title">');
-    expect(secondTaskHTML).not.toContain('<progress');
+    expect(secondTaskHTML).toContain('<progress');
     expect(secondTaskHTML).toContain('<div class="detail-block eta">');
     expect(secondTaskHTML).toContain('<div class="detail-block status">');
     expect(secondTaskHTML).toContain('<div class="detail-block startedOn">');
@@ -266,7 +266,7 @@ describe('Tasks On User Management Page', () => {
     );
 
     expect(thirdTaskHTML).toContain('<div class="task-title">');
-    expect(thirdTaskHTML).not.toContain('<progress');
+    expect(thirdTaskHTML).toContain('<progress');
     expect(thirdTaskHTML).toContain('<div class="detail-block eta">');
     expect(thirdTaskHTML).toContain('<div class="detail-block status">');
     expect(thirdTaskHTML).toContain('<div class="detail-block startedOn">');
