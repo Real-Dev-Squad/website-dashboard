@@ -102,8 +102,8 @@ footer {
 .action-button {
   width: 350px;
   color: var(--black-color);
-  font-weight: 1000;
-  font-size: larger;
+  font-weight: 600;
+  font-size: 1.1rem;
   background-color: var(--white-color);
   border: 2px solid var(--black-color);
   border-radius: 5px;
@@ -122,9 +122,10 @@ footer {
 }
 
 .description {
-  margin-top: 5px;
-  font-weight: 500;
-  font-size: medium;
+  margin-top: 0.6rem;
+  font-weight: 400;
+  font-size: 0.8rem;
+  line-height: 18px;
 }
 
 #sync-buttons.element-display-remove {
@@ -243,15 +244,6 @@ footer {
 .element-display-remove {
   display: none !important;
 }
-
-/* @media only screen and (max-width: 600px) {
-  .buttonSection {
-    flex-direction: column;
-  }
-  .action-button {
-    text-align: center;
-  }
-} */
 
 @media only screen and (max-width: 1105px) {
   .buttonSection {
