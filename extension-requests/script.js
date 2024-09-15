@@ -133,11 +133,11 @@ const render = async () => {
     const assigneeFilterState = userIdList.length ? userIdList : '';
     filterStates.assignee = assigneeFilterState;
     if (!filterStates.order) {
-      filterStates.order = Order.ASCENDING;
+      filterStates.order = Order.DESCENDING;
     }
   } else {
     filterStates.status = Status.PENDING;
-    filterStates.order = Order.ASCENDING;
+    filterStates.order = Order.DESCENDING;
     filterStates.size = DEFAULT_PAGE_SIZE;
   }
   updateUIBasedOnFilterStates();
