@@ -243,4 +243,18 @@ describe('Discord Groups Page', () => {
 
     expect(groupCreationModalClosed).toBeFalsy();
   });
+
+  test('Should display only specified groups when dev=true and name=<group-name> with different case', async () => {
+    const groupNames = 'fIrSt,DSA+COdInG';
+    await page.goto(`${PAGE_URL}/groups?dev=true&name=${groupNames}`);
+    await page.waitForNetworkIdle();
+
+    const displayedGroups = await page.evaluate(() => {
+      return Array.from(document.querySelectorAll('.card__title')).map(
+        (el) => el.textContent,
+      );
+    });
+
+    expect(displayedGroups).toEqual(['First Daaa', 'DSA Coding Group']);
+  });
 });
