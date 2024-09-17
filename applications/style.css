@@ -369,22 +369,30 @@ body {
   color: var(--red-color);
   background-color: white;
   margin: 0 auto;
-  width:40%;
+  width: 40%;
   border: 2px solid var(--red-color);
 }
 
-.application-details .application-details-actions .application-details-reject:hover,
-.application-details .application-details-actions .application-details-reject:active {
+.application-details
+  .application-details-actions
+  .application-details-reject:hover,
+.application-details
+  .application-details-actions
+  .application-details-reject:active {
   background: var(--red-color);
   color: var(--white);
   transition: transform 0.2s ease;
 }
 
-.application-details .application-details-actions .application-details-reject:hover {
+.application-details
+  .application-details-actions
+  .application-details-reject:hover {
   transform: scale(1.05);
 }
 
-.application-details .application-details-actions .application-details-reject:active {
+.application-details
+  .application-details-actions
+  .application-details-reject:active {
   animation: bounceBackAnimation 0.4s ease forwards;
 }
 
@@ -394,17 +402,25 @@ body {
   width: 40%;
 }
 
-.application-details .application-details-actions .application-details-accept:hover,
-.application-details .application-details-actions .application-details-accept:active {
+.application-details
+  .application-details-actions
+  .application-details-accept:hover,
+.application-details
+  .application-details-actions
+  .application-details-accept:active {
   transition: transform 0.2s ease;
   background: var(--color-button-hover);
 }
 
-.application-details .application-details-actions .application-details-accept:hover {
+.application-details
+  .application-details-actions
+  .application-details-accept:hover {
   transform: scale(1.05);
 }
 
-.application-details .application-details-actions .application-details-accept:active {
+.application-details
+  .application-details-actions
+  .application-details-accept:active {
   animation: bounceBackAnimation 0.4s ease forwards;
 }
 
