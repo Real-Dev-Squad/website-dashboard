@@ -2,6 +2,7 @@
   font-family: 'Inter', sans-serif;
   --color-primary: #1d1283;
   --color-primary-hover: #11085c;
+  --color-button-hover: #2c1bc6;
   --white: #fff;
   --color-gray: #666;
   --black-color: black;
@@ -48,7 +49,7 @@ body {
 .container {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
   overflow-y: auto;
 }
 
@@ -145,7 +146,6 @@ body {
 .application-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
   padding-bottom: 10px;
   padding-top: 32px;
   gap: 25px;
@@ -159,7 +159,10 @@ body {
   border-radius: 15px;
   box-shadow: var(--elevation-1);
   padding: 24px;
-  width: 44%;
+  width: 85%;
+  max-width: 800px;
+  box-sizing: border-box;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -364,16 +367,45 @@ body {
 
 .application-details .application-details-actions .application-details-reject {
   color: var(--red-color);
-  height: auto;
   background-color: white;
-  margin-left: auto;
-  margin-right: auto;
-  text-decoration: underline;
+  margin: 0 auto;
+  width:40%;
+  border: 2px solid var(--red-color);
+}
+
+.application-details .application-details-actions .application-details-reject:hover,
+.application-details .application-details-actions .application-details-reject:active {
+  background: var(--red-color);
+  color: var(--white);
+  transition: transform 0.2s ease;
+}
+
+.application-details .application-details-actions .application-details-reject:hover {
+  transform: scale(1.05);
+}
+
+.application-details .application-details-actions .application-details-reject:active {
+  animation: bounceBackAnimation 0.4s ease forwards;
 }
 
 .application-details .application-details-actions .application-details-accept {
   background: var(--color-primary);
-  width: 50%;
+  margin: 0 auto;
+  width: 40%;
+}
+
+.application-details .application-details-actions .application-details-accept:hover,
+.application-details .application-details-actions .application-details-accept:active {
+  transition: transform 0.2s ease;
+  background: var(--color-button-hover);
+}
+
+.application-details .application-details-actions .application-details-accept:hover {
+  transform: scale(1.05);
+}
+
+.application-details .application-details-actions .application-details-accept:active {
+  animation: bounceBackAnimation 0.4s ease forwards;
 }
 
 .application-details-actions .hidden {
@@ -442,6 +474,24 @@ body {
   opacity: 0.2;
 }
 
+@keyframes bounceBackAnimation {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(0.9);
+  }
+  55% {
+    transform: scale(1.1);
+  }
+  75% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 @keyframes slideIn {
   from {
     right: -300px;
@@ -463,10 +513,6 @@ body {
 }
 
 @media screen and (max-width: 850px) {
-  .application-card {
-    width: 100%;
-  }
-
   .container {
     padding: 1rem;
   }
@@ -477,5 +523,9 @@ body {
     width: 100%;
     height: 100%;
     border-radius: 0;
+  }
+
+  .application-card {
+    width: 90%;
   }
 }
