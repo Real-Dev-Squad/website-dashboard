@@ -375,10 +375,7 @@ body {
 
 .application-details
   .application-details-actions
-  .application-details-reject:hover,
-.application-details
-  .application-details-actions
-  .application-details-reject:active {
+  .application-details-reject:is(:hover, :active) {
   background: var(--red-color);
   color: var(--white);
   transition: transform 0.2s ease;
@@ -404,10 +401,7 @@ body {
 
 .application-details
   .application-details-actions
-  .application-details-accept:hover,
-.application-details
-  .application-details-actions
-  .application-details-accept:active {
+  .application-details-accept:is(:hover, :active) {
   transition: transform 0.2s ease;
   background: var(--color-button-hover);
 }
@@ -494,15 +488,19 @@ body {
   0% {
     transform: scale(1);
   }
+
   25% {
     transform: scale(0.9);
   }
+
   55% {
     transform: scale(1.1);
   }
+
   75% {
     transform: scale(0.9);
   }
+
   100% {
     transform: scale(1);
   }
