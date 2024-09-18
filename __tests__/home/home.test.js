@@ -348,8 +348,9 @@ describe('Home Page', () => {
       discordUsersButton,
     );
     const trimmedDiscordUsersButtonText = discordUsersButtonText.trim();
+
     expect(trimmedDiscordUsersButtonText).toBe(
-      'Discord Users\nManage Discord user roles and activities.',
+      'Discord Users\n\nManage Discord user roles and activities.',
     );
   });
 
@@ -531,8 +532,9 @@ describe('Home Page', () => {
       applicationButton,
     );
     const trimmedApplicationButtonText = applicationButtonText.trim();
+
     expect(trimmedApplicationButtonText).toBe(
-      'Applications\nManage and review submitted applications.',
+      'Applications\n\nManage and review submitted applications.',
     );
   });
 

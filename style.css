@@ -114,6 +114,36 @@ footer {
   text-decoration: none;
 }
 
+.card {
+  background-color: white;
+  text-decoration: none;
+  padding: 20px;
+  width: 280px;
+  border-radius: 15px;
+  border: 1px solid hsla(0, 0%, 92%, 1);
+  box-shadow: 1px 2px 4px 0px hsla(0, 0%, 0%, 0.1);
+}
+
+.card:hover {
+  background-color: rgb(215, 230, 241);
+  transition: 0.5s ease;
+}
+
+.card__title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: hsla(0, 0%, 21%, 1);
+}
+
+.card__description {
+  margin-top: 0.6rem;
+  color: hsla(0, 0%, 21%, 0.75);
+  font-weight: 400;
+  font-size: 0.8rem;
+  line-height: 18px;
+}
+
 .action-button:hover,
 .action-button:focus {
   color: var(--white-color);
@@ -245,7 +275,7 @@ footer {
   display: none !important;
 }
 
-@media only screen and (max-width: 1105px) {
+@media only screen and (max-width: 1200px) {
   .buttonSection {
     flex-direction: column;
     height: auto;
