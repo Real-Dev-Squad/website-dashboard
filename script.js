@@ -110,6 +110,10 @@ if (params.get('dev') === 'true') {
   repoSyncDiv.classList.remove('element-display-remove');
   createActivityFeedButton.classList.remove('element-display-remove');
   requestPageButton.classList.remove('element-display-remove');
+} else {
+  const syncUnverifiedUsersButtonContainer =
+    document.getElementsByClassName('button-container')[0];
+  syncUnverifiedUsersButtonContainer.style.display = 'none';
 }
 
 function addClickEventListener(
