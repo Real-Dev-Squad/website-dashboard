@@ -6,6 +6,7 @@ import {
   renderGroupById,
   renderGroupCreationModal,
   renderLoadingCards,
+  renderNoGroupFound,
   renderLoadingNavbarProfile,
   renderNavbarProfile,
   renderNavbarProfileSignin,
@@ -60,6 +61,7 @@ const handler = {
         renderAllGroups({
           cardOnClick: groupCardOnAction,
         });
+        if (isDev && (!value || value.length == 0)) renderNoGroupFound();
         break;
       case 'search':
         if (isDev) {
