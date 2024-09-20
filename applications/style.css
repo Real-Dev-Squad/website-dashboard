@@ -375,10 +375,11 @@ body {
 
 .application-details
   .application-details-actions
-  .application-details-reject:is(:hover, :active) {
+  .application-details-reject:is(:hover, :active, :focus-visible) {
   background: var(--red-color);
   color: var(--white);
   transition: transform 0.2s ease;
+  will-change: transform;
 }
 
 .application-details
@@ -401,9 +402,10 @@ body {
 
 .application-details
   .application-details-actions
-  .application-details-accept:is(:hover, :active) {
-  transition: transform 0.2s ease;
+  .application-details-accept:is(:hover, :active, :focus-visible) {
   background: var(--color-button-hover);
+  transition: transform 0.2s ease;
+  will-change: transform;
 }
 
 .application-details
