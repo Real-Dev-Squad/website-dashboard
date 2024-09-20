@@ -2,6 +2,7 @@ import {
   createCard,
   createGroupCreationModal,
   createLoadingCard,
+  createNoGroupFound,
   createNavbarProfile,
   createNavbarProfileLoading,
   createNavbarProfileSignin,
@@ -96,6 +97,14 @@ const renderGroupById = ({ group, cardOnClick = () => {} }) => {
   }
 };
 
+const renderNoGroupFound = () => {
+  const mainContainer = document.querySelector('.group-container');
+  const noGroupContainer = document.createElement('div');
+  noGroupContainer.className = 'no-group-container';
+  noGroupContainer.append(createNoGroupFound());
+  mainContainer.append(noGroupContainer);
+};
+
 export {
   renderNotAuthenticatedPage,
   renderGroupCreationModal,
@@ -107,4 +116,5 @@ export {
   renderLoadingCards,
   removeLoadingCards,
   renderGroupById,
+  renderNoGroupFound,
 };
