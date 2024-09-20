@@ -257,4 +257,13 @@ describe('Discord Groups Page', () => {
 
     expect(displayedGroups).toEqual(['First Daaa', 'DSA Coding Group']);
   });
+
+  test('Should display no group found div when no group is present', async () => {
+    await page.goto(`${PAGE_URL}/groups?dev=true&name=no-group-present`);
+    await page.waitForNetworkIdle();
+
+    const noGroupDiv = await page.$('.no-group-container');
+
+    expect(noGroupDiv).toBeTruthy();
+  });
 });
