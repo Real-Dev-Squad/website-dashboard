@@ -6,6 +6,7 @@ import {
   renderGroupById,
   renderGroupCreationModal,
   renderLoadingCards,
+  renderNoGroupFound,
   renderLoadingNavbarProfile,
   renderNavbarProfile,
   renderNavbarProfileSignin,
@@ -18,7 +19,16 @@ import {
   getUserGroupRoles,
   getUserSelf,
   removeRoleFromMember,
+  getDiscordGroupIdsFromSearch,
+  getParamValueFromURL,
+  setParamValueInURL,
 } from './utils.js';
+
+const QUERY_PARAM_KEY = {
+  DEV_FEATURE_FLAG: 'dev',
+  GROUP_SEARCH: 'name',
+};
+const isDev = getParamValueFromURL(QUERY_PARAM_KEY.DEV_FEATURE_FLAG) === 'true';
 
 const handler = {
   set: (obj, prop, value) => {
@@ -51,9 +61,16 @@ const handler = {
         renderAllGroups({
           cardOnClick: groupCardOnAction,
         });
+        if (isDev && (!value || value.length == 0)) renderNoGroupFound();
         break;
       case 'search':
-        if (value === '') {
+        if (isDev) {
+          setParamValueInURL(QUERY_PARAM_KEY.GROUP_SEARCH, value);
+          dataStore.filteredGroupsIds = getDiscordGroupIdsFromSearch(
+            Object.values(dataStore.groups),
+            value,
+          );
+        } else if (value === '') {
           if (dataStore.groups == null) break;
           dataStore.filteredGroupsIds = Object.values(dataStore.groups).map(
             (group) => group.id,
@@ -107,7 +124,7 @@ const dataStore = new Proxy(
     userSelf: null,
     groups: null,
     filteredGroupsIds: null,
-    search: '',
+    search: isDev ? getParamValueFromURL(QUERY_PARAM_KEY.GROUP_SEARCH) : '',
     discordId: null,
     isCreateGroupModalOpen: false,
   },
@@ -171,6 +188,12 @@ const afterAuthentication = async () => {
         };
         return acc;
       }, {});
+      if (isDev) {
+        dataStore.filteredGroupsIds = getDiscordGroupIdsFromSearch(
+          Object.values(dataStore.groups),
+          dataStore.search,
+        );
+      }
       dataStore.discordId = roleData.userId;
     },
   );
@@ -188,6 +211,7 @@ const bindGroupCreationButton = () => {
 
 const bindSearchInput = () => {
   const searchInput = document.querySelector('.search__input');
+  if (isDev) searchInput.value = dataStore.search;
   searchInput.addEventListener('input', (e) => {
     dataStore.search = e.target.value;
   });
