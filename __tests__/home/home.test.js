@@ -348,7 +348,10 @@ describe('Home Page', () => {
       discordUsersButton,
     );
     const trimmedDiscordUsersButtonText = discordUsersButtonText.trim();
-    expect(trimmedDiscordUsersButtonText).toBe('Discord Users');
+
+    expect(trimmedDiscordUsersButtonText).toBe(
+      'Discord Users\n\nManage Discord user roles and activities.',
+    );
   });
 
   it('should display the User Management anchor button', async () => {
@@ -529,7 +532,10 @@ describe('Home Page', () => {
       applicationButton,
     );
     const trimmedApplicationButtonText = applicationButtonText.trim();
-    expect(trimmedApplicationButtonText).toBe('Applications');
+
+    expect(trimmedApplicationButtonText).toBe(
+      'Applications\n\nManage and review submitted applications.',
+    );
   });
 
   it('should close hamburger menu on clicking anywhere on the screen except the menu', async () => {
