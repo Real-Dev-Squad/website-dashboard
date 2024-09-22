@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/profile-diff/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <title>Profile Diff</title>
+  </head>
+
+  <body>
+    <header class="header">
+      <a class="back" href="/profile-diffs/">
+        <img src="assets/left-arrow.svg" class="back__icon" alt="Back" />
+      </a>
+      Request Details
+    </header>
+    <div id="toast" class="hidden"></div>
+    <div class="container"></div>
+    <script src="/helpers/loadENV.js"></script>
+    <script src="/profile-diff/constants.js"></script>
+    <script src="/utils.js"></script>
+    <script src="/profile-diff/local-utils.js"></script>
+    <script src="/profile-diff/script.js"></script>
+  </body>
+</html>

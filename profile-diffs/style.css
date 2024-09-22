@@ -1,0 +1,359 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+:root {
+  --blue-color: #1d1283;
+  --blue-hover-color: #11085c;
+  --dark-blue: #1b1378;
+  --light-aqua: #d4f9f2;
+  --scandal: #e5fcf5;
+  --green-transparent: rgba(0, 255, 0, 0.2);
+  --green-color: green;
+  --red-transparent: rgba(255, 0, 0, 0.145);
+  --white: #ffffff;
+  --black-transparent: #000000a8;
+  --black: #181717;
+  --light-gray: #d9d9d9;
+  --razzmatazz: #df0057;
+  --red-color: red;
+  --gray: #808080;
+  --button-proceed: #008000;
+  --modal-color: #00000048;
+  --black-color: black;
+  --light-gray-color: lightgray;
+  --green10: #e1f9f1;
+  --green500: #19805e;
+  --secondary10: #fff0f6;
+  --secondary600: #b6004e;
+  --medium-gray: #aeaeae;
+  --dark-gray: #737373;
+  --blue-color-heading: #041187;
+  --white-gray: #f2f2f3;
+  --color-red: #ae1820;
+  --color-green: rgba(0, 128, 0, 0.8);
+  --color-warn: rgba(199, 129, 18, 0.8);
+}
+
+*,
+::after,
+::before {
+  box-sizing: border-box;
+}
+
+.header {
+  height: 7.25em;
+  background-color: #233876;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 20px;
+  color: var(--white);
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  user-select: none;
+  max-width: 100vw;
+  background-color: #f8fafd;
+}
+
+.search-filter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+  padding: 1rem 0;
+  gap: 1rem;
+}
+
+#search {
+  width: 90%;
+  max-width: 70rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+#assignee-search {
+  width: 100%;
+  padding: 0.7rem 2.7rem 0.7rem 3.243rem;
+  border: 1px solid #fff;
+  box-shadow: 2px 1px 5px 0px #d4cccc40;
+  font-family: 'Inter', sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 16px;
+  background-color: #fff;
+  height: 3.5rem;
+  color: var(--black-color);
+}
+
+#assignee-search::placeholder {
+  color: #212429;
+}
+
+#filter-container {
+  display: flex;
+  width: 90%;
+  max-width: 70rem;
+  justify-content: space-around;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.7rem;
+}
+
+#desc-sort-icon {
+  display: none;
+}
+
+.sort-button {
+  padding: 8px;
+  height: 2.5rem;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  right: 0.7em;
+}
+
+.tooltip-container {
+  position: relative;
+}
+
+.sort-button-position {
+  position: absolute;
+}
+
+.filter-button {
+  background-color: transparent;
+  color: #90959f;
+  font-family: 'Inter', sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.filter-button:hover {
+  color: #233876;
+  text-decoration: underline;
+  text-underline-position: under;
+}
+
+.selected {
+  color: #233876;
+  text-decoration: underline;
+  text-underline-position: under;
+}
+
+.profile-diffs {
+  display: flex;
+  justify-content: center;
+}
+
+.profileDiffs__list-container {
+  display: flex;
+  width: 90%;
+  max-width: 70rem;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 10px;
+  background-color: white;
+  margin-bottom: 1em;
+}
+
+.profile-card {
+  padding: 1em 1em 1em 0.5em;
+  border-bottom: 1px solid #eae8e8;
+  display: flex;
+  justify-content: space-between;
+}
+
+.profile-card_right {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+}
+
+.profile-card_right-date-time {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 150%;
+  color: #90959f;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+}
+
+.profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ccc;
+  margin-right: 10px;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-name {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 150%;
+  color: #111928;
+}
+
+.profile-username {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 300;
+  font-size: 13px;
+  line-height: 150%;
+  color: #111928;
+}
+
+.profile-name-shimmer,
+.profile-username-shimmer {
+  width: 100px;
+  height: 10px;
+  background-color: #ccc;
+  margin-bottom: 5px;
+}
+
+.profile.shimmer .profile-pic,
+.profile.shimmer .profile-name-shimmer,
+.profile.shimmer .profile-username-shimmer {
+  background: linear-gradient(to right, #eeeeee 8%, #dddddd 18%, #eeeeee 33%);
+  background-size: 1000px 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.tooltip {
+  background-color: var(--black-color);
+  color: var(--white);
+  visibility: hidden;
+  text-align: center;
+  border-radius: 4px;
+  padding: 0.5rem;
+  position: absolute;
+  opacity: 0.9;
+  font-size: 0.7rem;
+  width: 10rem;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -5rem;
+}
+
+.sort-button-tooltip {
+  bottom: 120%;
+  width: 7rem;
+  margin-left: -5.8rem;
+}
+
+.tooltip-container:hover .tooltip {
+  visibility: visible;
+  transition-delay: 400ms;
+}
+
+.tooltip-container:hover .sort-button-tooltip {
+  visibility: visible;
+  transition-delay: 200ms;
+}
+
+/* Loader Container */
+.loader-text {
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.loader {
+  margin: auto auto;
+}
+
+.loader p {
+  font-weight: 600;
+  font-size: 2em;
+}
+
+#toast {
+  position: fixed;
+  top: 20px;
+  right: -300px;
+  color: #fff;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.animated_toast {
+  animation: slideIn 0.5s ease-in-out forwards,
+    slideOut 0.5s ease-in-out 2.5s forwards;
+}
+
+.success {
+  background: green;
+}
+
+.failure {
+  background: #f43030;
+}
+
+.hidden {
+  visibility: collapse;
+}
+
+.disable-button {
+  opacity: 0.2;
+}
+
+@keyframes slideIn {
+  from {
+    right: -300px;
+  }
+
+  to {
+    right: 20px;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    right: 20px;
+  }
+
+  to {
+    right: -300px;
+  }
+}
