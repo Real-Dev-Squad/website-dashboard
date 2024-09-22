@@ -126,20 +126,36 @@ function removeGroupKeywordFromDiscordRoleName(groupName) {
   return groupName;
 }
 
-//Function to parse only search value from URL
-function getSearchValueFromURL() {
-  const params = new URLSearchParams(window.location.search);
-
-  let searchValue = null;
-
-  for (const [key, value] of params.entries()) {
-    if (value === '') {
-      searchValue = key;
-      break;
-    }
-  }
-  return searchValue;
+function getDiscordGroupIdsFromSearch(groups, multipleGroupSearch) {
+  if (!multipleGroupSearch) return groups.map((group) => group.id);
+  const GROUP_SEARCH_SEPARATOR = ',';
+  const searchGroups = multipleGroupSearch
+    .split(GROUP_SEARCH_SEPARATOR)
+    .map((group) => group.trim().toLowerCase());
+  const matchGroups = groups.filter((group) =>
+    searchGroups.some((searchGroup) =>
+      group.title.toLowerCase().startsWith(searchGroup),
+    ),
+  );
+  return matchGroups.map((group) => group.id);
 }
+
+function getParamValueFromURL(paramKey) {
+  const params = new URLSearchParams(window.location.search);
+  return params.get(paramKey);
+}
+
+function setParamValueInURL(paramKey, paramValue) {
+  const params = new URLSearchParams(window.location.search);
+  if (paramValue === '') params.delete(paramKey);
+  else params.set(paramKey, paramValue);
+  window.history.replaceState(
+    {},
+    '',
+    window.location.pathname + (params.toString() && `?${params}`),
+  );
+}
+
 export {
   getUserGroupRoles,
   getMembers,
@@ -149,5 +165,7 @@ export {
   addGroupRoleToMember,
   removeRoleFromMember,
   removeGroupKeywordFromDiscordRoleName,
-  getSearchValueFromURL,
+  getDiscordGroupIdsFromSearch,
+  getParamValueFromURL,
+  setParamValueInURL,
 };
