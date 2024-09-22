@@ -1,4 +1,5 @@
-const BASE_URL = window.API_BASE_URL; // REPLACE WITH YOUR LOCALHOST URL FOR TESTING LOCAL BACKEND
+// const BASE_URL = window.API_BASE_URL; // REPLACE WITH YOUR LOCALHOST URL FOR TESTING LOCAL BACKEND
+const BASE_URL = "http://localhost:3000";
 
 async function getMembers() {
   try {
@@ -43,9 +44,10 @@ async function getUserGroupRoles() {
   return await res.json();
 }
 
-async function getDiscordGroups() {
+let latestDoc = 0;
+async function getPaginatedDiscordGroups() {
   try {
-    const res = await fetch(`${BASE_URL}/discord-actions/groups`, {
+    const res = await fetch(`${BASE_URL}/discord-actions/groups?latestDoc=${latestDoc}`, {
       method: 'GET',
       credentials: 'include',
       headers: {
@@ -53,7 +55,8 @@ async function getDiscordGroups() {
       },
     });
 
-    const { groups } = await res.json();
+    const { groups, newLatestDoc } = await res.json();
+    latestDoc = newLatestDoc;
     return groups;
   } catch (err) {
     return err;
@@ -160,7 +163,7 @@ export {
   getUserGroupRoles,
   getMembers,
   getUserSelf,
-  getDiscordGroups,
+  getPaginatedDiscordGroups,
   createDiscordGroupRole,
   addGroupRoleToMember,
   removeRoleFromMember,
