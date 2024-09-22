@@ -654,12 +654,11 @@ For Delete Confirmation Modal
   margin: 0;
 }
 
-.delete-modal__close {
+.delete-modal_close {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0.8rem 1rem;
-  margin: -1rem -0.8rem 0.8rem 0.4rem;
+  padding: 4px;
 }
 
 .delete-modal__content {

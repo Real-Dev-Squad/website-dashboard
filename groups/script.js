@@ -28,8 +28,10 @@ import {
 } from './utils.js';
 
 const QUERY_PARAM_KEY = {
+  DEV_FEATURE_FLAG: 'dev',
   GROUP_SEARCH: 'name',
 };
+const isDev = getParamValueFromURL(QUERY_PARAM_KEY.DEV_FEATURE_FLAG) === 'true';
 
 const handler = {
   set: (obj, prop, value) => {
@@ -248,7 +250,6 @@ function updateGroup(id, group) {
       ...group,
     },
   };
-  console.log(`Updated group ${id}:`, dataStore.groups[id]); // Add this line for debugging
 }
 
 function groupCardOnAction(id) {
@@ -309,12 +310,6 @@ function showDeleteModal(groupId, roleId) {
         dataStore.filteredGroupsIds = dataStore.filteredGroupsIds.filter(
           (id) => id !== groupId,
         );
-        // const { [groupId]: deletedGroup, ...remainingGroups } =
-        //   dataStore.groups;
-        // dataStore.groups = remainingGroups;
-        // dataStore.filteredGroupsIds = dataStore.filteredGroupsIds.filter(
-        //   (id) => id !== groupId,
-        // );
         renderAllGroups({
           cardOnClick: groupCardOnAction,
         });
