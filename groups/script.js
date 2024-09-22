@@ -15,7 +15,7 @@ import {
 import {
   addGroupRoleToMember,
   createDiscordGroupRole,
-  getDiscordGroups,
+  getPaginatedDiscordGroups,
   getUserGroupRoles,
   getUserSelf,
   removeRoleFromMember,
@@ -110,6 +110,8 @@ const handler = {
         obj[prop] = value;
         break;
       case 'discordId':
+      case 'isLoading':
+      case 'hasMoreGroups':
         obj[prop] = value;
         break;
       default:
@@ -123,10 +125,12 @@ const dataStore = new Proxy(
   {
     userSelf: null,
     groups: null,
-    filteredGroupsIds: null,
+    filteredGroupsIds: [],
     search: isDev ? getParamValueFromURL(QUERY_PARAM_KEY.GROUP_SEARCH) : '',
     discordId: null,
-    isCreateGroupModalOpen: false,
+    isGroupCreationModalOpen: false,
+    isLoading: false,
+    hasMoreGroups: true,
   },
   handler,
 );
@@ -147,6 +151,7 @@ const onCreate = () => {
         throw new Error(data);
       }
       dataStore.userSelf = data;
+      removeLoadingCards();
       removeLoadingNavbarProfile();
       await afterAuthentication();
     })
@@ -165,10 +170,11 @@ const onCreate = () => {
   bindSearchInput();
   bindSearchFocus();
   bindGroupCreationButton();
+  bindInfiniteScroll();
 };
 const afterAuthentication = async () => {
   renderNavbarProfile({ profile: dataStore.userSelf });
-  await Promise.all([getDiscordGroups(), getUserGroupRoles()]).then(
+  await Promise.all([loadMoreGroups(), getUserGroupRoles()]).then(
     ([groups, roleData]) => {
       dataStore.filteredGroupsIds = groups.map((group) => group.id);
       dataStore.groups = groups.reduce((acc, group) => {
@@ -198,8 +204,62 @@ const afterAuthentication = async () => {
     },
   );
 };
+const loadMoreGroups = async () => {
+  if (dataStore.isLoading || !dataStore.hasMoreGroups) return;
+  
+  dataStore.isLoading = true;
+  renderLoadingCards();
+  
+  const newGroups = await getPaginatedDiscordGroups();
+  
+  removeLoadingCards();
+  dataStore.isLoading = false;
+  
+  if (newGroups.length === 0) {
+    dataStore.hasMoreGroups = false;
+    return;
+  }
+  
+  dataStore.groups = {
+    ...dataStore.groups,
+    ...newGroups.reduce((acc, group) => {
+      acc[group.id] = {
+        id: group.id,
+        title: group.rolename
+          .replace('group-', '')
+          .split('-')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' '),
+        count: group.memberCount,
+        isMember: group.isMember,
+        roleId: group.roleid,
+        description: group.description,
+        isUpdating: false,
+      };
+      return acc;
+    }, {}),
+  };
+  
+  dataStore.filteredGroupsIds = [
+    ...dataStore.filteredGroupsIds,
+    ...newGroups.map((group) => group.id),
+  ];
+  
+  return newGroups;
+};
 
 // Bind Functions
+
+const bindInfiniteScroll = () => {
+  window.addEventListener('scroll', () => {
+    if (
+      window.innerHeight + window.scrollY >=
+      document.body.offsetHeight - 100
+    ) {
+      loadMoreGroups();
+    }
+  });
+};
 
 const bindGroupCreationButton = () => {
   const groupCreationBtn = document.querySelector('.create-group');
