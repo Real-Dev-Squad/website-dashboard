@@ -127,6 +127,12 @@ body {
   grid-template-columns: repeat(4, 1fr);
 }
 
+@media screen and (max-width: 400px) {
+  .group-header {
+    gap: 0.8rem;
+  }
+}
+
 .spacer {
   flex-grow: 1;
 }
@@ -648,11 +654,12 @@ For Delete Confirmation Modal
   margin: 0;
 }
 
-.delete-modal_close {
+.delete-modal__close {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 4px;
+  padding: 0.8rem 1rem;
+  margin: -1rem -0.8rem 0.8rem 0.4rem;
 }
 
 .delete-modal__content {
