@@ -367,7 +367,9 @@ describe('Home Page', () => {
       userManagementButton,
     );
     const trimmedUserManagementButtonText = userManagementButtonText.trim();
-    expect(trimmedUserManagementButtonText).toBe('User Management');
+    expect(trimmedUserManagementButtonText).toBe(
+      'User Management\n\nManage requests for various resources and services.',
+    );
   });
 
   it('should display the Sync Repo button', async () => {

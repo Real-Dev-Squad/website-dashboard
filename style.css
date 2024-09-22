@@ -31,7 +31,6 @@ body {
 
 .buttonSection {
   margin-top: 10px;
-  height: 80vh;
   display: flex;
   justify-content: center;
   align-content: center;
@@ -63,7 +62,6 @@ button {
   border-color: transparent;
 }
 
-/* profile section */
 .profileSection {
   height: 80vh;
   display: flex;
@@ -100,7 +98,7 @@ footer {
 }
 
 .action-button {
-  width: 350px;
+  width: 100%;
   color: var(--black-color);
   font-weight: 600;
   font-size: 1.1rem;
@@ -169,12 +167,13 @@ footer {
   gap: 1.25rem;
   margin-top: 3.12rem;
   margin-bottom: 1.25rem;
-  padding: 0 6.25rem;
+  padding: 0 1.25rem;
   flex-wrap: wrap;
 }
 
 #sync-buttons .button-container {
-  flex: 1 1 100%;
+  flex: 1 1 auto;
+
   max-width: 250px;
   display: flex;
   flex-direction: column;
