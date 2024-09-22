@@ -11,6 +11,8 @@ import {
   renderNavbarProfile,
   renderNavbarProfileSignin,
   renderNotAuthenticatedPage,
+  renderDeleteConfirmationModal,
+  removeDeleteConfirmationModal,
 } from './render.js';
 import {
   addGroupRoleToMember,
@@ -49,6 +51,7 @@ const handler = {
           renderGroupById({
             group,
             cardOnClick: () => groupCardOnAction(group.id),
+            isSuperUser: dataStore.isSuperUser,
           }),
         );
         break;
@@ -61,7 +64,7 @@ const handler = {
         renderAllGroups({
           cardOnClick: groupCardOnAction,
         });
-        if (isDev && (!value || value.length == 0)) renderNoGroupFound();
+        // if (isDev && (!value || value.length == 0)) renderNoGroupFound();
         break;
       case 'search':
         if (isDev) {
@@ -112,6 +115,9 @@ const handler = {
       case 'discordId':
         obj[prop] = value;
         break;
+      case 'isSuperUser':
+        obj[prop] = value;
+        break;
       default:
         throw new Error('Invalid property set');
     }
@@ -127,6 +133,7 @@ const dataStore = new Proxy(
     search: isDev ? getParamValueFromURL(QUERY_PARAM_KEY.GROUP_SEARCH) : '',
     discordId: null,
     isCreateGroupModalOpen: false,
+    isSuperUser: false,
   },
   handler,
 );
@@ -168,6 +175,8 @@ const onCreate = () => {
 };
 const afterAuthentication = async () => {
   renderNavbarProfile({ profile: dataStore.userSelf });
+  dataStore.isSuperUser = await checkUserIsSuperUser();
+
   await Promise.all([getDiscordGroups(), getUserGroupRoles()]).then(
     ([groups, roleData]) => {
       dataStore.filteredGroupsIds = groups.map((group) => group.id);
@@ -195,6 +204,9 @@ const afterAuthentication = async () => {
         );
       }
       dataStore.discordId = roleData.userId;
+      renderAllGroups({
+        cardOnClick: groupCardOnAction,
+      });
     },
   );
 };
@@ -269,12 +281,32 @@ function groupCardOnAction(id) {
 function renderAllGroups({ cardOnClick }) {
   const mainContainer = document.querySelector('.group-container');
   mainContainer.innerHTML = '';
-  dataStore.filteredGroupsIds.forEach((id) =>
-    renderGroupById({
-      group: dataStore.groups[id],
-      cardOnClick: () => cardOnClick(id),
-    }),
-  );
+  if (dataStore.filteredGroupsIds.length === 0 && isDev) {
+    renderNoGroupFound();
+  } else {
+    dataStore.filteredGroupsIds.forEach((id) =>
+      renderGroupById({
+        group: dataStore.groups[id],
+        cardOnClick: () => cardOnClick(id),
+        onDelete: isDev ? showDeleteModal : undefined,
+        isSuperUser: dataStore.isSuperUser && isDev,
+      }),
+    );
+  }
+}
+
+function showDeleteModal(groupId) {
+  if (!isDev) return;
+  renderDeleteConfirmationModal({
+    onClose: () => {
+      removeDeleteConfirmationModal();
+    },
+    onConfirm: () => {
+      console.log(`Confirming delete for group ${groupId}`);
+      removeDeleteConfirmationModal();
+      // Will Implement actual delete functionality here
+    },
+  });
 }
 
 onCreate();

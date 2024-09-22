@@ -345,6 +345,32 @@ body {
   width: 100%;
 }
 
+.card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.delete-group {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.delete-group__icon {
+  height: 1.2em;
+  opacity: 0.5;
+  transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out,
+    scale 0.2s ease-in-out;
+}
+
+.delete-group:hover .delete-group__icon {
+  transform: rotate(10deg);
+  opacity: 1;
+  scale: 1.2;
+}
+
 .card__title {
   font-size: 1.1rem;
   font-weight: 600;
@@ -591,4 +617,79 @@ body {
     height: 100%;
     gap: 0;
   }
+}
+
+/*
+
+For Delete Confirmation Modal
+*/
+
+.delete-confirmation-modal {
+  background-color: var(--color-white);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 90%;
+  padding: 24px;
+  position: relative;
+}
+
+.delete-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.delete-modal__title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+.delete-modal_close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.delete-modal__content {
+  margin-bottom: 24px;
+}
+
+.delete-modal__msg {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.delete-modal__buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.delete-modal-button {
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.button--secondary:hover {
+  background-color: var(--color-group-btn-background);
+}
+
+.button--danger {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+}
+
+.button--danger:hover {
+  background-color: #c82333;
 }
