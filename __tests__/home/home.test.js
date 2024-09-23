@@ -368,7 +368,7 @@ describe('Home Page', () => {
     );
     const trimmedUserManagementButtonText = userManagementButtonText.trim();
     expect(trimmedUserManagementButtonText).toBe(
-      'User Management\n\nManage requests for various resources and services.',
+      'User Management\n\nView requests for various resources and services.',
     );
   });
 
