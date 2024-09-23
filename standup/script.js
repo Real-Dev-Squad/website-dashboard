@@ -121,8 +121,21 @@ function createTableHeaderElement() {
     type: 'th',
     classList: ['user', 'date', 'table-head'],
   });
-  headerCellElement.innerHTML = 'DATES ➡️<hr />USERS ⬇️';
+  headerCellElement.innerHTML =
+    'DATES➡️ <br><br><input type="date" id="date" name="DATES" max=""/> <hr />USERS ⬇️';
+
   headerRowElement.appendChild(headerCellElement);
+
+  // My code Changes Start
+
+  const dateInput = headerCellElement.querySelector('input');
+  dateInput.addEventListener('change', (event) => {
+    scrollToSelectedDate(event.target.value);
+  });
+  dateInput.max = endDate.toLocaleDateString('en-CA');
+
+  // my code changes end
+
   for (
     let date = new Date(endDate);
     date >= startDate;
@@ -355,4 +368,37 @@ document.addEventListener('click', (event) => {
 
 if (getUsernames().length > 0) {
   searchButtonHandler();
+}
+
+function countSundays(startDate, endDate) {
+  let start = new Date(startDate);
+  let end = new Date(endDate);
+
+  let sundayCount = 0;
+  while (start.getDay() !== 0) {
+    start.setDate(start.getDate() + 1);
+  }
+
+  while (start <= end) {
+    sundayCount++;
+    start.setDate(start.getDate() + 7);
+  }
+
+  return sundayCount;
+}
+
+function scrollToSelectedDate(date) {
+  const selectedDate = new Date(date);
+  selectedDate.setHours(0, 0, 0, 0);
+  const dates = document.querySelectorAll('.dates');
+  const columnWidth = dates[0].offsetWidth;
+  const dateDifference = endDate.getTime() - selectedDate.getTime();
+  const numberOfSundays = countSundays(selectedDate, endDate);
+  const numberOfDays = Math.floor(dateDifference / oneDay) - numberOfSundays;
+
+  let scrollPosition = numberOfDays * columnWidth;
+  tableContainerElement.scrollTo({
+    left: scrollPosition,
+    behavior: 'smooth',
+  });
 }
