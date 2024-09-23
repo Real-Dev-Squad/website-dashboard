@@ -20,7 +20,8 @@ const generateProfileDiffsParams = (nextPageParams, forApi = true) => {
 
 const getProfileDiffs = async (query = {}, nextLink) => {
   const finalUrl =
-    API_BASE_URL + (nextLink || generateProfileDiffsParams(query));
+    API_BASE_URL +
+    (nextLink || generateProfileDiffsParams({ ...query, dev: true }));
   const res = await fetch(finalUrl, {
     credentials: 'include',
     method: 'GET',
