@@ -112,7 +112,10 @@ async function populateProfileDiffs(query = {}, newLink) {
     if (!newLink) profileDiffsElement.innerHTML = '';
     const profileDiffs = await getProfileDiffs(query, newLink);
     if (profileDiffs?.notAuthorized) {
-      profileDiffsElement.innerHTML = 'You are not AUTHORIZED!';
+      showToast({ type: 'error', message: 'You are not AUTHORIZED!' });
+      setTimeout(() => {
+        window.location.href = '/index.html';
+      }, 3000);
       return;
     }
     nextLink = profileDiffs.next;
