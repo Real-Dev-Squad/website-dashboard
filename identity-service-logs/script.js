@@ -7,8 +7,9 @@ import {
 } from './utils.js';
 
 const { isSuperUser } = await getIsSuperUser();
+const params = new URLSearchParams(window.location.search);
 
-if (isSuperUser) {
+if (isSuperUser && params.has('dev') && params.get('dev') === 'true') {
   const {
     verifiedUsersCount,
     blockedUsersCount,
