@@ -1,5 +1,5 @@
-// const BASE_URL = window.API_BASE_URL; // REPLACE WITH YOUR LOCALHOST URL FOR TESTING LOCAL BACKEND
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = window.API_BASE_URL; // REPLACE WITH YOUR LOCALHOST URL FOR TESTING LOCAL BACKEND
+// const BASE_URL = "http://localhost:3000";
 
 async function getMembers() {
   try {
