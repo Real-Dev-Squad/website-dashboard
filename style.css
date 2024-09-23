@@ -30,7 +30,6 @@ body {
 }
 
 .buttonSection {
-  margin-top: 10px;
   height: 80vh;
   display: flex;
   justify-content: center;
@@ -100,10 +99,9 @@ footer {
 }
 
 .action-button {
-  width: 350px;
   color: var(--black-color);
-  font-weight: 600;
-  font-size: 1.1rem;
+  font-weight: 500;
+  font-size: larger;
   background-color: var(--white-color);
   border: 2px solid var(--black-color);
   border-radius: 5px;
@@ -114,48 +112,11 @@ footer {
   text-decoration: none;
 }
 
-.card {
-  background-color: white;
-  text-decoration: none;
-  padding: 20px;
-  width: 280px;
-  border-radius: 15px;
-  border: 1px solid hsla(0, 0%, 92%, 1);
-  box-shadow: 1px 2px 4px 0px hsla(0, 0%, 0%, 0.1);
-}
-
-.card:hover {
-  background-color: rgb(215, 230, 241);
-  transition: 0.5s ease;
-}
-
-.card__title {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: hsla(0, 0%, 21%, 1);
-}
-
-.card__description {
-  margin-top: 0.6rem;
-  color: hsla(0, 0%, 21%, 0.75);
-  font-weight: 400;
-  font-size: 0.8rem;
-  line-height: 18px;
-}
-
 .action-button:hover,
 .action-button:focus {
   color: var(--white-color);
   background-color: var(--blue-color);
   border-color: var(--blue-color);
-}
-
-.description {
-  margin-top: 0.6rem;
-  font-weight: 400;
-  font-size: 0.8rem;
-  line-height: 18px;
 }
 
 #sync-buttons.element-display-remove {
@@ -275,16 +236,11 @@ footer {
   display: none !important;
 }
 
-@media only screen and (max-width: 1200px) {
+@media only screen and (max-width: 600px) {
   .buttonSection {
     flex-direction: column;
-    height: auto;
-    padding: 15px;
   }
   .action-button {
     text-align: center;
-    width: 100%;
-    padding: 10px;
-    font-size: medium;
   }
 }
