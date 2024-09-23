@@ -53,6 +53,13 @@ body {
   overflow-y: auto;
 }
 
+.filter-container {
+  display: flex;
+  align-items: end;
+  gap: 10px;
+  margin: 20px;
+}
+
 .funnel-icon {
   width: 1.2rem;
   height: 1.5rem;
@@ -78,52 +85,62 @@ body {
   padding: 0.7rem;
 }
 
-.apply-filter-button {
-  border: 1px solid var(--light-gray-color);
-  border-radius: 0.31rem;
-  padding: 0.62rem;
-  cursor: pointer;
-  width: 100%;
-  background-color: var(--color-primary);
-  color: var(--white);
-}
-
-.filter-modal {
-  width: 20%;
-  min-width: 14rem;
-  max-width: 18rem;
-  border: 1px solid var(--light-gray-color);
-  box-shadow: 0 0 10px var(--black-transparent);
-  border-radius: 0.31rem;
-  flex-direction: column;
-  align-items: center;
-  padding: 10px;
-  padding-bottom: 1rem;
-  z-index: 1;
+.filter-dropdown {
+  width: 300px;
+  padding: 0;
+  margin: 0;
+  display: none;
   position: absolute;
-  top: 11.25rem;
-  right: 1rem;
+  border: 1px solid var(--light-gray-color);
+  border-radius: 0.2rem;
   background-color: var(--white);
 }
 
-.filter-head {
+.filter-dropdown div {
+  padding: 0.5rem 1rem 0.5rem 2rem;
+  color: var(--color-gray);
+  border: 1px solid var(--light-gray-color);
+}
+
+.filter-dropdown div:first-child {
+  font-weight: bold;
+}
+
+.filter-dropdown div:not(:first-child) {
+  padding-left: 4rem;
+  font-weight: normal;
+}
+.filter-dropdown div:not(:first-child):hover {
+  background-color: var(--light-gray-color);
+  cursor: pointer;
+}
+
+.filter-dropdown-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 1rem 0 1rem;
 }
 
-.clear-btn {
+/* Filter label */
+.filter-label {
+  display: flex;
+  font-size: 14px;
+  font-weight: 600;
+  align-items: center;
+  color: var(--color-primary);
   background-color: var(--white);
-  border: 1px solid var(--light-gray-color);
-  border-radius: 0.31rem;
-  padding: 0.31rem 0.62rem;
-  cursor: pointer;
+  border: 1px solid var(--color-primary);
+  padding: 5px 10px;
+  border-radius: 50px;
 }
 
-.clear-btn:hover {
-  background-color: var(--red-color);
-  color: var(--white);
+.filter-text {
+  margin-right: 5px;
+}
+
+.filter-remove {
+  cursor: pointer;
+  font-size: 14px;
 }
 
 .filters-container {
@@ -132,6 +149,18 @@ body {
   width: 100%;
   align-items: center;
   justify-content: center;
+}
+
+.close-dropdown-btn {
+  font-weight: bold;
+  color: var(--color-gray);
+  text-align: center;
+  font-size: 12px;
+  background-color: var(--white);
+  border: none;
+  outline: none;
+  box-shadow: none;
+  cursor: pointer;
 }
 
 .modal-form {
