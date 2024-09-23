@@ -62,7 +62,7 @@ body {
   font-optical-sizing: auto;
   font-weight: 500;
   font-style: normal;
-  font-size: 20px;
+  font-size: 1.25em;
   color: var(--white);
   position: relative;
 }
@@ -70,7 +70,7 @@ body {
 .back {
   background-color: transparent;
   border: none;
-  padding: 10px;
+  padding: 0.625em;
   text-decoration: none;
   display: flex;
   align-items: center;
