@@ -120,8 +120,12 @@ li p {
   white-space: nowrap;
 }
 
+.tile-webview{
+   display:block;
+}
+
 .tile-width {
-  width: 200px;
+  width: 400px;
 }
 
 .error-text {
@@ -145,10 +149,24 @@ li p {
   margin: 150px auto;
 }
 
+#loader_tag{
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 50px;
+  height: 50px;
+  margin-left: 41rem;
+  display: flex;
+  justify-content: center;
+  -webkit-animation: spin 2s linear infinite; 
+  animation: spin 2s linear infinite;
+}
+
 .pagination {
   display: flex;
   justify-content: space-between;
   margin-top: auto;
+  visibility: hidden;
 }
 
 .pagination-btn {
