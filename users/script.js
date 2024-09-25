@@ -46,7 +46,6 @@ const init = (
         paginationElement,
         loaderElement,
       );
-      console.log(res);
     }
   });
 
@@ -163,14 +162,7 @@ function generateUserList(
     return;
   }
 
-  const ulElement =
-    page == 0
-      ? document.createElement('ul')
-      : document.getElementById('head_list');
-
-  if (page == 0) {
-    ulElement.id = 'head_list';
-  }
+  const ulElement = document.getElementById('head_list');
 
   if (users != null) {
     users.forEach((userData) => {
