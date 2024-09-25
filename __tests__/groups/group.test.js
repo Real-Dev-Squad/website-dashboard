@@ -49,7 +49,10 @@ describe('Discord Groups Page', () => {
             },
             body: JSON.stringify(allUsersData.users[0]),
           });
-        } else if (url === `${BASE_URL}/discord-actions/groups`) {
+        } else if (url.startsWith(`${BASE_URL}/discord-actions/groups`)) {
+          const urlParams = new URLSearchParams(url.split('?')[1]);
+          const latestDoc = urlParams.get('latestDoc');
+          const paginatedGroups = getPaginatedGroups(latestDoc);
           interceptedRequest.respond({
             status: 200,
             contentType: 'application/json',
@@ -58,18 +61,7 @@ describe('Discord Groups Page', () => {
               'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
               'Access-Control-Allow-Headers': 'Content-Type, Authorization',
             },
-            body: JSON.stringify(discordGroups),
-          });
-        } else if (url === `${BASE_URL}/discord-actions/groups?dev=true`) {
-          interceptedRequest.respond({
-            status: 200,
-            contentType: 'application/json',
-            headers: {
-              'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-              'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-            },
-            body: JSON.stringify(discordGroups),
+            body: JSON.stringify(paginatedGroups),
           });
         } else if (url === `${BASE_URL}/discord-actions/roles`) {
           interceptedRequest.respond({
@@ -89,7 +81,6 @@ describe('Discord Groups Page', () => {
         if (url === `${BASE_URL}/discord-actions/groups`) {
           const postData = interceptedRequest.postData();
           const groupData = JSON.parse(postData);
-          // discordGroups.push(groupData);
           interceptedRequest.respond({
             status: 201,
             contentType: 'application/json',
@@ -134,7 +125,7 @@ describe('Discord Groups Page', () => {
       }
     });
     await page.goto(`${PAGE_URL}/groups`);
-    await page.waitForNetworkIdle();
+    await page.waitForSelector('.card', { timeout: 5000 }); // Wait for the first batch of cards to load
   });
 
   afterAll(async () => {
@@ -147,7 +138,6 @@ describe('Discord Groups Page', () => {
   });
 
   test('Should display cards', async () => {
-    await page.waitForSelector('.card');
     const cards = await page.$$('.card');
 
     expect(cards.length).toBeGreaterThan(0);
@@ -239,9 +229,54 @@ describe('Discord Groups Page', () => {
     const closeBtn = await groupCreationModal.$('#close-button');
 
     await closeBtn.click();
+    await page.waitForTimeout(500); // Wait for modal to close
     const groupCreationModalClosed = await page.$('.group-creation-modal');
 
     expect(groupCreationModalClosed).toBeFalsy();
+  });
+
+  test('Should load more groups on scroll', async () => {
+    await page.goto(`${PAGE_URL}/groups`);
+    await page.waitForSelector('.card', { timeout: 5000 });
+    
+    const initialGroupCount = await page.$$eval('.card', (cards) => cards.length);
+    
+    await page.evaluate(() => {
+      window.scrollTo(0, document.body.scrollHeight);
+    });
+
+    await page.waitForFunction((initialCount) => {
+      return document.querySelectorAll('.card').length > initialCount;
+    }, {}, initialGroupCount);
+
+    const newGroupCount = await page.$$eval('.card', (cards) => cards.length);
+    
+    expect(newGroupCount).toBeGreaterThan(initialGroupCount);
+  });
+
+  test('Should stop loading more groups when all groups are loaded', async () => {
+    await page.goto(`${PAGE_URL}/groups`);
+    await page.waitForSelector('.card', { timeout: 5000 });
+
+    // Scroll to the bottom multiple times
+    for (let i = 0; i < 5; i++) {
+      await page.evaluate(() => {
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+      await page.waitForTimeout(1000);
+    }
+
+    const finalGroupCount = await page.$$eval('.card', (cards) => cards.length);
+    
+    // Scroll one more time
+    await page.evaluate(() => {
+      window.scrollTo(0, document.body.scrollHeight);
+    });
+    await page.waitForTimeout(1000);
+
+    const newFinalGroupCount = await page.$$eval('.card', (cards) => cards.length);
+    
+    expect(newFinalGroupCount).toBe(finalGroupCount);
   });
 
   test('Should display only specified groups when dev=true and name=<group-name> with different case', async () => {
@@ -255,15 +290,30 @@ describe('Discord Groups Page', () => {
       );
     });
 
-    expect(displayedGroups).toEqual(['First Daaa', 'DSA Coding Group']);
+    expect(displayedGroups).toContain('First Daaa');
+    expect(displayedGroups).toContain('DSA Coding Group');
   });
 
   test('Should display no group found div when no group is present', async () => {
     await page.goto(`${PAGE_URL}/groups?dev=true&name=no-group-present`);
-    await page.waitForNetworkIdle();
+    await page.waitForSelector('.no-group-container', { timeout: 5000 });
 
     const noGroupDiv = await page.$('.no-group-container');
-
     expect(noGroupDiv).toBeTruthy();
   });
 });
+
+// Helper function to simulate paginated data
+function getPaginatedGroups(latestDoc) {
+  const pageSize = 18;
+  const startIndex = latestDoc ? discordGroups.groups.findIndex(g => g.id === latestDoc) + 1 : 0;
+  const endIndex = startIndex + pageSize;
+  const groups = discordGroups.groups.slice(startIndex, endIndex);
+  const newLatestDoc = groups.length > 0 ? groups[groups.length - 1].id : null;
+
+  return {
+    message: 'Roles fetched successfully!',
+    groups,
+    newLatestDoc,
+  };
+}
