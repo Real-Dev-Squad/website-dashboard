@@ -19,7 +19,33 @@ const urlParams = new URLSearchParams(window.location.search);
 let activeTab = urlParams.get('tab') ?? 'in_discord';
 
 let showUser = 0;
+let isLoading = false;
+const USERS_PER_FETCH = 20;
+
 usersData[activeTab] = await getUsers(activeTab);
+
+const fetchMoreUsers = async () => {
+  if (isLoading || !usersData[activeTab]) {
+    return;
+  }
+  isLoading = true;
+  const lastUserId = usersData[activeTab][usersData[activeTab].length - 1]?.id;
+  try {
+    const newUsers = await getUsers(activeTab, lastUserId, USERS_PER_FETCH);
+    usersData[activeTab] = [...usersData[activeTab], ...newUsers];
+    isLoading = false;
+    rerender(App(), window['root']);
+  } catch (error) {
+    console.error('Error fetching users', error);
+    isLoading = false;
+  }
+};
+const handleScroll = (e) => {
+  const { scrollTop, clientHeight, scrollHeight } = e.target;
+  if (scrollHeight - scrollTop <= clientHeight + 100) {
+    fetchMoreUsers();
+  }
+};
 
 const handleTabNavigation = async (e) => {
   const selectedTabId = e.target.getAttribute('data_key');
@@ -60,6 +86,8 @@ export const App = () => {
         users,
         showUser,
         handleUserSelected,
+        handleScroll,
+        isLoading,
       }),
       UserDetailsSection({ user: users[showUser] ?? {} }),
     ]);
@@ -69,3 +97,4 @@ export const App = () => {
     NoUserFound(),
   ]);
 };
+fetchMoreUsers();
