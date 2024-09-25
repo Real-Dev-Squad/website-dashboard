@@ -206,20 +206,20 @@ const afterAuthentication = async () => {
 };
 const loadMoreGroups = async () => {
   if (dataStore.isLoading || !dataStore.hasMoreGroups) return;
-  
+
   dataStore.isLoading = true;
   renderLoadingCards();
-  
+
   const newGroups = await getPaginatedDiscordGroups();
-  
+
   removeLoadingCards();
   dataStore.isLoading = false;
-  
+
   if (newGroups.length === 0) {
     dataStore.hasMoreGroups = false;
     return;
   }
-  
+
   dataStore.groups = {
     ...dataStore.groups,
     ...newGroups.reduce((acc, group) => {
@@ -239,12 +239,12 @@ const loadMoreGroups = async () => {
       return acc;
     }, {}),
   };
-  
+
   dataStore.filteredGroupsIds = [
     ...dataStore.filteredGroupsIds,
     ...newGroups.map((group) => group.id),
   ];
-  
+
   return newGroups;
 };
 

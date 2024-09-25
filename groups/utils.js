@@ -47,13 +47,16 @@ async function getUserGroupRoles() {
 let latestDoc = 0;
 async function getPaginatedDiscordGroups() {
   try {
-    const res = await fetch(`${BASE_URL}/discord-actions/groups?latestDoc=${latestDoc}`, {
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-        'Content-type': 'application/json',
+    const res = await fetch(
+      `${BASE_URL}/discord-actions/groups?latestDoc=${latestDoc}`,
+      {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-type': 'application/json',
+        },
       },
-    });
+    );
 
     const { groups, newLatestDoc } = await res.json();
     latestDoc = newLatestDoc;

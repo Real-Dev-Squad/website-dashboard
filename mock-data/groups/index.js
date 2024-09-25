@@ -297,7 +297,6 @@ const discordGroups = {
 
 // console.log(discordGroups);
 
-
 const GroupRoleData = {
   message: 'User group roles Id fetched successfully!',
   userId: '1234398439439989',

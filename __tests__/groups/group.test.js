@@ -238,19 +238,26 @@ describe('Discord Groups Page', () => {
   test('Should load more groups on scroll', async () => {
     await page.goto(`${PAGE_URL}/groups`);
     await page.waitForSelector('.card', { timeout: 5000 });
-    
-    const initialGroupCount = await page.$$eval('.card', (cards) => cards.length);
-    
+
+    const initialGroupCount = await page.$$eval(
+      '.card',
+      (cards) => cards.length,
+    );
+
     await page.evaluate(() => {
       window.scrollTo(0, document.body.scrollHeight);
     });
 
-    await page.waitForFunction((initialCount) => {
-      return document.querySelectorAll('.card').length > initialCount;
-    }, {}, initialGroupCount);
+    await page.waitForFunction(
+      (initialCount) => {
+        return document.querySelectorAll('.card').length > initialCount;
+      },
+      {},
+      initialGroupCount,
+    );
 
     const newGroupCount = await page.$$eval('.card', (cards) => cards.length);
-    
+
     expect(newGroupCount).toBeGreaterThan(initialGroupCount);
   });
 
@@ -267,15 +274,18 @@ describe('Discord Groups Page', () => {
     }
 
     const finalGroupCount = await page.$$eval('.card', (cards) => cards.length);
-    
+
     // Scroll one more time
     await page.evaluate(() => {
       window.scrollTo(0, document.body.scrollHeight);
     });
     await page.waitForTimeout(1000);
 
-    const newFinalGroupCount = await page.$$eval('.card', (cards) => cards.length);
-    
+    const newFinalGroupCount = await page.$$eval(
+      '.card',
+      (cards) => cards.length,
+    );
+
     expect(newFinalGroupCount).toBe(finalGroupCount);
   });
 
@@ -306,7 +316,9 @@ describe('Discord Groups Page', () => {
 // Helper function to simulate paginated data
 function getPaginatedGroups(latestDoc) {
   const pageSize = 18;
-  const startIndex = latestDoc ? discordGroups.groups.findIndex(g => g.id === latestDoc) + 1 : 0;
+  const startIndex = latestDoc
+    ? discordGroups.groups.findIndex((g) => g.id === latestDoc) + 1
+    : 0;
   const endIndex = startIndex + pageSize;
   const groups = discordGroups.groups.slice(startIndex, endIndex);
   const newLatestDoc = groups.length > 0 ? groups[groups.length - 1].id : null;
