@@ -9,6 +9,7 @@ import {
 let nextLink;
 let isDataLoading = false;
 const loader = document.querySelector('.loader');
+const filterModal = document.querySelector('.filter-modal');
 const backDrop = document.querySelector('.backdrop');
 const backDropBlur = document.querySelector('.backdrop-blur');
 const applicationDetailsModal = document.querySelector('.application-details');
@@ -26,24 +27,33 @@ const applicationAcceptButton = document.querySelector(
 const applicationRejectButton = document.querySelector(
   '.application-details-reject',
 );
+const applyFilterButton = document.getElementById('apply-filter-button');
 const applicationContainer = document.querySelector('.application-container');
+const clearButton = document.getElementById('clear-button');
 const lastElementContainer = document.getElementById('page_bottom_element');
 
 const applicationDetailsActionsContainer = document.querySelector(
   '.application-details-actions',
 );
+const urlParams = new URLSearchParams(window.location.search);
+const isDev = urlParams.get('dev') === 'true';
+const filterButton = isDev
+  ? document.getElementById('filter-button-new')
+  : document.getElementById('filter-button');
+if (isDev)
+  document
+    .getElementsByClassName('filter-container')[0]
+    .classList.remove('hidden');
 
-const filterButton = document.getElementById('filter-button');
 const filterDropdown = document.querySelector('.filter-dropdown');
 const filterOptions = document.querySelectorAll(
   '.filter-dropdown div:not(.close-dropdown-btn)',
 );
 const filterLabel = document.querySelector('.filter-label');
-const filterText = document.querySelector('.filter-text');
+const filterText = document.querySelector('.filter-label .filter-text');
 const filterRemove = document.querySelector('.filter-remove');
 const closeDropdownBtn = document.querySelector('.close-dropdown-btn');
 
-const urlParams = new URLSearchParams(window.location.search);
 let applicationId = urlParams.get('id');
 
 let currentApplicationId;
@@ -82,7 +92,12 @@ function updateUserApplication({ isAccepted }) {
 
 function changeFilter() {
   nextLink = '';
-  status = 'all';
+  if (!isDev) {
+    filterModal.classList.add('hidden');
+    backDrop.style.display = 'none';
+  } else {
+    status = 'all';
+  }
   applicationContainer.innerHTML = '';
 }
 
@@ -242,17 +257,17 @@ function openApplicationDetails(application) {
   }
 }
 
-// function clearFilter() {
-//   if (status === 'all') return;
-//   removeQueryParamInUrl('status');
-//   changeFilter();
-//   const selectedFilterOption = document.querySelector(
-//     'input[name="status"]:checked',
-//   );
-//   selectedFilterOption.checked = false;
-//   status = 'all';
-//   renderApplicationCards(nextLink, status);
-// }
+function clearFilter() {
+  if (status === 'all') return;
+  removeQueryParamInUrl('status');
+  changeFilter();
+  const selectedFilterOption = document.querySelector(
+    'input[name="status"]:checked',
+  );
+  selectedFilterOption.checked = false;
+  status = 'all';
+  renderApplicationCards(nextLink, status);
+}
 
 function changeLoaderVisibility({ hide }) {
   if (hide) loader.classList.add('hidden');
@@ -348,10 +363,10 @@ async function renderApplicationCards(next, status, isInitialRender) {
   changeLoaderVisibility({ hide: true });
   const applications = data.applications;
   nextLink = data.next;
-  if (status != 'all') {
+  if (isDev && status != 'all') {
     showAppliedFilter(status);
   }
-  // if (isInitialRender) filterButton.classList.remove('hidden');
+  if (isInitialRender) filterButton.classList.remove('hidden');
   if (!applications.length)
     return noApplicationFoundText.classList.remove('hidden');
   applications.forEach((application) => {
@@ -400,6 +415,10 @@ async function renderApplicationById(id) {
   const urlParams = new URLSearchParams(window.location.search);
   status = urlParams.get('status') || 'all';
 
+  if (!isDev && status !== 'all') {
+    document.querySelector(`input[name="status"]#${status}`).checked = true;
+  }
+
   if (applicationId) {
     await renderApplicationById(applicationId);
   }
@@ -422,22 +441,48 @@ const addIntersectionObserver = () => {
   intersectionObserver.observe(lastElementContainer);
 };
 
-filterButton.addEventListener('click', () => {
-  filterDropdown.style.display =
-    filterDropdown.style.display === 'block' ? 'none' : 'block';
-});
-
-filterOptions.forEach((option) => {
-  option.addEventListener('click', () => {
-    const filter = option.getAttribute('data-filter');
-    const filterLabelText = option.textContent;
-    applyFilter(filter, filterLabelText);
+if (isDev) {
+  filterButton.addEventListener('click', () => {
+    filterDropdown.style.display =
+      filterDropdown.style.display === 'block' ? 'none' : 'block';
   });
-});
+
+  filterOptions.forEach((option) => {
+    option.addEventListener('click', () => {
+      const filter = option.getAttribute('data-filter');
+      applyFilter(filter);
+    });
+  });
+} else {
+  filterButton.addEventListener('click', () => {
+    filterModal.classList.toggle('hidden');
+    backDrop.style.display = 'flex';
+  });
+
+  backDrop.addEventListener('click', () => {
+    filterModal.classList.add('hidden');
+    backDrop.style.display = 'none';
+  });
+
+  applyFilterButton.addEventListener('click', () => {
+    const selectedFilterOption = document.querySelector(
+      'input[name="status"]:checked',
+    );
+
+    const selectedStatus = selectedFilterOption.value;
+    addQueryParamInUrl('status', selectedStatus);
+    changeFilter();
+    status = selectedStatus;
+    renderApplicationCards(nextLink, status);
+  });
+
+  clearButton.addEventListener('click', clearFilter);
+}
 
 function showAppliedFilter(filterApplied) {
-  filterText.textContent = 'Status :' + filterApplied;
   filterLabel.classList.remove('hidden');
+  filterText.textContent =
+    'Status :' + filterApplied[0].toUpperCase() + filterApplied.substring(1);
 }
 
 function applyFilter(filter) {
@@ -478,8 +523,6 @@ document.addEventListener('click', (e) => {
 closeDropdownBtn.addEventListener('click', () => {
   filterDropdown.style.display = 'none';
 });
-
-// clearButton.addEventListener('click', clearFilter);
 
 applicationAcceptButton.addEventListener('click', () =>
   updateUserApplication({ isAccepted: true }),

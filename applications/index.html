@@ -16,16 +16,24 @@
     <div id="toast" class="hidden"></div>
     <div class="container">
       <div class="backdrop"></div>
-      <div class="filter-container">
+      <button id="filter-button" class="filter-button hidden">
+        <span class="filter-text">Filters</span>
+
+        <img
+          class="funnel-icon"
+          src="/task-requests/assets/funnel.svg"
+          alt="funnel icon"
+        />
+      </button>
+      <div class="filter-container hidden">
         <div class="filter-menu">
-          <button id="filter-button" class="filter-button">
+          <button id="filter-button-new" class="filter-button hidden">
             <img
               class="funnel-icon"
               src="/task-requests/assets/funnel.svg"
               alt="funnel icon"
             />
             Filters
-            <span>&#9662;</span>
           </button>
           <div class="filter-dropdown">
             <div data-filter="" class="filter-dropdown-header">
@@ -42,6 +50,47 @@
         </div>
       </div>
       <p class="no_applications_found hidden">No applications Found!</p>
+      <div
+        class="filter-modal hidden"
+        role="dialog"
+        aria-labelledby="filter-dialog-label"
+      >
+        <div class="filter-head">
+          <h3 id="filter-dialog-label">Filters</h3>
+          <button id="clear-button" class="clear-btn">Clear</button>
+        </div>
+        <div class="filters-container">
+          <h2>Status</h2>
+          <form class="modal-form" id="status-filter">
+            <div>
+              <input
+                type="radio"
+                id="rejected"
+                name="status"
+                value="rejected"
+              />
+              <label for="rejected">Rejected</label>
+            </div>
+            <div>
+              <input
+                type="radio"
+                id="accepted"
+                name="status"
+                value="accepted"
+              />
+              <label for="accepted">Accepted</label>
+            </div>
+
+            <div>
+              <input type="radio" id="pending" name="status" value="pending" />
+              <label for="pending">Pending</label>
+            </div>
+          </form>
+        </div>
+        <button id="apply-filter-button" class="apply-filter-button">
+          Apply Filter
+        </button>
+      </div>
       <div class="backdrop-blur"></div>
       <div class="application-details hidden">
         <button class="application-close-button">
