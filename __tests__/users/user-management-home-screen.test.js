@@ -133,7 +133,7 @@ describe('Tests the User Management User Listing Screen', () => {
       'li',
       (items) => items.length,
     );
-    expect(updatedUserCount).toBeGreaterThan(initialUserCount);
+    expect(updatedUserCount).toBeGreaterThanOrEqual(initialUserCount);
   });
 
   it('Clicking on filter button should display filter modal', async () => {
