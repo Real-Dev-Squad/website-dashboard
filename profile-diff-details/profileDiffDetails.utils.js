@@ -1,12 +1,11 @@
-function getDataItem(data, itemName) {
+function getUserDataItem(data, itemName) {
   const item = data[itemName];
 
-  if (item) {
+  if (item || (itemName === YEARS_OF_EXPERIENCE && item === 0)) {
     return item;
-  } else {
-    if (itemName === YEARS_OF_EXPERIENCE && item === 0) return item;
-    else return '';
   }
+
+  return '';
 }
 
 function checkDifferentValues(primaryData, secondaryData) {
