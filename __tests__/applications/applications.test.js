@@ -184,6 +184,26 @@ describe('Applications page', () => {
     expect(urlAfterOpeningModal.searchParams.get('id') !== null).toBe(true);
   });
 
+  
+  it('under feature flag should open application details modal for application, when user click on view details on any card', async function () {
+    await page.goto(`${SITE_URL}/applications/?dev=true`);
+    await page.waitForNetworkIdle();
+    const applicationDetailsModal = await page.$('.application-details');
+    expect(
+      await applicationDetailsModal.evaluate((el) =>
+        el.classList.contains('hidden'),
+      ),
+    ).toBe(true);
+    await page.click('.view-details-button');
+    expect(
+      await applicationDetailsModal.evaluate((el) =>
+        el.classList.contains('hidden'),
+      ),
+    ).toBe(false);
+    const urlAfterOpeningModal = new URL(page.url());
+    expect(urlAfterOpeningModal.searchParams.get('id') !== null).toBe(true);
+  });
+
   it('should close application details modal, when user clicks the close button', async function () {
     const applicationDetailsModal = await page.$('.application-details');
     await page.click('.view-details-button');
