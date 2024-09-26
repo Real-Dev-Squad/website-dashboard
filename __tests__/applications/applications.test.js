@@ -167,7 +167,7 @@ describe('Applications page', () => {
     ).toBe(true, 'status query param is not removed from url');
   });
 
-  it('should load and render the accepted application requests when accept filter is selected from filter under dev flag === true along with the total count of the accepted applications', async function () {
+  it('loads and renders accepted application requests with total count when 'accept' filter is selected and dev flag is true', async function () {
     await page.goto(`${SITE_URL}/applications?dev=true`);
     await page.click('.filter-button');
 
