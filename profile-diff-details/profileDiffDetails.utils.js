@@ -12,8 +12,8 @@ function checkDifferentValues(primaryData, secondaryData) {
   const diffValues = new Set();
 
   for (const listItem in primaryData) {
-    const oldValue = getDataItem(primaryData, listItem);
-    const newValue = getDataItem(secondaryData, listItem);
+    const oldValue = getUserDataItem(primaryData, listItem);
+    const newValue = getUserDataItem(secondaryData, listItem);
     const isValueEqual = String(oldValue).trim() === String(newValue).trim();
 
     if (!isValueEqual) {

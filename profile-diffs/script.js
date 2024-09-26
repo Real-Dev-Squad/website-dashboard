@@ -200,7 +200,7 @@ async function createProfileDiffCard(data, profileDiffCardList) {
   if (filterStates.status === Status.PENDING) {
     profileCard.style.cursor = 'pointer';
     profileCard.addEventListener('click', () => {
-      window.location.href = `/profile-diff/?id=${data.id}`;
+      window.location.href = `/profile-diff-details/?id=${data.id}`;
     });
   }
   profileDiffCardList.appendChild(profileCard);
