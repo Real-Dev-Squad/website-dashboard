@@ -122,9 +122,10 @@ function createTableHeaderElement() {
     classList: ['user', 'date', 'table-head'],
   });
 
-  const dateTextNode = document.createTextNode('DATES➡️');
-  const breakTag = document.createElement('br');
-  const breakTag2 = document.createElement('br');
+  const dateTextNode = document.createElement('p');
+  dateTextNode.style.marginTop = '0px';
+  dateTextNode.innerText = 'DATES➡️';
+
   const hrTag = document.createElement('hr');
   const datePicker = document.createElement('input');
   const usersTextNode = document.createTextNode('USERS ⬇️');
@@ -136,8 +137,8 @@ function createTableHeaderElement() {
   datePicker.min = startDate.toLocaleDateString('en-CA');
 
   headerCellElement.appendChild(dateTextNode);
-  headerCellElement.appendChild(breakTag);
-  headerCellElement.appendChild(breakTag2);
+  // headerCellElement.appendChild(breakTag);
+  // headerCellElement.appendChild(breakTag2);
   headerCellElement.appendChild(datePicker);
   headerCellElement.appendChild(hrTag);
   headerCellElement.appendChild(usersTextNode);

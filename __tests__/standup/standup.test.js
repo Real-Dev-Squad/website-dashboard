@@ -192,7 +192,6 @@ describe('Standup Page', () => {
     await page.evaluate(() => {
       const datePicker = document.getElementById('date');
       datePicker.value = '2024-09-25';
-      console.log('Date Value: ' + datePicker.value);
       const event = new Event('change');
       datePicker.dispatchEvent(event);
     });
@@ -216,7 +215,6 @@ describe('Standup Page', () => {
     await page.evaluate(() => {
       const datePicker = document.getElementById('date');
       datePicker.value = new Date().toISOString().slice(0, 10);
-      console.log('Date Value: ' + datePicker.value);
       const event = new Event('change');
       datePicker.dispatchEvent(event);
     });
@@ -229,7 +227,6 @@ describe('Standup Page', () => {
     await page.evaluate(() => {
       const datePicker = document.getElementById('date');
       datePicker.value = '2025-09-26';
-      console.log('Date Value: ' + datePicker.value);
       const event = new Event('change');
       datePicker.dispatchEvent(event);
     });
@@ -253,7 +250,6 @@ describe('Standup Page', () => {
     await page.evaluate(() => {
       const datePicker = document.getElementById('date');
       datePicker.value = new Date().toISOString().slice(0, 10);
-      console.log('Date Value: ' + datePicker.value);
       const event = new Event('change');
       datePicker.dispatchEvent(event);
     });
