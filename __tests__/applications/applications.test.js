@@ -167,7 +167,7 @@ describe('Applications page', () => {
     ).toBe(true, 'status query param is not removed from url');
   });
 
-  it('loads and renders accepted application requests with total count when accept filter is selected and dev flag is true', async function () {
+  it('should load and render the accepted application requests when accept filter is selected from filter under dev flag === true along with the total count of the accepted applications', async function () {
     await page.goto(`${SITE_URL}/applications?dev=true`);
     await page.click('.filter-button');
 
@@ -201,6 +201,25 @@ describe('Applications page', () => {
       ),
     ).toBe(true);
     await page.click('.view-details-button');
+    expect(
+      await applicationDetailsModal.evaluate((el) =>
+        el.classList.contains('hidden'),
+      ),
+    ).toBe(false);
+    const urlAfterOpeningModal = new URL(page.url());
+    expect(urlAfterOpeningModal.searchParams.get('id') !== null).toBe(true);
+  });
+
+  it('under feature flag should open application details modal for application, when user click on card', async function () {
+    await page.goto(`${SITE_URL}/applications/?dev=true`);
+    await page.waitForNetworkIdle();
+    const applicationDetailsModal = await page.$('.application-details');
+    expect(
+      await applicationDetailsModal.evaluate((el) =>
+        el.classList.contains('hidden'),
+      ),
+    ).toBe(true);
+    await page.click('.application-details');
     expect(
       await applicationDetailsModal.evaluate((el) =>
         el.classList.contains('hidden'),
