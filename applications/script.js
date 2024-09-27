@@ -480,11 +480,11 @@ if (isDev) {
 }
 
 function showAppliedFilter(filterApplied) {
-  if(filterApplied){
+  if (filterApplied) {
     filterLabel.classList.remove('hidden');
     filterText.textContent =
       'Status :' + filterApplied[0].toUpperCase() + filterApplied.substring(1);
-  } 
+  }
 }
 
 function applyFilter(filter) {

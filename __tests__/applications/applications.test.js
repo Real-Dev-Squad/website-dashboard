@@ -153,6 +153,7 @@ describe('Applications page', () => {
     ).toBe(true, 'status query param is not removed from url');
     expect(applicationCards.length).toBe(6);
   });
+
   it('should load more applications on going to the bottom of the page', async function () {
     let applicationCards = await page.$$('.application-card');
     expect(applicationCards.length).toBe(6);
@@ -184,7 +185,6 @@ describe('Applications page', () => {
     expect(urlAfterOpeningModal.searchParams.get('id') !== null).toBe(true);
   });
 
-  
   it('under feature flag should open application details modal for application, when user click on view details on any card', async function () {
     await page.goto(`${SITE_URL}/applications/?dev=true`);
     await page.waitForNetworkIdle();
