@@ -336,20 +336,8 @@ function createApplicationCard({ application, dev }) {
     innerText: application.intro.introduction.slice(0, 200),
   });
 
-  // const viewDetailsButton = createElement({
-  //   type: 'button',
-  //   attributes: { class: 'view-details-button' },
-  //   innerText: 'View Details',
-  // });
-
-  // viewDetailsButton.addEventListener('click', () => {
-  //   addQueryParamInUrl('id', application.id);
-  //   openApplicationDetails(application);
-  // });
-
   applicationCard.appendChild(userInfoContainer);
   applicationCard.appendChild(introductionText);
-  // applicationCard.appendChild(viewDetailsButton);
 
   if (dev) {
     applicationCard.style.cursor = 'pointer';
@@ -467,7 +455,6 @@ async function renderApplicationById(id) {
     await renderApplicationCards('', status, true, applicationId);
   }
 
-  // await renderApplicationCards('', status, true, applicationId);
   addIntersectionObserver();
 
   changeLoaderVisibility({ hide: true });
