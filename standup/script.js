@@ -137,8 +137,6 @@ function createTableHeaderElement() {
   datePicker.min = startDate.toLocaleDateString('en-CA');
 
   headerCellElement.appendChild(dateTextNode);
-  // headerCellElement.appendChild(breakTag);
-  // headerCellElement.appendChild(breakTag2);
   headerCellElement.appendChild(datePicker);
   headerCellElement.appendChild(hrTag);
   headerCellElement.appendChild(usersTextNode);
