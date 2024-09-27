@@ -48,35 +48,6 @@ function calculateScrollPosition(date, width) {
   return days * width;
 }
 
-function countSundays(startDate, endDate) {
-  let start = new Date(startDate);
-  let end = new Date(endDate);
-
-  let sundayCount = 0;
-  while (start.getDay() !== 0) {
-    start.setDate(start.getDate() + 1);
-  }
-
-  while (start <= end) {
-    sundayCount++;
-    start.setDate(start.getDate() + 7);
-  }
-
-  return sundayCount;
-}
-
-function calculateScrollPosition(date, width) {
-  const selectedDate = new Date(date);
-  const endDate = new Date();
-  selectedDate.setHours(0, 0, 0, 0);
-
-  const dateDifference = endDate.getTime() - selectedDate.getTime();
-  const numberOfSundays = countSundays(selectedDate, endDate);
-  const oneDay = 24 * 60 * 60 * 1000;
-  const days = Math.floor(dateDifference / oneDay) - numberOfSundays;
-  return days * width;
-}
-
 function generateExpectedDateValues() {
   const expectedDateValues = [];
   for (
@@ -243,7 +214,7 @@ describe('Standup Page', () => {
 
     await page.evaluate(() => {
       const datePicker = document.getElementById('date');
-      datePicker.value = new Date().toISOString().slice(0, 10);
+      datePicker.value = new Date().toLocaleDateString('en-CA');
       const event = new Event('change');
       datePicker.dispatchEvent(event);
     });
@@ -278,7 +249,7 @@ describe('Standup Page', () => {
 
     await page.evaluate(() => {
       const datePicker = document.getElementById('date');
-      datePicker.value = new Date().toISOString().slice(0, 10);
+      datePicker.value = new Date().toLocaleDateString('en-CA');
       const event = new Event('change');
       datePicker.dispatchEvent(event);
     });
