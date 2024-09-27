@@ -116,32 +116,24 @@ describe('Tests the User Management User Listing Screen', () => {
     expect(userCard.length).toBeGreaterThan(0);
   });
 
-  it('checks the next and previous button functionality', async () => {
+  it('checks infinite scroll functionality to load more users', async () => {
     await page.goto('http://localhost:8000/users');
     await page.waitForNetworkIdle();
 
-    // Get the "next" button and check if it is enabled
-    const nextBtn = await page.$('#nextButton');
-    const isNextButtonDisabled = await page.evaluate(
-      (button) => button.disabled,
-      nextBtn,
-    );
-    expect(isNextButtonDisabled).toBe(false);
+    const userList = await page.$('#user-list');
+    let initialUserCount = await userList.$$eval('li', (items) => items.length);
+    expect(initialUserCount).toBeGreaterThan(0);
 
-    // Click the "next" button and wait for the page to load
-    await nextBtn.click();
+    // Scroll to the bottom of the page to trigger infinite scroll
+    await page.evaluate(() => {
+      window.scrollTo(0, document.body.scrollHeight);
+    });
     await page.waitForNetworkIdle();
-
-    // Check that the "next" button is still present and the "previous" button is not disabled
-    const updatedNextButton = await page.$('#nextButton');
-    expect(updatedNextButton).toBeTruthy();
-
-    const prevBtn = await page.$('#prevButton');
-    const isPrevButtonDisabled = await page.evaluate(
-      (button) => button.disabled,
-      prevBtn,
+    const updatedUserCount = await userList.$$eval(
+      'li',
+      (items) => items.length,
     );
-    expect(isPrevButtonDisabled).toBe(false);
+    expect(updatedUserCount).toBeGreaterThanOrEqual(initialUserCount);
   });
 
   it('Clicking on filter button should display filter modal', async () => {
