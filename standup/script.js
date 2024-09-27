@@ -121,20 +121,33 @@ function createTableHeaderElement() {
     type: 'th',
     classList: ['user', 'date', 'table-head'],
   });
-  headerCellElement.innerHTML =
-    'DATES➡️ <br><br><input type="date" id="date" name="DATES" max=""/> <hr />USERS ⬇️';
+
+  const dateTextNode = document.createTextNode('DATES➡️');
+  const breakTag = document.createElement('br');
+  const breakTag2 = document.createElement('br');
+  const hrTag = document.createElement('hr');
+  const datePicker = document.createElement('input');
+  const usersTextNode = document.createTextNode('USERS ⬇️');
+
+  datePicker.type = 'date';
+  datePicker.id = 'date';
+  datePicker.name = 'DATES';
+  datePicker.max = endDate.toLocaleDateString('en-CA');
+  datePicker.min = startDate.toLocaleDateString('en-CA');
+
+  headerCellElement.appendChild(dateTextNode);
+  headerCellElement.appendChild(breakTag);
+  headerCellElement.appendChild(breakTag2);
+  headerCellElement.appendChild(datePicker);
+  headerCellElement.appendChild(hrTag);
+  headerCellElement.appendChild(usersTextNode);
 
   headerRowElement.appendChild(headerCellElement);
-
-  // My code Changes Start
 
   const dateInput = headerCellElement.querySelector('input');
   dateInput.addEventListener('change', (event) => {
     scrollToSelectedDate(event.target.value);
   });
-  dateInput.max = endDate.toLocaleDateString('en-CA');
-
-  // my code changes end
 
   for (
     let date = new Date(endDate);
@@ -390,6 +403,10 @@ function countSundays(startDate, endDate) {
 function scrollToSelectedDate(date) {
   const selectedDate = new Date(date);
   selectedDate.setHours(0, 0, 0, 0);
+
+  if (selectedDate < startDate || selectedDate > endDate) {
+    return;
+  }
   const dates = document.querySelectorAll('.dates');
   const columnWidth = dates[0].offsetWidth;
   const dateDifference = endDate.getTime() - selectedDate.getTime();
