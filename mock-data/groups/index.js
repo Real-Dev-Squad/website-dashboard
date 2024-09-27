@@ -55,6 +55,7 @@
 // };
 const discordGroups = {
   message: 'Roles fetched successfully!',
+  latestDoc: '1124798395722994956',
   groups: [
     {
       id: 'CqnEhbwtCqdcZdlrixLn',

@@ -44,11 +44,28 @@ async function getUserGroupRoles() {
   return await res.json();
 }
 
+async function getDiscordGroups() {
+  try {
+    const res = await fetch(`${BASE_URL}/discord-actions/groups`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+
+    const { groups } = await res.json();
+    return groups;
+  } catch (err) {
+    return err;
+  }
+}
+
 let latestDoc = 0;
 async function getPaginatedDiscordGroups() {
   try {
     const res = await fetch(
-      `${BASE_URL}/discord-actions/groups?latestDoc=${latestDoc}`,
+      `${BASE_URL}/discord-actions/groups?latestDoc=${latestDoc}&dev=true`,
       {
         method: 'GET',
         credentials: 'include',
@@ -166,6 +183,7 @@ export {
   getUserGroupRoles,
   getMembers,
   getUserSelf,
+  getDiscordGroups,
   getPaginatedDiscordGroups,
   createDiscordGroupRole,
   addGroupRoleToMember,

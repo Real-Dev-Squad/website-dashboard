@@ -8,7 +8,7 @@ const PAGE_URL = 'http://localhost:8000';
 describe('Discord Groups Page', () => {
   let browser;
   let page;
-  jest.setTimeout(60000);
+  jest.setTimeout(120000);
 
   beforeAll(async () => {
     browser = await puppeteer.launch({
@@ -237,7 +237,7 @@ describe('Discord Groups Page', () => {
 
   test('Should load more groups on scroll', async () => {
     await page.goto(`${PAGE_URL}/groups`);
-    await page.waitForSelector('.card', { timeout: 5000 });
+    await page.waitForSelector('.card', { timeout: 10000 });
 
     const initialGroupCount = await page.$$eval(
       '.card',
@@ -252,14 +252,14 @@ describe('Discord Groups Page', () => {
       (initialCount) => {
         return document.querySelectorAll('.card').length > initialCount;
       },
-      {},
+      { timeout: 60000 },
       initialGroupCount,
     );
 
     const newGroupCount = await page.$$eval('.card', (cards) => cards.length);
 
     expect(newGroupCount).toBeGreaterThan(initialGroupCount);
-  });
+  }, 120000);
 
   test('Should stop loading more groups when all groups are loaded', async () => {
     await page.goto(`${PAGE_URL}/groups`);

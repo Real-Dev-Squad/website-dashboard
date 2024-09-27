@@ -15,6 +15,7 @@ import {
 import {
   addGroupRoleToMember,
   createDiscordGroupRole,
+  getDiscordGroups,
   getPaginatedDiscordGroups,
   getUserGroupRoles,
   getUserSelf,
@@ -125,7 +126,7 @@ const dataStore = new Proxy(
   {
     userSelf: null,
     groups: null,
-    filteredGroupsIds: [],
+    filteredGroupsIds: isDev ? [] : null,
     search: isDev ? getParamValueFromURL(QUERY_PARAM_KEY.GROUP_SEARCH) : '',
     discordId: null,
     isGroupCreationModalOpen: false,
@@ -151,7 +152,7 @@ const onCreate = () => {
         throw new Error(data);
       }
       dataStore.userSelf = data;
-      removeLoadingCards();
+      isDev ? removeLoadingCards() : null;
       removeLoadingNavbarProfile();
       await afterAuthentication();
     })
@@ -170,39 +171,71 @@ const onCreate = () => {
   bindSearchInput();
   bindSearchFocus();
   bindGroupCreationButton();
-  bindInfiniteScroll();
+  isDev ? bindInfiniteScroll() : null;
 };
 const afterAuthentication = async () => {
   renderNavbarProfile({ profile: dataStore.userSelf });
-  await Promise.all([loadMoreGroups(), getUserGroupRoles()]).then(
-    ([groups, roleData]) => {
-      dataStore.filteredGroupsIds = groups.map((group) => group.id);
-      dataStore.groups = groups.reduce((acc, group) => {
-        let title = group.rolename
-          .replace('group-', '')
-          .split('-')
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(' ');
-        acc[group.id] = {
-          id: group.id,
-          title: title,
-          count: group.memberCount,
-          isMember: group.isMember,
-          roleId: group.roleid,
-          description: group.description,
-          isUpdating: false,
-        };
-        return acc;
-      }, {});
-      if (isDev) {
-        dataStore.filteredGroupsIds = getDiscordGroupIdsFromSearch(
-          Object.values(dataStore.groups),
-          dataStore.search,
-        );
-      }
-      dataStore.discordId = roleData.userId;
-    },
-  );
+  if (isDev) {
+    await Promise.all([loadMoreGroups(), getUserGroupRoles()]).then(
+      ([groups, roleData]) => {
+        dataStore.filteredGroupsIds = groups.map((group) => group.id);
+        dataStore.groups = groups.reduce((acc, group) => {
+          let title = group.rolename
+            .replace('group-', '')
+            .split('-')
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+          acc[group.id] = {
+            id: group.id,
+            title: title,
+            count: group.memberCount,
+            isMember: group.isMember,
+            roleId: group.roleid,
+            description: group.description,
+            isUpdating: false,
+          };
+          return acc;
+        }, {});
+        if (isDev) {
+          dataStore.filteredGroupsIds = getDiscordGroupIdsFromSearch(
+            Object.values(dataStore.groups),
+            dataStore.search,
+          );
+        }
+        dataStore.discordId = roleData.userId;
+      },
+    );
+  } else {
+    await Promise.all([getDiscordGroups(), getUserGroupRoles()]).then(
+      ([groups, roleData]) => {
+        dataStore.filteredGroupsIds = groups.map((group) => group.id);
+        dataStore.groups = groups.reduce((acc, group) => {
+          let title = group.rolename
+            .replace('group-', '')
+            .split('-')
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+          acc[group.id] = {
+            id: group.id,
+            title: title,
+            count: group.memberCount,
+            isMember: group.isMember,
+            roleId: group.roleid,
+            description: group.description,
+            isUpdating: false,
+          };
+          return acc;
+        }, {});
+        if (isDev) {
+          dataStore.filteredGroupsIds = getDiscordGroupIdsFromSearch(
+            Object.values(dataStore.groups),
+            dataStore.search,
+          );
+        }
+        dataStore.discordId = roleData.userId;
+      },
+    );
+  }
 };
 const loadMoreGroups = async () => {
   if (dataStore.isLoading || !dataStore.hasMoreGroups) return;
