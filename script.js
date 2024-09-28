@@ -103,6 +103,9 @@ const repoSyncButton = document.getElementById('repo-sync-button');
 const createActivityFeedButton = document.getElementById(
   'create-activity-feed',
 );
+const profileUpdateRequestsButton = document.getElementById(
+  'profile-update-requests',
+);
 const requestPageButton = document.getElementById('requests-link');
 const toast = document.getElementById('toast');
 if (params.get('dev') === 'true') {
@@ -110,6 +113,7 @@ if (params.get('dev') === 'true') {
   repoSyncDiv.classList.remove('element-display-remove');
   createActivityFeedButton.classList.remove('element-display-remove');
   requestPageButton.classList.remove('element-display-remove');
+  profileUpdateRequestsButton.classList.remove('element-display-remove');
 }
 
 function addClickEventListener(
