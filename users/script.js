@@ -12,6 +12,7 @@ const filterButton = document.getElementById(FILTER_BUTTON);
 const availabilityFilter = document.getElementById(AVAILABILITY_FILTER);
 const applyFilterButton = document.getElementById(APPLY_FILTER_BUTTON);
 const clearButton = document.getElementById(CLEAR_BUTTON);
+const ulElement = document.getElementById(HEAD_LIST_ELEMENT);
 
 let tileViewActive = false;
 let tableViewActive = true;
@@ -27,26 +28,26 @@ const init = (
   paginationElement,
   loaderElement,
 ) => {
-  prevBtn.addEventListener('click', () => {
-    showUserDataList(
-      --page,
-      userListElement,
-      paginationElement,
-      loaderElement,
-      prevBtn,
-      nextBtn,
-    );
-  });
-
-  nextBtn.addEventListener('click', () => {
-    showUserDataList(
-      ++page,
-      userListElement,
-      paginationElement,
-      loaderElement,
-      prevBtn,
-      nextBtn,
-    );
+  window.addEventListener('scroll', async () => {
+    if (
+      window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 &&
+      run
+    ) {
+      if (!run) {
+        return;
+      }
+      if (page === 0) {
+        page++;
+      } else {
+        run = false;
+        showUserDataList(
+          page++,
+          userListElement,
+          paginationElement,
+          loaderElement,
+        );
+      }
+    }
   });
 
   tileViewBtn.addEventListener('click', () => {
@@ -65,17 +66,9 @@ const init = (
           userListElement,
           paginationElement,
           loaderElement,
-          prevBtn,
         );
       }
-      showUserDataList(
-        page,
-        userListElement,
-        paginationElement,
-        loaderElement,
-        prevBtn,
-        nextBtn,
-      );
+      showUserDataList(page, userListElement, paginationElement, loaderElement);
     }, 500),
   );
 };
@@ -99,6 +92,8 @@ function showTableView(userListElement, tableViewBtn, tileViewBtn) {
   tileViewBtn.classList.remove('btn-active');
   tableViewBtn.classList.add('btn-active');
   const listContainerElement = userListElement.lastChild;
+  const headList = document.getElementById('head_list');
+  headList.classList.remove('tile-webview');
   listContainerElement.childNodes.forEach((listElement) => {
     const imgElement = listElement.firstChild;
     imgElement.classList.remove('remove-element');
@@ -166,38 +161,46 @@ function generateUserList(
     );
     return;
   }
-  const ulElement = document.createElement('ul');
-  users.forEach((userData) => {
-    const listElement = document.createElement('li');
-    const imgElement = document.createElement('img');
-    imgElement.src = userData.picture ? userData.picture : DEFAULT_AVATAR;
-    imgElement.classList.add('user-img-dimension');
-    const pElement = document.createElement('p');
-    const node = document.createTextNode(
-      `${userData.first_name} ${userData.last_name}`,
-    );
-    pElement.appendChild(node);
-    listElement.appendChild(imgElement);
-    listElement.appendChild(pElement);
 
-    if (tileViewActive) {
-      let imgElement = listElement.firstChild;
-      listElement.classList.remove('tile-width');
-      imgElement.classList.add('remove-element');
-    }
-    listElement.onclick = () => {
-      document.getElementById('user-search').value = '';
-      window.location.href = `/users/details/index.html?username=${userData.username}`;
-    };
-    ulElement.appendChild(listElement);
+  console.log(users);
+  const errorTexts = document.getElementsByClassName('error-text');
+  Array.from(errorTexts).forEach((errorText) => {
+    errorText.remove();
   });
-  loaderElement.classList.add('remove-element');
-  if (showPagination) {
-    paginationElement.classList.remove('remove-element');
-    paginationElement.classList.add('pagination');
-  } else {
-    paginationElement.classList.add('remove-element');
-    paginationElement.classList.remove('pagination');
+
+  if (showPagination || page == 0) {
+    ulElement.innerHTML = '';
+  }
+
+  if (users?.length !== 0) {
+    users?.forEach((userData) => {
+      const listElement = document.createElement('li');
+      const imgElement = document.createElement('img');
+      imgElement.src = userData.picture ? userData.picture : DEFAULT_AVATAR;
+      imgElement.classList.add('user-img-dimension');
+      listElement.classList.add('tile-webview');
+      const pElement = document.createElement('p');
+      const node = document.createTextNode(
+        `${userData.first_name} ${userData.last_name}`,
+      );
+      pElement.appendChild(node);
+      listElement.appendChild(imgElement);
+      listElement.appendChild(pElement);
+
+      if (tileViewActive) {
+        let imgElement = listElement.firstChild;
+        listElement.classList.add('tile-width');
+        imgElement.classList.add('remove-element');
+      }
+      listElement.onclick = () => {
+        document.getElementById('user-search').value = '';
+        window.location.href = `/users/details/index.html?username=${userData.username}`;
+      };
+      ulElement.appendChild(listElement);
+    });
+    loaderElement.classList.add('remove-element');
+    userListElement.appendChild(ulElement);
+    run = true;
   }
   userListElement.appendChild(ulElement);
 }
@@ -238,19 +241,28 @@ async function getParticularUserData(
   userListElement,
   paginationElement,
   loaderElement,
-  prevBtn,
 ) {
   try {
-    const usersData = await fetchUsersData(searchInput);
-    if (usersData.users) {
-      const data = formatUsersData(usersData.users);
-      generateUserList(
-        data,
-        false,
+    page = 0;
+    if (searchInput === '') {
+      await showUserDataList(
+        page,
         userListElement,
         paginationElement,
         loaderElement,
-        prevBtn,
+      );
+      return;
+    }
+    const usersData = await fetchUsersData(searchInput);
+    if (usersData.users) {
+      const data = formatUsersData(usersData?.users);
+
+      generateUserList(
+        data,
+        true,
+        userListElement,
+        paginationElement,
+        loaderElement,
       );
     } else {
       showErrorMessage(
@@ -318,14 +330,7 @@ function displayLoader() {
 function clearFilters() {
   availabilityFilter.value = 'none';
   displayLoader();
-  showUserDataList(
-    page,
-    userListElement,
-    paginationElement,
-    loaderElement,
-    prevBtn,
-    nextBtn,
-  );
+  showUserDataList(page, userListElement, paginationElement, loaderElement);
 }
 
 const showUserDataList = async (
@@ -338,12 +343,7 @@ const showUserDataList = async (
 ) => {
   try {
     const userData = await getUsersData(page);
-    if (userData.length) {
-      if (userData.length < USER_FETCH_COUNT) {
-        nextBtn.classList.add('btn-disabled');
-      } else {
-        nextBtn.classList.remove('btn-disabled');
-      }
+    if (userData && userData.length) {
       let usersDataList = userData.filter(
         (user) => user.first_name && !user.roles?.archived,
       );
@@ -355,7 +355,7 @@ const showUserDataList = async (
       }));
       generateUserList(
         usersDataList,
-        true,
+        false,
         userListElement,
         paginationElement,
         loaderElement,
