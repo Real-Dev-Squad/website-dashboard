@@ -251,7 +251,7 @@ body {
   justify-content: center;
 }
 
-.total_count {
+.total_count .hidden{
   padding: 24px;
   width: 58%;
   max-width: 800px;
