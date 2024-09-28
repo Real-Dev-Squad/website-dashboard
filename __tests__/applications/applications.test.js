@@ -135,6 +135,25 @@ describe('Applications page', () => {
     ).toBe(true, 'status query param is not removed from url');
   });
 
+  it('should load and render accepted application and check the applied filter label,render all applications when the applied filter is removed', async function () {
+    await page.goto(`${SITE_URL}/applications/?dev=true`);
+    await page.waitForNetworkIdle();
+    await page.click('#filter-button-new');
+    await page.click('.filter-dropdown div[data-filter="accepted"]');
+    applicationCards = await page.$$('.application-card');
+    expect(applicationCards.length).toBe(4);
+    const filterLabelElement = page.$('.filter-label .filter-text');
+    expect(filterLabelElement).toBeTruthy();
+    await page.click('.filter-remove');
+    await page.waitForNetworkIdle();
+    applicationCards = await page.$$('.application-card');
+    const urlAfterClearingStatusFilter = new URL(page.url());
+    expect(
+      urlAfterClearingStatusFilter.searchParams.get('status') === null,
+    ).toBe(true, 'status query param is not removed from url');
+    expect(applicationCards.length).toBe(6);
+  });
+
   it('should load more applications on going to the bottom of the page', async function () {
     let applicationCards = await page.$$('.application-card');
     expect(applicationCards.length).toBe(6);
@@ -150,6 +169,25 @@ describe('Applications page', () => {
   });
 
   it('should open application details modal for application, when user click on view details on any card', async function () {
+    const applicationDetailsModal = await page.$('.application-details');
+    expect(
+      await applicationDetailsModal.evaluate((el) =>
+        el.classList.contains('hidden'),
+      ),
+    ).toBe(true);
+    await page.click('.view-details-button');
+    expect(
+      await applicationDetailsModal.evaluate((el) =>
+        el.classList.contains('hidden'),
+      ),
+    ).toBe(false);
+    const urlAfterOpeningModal = new URL(page.url());
+    expect(urlAfterOpeningModal.searchParams.get('id') !== null).toBe(true);
+  });
+
+  it('under feature flag should open application details modal for application, when user click on view details on any card', async function () {
+    await page.goto(`${SITE_URL}/applications/?dev=true`);
+    await page.waitForNetworkIdle();
     const applicationDetailsModal = await page.$('.application-details');
     expect(
       await applicationDetailsModal.evaluate((el) =>

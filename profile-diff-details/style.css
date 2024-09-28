@@ -1,0 +1,341 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+:root {
+  --blue-color: #1d1283;
+  --blue-hover-color: #11085c;
+  --dark-blue: #1b1378;
+  --light-aqua: #d4f9f2;
+  --scandal: #e5fcf5;
+  --green-transparent: rgba(0, 255, 0, 0.2);
+  --green-color: green;
+  --red-transparent: rgba(255, 0, 0, 0.145);
+  --white: #ffffff;
+  --black-transparent: #000000a8;
+  --black: #181717;
+  --light-gray: #d9d9d9;
+  --razzmatazz: #df0057;
+  --red-color: red;
+  --gray: #808080;
+  --button-proceed: #008000;
+  --modal-color: #00000048;
+  --black-color: black;
+  --light-gray-color: lightgray;
+  --green10: #e1f9f1;
+  --green500: #19805e;
+  --secondary10: #fff0f6;
+  --secondary600: #b6004e;
+  --medium-gray: #aeaeae;
+  --dark-gray: #737373;
+  --blue-color-heading: #041187;
+  --white-gray: #f2f2f3;
+  --color-red: #ae1820;
+  --color-green: rgba(0, 128, 0, 0.8);
+  --color-warn: rgba(199, 129, 18, 0.8);
+  --font-family: 'Inter', sans-serif;
+}
+
+*,
+::after,
+::before {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  user-select: none;
+  max-width: 100vw;
+  background-color: #f8fafd;
+}
+
+.header {
+  height: 7.25em;
+  background-color: #233876;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 1.25em;
+  color: var(--white);
+  position: relative;
+}
+
+.back {
+  background-color: transparent;
+  border: none;
+  padding: 0.625em;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  position: absolute;
+  left: 10%;
+}
+
+.back__icon {
+  height: 1.6rem;
+}
+
+.container {
+  margin: 0 auto;
+  padding: 2em 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
+  font-weight: 700;
+  font-size: x-large;
+  text-align: center;
+  width: 95%;
+  max-width: 992px;
+}
+
+.user_image {
+  border-radius: 37px;
+}
+
+.user_name {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 150%;
+  color: #111928;
+  margin-top: -1em;
+  margin-bottom: 1em;
+}
+
+.expand-control-container {
+  width: 100%;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  color: #233876;
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.expand-control-text {
+  cursor: pointer;
+}
+
+.expand-control-icon {
+  margin-left: 0.5em;
+  font-size: 10px !important;
+}
+
+.reason_heading {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 17px;
+  line-height: 150%;
+  color: #111928;
+  width: 100%;
+  text-align: left;
+  padding-left: 1.25em;
+  margin-block-end: 0;
+}
+
+.reason_textarea {
+  font-style: normal;
+  font-size: 16px;
+  background: #ffffff;
+  box-shadow: 0px 8px 3px rgba(0, 0, 0, 0.01), 0px 5px 3px rgba(0, 0, 0, 0.02),
+    0px 2px 2px rgba(0, 0, 0, 0.04), 0px 1px 1px rgba(0, 0, 0, 0.04);
+  border-radius: 12px;
+  border: none;
+  padding: 1em;
+  width: 100%;
+  resize: none;
+}
+
+.button__container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1em;
+}
+
+.button__approve {
+  padding: 11px 32px;
+  background: #046c4e;
+  border-radius: 10px;
+  border: none;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 150%;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.button__approve:disabled {
+  opacity: 0.2;
+}
+
+.button__reject {
+  padding: 11px 32px;
+  background: #c81e1e;
+  border-radius: 10px;
+  border: none;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 150%;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.button__reject:disabled {
+  opacity: 0.2;
+}
+
+.loader {
+  width: 60px;
+  aspect-ratio: 2;
+  --_g: no-repeat radial-gradient(circle closest-side, #000 90%, #0000);
+  background: var(--_g) 0% 50%, var(--_g) 50% 50%, var(--_g) 100% 50%;
+  background-size: calc(100% / 3) 50%;
+  animation: loader-animation 1s infinite linear;
+}
+
+.button__loader {
+  width: 60px;
+  aspect-ratio: 2;
+  --_g: no-repeat radial-gradient(circle closest-side, #fff 90%, #0000);
+  background: var(--_g) 0% 50%, var(--_g) 50% 50%, var(--_g) 100% 50%;
+  background-size: calc(100% / 3) 50%;
+  animation: loader-animation 1s infinite linear;
+}
+
+@keyframes loader-animation {
+  20% {
+    background-position: 0% 0%, 50% 50%, 100% 50%;
+  }
+  40% {
+    background-position: 0% 100%, 50% 0%, 100% 50%;
+  }
+  60% {
+    background-position: 0% 50%, 50% 100%, 100% 0%;
+  }
+  80% {
+    background-position: 0% 50%, 50% 50%, 100% 100%;
+  }
+}
+
+.profile-details-container {
+  background: #ffffff;
+  box-shadow: 0px 8px 3px rgba(0, 0, 0, 0.01), 0px 5px 3px rgba(0, 0, 0, 0.02),
+    0px 2px 2px rgba(0, 0, 0, 0.04), 0px 1px 1px rgba(0, 0, 0, 0.04);
+  border-radius: 12px;
+  width: 100%;
+  padding: 0 0.5em;
+}
+
+.profile-details-list-item {
+  padding: 0.5em 0.75em;
+  border-bottom: 1px solid #cec4c4;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile-details-border-none {
+  border: none;
+}
+
+.profile-details-name {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 150%;
+  color: #585b61;
+  width: 30%;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+.profile-details-old-data {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+  color: #c81e1e;
+  width: 30%;
+  text-align: center;
+  word-wrap: break-word;
+}
+
+.profile-details-new-data {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+  color: #046c4e;
+  width: 30%;
+  text-align: right;
+  word-wrap: break-word;
+}
+
+.profile-details-data {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+  color: #233876;
+}
+
+#toast {
+  position: fixed;
+  top: 20px;
+  right: -300px;
+  color: #fff;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.animated_toast {
+  animation: slideIn 0.5s ease-in-out forwards,
+    slideOut 0.5s ease-in-out 2.5s forwards;
+}
+
+.success {
+  background: green;
+}
+
+.failure {
+  background: #f43030;
+}
+
+.hidden {
+  visibility: collapse;
+}
+
+.disable-button {
+  opacity: 0.2;
+}
+
+@keyframes slideIn {
+  from {
+    right: -300px;
+  }
+
+  to {
+    right: 20px;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    right: 20px;
+  }
+
+  to {
+    right: -300px;
+  }
+}
