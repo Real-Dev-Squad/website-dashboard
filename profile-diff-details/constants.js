@@ -1,6 +1,6 @@
 const YEARS_OF_EXPERIENCE = 'yoe';
 
-const fieldDisplayName = {
+const fieldDisplayName = Object.freeze({
   first_name: 'First name',
   last_name: 'Last name',
   designation: 'Role',
@@ -13,10 +13,10 @@ const fieldDisplayName = {
   twitter_id: 'Twitter',
   instagram_id: 'Instagram',
   website: 'Website',
-};
+});
 
-const Status = {
+const Status = Object.freeze({
   APPROVED: 'APPROVED',
   PENDING: 'PENDING',
   NOT_APPROVED: 'NOT APPROVED',
-};
+});

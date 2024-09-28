@@ -7,13 +7,13 @@ const NEWEST_FIRST = 'Newest first';
 const SEARCH_ELEMENT = 'assignee-search';
 const LAST_ELEMENT_CONTAINER = '.virtual';
 
-const Status = {
+const Status = Object.freeze({
   APPROVED: 'APPROVED',
   PENDING: 'PENDING',
   NOT_APPROVED: 'NOT APPROVED',
-};
+});
 
-const Order = {
+const Order = Object.freeze({
   DESCENDING: 'desc',
   ASCENDING: 'asc',
-};
+});
