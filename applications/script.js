@@ -365,13 +365,6 @@ function createApplicationCard({ application, dev }) {
 function updateTotalCount(total, status) {
   if (total > 0) {
     totalCountElement.textContent = `Total ${status} applications: ${total}`;
-    totalCountElement.style.paddingTop = '24px';
-    totalCountElement.style.paddingBottom = '24px';
-    totalCountElement.style.width = '58%';
-    totalCountElement.style.maxWidth = '800px';
-    totalCountElement.style.boxSizing = 'border-box';
-    totalCountElement.style.textAlign = 'center';
-    totalCountElement.style.fontSize = '1.5rem';
     totalCountElement.classList.remove('hidden');
   }
 }
