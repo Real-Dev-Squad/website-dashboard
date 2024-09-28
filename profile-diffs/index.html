@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/profile-diffs/style.css" />
+    <title>Profile Diffs</title>
+  </head>
+
+  <body>
+    <header class="header">Profile Difference Requests</header>
+    <div id="toast" class="hidden"></div>
+    <div class="search-filter" id="search-filter">
+      <div id="search">
+        <input id="assignee-search" type="text" placeholder="Search" />
+        <img
+          src="/profile-diffs/assets/search.svg"
+          alt="search"
+          class="search-icon"
+        />
+        <button
+          class="sort-button tooltip-container sort-button-position"
+          id="sort-button"
+        >
+          <img
+            id="asc-sort-icon"
+            src="/profile-diffs/assets/sort-asc.svg"
+            alt="sort-icon"
+          />
+          <img
+            id="desc-sort-icon"
+            src="/profile-diffs/assets/sort-desc.svg"
+            alt="sort-icon"
+          />
+        </button>
+      </div>
+      <div id="filter-container">
+        <button id="filter-button" name="PENDING" class="filter-button">
+          <span class="filter-text">Pending</span>
+        </button>
+        <button id="filter-button" name="APPROVED" class="filter-button">
+          <span class="filter-text">Approved</span>
+        </button>
+        <button id="filter-button" name="NOT APPROVED" class="filter-button">
+          <span class="filter-text">Rejected</span>
+        </button>
+      </div>
+    </div>
+    <div class="container">
+      <div id="profile-diffs" class="profile-diffs"></div>
+      <div class="virtual"></div>
+    </div>
+
+    <script src="/helpers/loadENV.js"></script>
+    <script src="/constants.js"></script>
+    <script src="/utils.js"></script>
+
+    <script src="/profile-diffs/constants.js"></script>
+    <script src="/profile-diffs/profileDiffs.utils.js"></script>
+    <script src="/profile-diffs/profileDiffs.apiCalls.js"></script>
+    <script src="/profile-diffs/script.js"></script>
+  </body>
+</html>
