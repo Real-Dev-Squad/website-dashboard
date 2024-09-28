@@ -1,6 +1,7 @@
 const params = new URLSearchParams(window.location.search);
 const userListElement = document.getElementById(USER_LIST_ELEMENT);
 const loaderElement = document.getElementById(LOADER_ELEMENT);
+const userloaderElement = document.getElementById(USER_LOADER_ELEMENT);
 const tileViewBtn = document.getElementById(TILE_VIEW_BTN);
 const tableViewBtn = document.getElementById(TABLE_VIEW_BTN);
 const userSearchElement = document.getElementById(USER_SEARCH_ELEMENT);
@@ -16,7 +17,9 @@ const ulElement = document.getElementById(HEAD_LIST_ELEMENT);
 
 let tileViewActive = false;
 let tableViewActive = true;
+let isLoading = false;
 let page = 0;
+let run = true;
 
 const init = (
   prevBtn,
@@ -36,17 +39,18 @@ const init = (
       if (!run) {
         return;
       }
-      if (page === 0) {
+      if (!page) {
         page++;
-      } else {
-        run = false;
-        showUserDataList(
-          page++,
-          userListElement,
-          paginationElement,
-          loaderElement,
-        );
+        return;
       }
+
+      run = false;
+      showUserDataList(
+        page++,
+        userListElement,
+        paginationElement,
+        loaderElement,
+      );
     }
   });
 
@@ -79,6 +83,8 @@ function showTileView(userListElement, tableViewBtn, tileViewBtn) {
   tableViewBtn.classList.remove('btn-active');
   tileViewBtn.classList.add('btn-active');
   const listContainerElement = userListElement.lastChild;
+  const headList = document.getElementById('head_list');
+  headList.classList.add('tile-webview');
   listContainerElement.childNodes.forEach((listElement) => {
     const imgElement = listElement.firstChild;
     imgElement.classList.add('remove-element');
@@ -111,6 +117,7 @@ function showErrorMessage(
   const paraELe = document.createElement('p');
   const textNode = document.createTextNode(msg);
   paraELe.appendChild(textNode);
+  paraELe.id = 'error_para';
   paraELe.classList.add('error-text');
   userListElement.appendChild(paraELe);
   paginationElement.classList.add('remove-element');
@@ -144,14 +151,7 @@ function generateUserList(
   userListElement,
   paginationElement,
   loaderElement,
-  prevBtn,
 ) {
-  userListElement.innerHTML = '';
-  if (page <= 0) {
-    prevBtn.classList.add('btn-disabled');
-  } else {
-    prevBtn.classList.remove('btn-disabled');
-  }
   if (!users || !users.length) {
     showErrorMessage(
       'No data found',
@@ -162,17 +162,16 @@ function generateUserList(
     return;
   }
 
-  console.log(users);
-  const errorTexts = document.getElementsByClassName('error-text');
-  Array.from(errorTexts).forEach((errorText) => {
-    errorText.remove();
-  });
+  const errorTexts = document.getElementById('error_para');
+  if (errorTexts) {
+    errorTexts.remove();
+  }
 
   if (showPagination || page == 0) {
     ulElement.innerHTML = '';
   }
 
-  if (users?.length !== 0) {
+  if (users?.length) {
     users?.forEach((userData) => {
       const listElement = document.createElement('li');
       const imgElement = document.createElement('img');
@@ -202,7 +201,6 @@ function generateUserList(
     userListElement.appendChild(ulElement);
     run = true;
   }
-  userListElement.appendChild(ulElement);
 }
 
 async function fetchUsersData(searchInput) {
@@ -244,7 +242,7 @@ async function getParticularUserData(
 ) {
   try {
     page = 0;
-    if (searchInput === '') {
+    if (!searchInput.length) {
       await showUserDataList(
         page,
         userListElement,
@@ -338,10 +336,14 @@ const showUserDataList = async (
   userListElement,
   paginationElement,
   loaderElement,
-  prevBtn,
-  nextBtn,
 ) => {
   try {
+    if (isLoading) return;
+    if (page != 0) {
+      isLoading = true;
+      userloaderElement.style.display = 'block';
+    }
+
     const userData = await getUsersData(page);
     if (userData && userData.length) {
       let usersDataList = userData.filter(
@@ -359,7 +361,6 @@ const showUserDataList = async (
         userListElement,
         paginationElement,
         loaderElement,
-        prevBtn,
       );
     }
   } catch (err) {
@@ -370,6 +371,9 @@ const showUserDataList = async (
       paginationElement,
       loaderElement,
     );
+  } finally {
+    userloaderElement.style.display = 'none';
+    isLoading = false;
   }
 };
 
