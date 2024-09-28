@@ -251,6 +251,15 @@ body {
   justify-content: center;
 }
 
+.total_count {
+  padding: 24px;
+  width: 58%;
+  max-width: 800px;
+  box-sizing: border-box;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
 .application-card {
   border-radius: 15px;
   box-shadow: var(--elevation-1);
