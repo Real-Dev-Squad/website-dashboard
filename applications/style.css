@@ -42,7 +42,7 @@ body {
   left: 0;
 }
 
-.header {
+.header, .footer {
   text-align: center;
 }
 
