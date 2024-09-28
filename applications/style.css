@@ -210,6 +210,19 @@ body {
   color: var(--white);
 }
 
+.total_count {
+  padding: 24px;
+  width: 58%;
+  max-width: 800px;
+  box-sizing: border-box;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.total_count.hidden {
+  display: none;
+}
+
 .filters-container {
   display: flex;
   flex-direction: column;
