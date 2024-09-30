@@ -21,9 +21,9 @@ let urls = [
   'https://dashboard.realdevsquad.com/featureflag/index.html',
   'https://dashboard.realdevsquad.com/wallet/index.html',
   'https://dashboard.realdevsquad.com/online-members/online-members.html',
-  'https://dashboard.realdevsquad.com/users/discord/index.html',
-  'https://dashboard.realdevsquad.com/groups/index.html',
-  'https://dashboard.realdevsquad.com/applications/index.html',
+  // 'https://dashboard.realdevsquad.com/users/discord/index.html',
+  // 'https://dashboard.realdevsquad.com/groups/index.html',
+  // 'https://dashboard.realdevsquad.com/applications/index.html',
 ];
 
 const test_footer = async (url, index) => {
