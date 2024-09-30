@@ -200,6 +200,9 @@ function generateUserList(
     loaderElement.classList.add('remove-element');
     userListElement.appendChild(ulElement);
     run = true;
+    if (document.getElementById('loader')) {
+      document.getElementById('loader').classList.add('remove-element');
+    }
   }
 }
 
@@ -668,6 +671,7 @@ clearButton.addEventListener('click', function () {
   clearCheckboxes('availability-filter');
   filterModal.classList.toggle('hidden');
   displayLoader();
+  page = 0;
   showUserDataList(
     page,
     userListElement,
