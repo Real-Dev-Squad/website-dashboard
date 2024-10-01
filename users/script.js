@@ -36,9 +36,6 @@ const init = (
       window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 &&
       run
     ) {
-      if (!run) {
-        return;
-      }
       if (!page) {
         page++;
         return;
