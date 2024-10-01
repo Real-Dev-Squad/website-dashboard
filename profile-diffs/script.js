@@ -133,9 +133,18 @@ async function populateProfileDiffs(query = {}, newLink) {
       });
     }
     profileDiffsElement.appendChild(profileDiffsListElement);
-    for (let data of allProfileDiffs) {
-      await createProfileDiffCard(data, profileDiffsListElement);
-    }
+
+    // Create all profile diff cards with shimmer effect
+    allProfileDiffs.forEach((data) => {
+      const card = createProfileDiffCard(data);
+      profileDiffsListElement.appendChild(card);
+    });
+
+    // Fetch user details and update cards
+    allProfileDiffs.forEach(async (data) => {
+      const user = await getUser(data.userId);
+      updateProfileDiffCard(data.id, user);
+    });
   } catch (error) {
     showToast({ type: 'error', message: 'Something went wrong!' });
   } finally {
@@ -177,7 +186,7 @@ function debounce(func, delay) {
   };
 }
 
-async function createProfileDiffCard(data, profileDiffCardList) {
+function createProfileDiffCard(data) {
   const time = data.timestamp;
   const fireBaseTime = new Date(
     time._seconds * 1000 + time._nanoseconds / 1000000,
@@ -195,7 +204,7 @@ async function createProfileDiffCard(data, profileDiffCardList) {
 
   const profileCard = createElement({
     type: 'div',
-    attributes: { class: 'profile-card' },
+    attributes: { class: 'profile-card', 'data-id': data.id },
   });
   if (filterStates.status === Status.PENDING) {
     profileCard.style.cursor = 'pointer';
@@ -203,7 +212,6 @@ async function createProfileDiffCard(data, profileDiffCardList) {
       window.location.href = `/profile-diff-details/?id=${data.id}`;
     });
   }
-  profileDiffCardList.appendChild(profileCard);
 
   const profileCardLeft = createElement({
     type: 'div',
@@ -251,19 +259,29 @@ async function createProfileDiffCard(data, profileDiffCardList) {
   profileCard.appendChild(profileCardLeft);
   profileCard.appendChild(profileCardRight);
 
-  const user = await getUser(data.userId);
-  profileCardLeft.classList.remove('shimmer');
+  return profileCard;
+}
 
-  profileCardPhoto.style.backgroundImage = `url(${user.picture?.url})`;
-  profileCardPhoto.style.backgroundSize = 'cover';
+function updateProfileDiffCard(cardId, user) {
+  const card = document.querySelector(`.profile-card[data-id="${cardId}"]`);
+  if (!card) return;
 
-  profileCardName.classList.remove('profile-name-shimmer');
-  profileCardName.classList.add('profile-name');
-  profileCardName.textContent = `${user.first_name} ${user.last_name}`;
+  const profileLeft = card.querySelector('.profile');
+  const profilePic = card.querySelector('.profile-pic');
+  const profileName = card.querySelector('.profile-name-shimmer');
+  const profileUsername = card.querySelector('.profile-username-shimmer');
 
-  profileCardUsername.classList.remove('profile-username-shimmer');
-  profileCardUsername.classList.add('profile-username');
-  profileCardUsername.textContent = `${user.username}`;
+  profileLeft.classList.remove('shimmer');
+  profilePic.style.backgroundImage = `url(${user.picture?.url})`;
+  profilePic.style.backgroundSize = 'cover';
+
+  profileName.classList.remove('profile-name-shimmer');
+  profileName.classList.add('profile-name');
+  profileName.textContent = `${user.first_name} ${user.last_name}`;
+
+  profileUsername.classList.remove('profile-username-shimmer');
+  profileUsername.classList.add('profile-username');
+  profileUsername.textContent = `${user.username}`;
 }
 
 const addIntersectionObserver = () => {
