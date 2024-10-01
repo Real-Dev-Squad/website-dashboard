@@ -29,7 +29,7 @@ const init = (
 ) => {
   prevBtn.addEventListener('click', () => {
     showUserDataList(
-      --page,
+      page == 0 ? page : --page,
       userListElement,
       paginationElement,
       loaderElement,
@@ -39,8 +39,10 @@ const init = (
   });
 
   nextBtn.addEventListener('click', () => {
+    const myDiv = document.getElementById('user-list');
+    const liElements = myDiv.querySelectorAll('li');
     showUserDataList(
-      ++page,
+      liElements == 0 ? page : ++page,
       userListElement,
       paginationElement,
       loaderElement,
