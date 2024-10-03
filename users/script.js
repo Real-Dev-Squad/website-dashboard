@@ -1,6 +1,7 @@
 const params = new URLSearchParams(window.location.search);
 const userListElement = document.getElementById(USER_LIST_ELEMENT);
 const loaderElement = document.getElementById(LOADER_ELEMENT);
+const userloaderElement = document.getElementById(USER_LOADER_ELEMENT);
 const tileViewBtn = document.getElementById(TILE_VIEW_BTN);
 const tableViewBtn = document.getElementById(TABLE_VIEW_BTN);
 const userSearchElement = document.getElementById(USER_SEARCH_ELEMENT);
@@ -12,10 +13,13 @@ const filterButton = document.getElementById(FILTER_BUTTON);
 const availabilityFilter = document.getElementById(AVAILABILITY_FILTER);
 const applyFilterButton = document.getElementById(APPLY_FILTER_BUTTON);
 const clearButton = document.getElementById(CLEAR_BUTTON);
+const ulElement = document.getElementById(HEAD_LIST_ELEMENT);
 
 let tileViewActive = false;
 let tableViewActive = true;
+let isLoading = false;
 let page = 0;
+let run = true;
 
 const init = (
   prevBtn,
@@ -27,26 +31,24 @@ const init = (
   paginationElement,
   loaderElement,
 ) => {
-  prevBtn.addEventListener('click', () => {
-    showUserDataList(
-      --page,
-      userListElement,
-      paginationElement,
-      loaderElement,
-      prevBtn,
-      nextBtn,
-    );
-  });
+  window.addEventListener('scroll', async () => {
+    if (
+      window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 &&
+      run
+    ) {
+      if (!page) {
+        page++;
+        return;
+      }
 
-  nextBtn.addEventListener('click', () => {
-    showUserDataList(
-      ++page,
-      userListElement,
-      paginationElement,
-      loaderElement,
-      prevBtn,
-      nextBtn,
-    );
+      run = false;
+      showUserDataList(
+        page++,
+        userListElement,
+        paginationElement,
+        loaderElement,
+      );
+    }
   });
 
   tileViewBtn.addEventListener('click', () => {
@@ -65,17 +67,9 @@ const init = (
           userListElement,
           paginationElement,
           loaderElement,
-          prevBtn,
         );
       }
-      showUserDataList(
-        page,
-        userListElement,
-        paginationElement,
-        loaderElement,
-        prevBtn,
-        nextBtn,
-      );
+      showUserDataList(page, userListElement, paginationElement, loaderElement);
     }, 500),
   );
 };
@@ -86,6 +80,8 @@ function showTileView(userListElement, tableViewBtn, tileViewBtn) {
   tableViewBtn.classList.remove('btn-active');
   tileViewBtn.classList.add('btn-active');
   const listContainerElement = userListElement.lastChild;
+  const headList = document.getElementById('head_list');
+  headList.classList.add('tile-webview');
   listContainerElement.childNodes.forEach((listElement) => {
     const imgElement = listElement.firstChild;
     imgElement.classList.add('remove-element');
@@ -99,6 +95,8 @@ function showTableView(userListElement, tableViewBtn, tileViewBtn) {
   tileViewBtn.classList.remove('btn-active');
   tableViewBtn.classList.add('btn-active');
   const listContainerElement = userListElement.lastChild;
+  const headList = document.getElementById('head_list');
+  headList.classList.remove('tile-webview');
   listContainerElement.childNodes.forEach((listElement) => {
     const imgElement = listElement.firstChild;
     imgElement.classList.remove('remove-element');
@@ -116,6 +114,7 @@ function showErrorMessage(
   const paraELe = document.createElement('p');
   const textNode = document.createTextNode(msg);
   paraELe.appendChild(textNode);
+  paraELe.id = 'error_para';
   paraELe.classList.add('error-text');
   userListElement.appendChild(paraELe);
   paginationElement.classList.add('remove-element');
@@ -149,14 +148,7 @@ function generateUserList(
   userListElement,
   paginationElement,
   loaderElement,
-  prevBtn,
 ) {
-  userListElement.innerHTML = '';
-  if (page <= 0) {
-    prevBtn.classList.add('btn-disabled');
-  } else {
-    prevBtn.classList.remove('btn-disabled');
-  }
   if (!users || !users.length) {
     showErrorMessage(
       'No data found',
@@ -166,40 +158,49 @@ function generateUserList(
     );
     return;
   }
-  const ulElement = document.createElement('ul');
-  users.forEach((userData) => {
-    const listElement = document.createElement('li');
-    const imgElement = document.createElement('img');
-    imgElement.src = userData.picture ? userData.picture : DEFAULT_AVATAR;
-    imgElement.classList.add('user-img-dimension');
-    const pElement = document.createElement('p');
-    const node = document.createTextNode(
-      `${userData.first_name} ${userData.last_name}`,
-    );
-    pElement.appendChild(node);
-    listElement.appendChild(imgElement);
-    listElement.appendChild(pElement);
 
-    if (tileViewActive) {
-      let imgElement = listElement.firstChild;
-      listElement.classList.remove('tile-width');
-      imgElement.classList.add('remove-element');
-    }
-    listElement.onclick = () => {
-      document.getElementById('user-search').value = '';
-      window.location.href = `/users/details/index.html?username=${userData.username}`;
-    };
-    ulElement.appendChild(listElement);
-  });
-  loaderElement.classList.add('remove-element');
-  if (showPagination) {
-    paginationElement.classList.remove('remove-element');
-    paginationElement.classList.add('pagination');
-  } else {
-    paginationElement.classList.add('remove-element');
-    paginationElement.classList.remove('pagination');
+  const errorTexts = document.getElementById('error_para');
+  if (errorTexts) {
+    errorTexts.remove();
   }
-  userListElement.appendChild(ulElement);
+
+  if (showPagination || page == 0) {
+    ulElement.innerHTML = '';
+  }
+
+  if (users?.length) {
+    users?.forEach((userData) => {
+      const listElement = document.createElement('li');
+      const imgElement = document.createElement('img');
+      imgElement.src = userData.picture ? userData.picture : DEFAULT_AVATAR;
+      imgElement.classList.add('user-img-dimension');
+      listElement.classList.add('tile-webview');
+      const pElement = document.createElement('p');
+      const node = document.createTextNode(
+        `${userData.first_name} ${userData.last_name}`,
+      );
+      pElement.appendChild(node);
+      listElement.appendChild(imgElement);
+      listElement.appendChild(pElement);
+
+      if (tileViewActive) {
+        let imgElement = listElement.firstChild;
+        listElement.classList.add('tile-width');
+        imgElement.classList.add('remove-element');
+      }
+      listElement.onclick = () => {
+        document.getElementById('user-search').value = '';
+        window.location.href = `/users/details/index.html?username=${userData.username}`;
+      };
+      ulElement.appendChild(listElement);
+    });
+    loaderElement.classList.add('remove-element');
+    userListElement.appendChild(ulElement);
+    run = true;
+    if (document.getElementById('loader')) {
+      document.getElementById('loader').classList.add('remove-element');
+    }
+  }
 }
 
 async function fetchUsersData(searchInput) {
@@ -238,19 +239,28 @@ async function getParticularUserData(
   userListElement,
   paginationElement,
   loaderElement,
-  prevBtn,
 ) {
   try {
-    const usersData = await fetchUsersData(searchInput);
-    if (usersData.users) {
-      const data = formatUsersData(usersData.users);
-      generateUserList(
-        data,
-        false,
+    page = 0;
+    if (!searchInput.length) {
+      await showUserDataList(
+        page,
         userListElement,
         paginationElement,
         loaderElement,
-        prevBtn,
+      );
+      return;
+    }
+    const usersData = await fetchUsersData(searchInput);
+    if (usersData.users) {
+      const data = formatUsersData(usersData?.users);
+
+      generateUserList(
+        data,
+        true,
+        userListElement,
+        paginationElement,
+        loaderElement,
       );
     } else {
       showErrorMessage(
@@ -318,14 +328,7 @@ function displayLoader() {
 function clearFilters() {
   availabilityFilter.value = 'none';
   displayLoader();
-  showUserDataList(
-    page,
-    userListElement,
-    paginationElement,
-    loaderElement,
-    prevBtn,
-    nextBtn,
-  );
+  showUserDataList(page, userListElement, paginationElement, loaderElement);
 }
 
 const showUserDataList = async (
@@ -333,17 +336,16 @@ const showUserDataList = async (
   userListElement,
   paginationElement,
   loaderElement,
-  prevBtn,
-  nextBtn,
 ) => {
   try {
+    if (isLoading) return;
+    if (page != 0) {
+      isLoading = true;
+      userloaderElement.style.display = 'block';
+    }
+
     const userData = await getUsersData(page);
-    if (userData.length) {
-      if (userData.length < USER_FETCH_COUNT) {
-        nextBtn.classList.add('btn-disabled');
-      } else {
-        nextBtn.classList.remove('btn-disabled');
-      }
+    if (userData && userData.length) {
       let usersDataList = userData.filter(
         (user) => user.first_name && !user.roles?.archived,
       );
@@ -355,11 +357,10 @@ const showUserDataList = async (
       }));
       generateUserList(
         usersDataList,
-        true,
+        false,
         userListElement,
         paginationElement,
         loaderElement,
-        prevBtn,
       );
     }
   } catch (err) {
@@ -370,6 +371,9 @@ const showUserDataList = async (
       paginationElement,
       loaderElement,
     );
+  } finally {
+    userloaderElement.style.display = 'none';
+    isLoading = false;
   }
 };
 
@@ -664,6 +668,7 @@ clearButton.addEventListener('click', function () {
   clearCheckboxes('availability-filter');
   filterModal.classList.toggle('hidden');
   displayLoader();
+  page = 0;
   showUserDataList(
     page,
     userListElement,
