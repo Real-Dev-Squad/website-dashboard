@@ -1,8 +1,9 @@
 import { TabsSection } from './components/TabsSection.js';
 import { UsersSection } from './components/UsersSection.js';
 import { UserDetailsSection } from './components/UserDetailsSection.js';
-import { getUsers } from './utils/util.js';
+import { getUsers, searchUser } from './utils/util.js';
 import { NoUserFound } from './components/NoUserFound.js';
+import { SearchField } from './components/SearchField.js';
 
 const { createElement, rerender } = react;
 
@@ -37,35 +38,61 @@ const handleTabNavigation = async (e) => {
   }
 };
 
+let users = usersData[activeTab] ?? [];
+
+let searchTerm = urlParams.get('search') ?? '';
+
+if (searchTerm) {
+  users = await searchUser(searchTerm);
+}
+
 const handleUserSelected = (e) => {
   const selectedUserId =
     e.target?.getAttribute('data_key') ||
     e.target.parentElement?.getAttribute('data_key');
 
   if (selectedUserId) {
-    showUser = usersData[activeTab]?.findIndex(
-      (user) => user.id === selectedUserId,
-    );
+    showUser = users?.findIndex((user) => user.id === selectedUserId);
     rerender(App(), window['root']);
   }
 };
 
-export const App = () => {
-  const users = usersData[activeTab] ?? [];
+const handleSearchChange = (newSearchTerm) => {
+  if (newSearchTerm) {
+    searchTerm = newSearchTerm;
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.set('search', searchTerm);
+    document.location.search = searchParams.toString();
+  }
+};
 
-  if (users.length)
+export const App = () => {
+  if (users.length) {
     return createElement('main', {}, [
+      SearchField({
+        onSearchChange: handleSearchChange,
+        initialValue: searchTerm,
+      }),
       TabsSection({ tabs, activeTab, handleTabNavigation }),
       UsersSection({
-        users,
+        users: users,
         showUser,
         handleUserSelected,
       }),
-      UserDetailsSection({ user: users[showUser] ?? {} }),
+      users.length > 0
+        ? UserDetailsSection({ user: users[showUser] ?? {} })
+        : null,
     ]);
+  }
 
   return createElement('main', {}, [
     TabsSection({ tabs, activeTab, handleTabNavigation }),
-    NoUserFound(),
+    createElement('div', { style: { display: 'flex' } }, [
+      SearchField({
+        onSearchChange: handleSearchChange,
+        initialValue: searchTerm,
+      }),
+      NoUserFound(),
+    ]),
   ]);
 };
