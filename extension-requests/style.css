@@ -124,17 +124,17 @@
 .assignee-container {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.7rem;
 }
 
-.assignee-image {
+.assignee-approver-image {
   width: 1.875rem;
   height: 1.875rem;
   color: transparent;
   border-radius: 50%;
 }
 
-.assignee-name {
+.assignee-approver-name {
   font-size: 1.3rem;
   font-weight: 500;
   border-radius: 5px;
@@ -269,17 +269,29 @@
   display: flex;
   justify-content: space-between;
 }
+.approval-day{
+  font-size: 1.0rem;
+  font-weight: 500;
+  padding-top: 0.25rem;
+  right: 0.4rem;
+  white-space: wrap; 
+}
 
-.assignee-text {
+.assignee-approver-text {
   font-size: 1.1rem;
   font-weight: 500;
   color: var(--medium-gray);
 }
 
-.extension-card-buttons {
+.approver-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+.action-card-buttons{
   display: flex;
   gap: 0.5rem;
-  margin-right: 3.5rem;
+  margin-right:3.5rem;
 }
 
 .details-heading {
@@ -820,7 +832,7 @@ body {
     margin: 1.5rem;
   }
 
-  .extension-card-buttons {
+  .approver-container {
     margin: 0;
   }
 
@@ -855,7 +867,7 @@ body {
     margin: 1rem;
   }
 
-  .assignee-text {
+  .assignee-approver-text {
     display: none;
   }
 
