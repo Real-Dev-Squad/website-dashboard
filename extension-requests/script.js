@@ -505,11 +505,11 @@ const createApprovalElements = async (data, approvalText, approverContainer) => 
   Promise.resolve(approverDataPromise)
     .then((response) => {
       const approverImageUrl = response?.picture?.url ?? DEFAULT_AVATAR;
-      const userFirstName = response?.first_name ?? data.approver;
+      const approverFirstName = response?.first_name ?? data.approver;
 
       approverImage.src = approverImageUrl;
-      approverImage.alt = userFirstName;
-      approverNameElement.innerText = `${userFirstName},`;
+      approverImage.alt = approverFirstName;
+      approverNameElement.innerText = `${approverFirstName},`;
     })
 };
 
