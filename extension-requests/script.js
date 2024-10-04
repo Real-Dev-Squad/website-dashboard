@@ -1254,7 +1254,7 @@ async function createExtensionCard(data) {
 
   Promise.all([taskDataPromise, userDataPromise]).then((response) => {
     const [{ taskData }, userData] = response;
-    const approverImage = userData?.picture?.url ?? DEFAULT_AVATAR;
+    const userImage = userData?.picture?.url ?? DEFAULT_AVATAR;
     let userFirstName = userData?.first_name ?? data.assignee;
     const taskStatus = taskData?.status?.replaceAll('_', ' ');
     const userId = userData?.id;
@@ -1263,7 +1263,7 @@ async function createExtensionCard(data) {
     userFirstName = userFirstName ?? '';
     statusSiteLink.href = `${STATUS_BASE_URL}/tasks/${data.taskId}`;
     statusSiteLink.innerText = taskData.title;
-    assigneeImage.src = approverImage;
+    assigneeImage.src = userImage;
     assigneeImage.alt = userFirstName;
     assigneeNameElement.innerText = userFirstName;
     taskStatusValue.innerText = ` ${taskStatus}`;
