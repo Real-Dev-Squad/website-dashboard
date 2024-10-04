@@ -471,20 +471,20 @@ const createApprovalElements = async (data, approvalText, approverContainer) => 
   );
   const approvalTextElement = createElement({
     type: 'span',
-    attributes: { class: 'assignee-approver-text' },
+    attributes: { class: 'approver-text' },
     innerText: `${approvalText} by`,
   });
   approverContainer.appendChild(approvalTextElement);
 
   const approverImage = createElement({
     type: 'img',
-    attributes: { class: 'assignee-approver-image' },
+    attributes: { class: 'approver-image' },
   });
   approverContainer.appendChild(approverImage);
 
   const approverNameElement = createElement({
     type: 'span',
-    attributes: { class: 'assignee-approver-name' },
+    attributes: { class: 'approver-name' },
   });
   approverContainer.appendChild(approverNameElement);
 
@@ -812,18 +812,18 @@ async function createExtensionCard(data) {
   cardAssigneeButtonContainer.appendChild(assigneeContainer);
   const assigneeText = createElement({
     type: 'span',
-    attributes: { class: 'assignee-approver-text' },
+    attributes: { class: 'assignee-text' },
     innerText: 'Assigned to',
   });
   assigneeContainer.appendChild(assigneeText);
   const assigneeImage = createElement({
     type: 'img',
-    attributes: { class: 'assignee-approver-image' },
+    attributes: { class: 'assignee-image' },
   });
   assigneeContainer.appendChild(assigneeImage);
   const assigneeNameElement = createElement({
     type: 'span',
-    attributes: { class: 'assignee-approver-name' },
+    attributes: { class: 'assignee-name' },
   });
   assigneeContainer.appendChild(assigneeNameElement);
   const approverContainer = createElement({
