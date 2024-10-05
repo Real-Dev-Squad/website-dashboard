@@ -148,7 +148,7 @@ describe('Applications page', () => {
 
   it('should render the index of pending applications under dev flag === true', async function () {
     await page.goto(`${SITE_URL}/applications?dev=true&status=pending`);
-    const indexOfApplication = await page.$$('.user-index');
+    const indexOfApplication = await page.$$('[data-testid="user-index"]');
     expect(indexOfApplication).toBeTruthy();
   });
 

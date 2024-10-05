@@ -332,6 +332,7 @@ function createApplicationCard({ application, dev, index }) {
         value: `${index}`,
         readonly: '',
         class: 'user-index',
+        'data-testid': 'user-index',
       },
     });
     usernameTextAndIndex.appendChild(usernameText);
