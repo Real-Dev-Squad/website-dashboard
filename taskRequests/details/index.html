@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/images/index.ico" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/taskRequests/details/style.css" />
+
+    <title>Task Requests | Real Dev Squad</title>
+    <script src="/helpers/loadENV.js"></script>
+    <script src="/taskRequests/util.js"></script>
+    <script src="/taskRequests/constants.js"></script>
+    <script src="/utils/time/index.js"></script>
+    <script src="/taskRequests/details/script.js" defer></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"
+      integrity="sha512-LhccdVNGe2QMEfI3x4DVV3ckMRe36TfydKss6mJpdHjNFiV07dFpS2xzeZedptKZrwxfICJpez09iNioiSZ3hA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+  </head>
+  <body>
+    <div class="header">
+      <div class="header__contents">
+        <img
+          src="/taskRequests/assets/RDSLogo.png"
+          alt="RDS logo"
+          height="48"
+          width="48"
+        />
+        <a href="/" class="header__contents__navlink">Home</a>
+      </div>
+    </div>
+    <div class="container">
+      <div id="task-request-details" class="taskRequest">
+        <div class="taskRequest__skeleton">
+          <div class="taskRequest__skeleton__title skeleton"></div>
+          <div class="taskRequest__skeleton__subtitle skeleton"></div>
+        </div>
+      </div>
+
+      <div id="task-details" class="task">
+        <div class="task__skeleton">
+          <div class="task__skeleton__title skeleton"></div>
+          <div class="task__skeleton__details skeleton"></div>
+          <div class="task__skeleton__details skeleton"></div>
+          <div class="task__skeleton__description skeleton"></div>
+          <div class="task__skeleton__description skeleton"></div>
+          <div class="task__skeleton__description skeleton"></div>
+          <div class="task__skeleton__description skeleton"></div>
+        </div>
+      </div>
+
+      <div class="request-details">
+        <div class="requestors">
+          <div class="requestors__container">
+            <h4 class="requestors__container__title">Requestors</h4>
+            <ul
+              class="requestors__container__list"
+              id="requestors-details"
+            ></ul>
+            <ul
+              class="
+                requestors__container__list
+                requestors__container__list__skeleton
+              "
+            >
+              <li class="skeleton"></li>
+              <li class="skeleton"></li>
+              <li class="skeleton"></li>
+              <li class="skeleton"></li>
+            </ul>
+          </div>
+        </div>
+        <div class="reject__container">
+          <button id="reject-button" class="request-details__reject__button">
+            Reject
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="toast_task_details" class="hidden">
+      <div class="message"></div>
+    </div>
+    <div id="overlay" class="overlay">
+      <div
+        id="requestor_details_modal_content"
+        class="requestor_details_modal_content"
+      >
+        <span
+          class="requestor_details_modal_close"
+          id="requestor_details_modal_close"
+          >&times;</span
+        >
+        <div class="requestor_details_modal_info"></div>
+      </div>
+    </div>
+  </body>
+</html>
