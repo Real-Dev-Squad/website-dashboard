@@ -2,6 +2,7 @@
   font-family: 'Inter', sans-serif;
   --color-primary: #1d1283;
   --color-primary-hover: #11085c;
+  --color-button-hover: #2c1bc6;
   --white: #fff;
   --color-gray: #666;
   --black-color: black;
@@ -48,14 +49,98 @@ body {
 .container {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
   overflow-y: auto;
+}
+
+.filter-container {
+  display: flex;
+  align-items: end;
+  gap: 10px;
+  margin: 20px;
 }
 
 .funnel-icon {
   width: 1.2rem;
   height: 1.5rem;
   margin-left: 0.5rem;
+}
+
+.filter-menu .filter-button:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.filter-menu .filter-button {
+  margin-left: auto;
+  background-color: var(--color-primary);
+  color: var(--white);
+  border: none;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 9rem;
+  height: 2.5rem;
+  padding: 0.7rem;
+}
+
+.filter-dropdown {
+  width: 300px;
+  padding: 0;
+  margin: 0;
+  display: none;
+  position: absolute;
+  border: 1px solid var(--light-gray-color);
+  border-radius: 0.2rem;
+  background-color: var(--white);
+}
+
+.filter-dropdown div {
+  padding: 0.5rem 1rem 0.5rem 2rem;
+  color: var(--color-gray);
+  border: 1px solid var(--light-gray-color);
+}
+
+.filter-dropdown div:first-child {
+  font-weight: bold;
+}
+
+.filter-dropdown div:not(:first-child) {
+  padding-left: 4rem;
+  font-weight: normal;
+}
+.filter-dropdown div:not(:first-child):hover {
+  background-color: var(--light-gray-color);
+  cursor: pointer;
+}
+
+.filter-dropdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Filter label */
+.filter-label {
+  display: flex;
+  font-size: 14px;
+  font-weight: 600;
+  align-items: center;
+  color: var(--color-primary);
+  background-color: var(--white);
+  border: 1px solid var(--color-primary);
+  padding: 5px 10px;
+  border-radius: 50px;
+}
+
+.filter-text {
+  margin-right: 5px;
+}
+
+.filter-remove {
+  cursor: pointer;
+  font-size: 14px;
 }
 
 .filter-button:hover {
@@ -125,12 +210,37 @@ body {
   color: var(--white);
 }
 
+.total_count {
+  padding: 24px;
+  width: 58%;
+  max-width: 800px;
+  box-sizing: border-box;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.total_count.hidden {
+  display: none;
+}
+
 .filters-container {
   display: flex;
   flex-direction: column;
   width: 100%;
   align-items: center;
   justify-content: center;
+}
+
+.close-dropdown-btn {
+  font-weight: bold;
+  color: var(--color-gray);
+  text-align: center;
+  font-size: 12px;
+  background-color: var(--white);
+  border: none;
+  outline: none;
+  box-shadow: none;
+  cursor: pointer;
 }
 
 .modal-form {
@@ -145,7 +255,6 @@ body {
 .application-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
   padding-bottom: 10px;
   padding-top: 32px;
   gap: 25px;
@@ -159,7 +268,10 @@ body {
   border-radius: 15px;
   box-shadow: var(--elevation-1);
   padding: 24px;
-  width: 44%;
+  width: 85%;
+  max-width: 800px;
+  box-sizing: border-box;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -364,16 +476,57 @@ body {
 
 .application-details .application-details-actions .application-details-reject {
   color: var(--red-color);
-  height: auto;
   background-color: white;
-  margin-left: auto;
-  margin-right: auto;
-  text-decoration: underline;
+  margin: 0 auto;
+  width: 40%;
+  border: 2px solid var(--red-color);
+}
+
+.application-details
+  .application-details-actions
+  .application-details-reject:is(:hover, :active, :focus-visible) {
+  background: var(--red-color);
+  color: var(--white);
+  transition: transform 0.2s ease;
+  will-change: transform;
+}
+
+.application-details
+  .application-details-actions
+  .application-details-reject:hover {
+  transform: scale(1.05);
+}
+
+.application-details
+  .application-details-actions
+  .application-details-reject:active {
+  animation: bounceBackAnimation 0.4s ease forwards;
 }
 
 .application-details .application-details-actions .application-details-accept {
   background: var(--color-primary);
-  width: 50%;
+  margin: 0 auto;
+  width: 40%;
+}
+
+.application-details
+  .application-details-actions
+  .application-details-accept:is(:hover, :active, :focus-visible) {
+  background: var(--color-button-hover);
+  transition: transform 0.2s ease;
+  will-change: transform;
+}
+
+.application-details
+  .application-details-actions
+  .application-details-accept:hover {
+  transform: scale(1.05);
+}
+
+.application-details
+  .application-details-actions
+  .application-details-accept:active {
+  animation: bounceBackAnimation 0.4s ease forwards;
 }
 
 .application-details-actions .hidden {
@@ -442,6 +595,28 @@ body {
   opacity: 0.2;
 }
 
+@keyframes bounceBackAnimation {
+  0% {
+    transform: scale(1);
+  }
+
+  25% {
+    transform: scale(0.9);
+  }
+
+  55% {
+    transform: scale(1.1);
+  }
+
+  75% {
+    transform: scale(0.9);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
 @keyframes slideIn {
   from {
     right: -300px;
@@ -463,10 +638,6 @@ body {
 }
 
 @media screen and (max-width: 850px) {
-  .application-card {
-    width: 100%;
-  }
-
   .container {
     padding: 1rem;
   }
@@ -477,5 +648,9 @@ body {
     width: 100%;
     height: 100%;
     border-radius: 0;
+  }
+
+  .application-card {
+    width: 90%;
   }
 }

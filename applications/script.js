@@ -9,9 +9,9 @@ import {
 let nextLink;
 let isDataLoading = false;
 const loader = document.querySelector('.loader');
-const filterButton = document.getElementById('filter-button');
 const filterModal = document.querySelector('.filter-modal');
 const backDrop = document.querySelector('.backdrop');
+const totalCountElement = document.querySelector('.total_count');
 const backDropBlur = document.querySelector('.backdrop-blur');
 const applicationDetailsModal = document.querySelector('.application-details');
 const mainContainer = document.querySelector('.container');
@@ -36,8 +36,25 @@ const lastElementContainer = document.getElementById('page_bottom_element');
 const applicationDetailsActionsContainer = document.querySelector(
   '.application-details-actions',
 );
-
 const urlParams = new URLSearchParams(window.location.search);
+const isDev = urlParams.get('dev') === 'true';
+const filterButton = isDev
+  ? document.getElementById('filter-button-new')
+  : document.getElementById('filter-button');
+if (isDev)
+  document
+    .getElementsByClassName('filter-container')[0]
+    .classList.remove('hidden');
+
+const filterDropdown = document.querySelector('.filter-dropdown');
+const filterOptions = document.querySelectorAll(
+  '.filter-dropdown div:not(.close-dropdown-btn)',
+);
+const filterLabel = document.querySelector('.filter-label');
+const filterText = document.querySelector('.filter-label .filter-text');
+const filterRemove = document.querySelector('.filter-remove');
+const closeDropdownBtn = document.querySelector('.close-dropdown-btn');
+
 let applicationId = urlParams.get('id');
 
 let currentApplicationId;
@@ -76,8 +93,14 @@ function updateUserApplication({ isAccepted }) {
 
 function changeFilter() {
   nextLink = '';
-  filterModal.classList.add('hidden');
-  backDrop.style.display = 'none';
+  if (!isDev) {
+    filterModal.classList.add('hidden');
+    backDrop.style.display = 'none';
+    totalCountElement.classList.add('hidden');
+  } else {
+    totalCountElement.classList.add('hidden');
+    status = 'all';
+  }
   applicationContainer.innerHTML = '';
 }
 
@@ -274,7 +297,7 @@ function removeQueryParamInUrl(queryParamKey) {
   window.history.replaceState(window.history.state, '', updatedUrl);
 }
 
-function createApplicationCard({ application }) {
+function createApplicationCard({ application, dev }) {
   const applicationCard = createElement({
     type: 'div',
     attributes: { class: 'application-card' },
@@ -313,42 +336,68 @@ function createApplicationCard({ application }) {
     innerText: application.intro.introduction.slice(0, 200),
   });
 
-  const viewDetailsButton = createElement({
-    type: 'button',
-    attributes: { class: 'view-details-button' },
-    innerText: 'View Details',
-  });
-
-  viewDetailsButton.addEventListener('click', () => {
-    addQueryParamInUrl('id', application.id);
-    openApplicationDetails(application);
-  });
-
   applicationCard.appendChild(userInfoContainer);
   applicationCard.appendChild(introductionText);
-  applicationCard.appendChild(viewDetailsButton);
+
+  if (dev) {
+    applicationCard.style.cursor = 'pointer';
+    applicationCard.addEventListener('click', () => {
+      addQueryParamInUrl('id', application.id);
+      openApplicationDetails(application);
+    });
+  } else {
+    const viewDetailsButton = createElement({
+      type: 'button',
+      attributes: { class: 'view-details-button' },
+      innerText: 'View Details',
+    });
+
+    viewDetailsButton.addEventListener('click', () => {
+      addQueryParamInUrl('id', application.id);
+      openApplicationDetails(application);
+    });
+    applicationCard.appendChild(viewDetailsButton);
+  }
 
   return applicationCard;
 }
 
-async function renderApplicationCards(next, status, isInitialRender) {
+function updateTotalCount(total, status) {
+  if (total > 0) {
+    totalCountElement.textContent = `Total ${status} applications: ${total}`;
+    totalCountElement.classList.remove('hidden');
+  }
+}
+
+async function renderApplicationCards(next, status, isInitialRender, dev) {
   noApplicationFoundText.classList.add('hidden');
   changeLoaderVisibility({ hide: false });
   isDataLoading = true;
   const data = await getApplications({
     applicationStatus: status,
     next,
+    dev,
   });
   isDataLoading = false;
   changeLoaderVisibility({ hide: true });
   const applications = data.applications;
+  const totalSelectedCount = data.totalCount;
+
   nextLink = data.next;
+  if (isDev && status != 'all') {
+    showAppliedFilter(status);
+  }
   if (isInitialRender) filterButton.classList.remove('hidden');
+
+  if (dev) {
+    updateTotalCount(totalSelectedCount, status);
+  }
   if (!applications.length)
     return noApplicationFoundText.classList.remove('hidden');
   applications.forEach((application) => {
     const applicationCard = createApplicationCard({
       application,
+      dev,
     });
     applicationContainer.appendChild(applicationCard);
   });
@@ -392,14 +441,20 @@ async function renderApplicationById(id) {
   const urlParams = new URLSearchParams(window.location.search);
   status = urlParams.get('status') || 'all';
 
-  if (status !== 'all') {
+  if (!isDev && status !== 'all') {
     document.querySelector(`input[name="status"]#${status}`).checked = true;
   }
 
   if (applicationId) {
     await renderApplicationById(applicationId);
   }
-  await renderApplicationCards('', status, true, applicationId);
+
+  if (isDev) {
+    await renderApplicationCards('', status, true, isDev);
+  } else {
+    await renderApplicationCards('', status, true, applicationId);
+  }
+
   addIntersectionObserver();
 
   changeLoaderVisibility({ hide: true });
@@ -410,7 +465,12 @@ const intersectionObserver = new IntersectionObserver(async (entries) => {
     return;
   }
   if (entries[0].isIntersecting && !isDataLoading) {
-    await renderApplicationCards(nextLink);
+    const dev = urlParams.get('dev');
+    if (dev) {
+      await renderApplicationCards(nextLink, status, true, dev);
+    } else {
+      await renderApplicationCards(nextLink);
+    }
   }
 });
 
@@ -418,9 +478,79 @@ const addIntersectionObserver = () => {
   intersectionObserver.observe(lastElementContainer);
 };
 
-filterButton.addEventListener('click', () => {
-  filterModal.classList.toggle('hidden');
-  backDrop.style.display = 'flex';
+if (isDev) {
+  filterButton.addEventListener('click', () => {
+    filterDropdown.style.display =
+      filterDropdown.style.display === 'block' ? 'none' : 'block';
+  });
+
+  filterOptions.forEach((option) => {
+    option.addEventListener('click', () => {
+      const filter = option.getAttribute('data-filter');
+      applyFilter(filter, isDev);
+    });
+  });
+} else {
+  filterButton.addEventListener('click', () => {
+    filterModal.classList.toggle('hidden');
+    backDrop.style.display = 'flex';
+  });
+
+  backDrop.addEventListener('click', () => {
+    filterModal.classList.add('hidden');
+    backDrop.style.display = 'none';
+  });
+
+  applyFilterButton.addEventListener('click', () => {
+    const selectedFilterOption = document.querySelector(
+      'input[name="status"]:checked',
+    );
+
+    const selectedStatus = selectedFilterOption.value;
+    addQueryParamInUrl('status', selectedStatus);
+    changeFilter();
+    status = selectedStatus;
+    const urlParams = new URLSearchParams(window.location.search);
+    const dev = urlParams.get('dev');
+
+    if (dev) {
+      renderApplicationCards(nextLink, status, false, dev);
+    } else {
+      renderApplicationCards(nextLink, status);
+    }
+  });
+
+  clearButton.addEventListener('click', clearFilter);
+}
+
+function showAppliedFilter(filterApplied) {
+  if (filterApplied) {
+    filterLabel.classList.remove('hidden');
+    filterText.textContent =
+      'Status :' + filterApplied[0].toUpperCase() + filterApplied.substring(1);
+  }
+}
+
+function applyFilter(filter, isDev) {
+  if (filter.length > 0) {
+    if (!filterLabel.classList.contains('hidden')) {
+      filterLabel.classList.add('hidden');
+    }
+    addQueryParamInUrl('status', filter);
+    changeFilter();
+    status = filter;
+    renderApplicationCards(nextLink, status, false, isDev);
+    filterDropdown.style.display = 'none';
+  }
+}
+
+filterRemove.addEventListener('click', () => {
+  filterLabel.classList.add('hidden');
+  filterText.textContent = '';
+  removeQueryParamInUrl('status');
+  changeFilter();
+  const dev = urlParams.get('dev');
+  renderApplicationCards(nextLink, status, false, dev);
 });
 
 backDrop.addEventListener('click', () => {
@@ -431,19 +561,15 @@ backDrop.addEventListener('click', () => {
 backDropBlur.addEventListener('click', closeApplicationDetails);
 applicationCloseButton.addEventListener('click', closeApplicationDetails);
 
-applyFilterButton.addEventListener('click', () => {
-  const selectedFilterOption = document.querySelector(
-    'input[name="status"]:checked',
-  );
-
-  const selectedStatus = selectedFilterOption.value;
-  addQueryParamInUrl('status', selectedStatus);
-  changeFilter();
-  status = selectedStatus;
-  renderApplicationCards(nextLink, status);
+document.addEventListener('click', (e) => {
+  if (!filterButton.contains(e.target) && !filterDropdown.contains(e.target)) {
+    filterDropdown.style.display = 'none';
+  }
 });
 
-clearButton.addEventListener('click', clearFilter);
+closeDropdownBtn.addEventListener('click', () => {
+  filterDropdown.style.display = 'none';
+});
 
 applicationAcceptButton.addEventListener('click', () =>
   updateUserApplication({ isAccepted: true }),

@@ -266,18 +266,54 @@ async function getUser(userId) {
   return user;
 }
 
-async function fillData(identityLogs, next, prev) {
+let isLoading = false;
+let nextLink = null;
+
+async function loadMoreLogs() {
+  if (!nextLink || isLoading) {
+    return;
+  }
+  const footer = document.querySelector('footer');
+
+  if (footer) {
+    footer.style.display = 'none';
+  }
+  isLoading = true;
+
+  try {
+    document.getElementById('loader').style.display = 'block';
+    const { identityLogs, next } = await getIdentityLogs(nextLink);
+    await fillData(identityLogs, next);
+  } catch (error) {
+    console.error('Error loading logs:', error);
+  } finally {
+    document.getElementById('loader').style.display = 'none';
+    isLoading = false;
+
+    if (footer) {
+      footer.style.display = 'block';
+    }
+  }
+}
+
+const addIntersectionObserver = () => {
+  const lastElementContainer = document.getElementById('page_bottom_element');
+  const intersectionObserver = new IntersectionObserver(async (entries) => {
+    if (entries[0].isIntersecting && !isLoading) {
+      await loadMoreLogs();
+    }
+  });
+  intersectionObserver.observe(lastElementContainer);
+};
+
+async function fillData(identityLogs, next) {
   if (identityLogs === undefined || identityLogs.length === 0) {
     document.getElementById('loader').innerHTML =
       'No Identity Service Logs found !!!';
   } else {
-    const wrapper = createCardComponent({
-      tagName: 'div',
-      className: 'wrapperDiv',
-    });
-
-    const footerDiv = document.querySelector('#footer');
-    document.body.insertBefore(wrapper, footerDiv);
+    const wrapper = document.querySelector('.wrapperDiv');
+    const loader = document.querySelector('#loader');
+    document.body.insertBefore(wrapper, loader);
     document.getElementById('loader').style.display = 'none';
 
     for (const identityLog of identityLogs) {
@@ -297,53 +333,14 @@ async function fillData(identityLogs, next, prev) {
         );
       }
     }
-
-    const buttonContainer = createCardComponent({
-      tagName: 'div',
-      className: 'buttonContainer',
-      parent: wrapper,
-    });
-
-    if (prev) {
-      const prevButton = createCardComponent({
-        tagName: 'button',
-        className: 'navigation-button',
-        parent: buttonContainer,
-        innerText: 'Prev',
-      });
-
-      prevButton.onclick = async () => {
-        wrapper.remove();
-        document.getElementById('loader').style.display = 'block';
-        const {
-          identityLogs,
-          next,
-          prev: prevLink,
-        } = await getIdentityLogs(prev);
-        fillData(identityLogs, next, prevLink);
-      };
-    }
-
-    if (next) {
-      const nextButton = createCardComponent({
-        tagName: 'button',
-        className: 'navigation-button',
-        parent: buttonContainer,
-        innerText: 'Next',
-      });
-
-      nextButton.onclick = async () => {
-        wrapper.remove();
-        document.getElementById('loader').style.display = 'block';
-        const {
-          identityLogs,
-          next: nextLink,
-          prev,
-        } = await getIdentityLogs(next);
-        fillData(identityLogs, nextLink, prev);
-      };
-    }
+    nextLink = next;
   }
 }
 
-export { getIdentityLogs, getIsSuperUser, fillData, getUserCount };
+export {
+  getIdentityLogs,
+  getIsSuperUser,
+  fillData,
+  getUserCount,
+  addIntersectionObserver,
+};

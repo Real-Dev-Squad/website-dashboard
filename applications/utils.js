@@ -13,7 +13,12 @@ function createElement({ type, attributes = {}, innerText }) {
   return element;
 }
 
-async function getApplications({ applicationStatus, size = 6, next = '' }) {
+async function getApplications({
+  applicationStatus,
+  size = 6,
+  next = '',
+  dev = false,
+}) {
   let url;
 
   if (next) url = `${BASE_URL}${next}`;
@@ -21,6 +26,9 @@ async function getApplications({ applicationStatus, size = 6, next = '' }) {
     url = `${BASE_URL}/applications?size=${size}`;
   } else {
     url = `${BASE_URL}/applications?size=${size}&status=${applicationStatus}`;
+    if (dev) {
+      url += '&dev=true';
+    }
   }
 
   try {
