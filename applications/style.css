@@ -42,9 +42,15 @@ body {
   left: 0;
 }
 
-.header,
-.footer {
+.header {
   text-align: center;
+}
+
+.footer {
+  width: 100vw;
+  text-align: center;
+  position: fixed;
+  bottom: 5px;
 }
 
 .container {
