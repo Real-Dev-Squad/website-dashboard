@@ -41,7 +41,6 @@ const applicationDetailsActionsContainer = document.querySelector(
 const urlParams = new URLSearchParams(window.location.search);
 const isDev = urlParams.get('dev') === 'true';
 let isApplicationPending = urlParams.get('status') === 'pending';
-console.log('isApplicationPending', isApplicationPending);
 const filterButton = isDev
   ? document.getElementById('filter-button-new')
   : document.getElementById('filter-button');
