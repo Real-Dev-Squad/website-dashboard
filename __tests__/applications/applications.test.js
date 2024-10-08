@@ -103,6 +103,23 @@ describe('Applications page', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
         });
+      } else if (
+        request.url() ===
+        `${API_BASE_URL}/applications?size=6&status=pending&dev=true`
+      ) {
+        request.respond({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            applications: acceptedApplications,
+            totalCount: acceptedApplications.length,
+          }),
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+        });
       } else {
         request.continue();
       }
@@ -127,6 +144,12 @@ describe('Applications page', () => {
     expect(filterButton).toBeTruthy();
     expect(applicationCards).toBeTruthy();
     expect(applicationCards.length).toBe(6);
+  });
+
+  it('should render the index of pending applications under dev flag === true', async function () {
+    await page.goto(`${SITE_URL}/applications?dev=true&status=pending`);
+    const indexOfApplication = await page.$$('[data-testid="user-index"]');
+    expect(indexOfApplication).toBeTruthy();
   });
 
   it('should render the initial UI elements under dev flag === true', async function () {
