@@ -8,7 +8,7 @@
     "fix": "prettier --write .",
     "test": "jest",
     "start": "node server.js",
-    "dev": "local-ssl-proxy --source 443 --target 5500 -n dev.realdevsquad.com"
+    "dev": "local-ssl-proxy --source 443 --target 8000 -n dev.realdevsquad.com"
   },
   "repository": {
     "type": "git",
