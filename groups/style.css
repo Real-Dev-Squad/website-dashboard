@@ -100,7 +100,11 @@ body {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  min-height: 98vh;
+}
+
+.footer {
+  position: fixed;
+  bottom: 5px;
 }
 
 .container {
@@ -158,12 +162,6 @@ body {
     font-weight: 600;
     line-height: 30px;
     text-align: left;
-  }
-
-  .footer {
-    text-align: center;
-    position: fixed;
-    bottom: 100px;
   }
 
   .disclaimer {
