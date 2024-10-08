@@ -60,7 +60,7 @@ describe('Discord Groups Page', () => {
             },
             body: JSON.stringify(discordGroups),
           });
-        } else if (url === `${BASE_URL}/discord-actions/groups?dev=true`) {
+        } else if (url === `${BASE_URL}/discord-actions/groups`) {
           interceptedRequest.respond({
             status: 200,
             contentType: 'application/json',
@@ -244,9 +244,9 @@ describe('Discord Groups Page', () => {
     expect(groupCreationModalClosed).toBeFalsy();
   });
 
-  test('Should display only specified groups when dev=true and name=<group-name> with different case', async () => {
+  test('Should display only specified groups when name=<group-name> with different case', async () => {
     const groupNames = 'fIrSt,DSA+COdInG';
-    await page.goto(`${PAGE_URL}/groups?dev=true&name=${groupNames}`);
+    await page.goto(`${PAGE_URL}/groups?name=${groupNames}`);
     await page.waitForNetworkIdle();
 
     const displayedGroups = await page.evaluate(() => {
@@ -259,7 +259,7 @@ describe('Discord Groups Page', () => {
   });
 
   test('Should display no group found div when no group is present', async () => {
-    await page.goto(`${PAGE_URL}/groups?dev=true&name=no-group-present`);
+    await page.goto(`${PAGE_URL}/groups?name=no-group-present`);
     await page.waitForNetworkIdle();
 
     const noGroupDiv = await page.$('.no-group-container');
