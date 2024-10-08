@@ -274,32 +274,41 @@ describe('Applications page', () => {
   });
 
   it('should display the footer with the correct repo link', async () => {
-    const footer = await page.$('footer');
+    // Selecting the footer using data-test-id
+    const footer = await page.$('[data-test-id="footer"]');
     expect(footer).toBeTruthy();
 
-    const infoRepo = await footer.$('.info-repo');
+    // Selecting the .info-repo using data-test-id
+    const infoRepo = await footer.$('[data-test-id="info-repo"]');
     expect(infoRepo).toBeTruthy();
 
-    const repoLink = await infoRepo.$('a');
+    // Selecting the anchor tag using data-test-id
+    const repoLink = await infoRepo.$('[data-test-id="repo-link"]');
     expect(repoLink).toBeTruthy();
 
+    // Checking if the href of the repo link is correct
     const repoLinkHref = await page.evaluate((el) => el.href, repoLink);
     expect(repoLinkHref).toBe(
       'https://github.com/Real-Dev-Squad/website-dashboard',
     );
 
+    // Checking if the target attribute is _blank
     const repoLinkTarget = await page.evaluate((el) => el.target, repoLink);
     expect(repoLinkTarget).toBe('_blank');
 
+    // Checking if the rel attribute is noopener noreferrer
     const repoLinkRel = await page.evaluate((el) => el.rel, repoLink);
     expect(repoLinkRel).toBe('noopener noreferrer');
 
+    // Checking if the inner text of the link is 'open sourced repo'
     const repoLinkText = await page.evaluate((el) => el.innerText, repoLink);
     expect(repoLinkText).toBe('open sourced repo');
 
+    // Checking if the link has no additional class
     const repoLinkClass = await page.evaluate((el) => el.className, repoLink);
     expect(repoLinkClass).toBe('');
 
+    // Checking if the link has inline styles
     const repoLinkStyle = await page.evaluate((el) => el.style, repoLink);
     expect(repoLinkStyle).toBeTruthy();
   });
