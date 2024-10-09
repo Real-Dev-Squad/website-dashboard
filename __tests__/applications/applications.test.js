@@ -86,6 +86,40 @@ describe('Applications page', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
         });
+      } else if (
+        request.url() ===
+        `${API_BASE_URL}/applications?size=6&status=accepted&dev=true`
+      ) {
+        request.respond({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            applications: acceptedApplications,
+            totalCount: acceptedApplications.length,
+          }),
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+        });
+      } else if (
+        request.url() ===
+        `${API_BASE_URL}/applications?size=6&status=pending&dev=true`
+      ) {
+        request.respond({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            applications: acceptedApplications,
+            totalCount: acceptedApplications.length,
+          }),
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+        });
       } else {
         request.continue();
       }
@@ -112,6 +146,27 @@ describe('Applications page', () => {
     expect(applicationCards.length).toBe(6);
   });
 
+  it('should render the index of pending applications under dev flag === true', async function () {
+    await page.goto(`${SITE_URL}/applications?dev=true&status=pending`);
+    const indexOfApplication = await page.$$('[data-testid="user-index"]');
+    expect(indexOfApplication).toBeTruthy();
+  });
+
+  it('should render the initial UI elements under dev flag === true', async function () {
+    await page.goto(`${SITE_URL}/applications?dev=true`);
+    const title = await page.$('.header h1');
+    const filterButton = await page.$('.filter-button');
+    const applicationCards = await page.$$('.application-card');
+    expect(title).toBeTruthy();
+    expect(filterButton).toBeTruthy();
+    expect(applicationCards).toBeTruthy();
+    expect(applicationCards.length).toBe(6);
+    for (const card of applicationCards) {
+      const viewDetailsButton = await card.$('.view-details-button');
+      expect(viewDetailsButton).toBeFalsy();
+    }
+  });
+
   it('should load and render the accepted application requests when accept is selected from filter, and after clearing the filter it should again show all the applications', async function () {
     await page.click('.filter-button');
 
@@ -135,6 +190,18 @@ describe('Applications page', () => {
     ).toBe(true, 'status query param is not removed from url');
   });
 
+  it('should load and render the accepted application requests when accept filter is selected from filter under dev flag === true along with the total count of the accepted applications', async function () {
+    await page.goto(`${SITE_URL}/applications?dev=true`);
+    await page.click('.filter-button');
+
+    await page.$eval('input[name="status"][value="accepted"]', (radio) =>
+      radio.click(),
+    );
+    await page.click('.apply-filter-button');
+    await page.waitForNetworkIdle();
+    const totalCountElement = await page.$$('total_count');
+    expect(totalCountElement).toBeTruthy(); // Assert that the element exists
+  });
   it('should load more applications on going to the bottom of the page', async function () {
     let applicationCards = await page.$$('.application-card');
     expect(applicationCards.length).toBe(6);
@@ -157,6 +224,25 @@ describe('Applications page', () => {
       ),
     ).toBe(true);
     await page.click('.view-details-button');
+    expect(
+      await applicationDetailsModal.evaluate((el) =>
+        el.classList.contains('hidden'),
+      ),
+    ).toBe(false);
+    const urlAfterOpeningModal = new URL(page.url());
+    expect(urlAfterOpeningModal.searchParams.get('id') !== null).toBe(true);
+  });
+
+  it('under feature flag should open application details modal for application, when user click on card', async function () {
+    await page.goto(`${SITE_URL}/applications/?dev=true`);
+    await page.waitForNetworkIdle();
+    const applicationDetailsModal = await page.$('.application-details');
+    expect(
+      await applicationDetailsModal.evaluate((el) =>
+        el.classList.contains('hidden'),
+      ),
+    ).toBe(true);
+    await page.click('.application-details');
     expect(
       await applicationDetailsModal.evaluate((el) =>
         el.classList.contains('hidden'),
