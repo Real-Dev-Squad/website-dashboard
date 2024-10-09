@@ -17,6 +17,19 @@
   --color-red-variant1: #f43030;
 }
 
+.user-text-index {
+  display: flex;
+  justify-content: space-between;
+}
+
+.user-index {
+  width: 60px;
+  border: none;
+  font-style: normal;
+  font-size: 20px;
+  font-weight: 700;
+}
+
 body {
   font-family: 'Roboto', sans-serif;
   margin: 0;
