@@ -312,6 +312,7 @@ const renderGithubIssue = async () => {
     simplifiedAutoLink: true,
     ghCodeBlocks: true,
     openLinksInNewWindow: true,
+    disableForced4SpacesIndentedSublists: true,
   });
   let res = await fetch(taskRequest?.externalIssueUrl);
   res = await res.json();

@@ -8,6 +8,8 @@ import {
 } from './utils.js';
 let nextLink;
 let isDataLoading = false;
+let totalApplicationCount = 0;
+let currentApplicationIndex = 0;
 const loader = document.querySelector('.loader');
 const filterModal = document.querySelector('.filter-modal');
 const backDrop = document.querySelector('.backdrop');
@@ -38,6 +40,7 @@ const applicationDetailsActionsContainer = document.querySelector(
 );
 const urlParams = new URLSearchParams(window.location.search);
 const isDev = urlParams.get('dev') === 'true';
+let isApplicationPending = urlParams.get('status') === 'pending';
 const filterButton = isDev
   ? document.getElementById('filter-button-new')
   : document.getElementById('filter-button');
@@ -100,6 +103,7 @@ function changeFilter() {
   } else {
     totalCountElement.classList.add('hidden');
     status = 'all';
+    totalApplicationCount = 0;
   }
   applicationContainer.innerHTML = '';
 }
@@ -297,7 +301,7 @@ function removeQueryParamInUrl(queryParamKey) {
   window.history.replaceState(window.history.state, '', updatedUrl);
 }
 
-function createApplicationCard({ application, dev }) {
+function createApplicationCard({ application, dev, index }) {
   const applicationCard = createElement({
     type: 'div',
     attributes: { class: 'application-card' },
@@ -314,6 +318,29 @@ function createApplicationCard({ application, dev }) {
     innerText: application.biodata.firstName,
   });
 
+  if (dev && isApplicationPending) {
+    const usernameTextAndIndex = createElement({
+      type: 'div',
+      attributes: { class: 'user-text-index' },
+    });
+
+    const userIndex = createElement({
+      type: 'input',
+      attributes: {
+        type: 'number',
+        value: `${index}`,
+        readonly: '',
+        class: 'user-index',
+        'data-testid': 'user-index',
+      },
+    });
+    usernameTextAndIndex.appendChild(usernameText);
+    usernameTextAndIndex.appendChild(userIndex);
+    userInfoContainer.appendChild(usernameTextAndIndex);
+  } else {
+    userInfoContainer.appendChild(usernameText);
+  }
+
   const companyNameText = createElement({
     type: 'p',
     attributes: { class: 'company-name hide-overflow' },
@@ -326,7 +353,6 @@ function createApplicationCard({ application, dev }) {
     innerText: `Skills: ${application.professional.skills}`,
   });
 
-  userInfoContainer.appendChild(usernameText);
   userInfoContainer.appendChild(companyNameText);
   userInfoContainer.appendChild(skillsText);
 
@@ -382,7 +408,10 @@ async function renderApplicationCards(next, status, isInitialRender, dev) {
   changeLoaderVisibility({ hide: true });
   const applications = data.applications;
   const totalSelectedCount = data.totalCount;
-
+  if (isInitialRender) {
+    totalApplicationCount = data.totalCount;
+    currentApplicationIndex = totalApplicationCount;
+  }
   nextLink = data.next;
   if (isDev && status != 'all') {
     showAppliedFilter(status);
@@ -394,12 +423,19 @@ async function renderApplicationCards(next, status, isInitialRender, dev) {
   }
   if (!applications.length)
     return noApplicationFoundText.classList.remove('hidden');
-  applications.forEach((application) => {
+
+  if (isInitialRender || !next) {
+    applicationContainer.innerHTML = '';
+    currentApplicationIndex = totalSelectedCount;
+  }
+  applications.forEach((application, index) => {
     const applicationCard = createApplicationCard({
       application,
       dev,
+      index: currentApplicationIndex,
     });
     applicationContainer.appendChild(applicationCard);
+    currentApplicationIndex--;
   });
 }
 
@@ -448,7 +484,8 @@ async function renderApplicationById(id) {
   if (applicationId) {
     await renderApplicationById(applicationId);
   }
-
+  totalApplicationCount = 0;
+  currentApplicationIndex = 0;
   if (isDev) {
     await renderApplicationCards('', status, true, isDev);
   } else {
@@ -467,7 +504,7 @@ const intersectionObserver = new IntersectionObserver(async (entries) => {
   if (entries[0].isIntersecting && !isDataLoading) {
     const dev = urlParams.get('dev');
     if (dev) {
-      await renderApplicationCards(nextLink, status, true, dev);
+      await renderApplicationCards(nextLink, status, false, dev);
     } else {
       await renderApplicationCards(nextLink);
     }
@@ -514,7 +551,7 @@ if (isDev) {
     const dev = urlParams.get('dev');
 
     if (dev) {
-      renderApplicationCards(nextLink, status, false, dev);
+      renderApplicationCards(nextLink, status, true, dev);
     } else {
       renderApplicationCards(nextLink, status);
     }
@@ -539,7 +576,7 @@ function applyFilter(filter, isDev) {
     addQueryParamInUrl('status', filter);
     changeFilter();
     status = filter;
-    renderApplicationCards(nextLink, status, false, isDev);
+    renderApplicationCards('', status, false, isDev);
     filterDropdown.style.display = 'none';
   }
 }
@@ -550,7 +587,7 @@ filterRemove.addEventListener('click', () => {
   removeQueryParamInUrl('status');
   changeFilter();
   const dev = urlParams.get('dev');
-  renderApplicationCards(nextLink, status, false, dev);
+  renderApplicationCards(nextLink, status, true, dev);
 });
 
 backDrop.addEventListener('click', () => {
