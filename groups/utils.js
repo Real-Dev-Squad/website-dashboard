@@ -1,4 +1,5 @@
 const BASE_URL = window.API_BASE_URL; // REPLACE WITH YOUR LOCALHOST URL FOR TESTING LOCAL BACKEND
+// const BASE_URL = "http://localhost:3000";
 
 async function getMembers() {
   try {
@@ -54,6 +55,28 @@ async function getDiscordGroups() {
     });
 
     const { groups } = await res.json();
+    return groups;
+  } catch (err) {
+    return err;
+  }
+}
+
+let latestDoc = 0;
+async function getPaginatedDiscordGroups() {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/discord-actions/groups?latestDoc=${latestDoc}&dev=true`,
+      {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-type': 'application/json',
+        },
+      },
+    );
+
+    const { groups, newLatestDoc } = await res.json();
+    latestDoc = newLatestDoc;
     return groups;
   } catch (err) {
     return err;
@@ -161,6 +184,7 @@ export {
   getMembers,
   getUserSelf,
   getDiscordGroups,
+  getPaginatedDiscordGroups,
   createDiscordGroupRole,
   addGroupRoleToMember,
   removeRoleFromMember,
