@@ -287,21 +287,16 @@
           />
         </div>
       </form>
-
-      <footer>
-        <p class="info-repo">
-          The contents of this website are deployed from this
-          <a
-            href="https://github.com/Real-Dev-Squad/website-dashboard"
-            target="_blank"
-            rel="noopener noreferrer"
-            >open sourced repo</a
-          >
-        </p>
-      </footer>
+      <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          const href = 'https://github.com/Real-Dev-Squad/website-dashboard';
+          loadFooter(href);
+        });
+      </script>
       <div class="hidden" id="submit-loader">
         <div class="loader"></div>
       </div>
+      <script src="../../footer/footerComponent.js"></script>
       <script src="/helpers/loadENV.js"></script>
       <script src="/task/script.js"></script>
     </div>

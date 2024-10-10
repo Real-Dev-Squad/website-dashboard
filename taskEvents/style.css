@@ -322,6 +322,12 @@ details[open] .dropDown {
   height: 100%;
 }
 
+.footer {
+  align-items: center;
+  position: fixed;
+  bottom: 4px;
+}
+
 /* Give roles modal */
 
 #generic-modal {

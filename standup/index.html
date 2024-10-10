@@ -35,20 +35,13 @@
 
       <section class="table-container" id="table-container"></section>
     </main>
-
-    <footer>
-      <p class="info-repo">
-        The contents of this website are deployed from this
-        <a
-          class="info-repo-link"
-          href="https://github.com/Real-Dev-Squad/website-dashboard"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Open sourced repo
-        </a>
-      </p>
-    </footer>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const href = 'https://github.com/Real-Dev-Squad/website-dashboard';
+        loadFooter(href);
+      });
+    </script>
+    <script src="../../footer/footerComponent.js"></script>
     <script src="/helpers/loadENV.js"></script>
     <script src="/constants.js"></script>
     <script src="/standup/utils.js"></script>
