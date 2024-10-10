@@ -24,6 +24,7 @@ import {
   getDiscordGroupIdsFromSearch,
   getParamValueFromURL,
   setParamValueInURL,
+  deleteDiscordGroupRole,
 } from './utils.js';
 
 const QUERY_PARAM_KEY = {
@@ -46,10 +47,14 @@ const handler = {
           .filter(
             (ng) => JSON.stringify(oldGroups?.[ng.id]) !== JSON.stringify(ng),
           )
-          .filter((ng) => dataStore.filteredGroupsIds.includes(ng.id));
+          .filter((ng) => dataStore.filteredGroupsIds.includes(ng.id))
+          .filter((ng) => !ng.isDeleted);
         diffGroups.forEach((group) =>
           renderGroupById({
-            group,
+            group: {
+              ...dataStore.groups[group.id],
+              roleId: dataStore.groups[group.id].roleid,
+            },
             cardOnClick: () => groupCardOnAction(group.id),
             isSuperUser: dataStore.isSuperUser,
           }),
@@ -64,7 +69,6 @@ const handler = {
         renderAllGroups({
           cardOnClick: groupCardOnAction,
         });
-        // if (isDev && (!value || value.length == 0)) renderNoGroupFound();
         break;
       case 'search':
         if (isDev) {
@@ -179,8 +183,9 @@ const afterAuthentication = async () => {
 
   await Promise.all([getDiscordGroups(), getUserGroupRoles()]).then(
     ([groups, roleData]) => {
-      dataStore.filteredGroupsIds = groups.map((group) => group.id);
-      dataStore.groups = groups.reduce((acc, group) => {
+      const nonDeletedGroups = groups.filter((group) => !group.isDeleted);
+      dataStore.filteredGroupsIds = nonDeletedGroups.map((group) => group.id);
+      dataStore.groups = nonDeletedGroups.reduce((acc, group) => {
         let title = group.rolename
           .replace('group-', '')
           .split('-')
@@ -257,6 +262,7 @@ function updateGroup(id, group) {
       ...group,
     },
   };
+  console.log(`Updated group ${id}:`, dataStore.groups[id]); // Add this line for debugging
 }
 
 function groupCardOnAction(id) {
@@ -281,30 +287,56 @@ function groupCardOnAction(id) {
 function renderAllGroups({ cardOnClick }) {
   const mainContainer = document.querySelector('.group-container');
   mainContainer.innerHTML = '';
-  if (dataStore.filteredGroupsIds.length === 0 && isDev) {
+  const nonDeletedGroups = dataStore.filteredGroupsIds.filter(
+    (id) => !dataStore.groups[id].isDeleted,
+  );
+  if (nonDeletedGroups.length === 0 && isDev) {
     renderNoGroupFound();
   } else {
-    dataStore.filteredGroupsIds.forEach((id) =>
-      renderGroupById({
-        group: dataStore.groups[id],
-        cardOnClick: () => cardOnClick(id),
-        onDelete: isDev ? showDeleteModal : undefined,
-        isSuperUser: dataStore.isSuperUser && isDev,
-      }),
-    );
+    nonDeletedGroups.forEach((id) => {
+      const group = dataStore.groups[id];
+      if (!group.isDeleted) {
+        renderGroupById({
+          group: group,
+          cardOnClick: () => cardOnClick(id),
+          onDelete: isDev ? showDeleteModal : undefined,
+          isSuperUser: dataStore.isSuperUser && isDev,
+        });
+      }
+    });
   }
 }
 
-function showDeleteModal(groupId) {
+function showDeleteModal(groupId, roleId) {
   if (!isDev) return;
   renderDeleteConfirmationModal({
     onClose: () => {
       removeDeleteConfirmationModal();
     },
-    onConfirm: () => {
-      console.log(`Confirming delete for group ${groupId}`);
-      removeDeleteConfirmationModal();
-      // Will Implement actual delete functionality here
+    onConfirm: async () => {
+      try {
+        await deleteDiscordGroupRole(groupId, roleId);
+        showToaster('Group deleted successfully');
+
+        updateGroup(groupId, { isDeleted: true });
+
+        dataStore.filteredGroupsIds = dataStore.filteredGroupsIds.filter(
+          (id) => id !== groupId,
+        );
+        // const { [groupId]: deletedGroup, ...remainingGroups } =
+        //   dataStore.groups;
+        // dataStore.groups = remainingGroups;
+        // dataStore.filteredGroupsIds = dataStore.filteredGroupsIds.filter(
+        //   (id) => id !== groupId,
+        // );
+        renderAllGroups({
+          cardOnClick: groupCardOnAction,
+        });
+      } catch (error) {
+        showToaster(error.message || 'Failed to delete group');
+      } finally {
+        removeDeleteConfirmationModal();
+      }
     },
   });
 }
