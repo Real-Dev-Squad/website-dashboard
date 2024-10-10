@@ -1,5 +1,4 @@
-// const BASE_URL = window.API_BASE_URL; // REPLACE WITH YOUR LOCALHOST URL FOR TESTING LOCAL BACKEND
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = window.API_BASE_URL; // REPLACE WITH YOUR LOCALHOST URL FOR TESTING LOCAL BACKEND
 async function getMembers() {
   try {
     const res = await fetch(`${BASE_URL}/users/`, {
@@ -119,14 +118,17 @@ async function removeRoleFromMember(roleId, discordId) {
 
 async function deleteDiscordGroupRole(groupId, roleId) {
   try {
-    const res = await fetch(`${BASE_URL}/discord-actions/groups/${groupId}`, {
-      method: 'DELETE',
-      credentials: 'include',
-      headers: {
-        'Content-type': 'application/json',
+    const res = await fetch(
+      `${BASE_URL}/discord-actions/groups/${groupId}?dev=true`,
+      {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        body: JSON.stringify({ roleid: roleId }),
       },
-      body: JSON.stringify({ roleid: roleId }),
-    });
+    );
 
     if (!res.ok) {
       const errorResponse = await res.json();
