@@ -512,11 +512,6 @@ const mockUsersData = {
     },
   ],
 };
-/* work on pagination with array index for now, forget about last user id. 
-You should call the API every time the user reaches the end of the page.
-Let's say initially you load 10 users- that's index 0,9 then when the user,
-reaches bottom of the page you fetch the data again to get the next 10 users- that's index 10,19
-*/
 
 const tabs = [
   { display_name: 'In Discord', id: 'in_discord' },
@@ -533,31 +528,51 @@ const INITIAL_USERS = 10;
 let isLoading = false;
 let currentPage = 1;
 let showUser = 0;
-// get mock users
-const getMockUser = (tabId, page = 1) => {
-  const start = (page - 1) * INITIAL_USERS;
-  const end = start + INITIAL_USERS;
-  console.log('fetched initial users');
-  // currentPage++;
-  return mockUsersData[tabId].slice(start, end);
-};
 
 // usersData[activeTab] = await getUsers(activeTab);
 
-usersData[activeTab] = await getMockUser(activeTab);
+const fetchUsers = async (tabId, page = 1) => {
+  if (isLoading) return;
 
-/* create a function to fetch more users (for eg. we initially have 6 users, 
-we fetch users everytime the user reaches the end of the page.) */
-
-const fetchMoreUsers = async () => {
   isLoading = true;
-  currentPage++;
-  const newUsers = await getMockUser(activeTab, currentPage);
-  usersData[activeTab] = [...usersData[activeTab], ...newUsers];
-  console.log(newUsers, 'fetched new users');
+  try {
+    const start = (page - 1) * INITIAL_USERS;
+    const end = start + INITIAL_USERS;
 
-  isLoading = false;
+    const newUsers = mockUsersData[tabId].slice(start, end);
+
+    if (newUsers.length > 0) {
+      if (page === 1) {
+        usersData[tabId] = newUsers; // Initial load
+        console.log('Fetched initial users');
+      } else {
+        usersData[tabId] = [...usersData[tabId], ...newUsers]; // Append new users
+        console.log('Fetched more users');
+        console.log(usersData[tabId]);
+      }
+      currentPage = page;
+      rerender(App(), window[root]); // Re-render the app with the new users
+    } else {
+      console.log('No more users to fetch');
+    }
+  } catch (error) {
+    console.error('Error fetching users', error);
+  } finally {
+    isLoading = false;
+  }
 };
+
+const handleScroll = () => {
+  const scrollPosition = window.innerHeight + window.scrollY;
+  const bottomPosition = document.body.offsetHeight - 100; // Trigger fetch 100px from bottom
+
+  if (scrollPosition >= bottomPosition) {
+    // Fetch more users when the user is near the bottom
+    fetchUsers(activeTab, currentPage + 1);
+  }
+};
+
+window.addEventListener('scroll', handleScroll);
 
 const handleTabNavigation = async (e) => {
   const selectedTabId = e.target.getAttribute('data_key');
@@ -598,7 +613,9 @@ export const App = () => {
         users,
         showUser,
         handleUserSelected,
-        fetchMoreUsers,
+        fetchUsers,
+        activeTab,
+        currentPage,
       }),
       UserDetailsSection({ user: users[showUser] ?? {} }),
     ]);
@@ -608,3 +625,5 @@ export const App = () => {
     NoUserFound(),
   ]);
 };
+
+fetchUsers(activeTab, 1);
