@@ -121,19 +121,12 @@
       <div class="loader hidden">Loading...</div>
       <div id="page_bottom_element"></div>
     </div>
-
-    <footer class="footer" data-test-id="footer">
-      <p class="info-repo" data-test-id="info-repo">
-        The contents of this website are deployed from this
-        <a
-          href="https://github.com/Real-Dev-Squad/website-dashboard"
-          target="_blank"
-          rel="noopener noreferrer"
-          data-test-id="repo-link"
-        >
-          open sourced repo
-        </a>
-      </p>
-    </footer>
+    <script src="../footer/footerComponent.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const href = 'https://github.com/Real-Dev-Squad/website-dashboard';
+        loadFooter(href);
+      });
+    </script>
   </body>
 </html>

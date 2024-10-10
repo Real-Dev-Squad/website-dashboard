@@ -44,19 +44,13 @@
       </section>
       <div class="group-container"></div>
     </main>
-
-    <footer class="footer">
-      <p class="info-repo">
-        The contents of this website are deployed from this
-        <a
-          href="https://github.com/Real-Dev-Squad/website-dashboard"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          open sourced repo
-        </a>
-      </p>
-    </footer>
+    <script src="../footer/footerComponent.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const href = 'https://github.com/Real-Dev-Squad/website-dashboard';
+        loadFooter(href);
+      });
+    </script>
   </body>
   <div class="toast">
     <div class="toast__message"></div>
