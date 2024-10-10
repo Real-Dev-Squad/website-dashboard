@@ -4,19 +4,29 @@ export const UsersSection = ({
   users,
   showUser,
   handleUserSelected,
-  fetchMoreUsers,
+  fetchUsers,
+  activeTab,
+  currentPage,
 }) => {
-  const handleScroll = (e) => {
-    console.log('scroll triggered');
-
-    const container = e.target;
-    const { scrollTop, scrollHeight, clientHeight } = container;
-    if (scrollTop + clientHeight >= scrollHeight - 5) {
-      isLoading = true;
-      console.log('user scrolling');
-      fetchMoreUsers();
-    }
+  const debounce = (func, delay) => {
+    let timeoutId;
+    return function (...args) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        func.apply(this, args);
+      }, delay);
+    };
   };
+
+  window.addEventListener(
+    'scroll',
+    debounce(() => {
+      console.log('scroll triggered');
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+        fetchUsers(activeTab, currentPage + 1); // Fetch next page
+      }
+    }, 200),
+  );
 
   // handle scroll is not working - add event listener on every scroll element
   return createElement(
@@ -24,7 +34,6 @@ export const UsersSection = ({
     {
       class: 'users_section',
       onclick: handleUserSelected,
-      onscroll: handleScroll,
     },
     users?.map((user) => {
       return createElement(
