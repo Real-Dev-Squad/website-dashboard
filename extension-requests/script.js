@@ -588,6 +588,7 @@ async function createExtensionCard(data, dev) {
       type: 'a',
       attributes: {
         class: 'external-link skeleton-link',
+        'data-testid': 'external-link skeleton-link',
       },
     });
   } else {
@@ -675,7 +676,10 @@ async function createExtensionCard(data, dev) {
   if (dev) {
     taskStatusValue = createElement({
       type: 'span',
-      attributes: { class: 'skeleton-span' },
+      attributes: {
+        class: 'skeleton-span',
+        'data-testid': 'skeleton-span',
+      },
     });
   } else {
     taskStatusValue = createElement({
@@ -801,23 +805,27 @@ async function createExtensionCard(data, dev) {
   if (dev) {
     assigneeImage = createElement({
       type: 'img',
-      attributes: { class: 'assignee-image' },
+      attributes: {
+        class: 'assignee-image skeleton',
+        'data-testid': 'assignee-image skeleton',
+      },
     });
-    assigneeImage.classList.add('skeleton');
   } else {
     assigneeImage = createElement({
       type: 'img',
       attributes: { class: 'assignee-image' },
     });
   }
-  console.log('dev : ', dev);
   assigneeContainer.appendChild(assigneeImage);
 
   let assigneeNameElement;
   if (dev) {
     assigneeNameElement = createElement({
       type: 'span',
-      attributes: { class: 'assignee-name skeleton-text' },
+      attributes: {
+        class: 'assignee-name skeleton-text',
+        'data-testid': 'assignee-name skeleton-text',
+      },
     });
   } else {
     assigneeNameElement = createElement({

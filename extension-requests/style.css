@@ -166,20 +166,19 @@
   background-color: var(--green500);
 }
 
-.skeleton,
+.skeleton {
+  width: 1.5rem; /* Adjust the width */
+  height: 1.5rem; /* Ensure height is the same as width */
+  border-radius: 50%; /* Makes it a circle */
+  animation: skeleton-loading 1s linear infinite alternate; /* Loading animation */
+}
 .skeleton-text,
 .skeleton-link,
 .skeleton-span {
   width: 3rem; /* Common width for all skeleton elements */
   height: 1rem; /* Common height for all skeleton elements */
-  border-radius: 0.5rem; /* Consistent border-radius */
   background-color: hsl(200, 20%, 70%);
   animation: skeleton-loading 1s linear infinite alternate;
-}
-
-/* Circular shape for the skeleton image */
-.skeleton {
-  border-radius: 50%; /* Keeps the image skeleton circular */
 }
 
 .skeleton-link,
