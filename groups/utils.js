@@ -134,7 +134,7 @@ function getDiscordGroupIdsFromSearch(groups, multipleGroupSearch) {
     .map((group) => group.trim().toLowerCase());
   const matchGroups = groups.filter((group) =>
     searchGroups.some((searchGroup) =>
-      group.title.toLowerCase().startsWith(searchGroup),
+      group.title.toLowerCase().includes(searchGroup),
     ),
   );
   return matchGroups.map((group) => group.id);

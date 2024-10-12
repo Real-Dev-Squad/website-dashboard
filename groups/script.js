@@ -63,21 +63,11 @@ const handler = {
         break;
       case 'search':
         setParamValueInURL(QUERY_PARAM_KEY.GROUP_SEARCH, value);
+        if (dataStore.groups == null) break;
         dataStore.filteredGroupsIds = getDiscordGroupIdsFromSearch(
           Object.values(dataStore.groups),
           value,
         );
-        if (value === '') {
-          if (dataStore.groups == null) break;
-          dataStore.filteredGroupsIds = Object.values(dataStore.groups).map(
-            (group) => group.id,
-          );
-        } else {
-          const search = value.toLowerCase();
-          dataStore.filteredGroupsIds = Object.values(dataStore.groups)
-            .filter((group) => group.title.toLowerCase().includes(search))
-            .map((group) => group.id);
-        }
         obj[prop] = value;
         break;
       case 'isGroupCreationModalOpen':
