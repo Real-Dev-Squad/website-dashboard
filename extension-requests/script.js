@@ -462,6 +462,57 @@ const handleFormPropagation = async (event) => {
   event.preventDefault();
 };
 
+const createApprovalElements = async (data, approvalText, approverContainer) => {
+  const approverDataPromise = getUser(data.approver);
+  const ApprovalDaysAgo = dateDiff(
+    Date.now(),
+    secondsToMilliSeconds(data.approvalTime),
+    (s) => s + ' ago',
+  );
+  const approvalTextElement = createElement({
+    type: 'span',
+    attributes: { class: 'approver-text' },
+    innerText: `${approvalText} by`,
+  });
+  approverContainer.appendChild(approvalTextElement);
+
+  const approverImage = createElement({
+    type: 'img',
+    attributes: { class: 'approver-image' },
+  });
+  approverContainer.appendChild(approverImage);
+
+  const approverNameElement = createElement({
+    type: 'span',
+    attributes: { class: 'approver-name' },
+  });
+  approverContainer.appendChild(approverNameElement);
+
+  const daysElement = createElement({
+    type: 'span',
+    attributes: { class: 'approval-day tooltip-container' },
+    innerText: `${ApprovalDaysAgo}`,
+  });
+  const toolTip = createElement({
+    type: 'span',
+    attributes: { class: 'tooltip' },
+    innerText: `${fullDateString(secondsToMilliSeconds(data.approvalTime))}`,
+  });
+
+  daysElement.appendChild(toolTip);
+  approverContainer.appendChild(daysElement);
+
+  Promise.resolve(approverDataPromise)
+    .then((response) => {
+      const approverImageUrl = response?.picture?.url ?? DEFAULT_AVATAR;
+      const approverFirstName = response?.first_name ?? data.approver;
+
+      approverImage.src = approverImageUrl;
+      approverImage.alt = approverFirstName;
+      approverNameElement.innerText = `${approverFirstName},`;
+    })
+};
+
 async function createExtensionCard(data) {
   renderLogRecord[data.id] = [];
   //Create card element
@@ -775,32 +826,46 @@ async function createExtensionCard(data) {
     attributes: { class: 'assignee-name' },
   });
   assigneeContainer.appendChild(assigneeNameElement);
-  const extensionCardButtons = createElement({
+  const approverContainer = createElement({
     type: 'div',
-    attributes: { class: 'extension-card-buttons' },
+    attributes: { class: 'approver-container' },
   });
-  cardAssigneeButtonContainer.appendChild(extensionCardButtons);
+  cardAssigneeButtonContainer.appendChild(approverContainer);
   //Conditionally render the buttons bases on status
   if (data.status === Status.APPROVED) {
+    if (data.approver) {
+      createApprovalElements(data, 'Approved', approverContainer);
+    }else{
     const approveButton = createElement({
       type: 'button',
       attributes: { class: 'approve-button approved' },
       innerText: Status.APPROVED,
     });
-    extensionCardButtons.appendChild(approveButton);
+    approverContainer.appendChild(approveButton);
+  }  
   } else if (data.status === Status.DENIED) {
+    if (data.approver) {
+      createApprovalElements(data, 'Denied', approverContainer);
+    } else {
     const denyButton = createElement({
       type: 'button',
       attributes: { class: 'deny-button denied' },
       innerText: Status.DENIED,
     });
-    extensionCardButtons.appendChild(denyButton);
+    approverContainer.appendChild(denyButton);
+  }
   } else {
+    const actionCardButtons = createElement({
+      type: 'div',
+      attributes: { class: 'action-card-buttons' },
+    });
+    cardAssigneeButtonContainer.appendChild(actionCardButtons);
+
     const editButton = createElement({
       type: 'button',
       attributes: { class: 'edit-button' },
     });
-    extensionCardButtons.appendChild(editButton);
+    actionCardButtons.appendChild(editButton);
     const editIcon = createElement({
       type: 'img',
       attributes: { src: EDIT_ICON, alt: 'edit-icon' },
@@ -810,7 +875,7 @@ async function createExtensionCard(data) {
       type: 'div',
       attributes: { class: 'update-wrapper hidden' },
     });
-    extensionCardButtons.appendChild(updateWrapper);
+    actionCardButtons.appendChild(updateWrapper);
     const updateButton = createElement({
       type: 'button',
       attributes: { class: 'update-button' },
@@ -837,7 +902,7 @@ async function createExtensionCard(data) {
 
     denyButton.appendChild(denyIcon);
 
-    extensionCardButtons.appendChild(denyButton);
+    actionCardButtons.appendChild(denyButton);
 
     const approveButton = createElement({
       type: 'button',
@@ -848,7 +913,7 @@ async function createExtensionCard(data) {
       attributes: { class: 'check-icon', src: CHECK_ICON, alt: 'check-icon' },
     });
     approveButton.appendChild(approveIcon);
-    extensionCardButtons.appendChild(approveButton);
+    actionCardButtons.appendChild(approveButton);
     //Event listeners
     editButton.addEventListener('click', (event) => {
       handleFormPropagation(event);
