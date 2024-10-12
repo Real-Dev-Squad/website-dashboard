@@ -74,11 +74,6 @@ nav h1::before {
   background-color: #000000;
 }
 
-.footer {
-  position: fixed;
-  bottom: 4px;
-}
-
 .wrapperDiv {
   display: flex;
   flex-direction: column;
