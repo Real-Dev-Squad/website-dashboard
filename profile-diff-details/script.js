@@ -122,7 +122,7 @@ async function setUser(profileDiff) {
     type: 'img',
     attributes: {
       class: 'user_image',
-      src: user.picture.url,
+      src: user.picture?.url || 'assets/default-profile.svg',
       height: '71px',
       width: '71px',
     },
@@ -135,7 +135,7 @@ async function setUser(profileDiff) {
       class: 'user_name',
     },
   });
-  username.innerHTML = `${user.first_name} ${user.last_name}`;
+  username.innerHTML = `${user.first_name || ''} ${user.last_name || ''}`;
   CONTAINER.appendChild(username);
 
   const expandControlContainer = createElement({
