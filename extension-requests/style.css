@@ -166,6 +166,41 @@
   background-color: var(--green500);
 }
 
+.skeleton,
+.skeleton-text,
+.skeleton-link,
+.skeleton-span {
+  width: 3rem; /* Common width for all skeleton elements */
+  height: 1rem; /* Common height for all skeleton elements */
+  border-radius: 0.5rem; /* Consistent border-radius */
+  background-color: hsl(200, 20%, 70%);
+  animation: skeleton-loading 1s linear infinite alternate;
+}
+
+/* Circular shape for the skeleton image */
+.skeleton {
+  border-radius: 50%; /* Keeps the image skeleton circular */
+}
+
+.skeleton-link,
+.skeleton-span,
+.skeleton-text {
+  width: 8rem; /* Increased width for links, spans, and text */
+  display: inline-flex;
+  border-radius: 0.125rem; /* Less rounded corners */
+  line-height: 3rem; /* Align with the text height */
+}
+
+/* Animation keyframes */
+@keyframes skeleton-loading {
+  0% {
+    background-color: hsl(200, 20%, 70%);
+  }
+  100% {
+    background-color: hsl(200, 20%, 80%);
+  }
+}
+
 .edit-button {
   background: none;
   border: none;
