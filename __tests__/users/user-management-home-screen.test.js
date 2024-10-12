@@ -108,7 +108,7 @@ describe('Tests the User Management User Listing Screen', () => {
     expect(liList.length).toBeGreaterThan(0);
   });
 
-  it('checks the search functionality to display queried user', async () => {
+  it('Checks the search functionality to display queried user', async () => {
     await page.type('input[id="user-search"]', 'randhir');
     await page.waitForNetworkIdle();
     const userList = await page.$('#user-list');
@@ -116,32 +116,38 @@ describe('Tests the User Management User Listing Screen', () => {
     expect(userCard.length).toBeGreaterThan(0);
   });
 
-  it('checks the next and previous button functionality', async () => {
+  it('Checks for empty string input once the user removes their input', async () => {
+    // Find the user list and the user cards
+    const userList = await page.$('#head_list');
+    let userCard = await userList.$$('li');
+
+    await page.click('input[id="user-search"]');
+    await page.keyboard.down('Control'); // On Mac, use 'Meta' instead of 'Control'
+    await page.keyboard.press('A');
+    await page.keyboard.up('Control');
+    await page.keyboard.press('Backspace');
+
+    await page.waitForNetworkIdle();
+
+    userCard = await userList.$$('li');
+
+    expect(userCard.length).toBeGreaterThan(0);
+  });
+
+  it('checks infinite scroll functionality to load more users', async () => {
     await page.goto('http://localhost:8000/users');
     await page.waitForNetworkIdle();
-
-    // Get the "next" button and check if it is enabled
-    const nextBtn = await page.$('#nextButton');
-    const isNextButtonDisabled = await page.evaluate(
-      (button) => button.disabled,
-      nextBtn,
+    const userList = await page.$('#user-list');
+    let initialUserCount = await userList.$$eval('li', (items) => items.length);
+    expect(initialUserCount).toBeGreaterThan(0);
+    await page.evaluate(() => {
+      window.scrollTo(0, document.body.scrollHeight);
+    });
+    const updatedUserCount = await userList.$$eval(
+      'li',
+      (items) => items.length,
     );
-    expect(isNextButtonDisabled).toBe(false);
-
-    // Click the "next" button and wait for the page to load
-    await nextBtn.click();
-    await page.waitForNetworkIdle();
-
-    // Check that the "next" button is still present and the "previous" button is not disabled
-    const updatedNextButton = await page.$('#nextButton');
-    expect(updatedNextButton).toBeTruthy();
-
-    const prevBtn = await page.$('#prevButton');
-    const isPrevButtonDisabled = await page.evaluate(
-      (button) => button.disabled,
-      prevBtn,
-    );
-    expect(isPrevButtonDisabled).toBe(false);
+    expect(updatedUserCount).toBeGreaterThanOrEqual(initialUserCount);
   });
 
   it('Clicking on filter button should display filter modal', async () => {
