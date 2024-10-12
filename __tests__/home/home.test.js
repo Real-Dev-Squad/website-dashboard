@@ -393,13 +393,13 @@ describe('Home Page', () => {
   });
 
   it('should display the footer with the correct repo link', async () => {
-    const footer = await page.$('[data-test-id="footer"]');
+    const footer = await page.$('footer');
     expect(footer).toBeTruthy();
 
-    const infoRepo = await footer.$('[data-test-id="info-repo"]');
+    const infoRepo = await footer.$('.info-repo');
     expect(infoRepo).toBeTruthy();
 
-    const repoLink = await infoRepo.$('[data-test-id="repo-link"]');
+    const repoLink = await infoRepo.$('a');
     expect(repoLink).toBeTruthy();
 
     const repoLinkHref = await page.evaluate((el) => el.href, repoLink);
