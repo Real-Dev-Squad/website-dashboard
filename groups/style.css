@@ -102,11 +102,6 @@ body {
   flex-direction: column;
 }
 
-.footer {
-  position: fixed;
-  bottom: 4px;
-}
-
 .container {
   flex-grow: 1;
   width: clamp(300px, 100%, 1000px);

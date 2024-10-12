@@ -59,13 +59,6 @@ body {
   text-align: center;
 }
 
-.footer {
-  width: 100vw;
-  text-align: center;
-  position: fixed;
-  bottom: 4px;
-}
-
 .container {
   max-width: 1100px;
   margin: 0 auto;
