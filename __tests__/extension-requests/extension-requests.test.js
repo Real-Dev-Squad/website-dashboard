@@ -12,6 +12,7 @@ const {
   extensionRequestLogs,
   extensionRequestLogsInSentence,
 } = require('../../mock-data/logs');
+const setTimeout = require('node:timers/promises').setTimeout;
 const {
   userSunny,
   userRandhir,
@@ -633,7 +634,7 @@ describe('Tests the Extension Requests Screen', () => {
         break;
       }
     }
-    await page.waitForTimeout(1650);
+    await setTimeout(1650);
 
     const extensionCardsAfter = await page.$$('.extension-card');
 
@@ -656,7 +657,7 @@ describe('Tests the Extension Requests Screen', () => {
         break;
       }
     }
-    await page.waitForTimeout(850);
+    await setTimeout(850);
 
     const extensionCardsAfter = await page.$$('.extension-card');
 
@@ -720,7 +721,7 @@ describe('Tests the Extension Requests Screen', () => {
 
     await page.click('.update-button');
 
-    await page.waitForTimeout(1100);
+    await setTimeout(1100);
 
     await page.waitForNetworkIdle();
 
@@ -900,7 +901,7 @@ describe('Tests the Extension Requests Screen', () => {
     );
 
     await page.$$eval('.update-button', (buttons) => buttons[0].click());
-    await page.waitForTimeout(1100);
+    await setTimeout(1100);
     await page.waitForNetworkIdle();
     logs = await extensionLogsForFirstER.$$('.log-div');
     expect(Array.from(logs).length).toBe(9);
@@ -966,7 +967,7 @@ describe('Tests the Extension Requests Screen', () => {
     for (const card of extensionCardsList) {
       let approveButton = await card.$('.approve-button');
       await approveButton.click();
-      await page.waitForTimeout(1700);
+      await setTimeout(1700);
     }
 
     extensionRequestsElement = await page.$('.extension-requests');
