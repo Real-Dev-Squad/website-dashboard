@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 const { superUserDetails } = require('../../mock-data/users/mockdata');
+const setTimeout = require('node:timers/promises').setTimeout;
 
 describe('Tests the "Onboarding > 31 Days" Filter', () => {
   let browser;
@@ -63,7 +64,7 @@ describe('Tests the "Onboarding > 31 Days" Filter', () => {
 
     await taskDiv.click();
 
-    await page.waitForTimeout(2000);
+    await setTimeout(2000);
     const elements = await page.$$('.checkbox-label');
 
     // Checking if elements are found
@@ -76,7 +77,7 @@ describe('Tests the "Onboarding > 31 Days" Filter', () => {
     expect(applyfilterbutton).toBeTruthy();
     await applyfilterbutton.click();
 
-    await page.waitForTimeout(500);
+    await setTimeout(5000);
   });
   it('should gives results for ACTIVE SELECTED', async () => {
     const taskDiv = await page.$('.filter-button');
@@ -84,18 +85,18 @@ describe('Tests the "Onboarding > 31 Days" Filter', () => {
 
     await taskDiv.click();
 
-    // await page.waitForTimeout(2000);  enable to see the tests in actions
+    //await setTimeout(2000);  enable to see the tests in actions
     const elements = await page.$$('.checkbox-label');
 
     const clear = await page.$('#clear-button');
-    await clear.click();
+    await clear.evaluate((b) => b.click());
 
-    // await page.waitForTimeout(2000);     enable to see the tests in actions
+    //await setTimeout(2000);     enable to see the tests in actions
 
     const taskDiv2 = await page.$('.filter-button');
     await taskDiv2.click();
     expect(taskDiv2).toBeTruthy();
-    // await page.waitForTimeout(2000); enable to see the tests in actions
+    //await setTimeout(2000); enable to see the tests in actions
     expect(elements).toBeTruthy();
 
     const checkbox = await page.$('#ACTIVE');
@@ -105,7 +106,7 @@ describe('Tests the "Onboarding > 31 Days" Filter', () => {
     expect(applyfilterbutton).toBeTruthy();
     await applyfilterbutton.click();
 
-    await page.waitForTimeout(500);
+    await setTimeout(5000);
   });
 
   it('should gives results for both ACTIVE & Onboarding > 31 SELECTED', async () => {
@@ -114,7 +115,7 @@ describe('Tests the "Onboarding > 31 Days" Filter', () => {
 
     await taskDiv.click();
 
-    // await page.waitForTimeout(2000);  enable to see the tests in actions
+    //await setTimeout(2000);  enable to see the tests in actions
     const elements = await page.$$('.checkbox-label');
 
     // Checking if elements are found
@@ -123,22 +124,22 @@ describe('Tests the "Onboarding > 31 Days" Filter', () => {
     const clear = await page.$('#clear-button');
     await clear.click();
 
-    // await page.waitForTimeout(2000);   enable to see the tests in actions
+    //await setTimeout(2000);   enable to see the tests in actions
 
     const taskDiv2 = await page.$('.filter-button');
     await taskDiv2.click();
     expect(taskDiv2).toBeTruthy();
-    // await page.waitForTimeout(2000);  enable to see the tests in actions
+    //await setTimeout(2000);  enable to see the tests in actions
     const checkbox = await page.$('#ONBOARDING31DAYS');
     await checkbox.click();
-    // await page.waitForTimeout(2000);  enable to see the tests in actions
+    //await setTimeout(2000);  enable to see the tests in actions
     const checkbox2 = await page.$('#ACTIVE');
     await checkbox2.click();
-    // await page.waitForTimeout(2000);   enable to see the tests in actions
+    //await setTimeout(2000);   enable to see the tests in actions
     const applyfilterbutton = await page.$('.apply-filter-button');
     expect(applyfilterbutton).toBeTruthy();
     await applyfilterbutton.click();
 
-    await page.waitForTimeout(500);
+    await setTimeout(5000);
   });
 });

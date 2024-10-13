@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 const { superUserData } = require('../../mock-data/users');
+const setTimeout = require('node:timers/promises').setTimeout;
 
 describe('Home Page', () => {
   let browser;
@@ -447,7 +448,7 @@ describe('Home Page', () => {
       },
     ];
 
-    await page.waitForTimeout(1500);
+    await setTimeout(5000);
 
     const userName = await page.$eval(
       '#user-name',
@@ -541,7 +542,7 @@ describe('Home Page', () => {
 
     const hamIcon = await page.$('.hamburger');
     expect(hamIcon).toBeTruthy();
-    await hamIcon.click();
+    await hamIcon.evaluate((h) => h.click());
 
     await page.waitForSelector('.links');
 

@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 const { userDetails } = require('../../mock-data/user-details/index');
+const setTimeout = require('node:timers/promises').setTimeout;
 
 describe('Intro User Button Users Detail Page', () => {
   let browser;
@@ -55,7 +56,7 @@ describe('Intro User Button Users Detail Page', () => {
     expect(button).toBeTruthy();
 
     await button.hover();
-    await page.waitForTimeout(500);
+    await setTimeout(5000);
 
     const tooltipElement = await page.$('.tooltip');
     expect(tooltipElement).toBeTruthy();
@@ -68,7 +69,7 @@ describe('Intro User Button Users Detail Page', () => {
     );
 
     await page.mouse.move(0, 0);
-    await page.waitForTimeout(500);
+    await setTimeout(5000);
 
     const updatedTooltipElement = await page.$('.tooltip');
     expect(updatedTooltipElement).toBeFalsy();

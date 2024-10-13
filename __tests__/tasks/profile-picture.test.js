@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer');
 const { allUsersData } = require('../../mock-data/users');
 const API_BASE_URL = 'https://api.realdevsquad.com';
+const setTimeout = require('node:timers/promises').setTimeout;
 
 describe('Task Page - Assignee Profile Pic', () => {
   let browser;
@@ -61,7 +62,7 @@ describe('Task Page - Assignee Profile Pic', () => {
 
     await page.waitForSelector('#suggested-users-container');
 
-    await page.waitForTimeout(2000);
+    await setTimeout(2000);
     const imgSrc = await page.$eval('#list-items img', (img) => img.src);
     const expectedImageFilename =
       'https://res.cloudinary.com/realdevsquad/image/upload/v1679878917/profile/54vObOfoscwiIVNMSqnN/askdcanhcehukqrdugge.jpg';
@@ -81,7 +82,7 @@ describe('Task Page - Assignee Profile Pic', () => {
     }
 
     await page.waitForSelector('#suggested-users-container');
-    await page.waitForTimeout(2000);
+    await setTimeout(2000);
 
     const imgSrc = await page.$eval('#list-items img', (img) => img.src);
     const expectedImageFilename = 'No-profile-pic.jpg';

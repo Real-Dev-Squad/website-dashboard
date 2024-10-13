@@ -778,7 +778,7 @@ describe('Tests the Extension Requests Screen', () => {
 
     await element.hover();
 
-    await page.waitForTimeout(500);
+    await setTimeout(5000);
     const isTooltipVisible = await page.evaluate(() => {
       const tooltip = document.querySelector('.tooltip');
       const style = window.getComputedStyle(tooltip);

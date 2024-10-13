@@ -63,7 +63,7 @@ describe('Tests the "Onboarding > 31 Days" Filter', () => {
 
     await taskDiv.click();
 
-    await page.waitForTimeout(2000);
+    await setTimeout(2000);
     const elements = await page.$$('.checkbox-label');
 
     // Checking if elements are found
@@ -76,6 +76,6 @@ describe('Tests the "Onboarding > 31 Days" Filter', () => {
     expect(applyfilterbutton).toBeTruthy();
     await applyfilterbutton.click();
 
-    await page.waitForTimeout(5000);
+    await setTimeout(5000);
   });
 });

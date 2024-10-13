@@ -2,6 +2,7 @@ const puppeteer = require('puppeteer');
 const API_BASE_URL = 'https://staging-api.realdevsquad.com';
 const { user } = require('../../mock-data/users');
 const { standup } = require('../../mock-data/standup');
+const setTimeout = require('node:timers/promises').setTimeout;
 
 const oneDay = 24 * 60 * 60 * 1000;
 const numberOfMonthsAgo = 3;
@@ -118,7 +119,7 @@ describe('Standup Page', () => {
     await userInput.press('Backspace');
     await userInput.type('sunny');
     await searchButton.click();
-    await page.waitForTimeout(1000);
+    await setTimeout(1000);
     const updatedUrl = page.url();
     expect(updatedUrl).toContain('q=user:sunny');
   });
@@ -130,7 +131,7 @@ describe('Standup Page', () => {
     await userInput.press('Backspace');
     await userInput.type('sunny,pratiyush');
     await searchButton.click();
-    await page.waitForTimeout(1000);
+    await setTimeout(1000);
     const updatedUrl = page.url();
     expect(updatedUrl).toContain('q=user:sunny+user:pratiyush');
   });
@@ -142,7 +143,7 @@ describe('Standup Page', () => {
     await userInput.press('Backspace');
     await userInput.type('sunny,sunny,pratiyush');
     await searchButton.click();
-    await page.waitForTimeout(1000);
+    await setTimeout(1000);
     const updatedUrl = page.url();
     expect(updatedUrl).toContain('q=user:sunny+user:pratiyush');
   });

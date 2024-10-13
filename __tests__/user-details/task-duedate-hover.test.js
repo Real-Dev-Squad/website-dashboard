@@ -6,6 +6,7 @@ const {
 const {
   superUserDetails,
 } = require('../../mock-data/tasks-card-date-time-end-date-self/index'); // has super user info
+const setTimeout = require('node:timers/promises').setTimeout;
 
 describe('Tasks On User Management Page', () => {
   let browser;
@@ -127,7 +128,7 @@ describe('Tasks On User Management Page', () => {
 
     await taskDiv.click();
 
-    await page.waitForTimeout(500);
+    await setTimeout(5000);
   });
 
   it('should select and interact with text elements', async () => {
@@ -151,7 +152,7 @@ describe('Tasks On User Management Page', () => {
       await page.waitForTimeout(200); //waiting for a moment to check changes(very helpful when you turn headless into false), please increase value to 2000 or above to see clear changes
     }
 
-    await page.waitForTimeout(500); //waiting for a moment to check changes(very helpful when you turn headless into false)
+    await setTimeout(5000); //waiting for a moment to check changes(very helpful when you turn headless into false)
   });
 
   it('should interact with hover elements', async () => {
@@ -177,7 +178,7 @@ describe('Tasks On User Management Page', () => {
       await page.waitForTimeout(200); //waiting for a moment to check changes(very helpful when you turn headless into false), please increase value to 2000 or above to see clear changes
     }
 
-    await page.waitForTimeout(500); //waiting for a moment to check changes(very helpful when you turn headless into false)
+    await setTimeout(5000); //waiting for a moment to check changes(very helpful when you turn headless into false)
   });
 
   it('Scroll of task should work', async () => {
