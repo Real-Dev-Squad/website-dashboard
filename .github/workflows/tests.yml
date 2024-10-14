@@ -10,20 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Install dependencies
+    
+    - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libgbm-dev libasound2
-    - name: Install Google Chrome
-      run: |
-        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-        sudo dpkg -i google-chrome-stable_current_amd64.deb
-        sudo apt-get install -f
-    - name: Install Yarn
-      run: npm install -g yarn
+        sudo apt-get install -y libgbm1 libnss3 libatk-bridge2.0-0 libgtk-3-0 libgbm-dev
+
     - name: Install project dependencies
       run: yarn install
+
     - name: Run tests
       run: yarn test
       env:
         CI: true
+        PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
