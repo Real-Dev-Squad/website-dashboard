@@ -11,10 +11,15 @@ const ciPipelineOptions = {
     executablePath: '/usr/bin/google-chrome-stable',
     headless: 'new',
     args: [
-      '--ignore-certificate-errors',
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-gpu',
+      ...(ci
+        ? [
+            '--ignore-certificate-errors',
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-gpu',
+          ]
+        : ['--enable-gpu']),
     ],
   },
   server: baseOptions.server,

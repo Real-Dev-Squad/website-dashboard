@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 const { superUserDetails } = require('../../mock-data/users/mockdata');
+const setTimeout = require('node:timers/promises').setTimeout;
 
 describe('Tests the "Onboarding > 31 Days" Filter', () => {
   let browser;

@@ -19,7 +19,6 @@ describe('Apply Filter and Pagination Functionality', () => {
 
   beforeAll(async () => {
     browser = await puppeteer.launch({
-      headless: true,
       ignoreHTTPSErrors: true,
       args: ['--incognito', '--disable-web-security'],
     });
