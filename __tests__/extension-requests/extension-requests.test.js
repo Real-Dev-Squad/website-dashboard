@@ -636,8 +636,8 @@ describe('Tests the Extension Requests Screen', () => {
     await page.waitForTimeout(1650);
 
     const extensionCardsAfter = await page.$$('.extension-card');
-
     const cardCount = extensionCardsAfter.length;
+    console.log('Extension cards count', cardCount);
     expect(cardCount === 3 || cardCount === 7).toBe(true);
   });
 
