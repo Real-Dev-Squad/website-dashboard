@@ -15,6 +15,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y libgbm1 libnss3 libatk-bridge2.0-0 libgtk-3-0 libgbm-dev
+        echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
 
     - name: Install project dependencies
       run: yarn install
