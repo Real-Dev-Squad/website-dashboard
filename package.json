@@ -24,13 +24,13 @@
   "homepage": "https://github.com/Real-Dev-Squad/website-dashboard#readme",
   "devDependencies": {
     "jest": "^29.5.0",
-    "jest-puppeteer": "^10.1.2",
+    "jest-puppeteer": "^8.0.6",
     "jest-puppeteer-istanbul": "^0.5.3",
     "jsdom": "^21.1.1",
     "local-ssl-proxy": "^2.0.5",
     "pre-commit": "^1.2.2",
     "prettier": "2.3.1",
-    "puppeteer": "^23.5.3",
+    "puppeteer": "^20.2.1",
     "puppeteer-core": "^19.9.0"
   },
   "volta": {
