@@ -6,7 +6,7 @@
   "scripts": {
     "check": "prettier --check .",
     "fix": "prettier --write .",
-    "test": "jest",
+    "test": "jest --config jest.config.js",
     "start": "node server.js",
     "dev": "local-ssl-proxy --source 443 --target 5500 -n dev.realdevsquad.com"
   },

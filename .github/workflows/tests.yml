@@ -4,12 +4,26 @@ on:
     branches: [main, develop]
   push:
     branches: [main, develop]
+
 jobs:
-  Lint-Check:
+  test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: yarn
-      - run: yarn test
-        env:
-          CI: true
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgbm-dev libasound2
+    - name: Install Google Chrome
+      run: |
+        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+        sudo dpkg -i google-chrome-stable_current_amd64.deb
+        sudo apt-get install -f
+    - name: Install Yarn
+      run: npm install -g yarn
+    - name: Install project dependencies
+      run: yarn install
+    - name: Run tests
+      run: yarn test
+      env:
+        CI: true
