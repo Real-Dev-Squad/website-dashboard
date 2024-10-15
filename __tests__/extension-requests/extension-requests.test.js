@@ -633,10 +633,9 @@ describe('Tests the Extension Requests Screen', () => {
         break;
       }
     }
-    await page.waitForTimeout(1650);
+    await page.waitForTimeout(2000);
 
     const extensionCardsAfter = await page.$$('.extension-card');
-
     const cardCount = extensionCardsAfter.length;
     expect(cardCount === 3 || cardCount === 7).toBe(true);
   });
