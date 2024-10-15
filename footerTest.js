@@ -1,7 +1,4 @@
 const puppeteer = require('puppeteer');
-const EventEmitter = require('events');
-
-EventEmitter.defaultMaxListeners = 15;
 
 let config = {
   launchOptions: {
