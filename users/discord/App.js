@@ -551,7 +551,7 @@ const fetchUsers = async (tabId, page = 1) => {
         console.log(usersData[tabId]);
       }
       currentPage = page;
-      rerender(App(), window[root]); // Re-render the app with the new users
+      rerender(App(), document.getElementById('root')); // Re-render the app with the new users
     } else {
       console.log('No more users to fetch');
     }
@@ -562,17 +562,17 @@ const fetchUsers = async (tabId, page = 1) => {
   }
 };
 
-const handleScroll = () => {
-  const scrollPosition = window.innerHeight + window.scrollY;
-  const bottomPosition = document.body.offsetHeight - 100; // Trigger fetch 100px from bottom
+// const handleScroll = () => {
+//   const scrollPosition = window.innerHeight + window.scrollY;
+//   const bottomPosition = document.body.offsetHeight - 100; // Trigger fetch 100px from bottom
 
-  if (scrollPosition >= bottomPosition) {
-    // Fetch more users when the user is near the bottom
-    fetchUsers(activeTab, currentPage + 1);
-  }
-};
+//   if (scrollPosition >= bottomPosition) {
+//     // Fetch more users when the user is near the bottom
+//     fetchUsers(activeTab, currentPage + 1);
+//   }
+// };
 
-window.addEventListener('scroll', handleScroll);
+// window.addEventListener('scroll', handleScroll);
 
 const handleTabNavigation = async (e) => {
   const selectedTabId = e.target.getAttribute('data_key');
