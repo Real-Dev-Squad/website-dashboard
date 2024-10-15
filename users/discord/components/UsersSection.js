@@ -22,7 +22,6 @@ export const UsersSection = ({
   window.addEventListener(
     'scroll',
     debounce(() => {
-      console.log('scroll triggered');
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
         fetchUsers(activeTab, currentPage + 1);
       }

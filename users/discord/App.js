@@ -40,25 +40,21 @@ export const fetchUsers = async (tabId, page = 1) => {
     if (newUsers.length > 0) {
       if (page === 1) {
         usersData[tabId] = newUsers; // Initial load
-        console.log('Fetched initial users');
       } else {
         const existingIds = new Set(usersData[tabId].map((user) => user.id));
         const uniqueNewUsers = newUsers.filter(
           (user) => !existingIds.has(user.id),
         );
         usersData[tabId] = [...usersData[tabId], ...uniqueNewUsers];
-        console.log('Fetched more users');
-        console.log(usersData[tabId]);
       }
       currentPage = page;
-      rerender(App(), document.getElementById('root'));
     } else {
-      console.log('No more users to fetch');
     }
   } catch (error) {
     console.error('Error fetching users', error);
   } finally {
     isLoading = false;
+    rerender(App(), document.getElementById('root'));
   }
 };
 
