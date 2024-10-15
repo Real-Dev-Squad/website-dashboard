@@ -7,6 +7,7 @@ export const UsersSection = ({
   fetchUsers,
   activeTab,
   currentPage,
+  isLoading,
 }) => {
   const debounce = (func, delay) => {
     let timeoutId;
@@ -23,12 +24,17 @@ export const UsersSection = ({
     debounce(() => {
       console.log('scroll triggered');
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-        fetchUsers(activeTab, currentPage + 1); // Fetch next page
+        fetchUsers(activeTab, currentPage + 1);
       }
     }, 200),
   );
 
-  // handle scroll is not working - add event listener on every scroll element
+  if (isLoading) {
+    return createElement('aside', { class: 'users_section' }, [
+      createElement('div', { class: 'loading' }, ['Loading...']),
+    ]);
+  }
+
   return createElement(
     'aside',
     {
