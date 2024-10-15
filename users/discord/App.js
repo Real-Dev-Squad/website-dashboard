@@ -546,7 +546,11 @@ const fetchUsers = async (tabId, page = 1) => {
         usersData[tabId] = newUsers; // Initial load
         console.log('Fetched initial users');
       } else {
-        usersData[tabId] = [...usersData[tabId], ...newUsers]; // Append new users
+        const existingIds = new Set(usersData[tabId].map((user) => user.id));
+        const uniqueNewUsers = newUsers.filter(
+          (user) => !existingIds.has(user.id),
+        );
+        usersData[tabId] = [...usersData[tabId], ...uniqueNewUsers];
         console.log('Fetched more users');
         console.log(usersData[tabId]);
       }
