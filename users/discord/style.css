@@ -24,13 +24,16 @@ main {
 }
 
 .tabs_section {
-  padding: 1rem 0;
+  padding: 1rem;
   margin: 1rem;
   grid-area: tab;
+  width: 18rem;
+  border: 2px solid gray;
+  font-size: unset;
 }
 
 .tab {
-  padding: 0.5rem;
+  padding: 1rem;
   margin-inline-end: 0.5rem;
   cursor: pointer;
 }
