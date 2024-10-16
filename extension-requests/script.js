@@ -1366,7 +1366,7 @@ async function createExtensionCard(data, dev) {
     if (dev) {
       extensionRequestNumberValue.classList.remove('skeleton-span');
       extensionRequestNumberValue.innerText = `#${requestNumber}`;
-      extensionRequestNumberValue.add('extension-request-number');
+      extensionRequestNumberValue.classList.add('extension-request-number');
     }
     if (!dev) {
       removeSpinner();
