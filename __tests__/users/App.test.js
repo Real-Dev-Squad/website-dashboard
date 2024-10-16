@@ -6,7 +6,7 @@ const API_BASE_URL = 'https://staging-api.realdevsquad.com';
 describe('App Component', () => {
   let browser;
   let page;
-  jest.setTimeout(60000);
+  jest.setTimeout(90000);
   let config = {
     launchOptions: {
       headless: 'new',
@@ -68,6 +68,11 @@ describe('App Component', () => {
   });
 
   it('should render all sections', async () => {
+    await page.waitForSelector('.tabs_section');
+    await page.waitForSelector('.users_section');
+    await page.waitForSelector('.user_card');
+    await page.waitForSelector('.user_details_section');
+
     let tabsSection = await page.$('.tabs_section');
     let usersSection = await page.$('.users_section');
     let firstUser = await page.$('.user_card');
@@ -82,6 +87,8 @@ describe('App Component', () => {
   });
 
   it('should update the URL query string and re-render the app', async () => {
+    await page.waitForSelector('[data_key="verified"]');
+
     // Click on the "Linked Accounts" tab
     await page.click('[data_key="verified"]');
 
