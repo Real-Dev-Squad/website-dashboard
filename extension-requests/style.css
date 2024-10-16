@@ -165,6 +165,39 @@
 .approve-button:hover {
   background-color: var(--green500);
 }
+.skeleton {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  animation: skeleton-loading 1s linear infinite alternate;
+}
+
+.skeleton-text,
+.skeleton-link,
+.skeleton-span {
+  width: 3rem;
+  height: 1rem;
+  background-color: hsl(200, 20%, 70%);
+  animation: skeleton-loading 1s linear infinite alternate;
+}
+
+.skeleton-link,
+.skeleton-span,
+.skeleton-text {
+  width: 8rem;
+  display: inline-flex;
+  border-radius: 0.125rem;
+  line-height: 3rem;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-color: hsl(200, 20%, 70%);
+  }
+  100% {
+    background-color: hsl(200, 20%, 80%);
+  }
+}
 
 .edit-button {
   background: none;
