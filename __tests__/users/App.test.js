@@ -68,7 +68,6 @@ describe('App Component', () => {
   });
 
   it('should render all sections', async () => {
-    // Wait for the sections to be rendered
     await page.waitForSelector('.tabs_section');
     await page.waitForSelector('.users_section');
     await page.waitForSelector('.user_card');
