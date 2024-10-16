@@ -48,7 +48,6 @@ export const fetchUsers = async (tabId, page = 1) => {
         usersData[tabId] = [...usersData[tabId], ...uniqueNewUsers];
       }
       currentPage = page;
-    } else {
     }
   } catch (error) {
     console.error('Error fetching users', error);
