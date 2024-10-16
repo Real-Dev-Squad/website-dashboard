@@ -339,4 +339,35 @@ describe('Discord Groups Page', () => {
     const modalClosed = await page.$('.delete-confirmation-modal');
     expect(modalClosed).toBeFalsy();
   });
+
+  it('should display the footer with the correct repo link', async () => {
+    const footer = await page.$('[data-test-id="footer"]');
+    expect(footer).toBeTruthy();
+
+    const infoRepo = await footer.$('[data-test-id="info-repo"]');
+    expect(infoRepo).toBeTruthy();
+
+    const repoLink = await infoRepo.$('[data-test-id="repo-link"]');
+    expect(repoLink).toBeTruthy();
+
+    const repoLinkHref = await page.evaluate((el) => el.href, repoLink);
+    expect(repoLinkHref).toBe(
+      'https://github.com/Real-Dev-Squad/website-dashboard',
+    );
+
+    const repoLinkTarget = await page.evaluate((el) => el.target, repoLink);
+    expect(repoLinkTarget).toBe('_blank');
+
+    const repoLinkRel = await page.evaluate((el) => el.rel, repoLink);
+    expect(repoLinkRel).toBe('noopener noreferrer');
+
+    const repoLinkText = await page.evaluate((el) => el.innerText, repoLink);
+    expect(repoLinkText).toBe('open sourced repo');
+
+    const repoLinkClass = await page.evaluate((el) => el.className, repoLink);
+    expect(repoLinkClass).toBe('');
+
+    const repoLinkStyle = await page.evaluate((el) => el.style, repoLink);
+    expect(repoLinkStyle).toBeTruthy();
+  });
 });
