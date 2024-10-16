@@ -1,9 +1,45 @@
 const { createElement } = react;
 
-export const UsersSection = ({ users, showUser, handleUserSelected }) => {
+export const UsersSection = ({
+  users,
+  showUser,
+  handleUserSelected,
+  fetchUsers,
+  activeTab,
+  currentPage,
+  isLoading,
+}) => {
+  const debounce = (func, delay) => {
+    let timeoutId;
+    return function (...args) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        func.apply(this, args);
+      }, delay);
+    };
+  };
+
+  window.addEventListener(
+    'scroll',
+    debounce(() => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+        fetchUsers(activeTab, currentPage + 1);
+      }
+    }, 200),
+  );
+
+  if (isLoading) {
+    return createElement('aside', { class: 'users_section' }, [
+      createElement('div', { class: 'loading' }, ['Loading...']),
+    ]);
+  }
+
   return createElement(
     'aside',
-    { class: 'users_section', onclick: handleUserSelected },
+    {
+      class: 'users_section',
+      onclick: handleUserSelected,
+    },
     users?.map((user) => {
       return createElement(
         'div',
@@ -18,7 +54,10 @@ export const UsersSection = ({ users, showUser, handleUserSelected }) => {
             src: user?.picture?.url ?? dummyPicture,
             class: 'user_image',
           }),
-          createElement('span', {}, [user.first_name + ' ' + user.last_name]),
+          // createElement('span', {}, [
+          //   user.first_name + ' ' + user.last_name + user.username,
+          // ]),
+          createElement('span', {}, [user.username]),
         ],
       );
     }),
