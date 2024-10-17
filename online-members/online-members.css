@@ -13,7 +13,7 @@
 }
 
 .task-container {
-  overflow: auto;
+  overflow: scroll;
   display: none;
   padding-top: 10px;
   max-height: 85vh;
