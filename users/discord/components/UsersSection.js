@@ -9,19 +9,10 @@ export const UsersSection = ({
   currentPage,
   isLoading,
 }) => {
-  const debounce = (func, delay) => {
-    let timeoutId;
-    return function (...args) {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-        func.apply(this, args);
-      }, delay);
-    };
-  };
-
   window.addEventListener(
     'scroll',
     debounce(() => {
+      console.log('scroll triggered');
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
         fetchUsers(activeTab, currentPage + 1);
       }
