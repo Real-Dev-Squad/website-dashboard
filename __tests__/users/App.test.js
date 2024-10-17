@@ -96,4 +96,62 @@ describe('App Component', () => {
     const url = await page.url();
     expect(url).toContain('?tab=verified');
   });
+
+  it('should update the URL query string on search', async () => {
+    const initialUrl = await page.url();
+
+    await page.waitForSelector('.search_field');
+
+    await page.type('.search_field', 'John Doe');
+    await page.click('.search_button');
+
+    const updatedUrl = await page.url();
+
+    expect(updatedUrl).toContain('search=John+Doe');
+  });
+
+  it('should display user details when a user card is clicked', async () => {
+    await page.waitForSelector('.active_tab');
+
+    await page.click('.active_tab');
+
+    await page.waitForSelector('.user_details_section');
+
+    const userDetailsDisplayed =
+      (await page.$('.user_details_section')) !== null;
+
+    expect(userDetailsDisplayed).toBeTruthy();
+  });
+
+  it('should display search results matching the search term', async () => {
+    await page.type('.search_field', 'shu');
+    await page.click('.search_button');
+
+    await page.waitForSelector('.user_card');
+
+    const userCards = await page.$$('.user_card');
+    let searchTermFound = false;
+
+    for (const card of userCards) {
+      const cardContent = await card.evaluate((node) => node.innerText);
+      if (cardContent.toLowerCase().includes('shubham')) {
+        searchTermFound = true;
+        break;
+      }
+    }
+
+    expect(searchTermFound).toBeTruthy();
+  });
+
+  it('should handle empty search results gracefully', async () => {
+    await page.type('.search_field', 'bdhsbhj'); //represents a string which won't yeild any search result
+    await page.click('.search_button');
+
+    await page.waitForSelector('.no_user_found');
+
+    const emptyResultsMessageDisplayed =
+      (await page.$('.no_user_found')) !== null;
+
+    expect(emptyResultsMessageDisplayed).toBeTruthy();
+  });
 });
