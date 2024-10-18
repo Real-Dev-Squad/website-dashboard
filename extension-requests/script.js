@@ -240,7 +240,11 @@ async function populateExtensionRequests(query = {}, newLink) {
       return;
     }
     for (let data of allExtensionRequests) {
-      createExtensionCard(data);
+      if (query.dev) {
+        createExtensionCard(data, true);
+      } else {
+        createExtensionCard(data);
+      }
     }
     initializeAccordions();
   } catch (error) {
@@ -260,7 +264,11 @@ const intersectionObserver = new IntersectionObserver(async (entries) => {
     return;
   }
   if (entries[0].isIntersecting && !isDataLoading) {
-    await populateExtensionRequests({}, nextLink);
+    if (isDev) {
+      await populateExtensionRequests({ dev: true }, nextLink);
+    } else {
+      await populateExtensionRequests({}, nextLink);
+    }
   }
 });
 
@@ -462,7 +470,7 @@ const handleFormPropagation = async (event) => {
   event.preventDefault();
 };
 
-async function createExtensionCard(data) {
+async function createExtensionCard(data, dev) {
   renderLogRecord[data.id] = [];
   //Create card element
   const rootElement = createElement({
@@ -470,8 +478,12 @@ async function createExtensionCard(data) {
     attributes: { class: 'extension-card' },
   });
   extensionRequestsContainer.appendChild(rootElement);
-  const removeSpinner = addSpinner(rootElement);
-  rootElement.classList.add('disabled');
+  let removeSpinner;
+  if (!dev) {
+    removeSpinner = addSpinner(rootElement);
+    rootElement.classList.add('disabled');
+  }
+
   //Api calls
   const userDataPromise = getUser(data.assignee);
   const taskDataPromise = getTaskDetails(data.taskId);
@@ -569,12 +581,24 @@ async function createExtensionCard(data) {
     type: 'div',
     attributes: { class: 'details-container' },
   });
-  const statusSiteLink = createElement({
-    type: 'a',
-    attributes: {
-      class: 'external-link',
-    },
-  });
+
+  let statusSiteLink;
+  if (dev) {
+    statusSiteLink = createElement({
+      type: 'a',
+      attributes: {
+        class: 'external-link skeleton-link',
+        'data-testid': 'external-link skeleton-link',
+      },
+    });
+  } else {
+    statusSiteLink = createElement({
+      type: 'a',
+      attributes: {
+        class: 'external-link',
+      },
+    });
+  }
   const taskTitle = createElement({
     type: 'span',
     attributes: { class: 'task-title' },
@@ -598,15 +622,27 @@ async function createExtensionCard(data) {
     innerText: `Deadline${isDeadLineCrossed ? ' ' : ' in '}`,
   });
   deadlineContainer.appendChild(deadlineText);
-  const deadlineValue = createElement({
-    type: 'span',
-    innerText: `${deadlineDays}`,
-    attributes: {
-      class: `tooltip-container ${
-        isDeadLineCrossed && isStatusPending ? 'red-text' : ''
-      }`,
-    },
-  });
+
+  let deadlineValue;
+  if (dev) {
+    deadlineValue = createElement({
+      type: 'span',
+      attributes: {
+        class: 'skeleton-span',
+        'data-testid': 'skeleton-span',
+      },
+    });
+  } else {
+    deadlineValue = createElement({
+      type: 'span',
+      innerText: `${deadlineDays}`,
+      attributes: {
+        class: `tooltip-container ${
+          isDeadLineCrossed && isStatusPending ? 'red-text' : ''
+        }`,
+      },
+    });
+  }
   deadlineContainer.appendChild(deadlineValue);
   const deadlineTooltip = createElement({
     type: 'span',
@@ -625,13 +661,25 @@ async function createExtensionCard(data) {
     innerText: 'Requested ',
   });
   requestedContainer.appendChild(requestedText);
-  const requestedValue = createElement({
-    type: 'span',
-    attributes: {
-      class: `requested-day tooltip-container ${requestedDaysTextColor}`,
-    },
-    innerText: ` ${requestedDaysAgo}`,
-  });
+
+  let requestedValue;
+  if (dev) {
+    requestedValue = createElement({
+      type: 'span',
+      attributes: {
+        class: 'skeleton-text',
+        'data-testid': 'skeleton-text',
+      },
+    });
+  } else {
+    requestedValue = createElement({
+      type: 'span',
+      attributes: {
+        class: `requested-day tooltip-container ${requestedDaysTextColor}`,
+      },
+      innerText: `${requestedDaysAgo}`,
+    });
+  }
   const requestedToolTip = createElement({
     type: 'span',
     attributes: { class: 'tooltip' },
@@ -647,9 +695,21 @@ async function createExtensionCard(data) {
     innerText: 'Task status ',
   });
   taskStatusContainer.appendChild(taskStatusText);
-  const taskStatusValue = createElement({
-    type: 'span',
-  });
+
+  let taskStatusValue;
+  if (dev) {
+    taskStatusValue = createElement({
+      type: 'span',
+      attributes: {
+        class: 'skeleton-span',
+        'data-testid': 'skeleton-span',
+      },
+    });
+  } else {
+    taskStatusValue = createElement({
+      type: 'span',
+    });
+  }
   taskStatusContainer.appendChild(taskStatusValue);
   const datesContainer = createElement({
     type: 'div',
@@ -683,11 +743,20 @@ async function createExtensionCard(data) {
     innerText: `New deadline${isNewDeadLineCrossed ? ' ' : ' in '}`,
   });
   newDeadlineContainer.appendChild(newDeadlineText);
-  const newDeadlineValue = createElement({
-    type: 'span',
-    attributes: { class: 'requested-day tooltip-container' },
-    innerText: ` ${newDeadlineDays}`,
-  });
+
+  let newDeadlineValue;
+  if (dev) {
+    newDeadlineValue = createElement({
+      type: 'span',
+      attributes: { class: 'skeleton-span', 'data-testid': 'skeleton-span' },
+    });
+  } else {
+    newDeadlineValue = createElement({
+      type: 'span',
+      attributes: { class: 'requested-day tooltip-container' },
+      innerText: ` ${newDeadlineDays}`,
+    });
+  }
   const newDeadlineToolTip = createElement({
     type: 'span',
     attributes: { class: 'tooltip' },
@@ -707,11 +776,19 @@ async function createExtensionCard(data) {
   });
   extensionForContainer.appendChild(extensionForText);
 
-  const extensionForValue = createElement({
-    type: 'span',
-    attributes: { class: 'tooltip-container' },
-    innerText: ` +${extensionDays}`,
-  });
+  let extensionForValue;
+  if (dev) {
+    extensionForValue = createElement({
+      type: 'span',
+      attributes: { class: 'skeleton-span' },
+    });
+  } else {
+    extensionForValue = createElement({
+      type: 'span',
+      attributes: { class: 'tooltip-container' },
+      innerText: ` +${extensionDays}`,
+    });
+  }
   const extensionToolTip = createElement({
     type: 'span',
     attributes: { class: 'tooltip' },
@@ -744,11 +821,19 @@ async function createExtensionCard(data) {
 
   const requestNumber = data.requestNumber || 1;
 
-  const extensionRequestNumberValue = createElement({
-    type: 'span',
-    attributes: { class: 'extension-request-number' },
-    innerText: `#${requestNumber}`,
-  });
+  let extensionRequestNumberValue;
+  if (dev) {
+    extensionRequestNumberValue = createElement({
+      type: 'span',
+      attributes: { class: 'skeleton-span', 'data-testid': 'skeleton-span' },
+    });
+  } else {
+    extensionRequestNumberValue = createElement({
+      type: 'span',
+      attributes: { class: 'extension-request-number' },
+      innerText: `#${requestNumber}`,
+    });
+  }
   extensionRequestNumberContainer.appendChild(extensionRequestNumberValue);
   const cardAssigneeButtonContainer = createElement({
     type: 'div',
@@ -765,16 +850,40 @@ async function createExtensionCard(data) {
     innerText: 'Assigned to',
   });
   assigneeContainer.appendChild(assigneeText);
-  const assigneeImage = createElement({
-    type: 'img',
-    attributes: { class: 'assignee-image' },
-  });
+  let assigneeImage;
+  if (dev) {
+    assigneeImage = createElement({
+      type: 'img',
+      attributes: {
+        class: 'assignee-image skeleton',
+        'data-testid': 'assignee-image skeleton',
+      },
+    });
+  } else {
+    assigneeImage = createElement({
+      type: 'img',
+      attributes: { class: 'assignee-image' },
+    });
+  }
   assigneeContainer.appendChild(assigneeImage);
-  const assigneeNameElement = createElement({
-    type: 'span',
-    attributes: { class: 'assignee-name' },
-  });
+
+  let assigneeNameElement;
+  if (dev) {
+    assigneeNameElement = createElement({
+      type: 'span',
+      attributes: {
+        class: 'assignee-name skeleton-text',
+        'data-testid': 'assignee-name skeleton-text',
+      },
+    });
+  } else {
+    assigneeNameElement = createElement({
+      type: 'span',
+      attributes: { class: 'assignee-name' },
+    });
+  }
   assigneeContainer.appendChild(assigneeNameElement);
+
   const extensionCardButtons = createElement({
     type: 'div',
     attributes: { class: 'extension-card-buttons' },
@@ -1198,10 +1307,22 @@ async function createExtensionCard(data) {
     userFirstName = userFirstName ?? '';
     statusSiteLink.href = `${STATUS_BASE_URL}/tasks/${data.taskId}`;
     statusSiteLink.innerText = taskData.title;
+    if (dev) {
+      statusSiteLink.classList.remove('skeleton-link');
+    }
     assigneeImage.src = userImage;
+    if (dev) {
+      assigneeImage.classList.remove('skeleton');
+    }
     assigneeImage.alt = userFirstName;
     assigneeNameElement.innerText = userFirstName;
+    if (dev) {
+      assigneeNameElement.classList.remove('skeleton-text');
+    }
     taskStatusValue.innerText = ` ${taskStatus}`;
+    if (dev) {
+      taskStatusValue.classList.remove('skeleton-span');
+    }
     CommitedHourslabel.innerText = 'Commited Hours:';
     if (comittedHours) {
       CommitedHoursContent.innerText = `${comittedHours / 4} hrs / week`;
@@ -1209,10 +1330,49 @@ async function createExtensionCard(data) {
       CommitedHoursContent.innerText = 'Missing';
       CommitedHoursContent.classList.add('label-content-missing');
     }
+    if (dev) {
+      deadlineValue.classList.remove('skeleton-span');
+      deadlineValue.innerText = `${deadlineDays}`;
 
-    removeSpinner();
-    renderExtensionCreatedLog();
-    rootElement.classList.remove('disabled');
+      deadlineValue.classList.add('tooltip-container');
+      if (isDeadLineCrossed && isStatusPending) {
+        deadlineValue.classList.add('red-text');
+      }
+    }
+
+    if (dev) {
+      requestedValue.classList.remove('skeleton-text');
+      requestedValue.innerText = `${requestedDaysAgo}`;
+
+      requestedValue.classList.add(
+        'requested-day',
+        'tooltip-container',
+        requestedDaysTextColor,
+      );
+    }
+
+    if (dev) {
+      newDeadlineValue.classList.remove('skeleton-span');
+      newDeadlineValue.innerText = ` ${newDeadlineDays}`;
+      newDeadlineValue.classList.add('requested-day', 'tooltip-container');
+    }
+
+    if (dev) {
+      extensionForValue.classList.remove('skeleton-span');
+      extensionForValue.innerText = ` +${extensionDays}`;
+      extensionForValue.classList.add('tooltip-container');
+    }
+
+    if (dev) {
+      extensionRequestNumberValue.classList.remove('skeleton-span');
+      extensionRequestNumberValue.innerText = `#${requestNumber}`;
+      extensionRequestNumberValue.classList.add('extension-request-number');
+    }
+    if (!dev) {
+      removeSpinner();
+      renderExtensionCreatedLog();
+      rootElement.classList.remove('disabled');
+    }
   });
   return rootElement;
 

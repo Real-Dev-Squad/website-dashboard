@@ -3,7 +3,11 @@ const { createElement } = react;
 export const UsersSection = ({ users, showUser, handleUserSelected }) => {
   return createElement(
     'aside',
-    { class: 'users_section', onclick: handleUserSelected },
+    {
+      class: 'users_section',
+      onClick: handleUserSelected,
+      'data-testid': 'users-section',
+    },
     users?.map((user) => {
       return createElement(
         'div',
@@ -11,7 +15,8 @@ export const UsersSection = ({ users, showUser, handleUserSelected }) => {
           class: `user_card ${
             users[showUser].id === user.id ? 'active_tab' : ''
           }`,
-          data_key: user.id,
+          'data-testid': `user-card-${user.id}`,
+          'data-key': user.id,
         },
         [
           createElement('img', {
