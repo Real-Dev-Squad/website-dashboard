@@ -4,6 +4,7 @@ const API_BASE_URL =
     : window.API_BASE_URL;
 
 let taskRequest;
+let self_user;
 
 const taskRequestSkeleton = document.querySelector('.taskRequest__skeleton');
 const container = document.querySelector('.container');
@@ -22,6 +23,19 @@ history.pushState({}, '', window.location.href);
 const errorMessage =
   'The requested operation could not be completed. Please try again later.';
 let taskId;
+
+async function getSelfUser() {
+  const res = await fetch(`${API_BASE_URL}/users/self`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: {
+      'Content-type': 'application/json',
+    },
+  });
+
+  const self_user = await res.json();
+  return self_user;
+}
 
 function renderTaskRequestDetails(taskRequest) {
   taskRequestContainer.append(
@@ -200,17 +214,26 @@ async function updateTaskRequest(action, userId) {
   }
 }
 
-function getActionButton(requestor) {
+function getActionButton(requestor, taskRequest) {
+  const isSuperUser = self_user.roles['super_user'];
+  if (!isSuperUser) {
+    return createCustomElement({
+      tagName: 'p',
+      textContent:
+        taskRequest.status[0].toUpperCase() +
+        taskRequest.status.slice(1).toLowerCase(),
+      class: ['requestors__container__list__status'],
+    });
+  }
+
   if (taskRequest?.status === taskRequestStatus.APPROVED) {
-    if (taskRequest.approvedTo === requestor?.user?.id) {
-      return createCustomElement({
-        tagName: 'p',
-        textContent: 'Approved',
-        class: ['requestors__container__list__approved'],
-      });
-    } else {
-      return '';
-    }
+    return taskRequest.approvedTo === requestor?.user?.id
+      ? createCustomElement({
+          tagName: 'p',
+          textContent: 'Approved',
+          class: ['requestors__container__list__status'],
+        })
+      : '';
   }
   return createCustomElement({
     tagName: 'button',
@@ -279,14 +302,17 @@ async function renderRequestors(taskRequest) {
         createCustomElement({
           tagName: 'div',
           child: [
-            taskRequest.status !== 'DENIED' ? getActionButton(requestor) : '',
+            taskRequest.status !== 'DENIED'
+              ? getActionButton(requestor, taskRequest)
+              : createCustomElement({
+                  tagName: 'p',
+                  textContent: 'Denied',
+                  class: ['requestors__container__list__status'],
+                }),
           ],
         }),
       ],
     });
-    const avatarDiv = userDetailsDiv.querySelector(
-      '.requestors__container__list__userDetails__avatar',
-    );
     requestorsContainer.append(userDetailsDiv);
   });
 }
@@ -409,14 +435,17 @@ const renderGithubIssue = async () => {
   );
 };
 const renderRejectButton = (taskRequest) => {
+  if (self_user.roles['super_user']) {
+    rejectButton.classList.remove('hidden');
+  }
   if (taskRequest?.status !== 'PENDING') {
-    rejectButton.disabled = true;
+    rejectButton.classList.add('hidden');
   }
 
   rejectButton.addEventListener('click', async () => {
     const res = await updateTaskRequest(TaskRequestAction.REJECT);
     if (res?.ok) {
-      rejectButton.disabled = true;
+      rejectButton.classList.add('hidden');
     }
   });
 };
@@ -425,6 +454,7 @@ const renderTaskRequest = async () => {
   taskContainer.classList.remove('hidden');
   try {
     taskRequest = await fetchTaskRequest();
+    self_user = await getSelfUser();
     taskRequestSkeleton.classList.add('hidden');
     renderRejectButton(taskRequest);
     renderTaskRequestDetails(taskRequest);

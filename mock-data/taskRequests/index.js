@@ -260,7 +260,6 @@ const githubIssue = {
   performed_via_github_app: null,
   state_reason: 'completed',
 };
-
 const individualTaskDetail = {
   message: 'task returned successfully',
   taskData: {
@@ -306,7 +305,6 @@ const userInformationTaskCreation = {
     },
   },
 };
-
 const userInformation = {
   message: 'User returned successfully!',
   user: {
@@ -339,7 +337,29 @@ const userInformation = {
     created_at: 1698684157040,
   },
 };
-
+const superUserData = {
+  id: 'V4rqL1aDecNGoa1IxiCu',
+  incompleteUserDetails: false,
+  discordId: '12345',
+  roles: {
+    archived: false,
+    super_user: true,
+  },
+  linkedin_id: 'kotesh',
+  last_name: 'Mudila',
+  yoe: '5',
+  github_display_name: 'kotesh Mudila',
+  company_name: 'Juniper networks ',
+  github_id: 'kotesh-arya',
+  designation: 'Front end engineer',
+  twitter_id: 'Codesh_',
+  first_name: 'Kotesh',
+  username: 'kotesh',
+  picture: {
+    publicId: 'profile/w2XR9Gkid6Kg5xCJ5Elm/rzh3cwff7hh7srvg63mb',
+    url: 'https://res.cloudinary.com/realdevsquad/image/upload/v1692990078/profile/w2XR9Gkid6Kg5xCJ5Elm/rzh3cwff7hh7srvg63mb.png',
+  },
+};
 const defaultMockResponseHeaders = {
   status: 200,
   contentType: 'application/json',
@@ -351,6 +371,7 @@ const defaultMockResponseHeaders = {
 };
 
 const urlMappings = {
+  'https://staging-api.realdevsquad.com/users/self': superUserData,
   'https://api.realdevsquad.com/taskRequests/dM5wwD9QsiTzi7eG7Oq5':
     individualTaskReqDetail,
   'https://api.realdevsquad.com/taskRequests/dM5wwD9QsiTzi7eG7Oq6':
