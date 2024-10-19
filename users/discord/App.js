@@ -7,10 +7,10 @@ import { NoUserFound } from './components/NoUserFound.js';
 const { createElement, rerender } = react;
 
 const tabs = [
-  { display_name: 'In Discord', id: 'in_discord', value: '1' },
-  { display_name: 'Linked Accounts', id: 'verified', value: '2' }, // added a value property to each option
+  { display_name: 'In Discord', id: 'in_discord', value: 'In Discord' },
+  { display_name: 'Linked Accounts', id: 'verified', value: 'Verified' },
 ];
-export const usersData = { //caches data, try caching current select tab here
+export const usersData = {
   in_discord: null,
   verified: null,
 };
