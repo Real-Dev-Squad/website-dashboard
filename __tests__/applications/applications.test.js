@@ -103,6 +103,23 @@ describe('Applications page', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
         });
+      } else if (
+        request.url() ===
+        `${API_BASE_URL}/applications?size=6&status=pending&dev=true`
+      ) {
+        request.respond({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            applications: acceptedApplications,
+            totalCount: acceptedApplications.length,
+          }),
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+        });
       } else {
         request.continue();
       }
@@ -127,6 +144,12 @@ describe('Applications page', () => {
     expect(filterButton).toBeTruthy();
     expect(applicationCards).toBeTruthy();
     expect(applicationCards.length).toBe(6);
+  });
+
+  it('should render the index of pending applications under dev flag === true', async function () {
+    await page.goto(`${SITE_URL}/applications?dev=true&status=pending`);
+    const indexOfApplication = await page.$$('[data-testid="user-index"]');
+    expect(indexOfApplication).toBeTruthy();
   });
 
   it('should render the initial UI elements under dev flag === true', async function () {
@@ -271,5 +294,36 @@ describe('Applications page', () => {
       'application updated successfully!',
     );
     await page.waitForNetworkIdle();
+  });
+
+  it('should display the footer with the correct repo link', async () => {
+    const footer = await page.$('[data-test-id="footer"]');
+    expect(footer).toBeTruthy();
+
+    const infoRepo = await footer.$('[data-test-id="info-repo"]');
+    expect(infoRepo).toBeTruthy();
+
+    const repoLink = await infoRepo.$('[data-test-id="repo-link"]');
+    expect(repoLink).toBeTruthy();
+
+    const repoLinkHref = await page.evaluate((el) => el.href, repoLink);
+    expect(repoLinkHref).toBe(
+      'https://github.com/Real-Dev-Squad/website-dashboard',
+    );
+
+    const repoLinkTarget = await page.evaluate((el) => el.target, repoLink);
+    expect(repoLinkTarget).toBe('_blank');
+
+    const repoLinkRel = await page.evaluate((el) => el.rel, repoLink);
+    expect(repoLinkRel).toBe('noopener noreferrer');
+
+    const repoLinkText = await page.evaluate((el) => el.innerText, repoLink);
+    expect(repoLinkText).toBe('open sourced repo');
+
+    const repoLinkClass = await page.evaluate((el) => el.className, repoLink);
+    expect(repoLinkClass).toBe('');
+
+    const repoLinkStyle = await page.evaluate((el) => el.style, repoLink);
+    expect(repoLinkStyle).toBeTruthy();
   });
 });

@@ -142,7 +142,7 @@ async function generateUserTaskData(username) {
     return;
   }
 
-  showLoadingSpinner(`${TASKS_CONTAINER_ID}`);
+  showLoadingSpinner(`#${TASKS_CONTAINER_ID}`);
 
   isTaskDataBeingFetched = true;
 

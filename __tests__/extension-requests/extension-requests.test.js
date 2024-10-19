@@ -633,12 +633,111 @@ describe('Tests the Extension Requests Screen', () => {
         break;
       }
     }
-    await page.waitForTimeout(1650);
+    await page.waitForTimeout(2000);
 
     const extensionCardsAfter = await page.$$('.extension-card');
-
     const cardCount = extensionCardsAfter.length;
     expect(cardCount === 3 || cardCount === 7).toBe(true);
+  });
+
+  it('checks whether the shimmer effect is visible under dev flag only for the assignee image element', async () => {
+    await page.goto(`${baseUrl}/?dev=true`);
+    const assignImageSelector = await page.$$(
+      '[data-testid="assignee-image skeleton"]',
+    );
+    expect(assignImageSelector).toBeTruthy();
+
+    await page.waitForTimeout(5000);
+    const hasSkeletonClassAfter = await page.$eval('.assignee-image', (el) =>
+      el.classList.contains('skeleton'),
+    );
+    expect(hasSkeletonClassAfter).toBe(false);
+  });
+
+  it('checks whether the shimmer effect is visible under dev flag only for the assignee name element', async () => {
+    await page.goto(`${baseUrl}/?dev=true`);
+    const assignNameSelector = await page.$$(
+      '[data-testid="assignee-name skeleton-text"]',
+    );
+    expect(assignNameSelector).toBeTruthy();
+    await page.waitForTimeout(5000);
+    const hasSkeletonClassAfter = await page.$eval('.assignee-name', (el) =>
+      el.classList.contains('skeleton-text'),
+    );
+    expect(hasSkeletonClassAfter).toBe(false);
+  });
+
+  it('checks whether the shimmer effect is working for deadlineValue element under feature flag', async () => {
+    await page.goto(`${baseUrl}/?dev=true`);
+    const deadlineValueSelector = await page.$$(
+      '[data-testid="skeleton-span"]',
+    );
+    expect(deadlineValueSelector).toBeTruthy();
+    await page.waitForTimeout(5000);
+    const hasSkeletonClassAfter = await page.$eval('.tooltip-container', (el) =>
+      el.classList.contains('skeleton-span'),
+    );
+    expect(hasSkeletonClassAfter).toBe(false);
+  });
+
+  it('checks whether the shimmer effect is working for requestedValue element under feature flag', async () => {
+    await page.goto(`${baseUrl}/?dev=true`);
+    const requestedValueSelector = await page.$$(
+      '[data-testid="skeleton-text"]',
+    );
+    expect(requestedValueSelector).toBeTruthy();
+    await page.waitForTimeout(5000);
+    const hasSkeletonClassAfter = await page.$eval('.requested-day', (el) =>
+      el.classList.contains('skeleton-text'),
+    );
+    expect(hasSkeletonClassAfter).toBe(false);
+  });
+  it('checks whether the shimmer effect is working for newDeadlineValue element under feature flag', async () => {
+    await page.goto(`${baseUrl}/?dev=true`);
+    const newDeadlineValueSelector = await page.$$(
+      '[data-testid="skeleton-span"]',
+    );
+    expect(newDeadlineValueSelector).toBeTruthy();
+    await page.waitForTimeout(5000);
+    const hasSkeletonClassAfter = await page.$eval('.requested-day', (el) =>
+      el.classList.contains('skeleton-span'),
+    );
+    expect(hasSkeletonClassAfter).toBe(false);
+  });
+
+  it('checks whether the shimmer effect is working for extensionRequestNumberValue element under feature flag', async () => {
+    await page.goto(`${baseUrl}/?dev=true`);
+    const extensionRequestNumberValueSelector = await page.$$(
+      '[data-testid="skeleton-span"]',
+    );
+    expect(extensionRequestNumberValueSelector).toBeTruthy();
+    await page.waitForTimeout(5000);
+    const hasSkeletonClassAfter = await page.$eval(
+      '.extension-request-number',
+      (el) => el.classList.contains('skeleton-span'),
+    );
+    expect(hasSkeletonClassAfter).toBe(false);
+  });
+
+  it('checks whether the shimmer effect is visible under dev flag only for the statusSiteLink element', async () => {
+    await page.goto(`${baseUrl}/?dev=true`);
+    const statusSiteLinkSelector = await page.$$(
+      '[data-testid="external-link skeleton-link"]',
+    );
+    expect(statusSiteLinkSelector).toBeTruthy();
+    await page.waitForTimeout(5000);
+    const hasSkeletonClassAfter = await page.$eval('.external-link', (el) =>
+      el.classList.contains('skeleton-link'),
+    );
+    expect(hasSkeletonClassAfter).toBe(false);
+  });
+
+  it('checks whether the shimmer effect is visible under dev flag only for the taskStatusValue element', async () => {
+    await page.goto(`${baseUrl}/?dev=true`);
+    const taskStatusValueElement = await page.$$(
+      '[data-testid="skeleton-span"]',
+    );
+    expect(taskStatusValueElement).toBeTruthy();
   });
 
   it('Checks whether the card is not removed from display when api call is unsuccessful', async () => {

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="/images/index.ico" type="image/x-icon" />
     <title>Discord Groups | Real Dev Squad</title>
-    <link rel="stylesheet" href="/global.css" />
+    <link rel="stylesheet" href="../global.css" />
     <link rel="stylesheet" href="/groups/style.css" />
     <script src="/helpers/loadENV.js"></script>
     <script src="/constants.js"></script>
@@ -38,12 +38,18 @@
         <div class="create-group">
           <button class="button">
             <span class="button__text">Create Group</span>
-            <img src="assets/plus.svg" class="button__icon" />
+            <img src="assets/plus.svg" alt="+" class="button__icon" />
           </button>
         </div>
       </section>
       <div class="group-container"></div>
     </main>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        loadFooter();
+      });
+    </script>
+    <script src="../footer/footerComponent.js"></script>
   </body>
   <div class="toast">
     <div class="toast__message"></div>

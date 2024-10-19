@@ -3,7 +3,11 @@ const { createElement } = react;
 export const TabsSection = ({ tabs, activeTab, handleTabNavigation }) => {
   return createElement(
     'div',
-    { class: 'tabs_section', onclick: handleTabNavigation },
+    {
+      class: 'tabs_section',
+      onclick: handleTabNavigation,
+      'data-testid': 'tabs-section',
+    },
     tabs.map((tabItem) => {
       return createElement(
         'span',
