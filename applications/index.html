@@ -8,6 +8,7 @@
     <script src="/helpers/loadENV.js"></script>
     <title>Applications</title>
   </head>
+
   <body>
     <header class="header">
       <h1>RDS Join Applications</h1>
@@ -24,6 +25,31 @@
           alt="funnel icon"
         />
       </button>
+      <div class="filter-container hidden">
+        <div class="filter-menu">
+          <button id="filter-button-new" class="filter-button hidden">
+            <img
+              class="funnel-icon"
+              src="/task-requests/assets/funnel.svg"
+              alt="funnel icon"
+            />
+            Filters
+          </button>
+          <div class="filter-dropdown">
+            <div data-filter="" class="filter-dropdown-header">
+              Status <button class="close-dropdown-btn">&#x2715;</button>
+            </div>
+            <div data-filter="rejected">Rejected</div>
+            <div data-filter="accepted">Accepted</div>
+            <div data-filter="pending">Pending</div>
+          </div>
+        </div>
+        <div class="filter-label hidden">
+          <span class="filter-text"></span>
+          <span class="filter-remove">&#x2715;</span>
+        </div>
+      </div>
+      <h2 class="total_count hidden"></h2>
       <p class="no_applications_found hidden">No applications Found!</p>
       <div
         class="filter-modal hidden"
@@ -77,8 +103,18 @@
         </button>
         <div class="application-details-main"></div>
         <div class="application-details-actions">
-          <button class="application-details-accept">Accept</button>
-          <p class="application-details-reject">Reject</p>
+          <button
+            class="application-details-accept"
+            aria-label="Accept Application"
+          >
+            Accept
+          </button>
+          <button
+            class="application-details-reject"
+            aria-label="Reject Application"
+          >
+            Reject
+          </button>
         </div>
       </div>
       <main class="application-container"></main>
