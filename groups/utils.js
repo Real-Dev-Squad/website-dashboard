@@ -128,15 +128,21 @@ function removeGroupKeywordFromDiscordRoleName(groupName) {
 
 function getDiscordGroupIdsFromSearch(groups, multipleGroupSearch) {
   if (!multipleGroupSearch) return groups.map((group) => group.id);
+
   const GROUP_SEARCH_SEPARATOR = ',';
   const searchGroups = multipleGroupSearch
     .split(GROUP_SEARCH_SEPARATOR)
     .map((group) => group.trim().toLowerCase());
+
   const matchGroups = groups.filter((group) =>
     searchGroups.some((searchGroup) =>
-      group.title.toLowerCase().startsWith(searchGroup),
+      group.title
+        .toLowerCase()
+        .split(' ')
+        .some((word) => word.startsWith(searchGroup)),
     ),
   );
+
   return matchGroups.map((group) => group.id);
 }
 
