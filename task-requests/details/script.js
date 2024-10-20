@@ -4,7 +4,7 @@ const API_BASE_URL =
     : window.API_BASE_URL;
 
 let taskRequest;
-let self_user;
+let isSuperUser;
 
 const taskRequestSkeleton = document.querySelector('.taskRequest__skeleton');
 const container = document.querySelector('.container');
@@ -35,6 +35,10 @@ async function getSelfUser() {
 
   const self_user = await res.json();
   return self_user;
+}
+async function checkUserIsSuperUser() {
+  const self_user = await getSelfUser();
+  return self_user?.roles['super_user'];
 }
 
 function renderTaskRequestDetails(taskRequest) {
@@ -214,38 +218,36 @@ async function updateTaskRequest(action, userId) {
   }
 }
 
-function getActionButton(requestor, taskRequest) {
-  const isSuperUser = self_user.roles['super_user'];
-  if (!isSuperUser) {
+function renderActionButton(requestor, taskRequest) {
+  if (isSuperUser) {
+    if (taskRequest?.status === taskRequestStatus.APPROVED) {
+      return taskRequest.approvedTo === requestor?.user?.id
+        ? createCustomElement({
+            tagName: 'p',
+            textContent: 'Approved',
+            class: ['requestors__container__list__status'],
+          })
+        : '';
+    }
     return createCustomElement({
-      tagName: 'p',
-      textContent:
-        taskRequest.status[0].toUpperCase() +
-        taskRequest.status.slice(1).toLowerCase(),
-      class: ['requestors__container__list__status'],
+      tagName: 'button',
+      textContent: 'Approve',
+      class: 'requestors__conatainer__list__button',
+      eventListeners: [
+        {
+          event: 'click',
+          func: () =>
+            updateTaskRequest(TaskRequestAction.APPROVE, requestor.user?.id),
+        },
+      ],
     });
   }
-
-  if (taskRequest?.status === taskRequestStatus.APPROVED) {
-    return taskRequest.approvedTo === requestor?.user?.id
-      ? createCustomElement({
-          tagName: 'p',
-          textContent: 'Approved',
-          class: ['requestors__container__list__status'],
-        })
-      : '';
-  }
   return createCustomElement({
-    tagName: 'button',
-    textContent: 'Approve',
-    class: 'requestors__conatainer__list__button',
-    eventListeners: [
-      {
-        event: 'click',
-        func: () =>
-          updateTaskRequest(TaskRequestAction.APPROVE, requestor.user?.id),
-      },
-    ],
+    tagName: 'p',
+    textContent:
+      taskRequest.status[0].toUpperCase() +
+      taskRequest.status.slice(1).toLowerCase(),
+    class: ['requestors__container__list__status'],
   });
 }
 
@@ -303,7 +305,7 @@ async function renderRequestors(taskRequest) {
           tagName: 'div',
           child: [
             taskRequest.status !== 'DENIED'
-              ? getActionButton(requestor, taskRequest)
+              ? renderActionButton(requestor, taskRequest)
               : createCustomElement({
                   tagName: 'p',
                   textContent: 'Denied',
@@ -436,11 +438,14 @@ const renderGithubIssue = async () => {
   );
 };
 const renderRejectButton = (taskRequest) => {
-  if (self_user.roles['super_user']) {
+  if (!isSuperUser) return;
+
+  if (taskRequest?.status === 'PENDING') {
     rejectButton.classList.remove('hidden');
-  }
-  if (taskRequest?.status !== 'PENDING') {
-    rejectButton.classList.add('hidden');
+  } else {
+    if (!rejectButton.classList.contains('hidden')) {
+      rejectButton.classList.add('hidden');
+    }
   }
 
   rejectButton.addEventListener('click', async () => {
@@ -455,7 +460,7 @@ const renderTaskRequest = async () => {
   taskContainer.classList.remove('hidden');
   try {
     taskRequest = await fetchTaskRequest();
-    self_user = await getSelfUser();
+    isSuperUser = await checkUserIsSuperUser();
     taskRequestSkeleton.classList.add('hidden');
     renderRejectButton(taskRequest);
     renderTaskRequestDetails(taskRequest);
