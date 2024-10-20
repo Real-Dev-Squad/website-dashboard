@@ -245,7 +245,7 @@ describe('Discord Groups Page', () => {
   });
 
   test('Should display only specified groups when name=<group-name> with different case', async () => {
-    const groupNames = 'fIrSt,DSA+COdInG';
+    const groupNames = 'fIrSt,COdInG';
     await page.goto(`${PAGE_URL}/groups?name=${groupNames}`);
     await page.waitForNetworkIdle();
 
