@@ -1,6 +1,12 @@
 const { createElement } = react;
 
 export const UsersSection = ({ users, showUser, handleUserSelected }) => {
+  if (users.length === 0) {
+    return createElement('div', { class: 'users_section no_users' }, [
+      createElement('div', {}, ['No users found']),
+    ]);
+  }
+
   return createElement(
     'aside',
     {

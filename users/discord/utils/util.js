@@ -19,3 +19,23 @@ export const getUsers = async (tab) => {
     console.error(err);
   }
 };
+
+export const searchUser = async (searchTerm) => {
+  let URL = `${API_BASE_URL}/users?search=${searchTerm}&dev=true`; // dev=true is a temporary query param
+
+  try {
+    const response = await fetch(URL, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+
+    const data = await response.json();
+    return data.users ?? [];
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
