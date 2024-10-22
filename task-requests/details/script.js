@@ -14,15 +14,16 @@ const requestorSkeleton = document.querySelector(
 );
 
 const taskRequestContainer = document.getElementById('task-request-details');
+const requestDetailContainer =
+  document.getElementsByClassName('request-details');
 const taskContainer = document.getElementById('task-details');
 const toast = document.getElementById('toast_task_details');
-const rejectButton = document.getElementById('reject-button');
+// const rejectButton = document.getElementById('reject-button');
 const requestorsContainer = document.getElementById('requestors-details');
 const taskRequestId = new URLSearchParams(window.location.search).get('id');
 history.pushState({}, '', window.location.href);
 const errorMessage =
   'The requested operation could not be completed. Please try again later.';
-let taskId;
 
 async function getSelfUser() {
   const res = await fetch(`${API_BASE_URL}/users/self`, {
@@ -36,6 +37,7 @@ async function getSelfUser() {
   const self_user = await res.json();
   return self_user;
 }
+
 async function checkUserIsSuperUser() {
   const self_user = await getSelfUser();
   return self_user?.roles['super_user'];
@@ -439,22 +441,32 @@ const renderGithubIssue = async () => {
 };
 const renderRejectButton = (taskRequest) => {
   if (!isSuperUser) return;
-
   if (taskRequest?.status === 'PENDING') {
-    rejectButton.classList.remove('hidden');
-  } else {
-    if (!rejectButton.classList.contains('hidden')) {
-      rejectButton.classList.add('hidden');
-    }
-  }
+    const rejectContainer = createCustomElement({
+      tagName: 'div',
+      class: 'reject__container',
+      child: [
+        createCustomElement({
+          tagName: 'button',
+          textContent: 'Reject',
+          id: 'reject-button',
+          class: 'request-details__reject__button',
+        }),
+      ],
+    });
 
-  rejectButton.addEventListener('click', async () => {
-    const res = await updateTaskRequest(TaskRequestAction.REJECT);
-    if (res?.ok) {
-      rejectButton.classList.add('hidden');
-    }
-  });
+    requestDetailContainer[0].appendChild(rejectContainer);
+    const rejectButton = rejectContainer.querySelector('#reject-button');
+
+    rejectButton.addEventListener('click', async () => {
+      const res = await updateTaskRequest(TaskRequestAction.REJECT);
+      if (res?.ok) {
+        rejectButton.remove();
+      }
+    });
+  }
 };
+
 const renderTaskRequest = async () => {
   taskRequestSkeleton.classList.remove('hidden');
   taskContainer.classList.remove('hidden');
