@@ -39,12 +39,12 @@ const handleTabNavigation = async (e) => {
 
 const handleUserSelected = (userId) => {
   if (userId) {
-    const selectedIndex = usersData[activeTab]?.findIndex(
+    const selectedUserIndex = usersData[activeTab]?.findIndex(
       (user) => user.id === userId,
     );
 
-    if (selectedIndex !== -1) {
-      showUser = selectedIndex;
+    if (selectedUserIndex !== -1) {
+      showUser = selectedUserIndex;
       rerender(App(), window['root']);
     }
   }
