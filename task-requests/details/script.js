@@ -2,7 +2,7 @@ const API_BASE_URL =
   window.location.hostname === 'localhost'
     ? 'https://staging-api.realdevsquad.com'
     : window.API_BASE_URL;
-
+import { getIsSuperUser } from '../../applications/utils.js';
 let taskRequest;
 let isSuperUser;
 
@@ -18,30 +18,11 @@ const requestDetailContainer =
   document.getElementsByClassName('request-details');
 const taskContainer = document.getElementById('task-details');
 const toast = document.getElementById('toast_task_details');
-// const rejectButton = document.getElementById('reject-button');
 const requestorsContainer = document.getElementById('requestors-details');
 const taskRequestId = new URLSearchParams(window.location.search).get('id');
 history.pushState({}, '', window.location.href);
 const errorMessage =
   'The requested operation could not be completed. Please try again later.';
-
-async function getSelfUser() {
-  const res = await fetch(`${API_BASE_URL}/users/self`, {
-    method: 'GET',
-    credentials: 'include',
-    headers: {
-      'Content-type': 'application/json',
-    },
-  });
-
-  const self_user = await res.json();
-  return self_user;
-}
-
-async function checkUserIsSuperUser() {
-  const self_user = await getSelfUser();
-  return self_user?.roles['super_user'];
-}
 
 function renderTaskRequestDetails(taskRequest) {
   taskRequestContainer.append(
@@ -335,7 +316,7 @@ async function fetchTaskRequest() {
 }
 
 const renderGithubIssue = async () => {
-  converter = new showdown.Converter({
+  const converter = new showdown.Converter({
     tables: true,
     simplifiedAutoLink: true,
     tasklists: true,
@@ -374,7 +355,7 @@ const renderGithubIssue = async () => {
     }),
   );
   const body = DOMPurify.sanitize(res?.body ?? '');
-  html = converter.makeHtml(body);
+  const html = converter.makeHtml(body);
   taskContainer.appendChild(
     createCustomElement({
       tagName: 'div',
@@ -472,7 +453,7 @@ const renderTaskRequest = async () => {
   taskContainer.classList.remove('hidden');
   try {
     taskRequest = await fetchTaskRequest();
-    isSuperUser = await checkUserIsSuperUser();
+    isSuperUser = await getIsSuperUser();
     taskRequestSkeleton.classList.add('hidden');
     renderRejectButton(taskRequest);
     renderTaskRequestDetails(taskRequest);
@@ -615,7 +596,7 @@ function populateModalContent(index) {
   );
 
   if (userData?.markdownEnabled ?? false) {
-    converter = new showdown.Converter({
+    const converter = new showdown.Converter({
       tables: true,
       simplifiedAutoLink: true,
       tasklists: true,
@@ -624,7 +605,7 @@ function populateModalContent(index) {
       openLinksInNewWindow: true,
     });
     const sanitizedDescription = DOMPurify.sanitize(userData.description ?? '');
-    html = converter.makeHtml(sanitizedDescription);
+    const html = converter.makeHtml(sanitizedDescription);
     descriptionValue.innerHTML = html;
     descriptionValue.className = 'requestor_description_details';
   } else {
