@@ -2,8 +2,9 @@ const API_BASE_URL =
   window.location.hostname === 'localhost'
     ? 'https://staging-api.realdevsquad.com'
     : window.API_BASE_URL;
-
+import { getIsSuperUser } from '../../applications/utils.js';
 let taskRequest;
+let isSuperUser;
 
 const taskRequestSkeleton = document.querySelector('.taskRequest__skeleton');
 const container = document.querySelector('.container');
@@ -13,15 +14,15 @@ const requestorSkeleton = document.querySelector(
 );
 
 const taskRequestContainer = document.getElementById('task-request-details');
+const requestDetailContainer =
+  document.getElementsByClassName('request-details');
 const taskContainer = document.getElementById('task-details');
 const toast = document.getElementById('toast_task_details');
-const rejectButton = document.getElementById('reject-button');
 const requestorsContainer = document.getElementById('requestors-details');
 const taskRequestId = new URLSearchParams(window.location.search).get('id');
 history.pushState({}, '', window.location.href);
 const errorMessage =
   'The requested operation could not be completed. Please try again later.';
-let taskId;
 
 function renderTaskRequestDetails(taskRequest) {
   taskRequestContainer.append(
@@ -200,29 +201,36 @@ async function updateTaskRequest(action, userId) {
   }
 }
 
-function getActionButton(requestor) {
-  if (taskRequest?.status === taskRequestStatus.APPROVED) {
-    if (taskRequest.approvedTo === requestor?.user?.id) {
-      return createCustomElement({
-        tagName: 'p',
-        textContent: 'Approved',
-        class: ['requestors__container__list__approved'],
-      });
-    } else {
-      return '';
+function renderActionButton(requestor, taskRequest) {
+  if (isSuperUser) {
+    if (taskRequest?.status === taskRequestStatus.APPROVED) {
+      return taskRequest.approvedTo === requestor?.user?.id
+        ? createCustomElement({
+            tagName: 'p',
+            textContent: 'Approved',
+            class: ['requestors__container__list__status'],
+          })
+        : '';
     }
+    return createCustomElement({
+      tagName: 'button',
+      textContent: 'Approve',
+      class: 'requestors__conatainer__list__button',
+      eventListeners: [
+        {
+          event: 'click',
+          func: () =>
+            updateTaskRequest(TaskRequestAction.APPROVE, requestor.user?.id),
+        },
+      ],
+    });
   }
   return createCustomElement({
-    tagName: 'button',
-    textContent: 'Approve',
-    class: 'requestors__conatainer__list__button',
-    eventListeners: [
-      {
-        event: 'click',
-        func: () =>
-          updateTaskRequest(TaskRequestAction.APPROVE, requestor.user?.id),
-      },
-    ],
+    tagName: 'p',
+    textContent:
+      taskRequest.status[0].toUpperCase() +
+      taskRequest.status.slice(1).toLowerCase(),
+    class: ['requestors__container__list__status'],
   });
 }
 
@@ -279,14 +287,17 @@ async function renderRequestors(taskRequest) {
         createCustomElement({
           tagName: 'div',
           child: [
-            taskRequest.status !== 'DENIED' ? getActionButton(requestor) : '',
+            taskRequest.status !== 'DENIED'
+              ? renderActionButton(requestor, taskRequest)
+              : createCustomElement({
+                  tagName: 'p',
+                  textContent: 'Denied',
+                  class: ['requestors__container__list__status'],
+                }),
           ],
         }),
       ],
     });
-    const avatarDiv = userDetailsDiv.querySelector(
-      '.requestors__container__list__userDetails__avatar',
-    );
     requestorsContainer.append(userDetailsDiv);
   });
 }
@@ -305,7 +316,7 @@ async function fetchTaskRequest() {
 }
 
 const renderGithubIssue = async () => {
-  converter = new showdown.Converter({
+  const converter = new showdown.Converter({
     tables: true,
     simplifiedAutoLink: true,
     tasklists: true,
@@ -344,7 +355,7 @@ const renderGithubIssue = async () => {
     }),
   );
   const body = DOMPurify.sanitize(res?.body ?? '');
-  html = converter.makeHtml(body);
+  const html = converter.makeHtml(body);
   taskContainer.appendChild(
     createCustomElement({
       tagName: 'div',
@@ -410,22 +421,39 @@ const renderGithubIssue = async () => {
   );
 };
 const renderRejectButton = (taskRequest) => {
-  if (taskRequest?.status !== 'PENDING') {
-    rejectButton.disabled = true;
-  }
+  if (!isSuperUser) return;
+  if (taskRequest?.status === 'PENDING') {
+    const rejectContainer = createCustomElement({
+      tagName: 'div',
+      class: 'reject__container',
+      child: [
+        createCustomElement({
+          tagName: 'button',
+          textContent: 'Reject',
+          id: 'reject-button',
+          class: 'request-details__reject__button',
+        }),
+      ],
+    });
 
-  rejectButton.addEventListener('click', async () => {
-    const res = await updateTaskRequest(TaskRequestAction.REJECT);
-    if (res?.ok) {
-      rejectButton.disabled = true;
-    }
-  });
+    requestDetailContainer[0].appendChild(rejectContainer);
+    const rejectButton = rejectContainer.querySelector('#reject-button');
+
+    rejectButton.addEventListener('click', async () => {
+      const res = await updateTaskRequest(TaskRequestAction.REJECT);
+      if (res?.ok) {
+        rejectButton.remove();
+      }
+    });
+  }
 };
+
 const renderTaskRequest = async () => {
   taskRequestSkeleton.classList.remove('hidden');
   taskContainer.classList.remove('hidden');
   try {
     taskRequest = await fetchTaskRequest();
+    isSuperUser = await getIsSuperUser();
     taskRequestSkeleton.classList.add('hidden');
     renderRejectButton(taskRequest);
     renderTaskRequestDetails(taskRequest);
@@ -568,7 +596,7 @@ function populateModalContent(index) {
   );
 
   if (userData?.markdownEnabled ?? false) {
-    converter = new showdown.Converter({
+    const converter = new showdown.Converter({
       tables: true,
       simplifiedAutoLink: true,
       tasklists: true,
@@ -577,7 +605,7 @@ function populateModalContent(index) {
       openLinksInNewWindow: true,
     });
     const sanitizedDescription = DOMPurify.sanitize(userData.description ?? '');
-    html = converter.makeHtml(sanitizedDescription);
+    const html = converter.makeHtml(sanitizedDescription);
     descriptionValue.innerHTML = html;
     descriptionValue.className = 'requestor_description_details';
   } else {
