@@ -37,16 +37,16 @@ const handleTabNavigation = async (e) => {
   }
 };
 
-const handleUserSelected = (e) => {
-  const selectedUserId =
-    e.target?.getAttribute('data_key') ||
-    e.target.parentElement?.getAttribute('data_key');
-
-  if (selectedUserId) {
-    showUser = usersData[activeTab]?.findIndex(
-      (user) => user.id === selectedUserId,
+const handleUserSelected = (userId) => {
+  if (userId) {
+    const selectedUserIndex = usersData[activeTab]?.findIndex(
+      (user) => user.id === userId,
     );
-    rerender(App(), window['root']);
+
+    if (selectedUserIndex !== -1) {
+      showUser = selectedUserIndex;
+      rerender(App(), window['root']);
+    }
   }
 };
 
