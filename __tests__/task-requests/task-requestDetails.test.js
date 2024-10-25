@@ -2,7 +2,62 @@ const puppeteer = require('puppeteer');
 const {
   urlMappings,
   defaultMockResponseHeaders,
+  normalUserData,
 } = require('../../mock-data/taskRequests');
+const { user } = require('../../mock-data/users/index.js');
+describe('Request container for non-super users', () => {
+  let browser;
+  let page;
+  jest.setTimeout(60000);
+
+  beforeAll(async () => {
+    browser = await puppeteer.launch({
+      headless: 'new',
+      ignoreHTTPSErrors: true,
+      args: ['--incognito', '--disable-web-security'],
+      devtools: false,
+    });
+    page = await browser.newPage();
+    await page.setRequestInterception(true);
+    page.on('request', (interceptedRequest) => {
+      const url = interceptedRequest.url();
+      if (url == 'https://staging-api.realdevsquad.com/users/self') {
+        interceptedRequest.respond({
+          ...defaultMockResponseHeaders,
+          body: JSON.stringify(user),
+        });
+      } else if (urlMappings.hasOwnProperty(url)) {
+        interceptedRequest.respond({
+          ...defaultMockResponseHeaders,
+          body: JSON.stringify(urlMappings[url]),
+        });
+      } else {
+        interceptedRequest.continue();
+      }
+    });
+    await page.goto(
+      'http://localhost:8000/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq5',
+    );
+  });
+
+  afterAll(async () => {
+    await browser.close();
+  });
+
+  it('Approve and Reject buttons should not render for non-super users', async function () {
+    const approveButton = await page.$('.requestors__conatainer__list__button');
+    const rejectButton = await page.$('.request-details__reject__button');
+    expect(approveButton).toBeNull();
+    expect(rejectButton).toBeNull();
+  });
+
+  it('Should render task status for non-super users', async function () {
+    const taskRequestStatus = await page.$(
+      '.requestors__container__list__status',
+    );
+    expect(taskRequestStatus).toBeTruthy();
+  });
+});
 
 describe('Task request details page', () => {
   let browser;
@@ -89,7 +144,7 @@ describe('Task request details page', () => {
     );
   });
 
-  it('Should contain Approve and Reject buttons', async function () {
+  it('Should render Approve and Reject buttons for super users', async function () {
     const approveButton = await page.$('.requestors__conatainer__list__button');
     const rejectButton = await page.$('.request-details__reject__button');
     expect(approveButton).toBeTruthy();
@@ -180,7 +235,7 @@ describe('Task request details page with markdown support in description', () =>
     expect(descriptionHtmlValue).toContain('<h3 id="heading">Heading</h3>');
   });
 
-  it('Should contain Approve and Reject buttons', async function () {
+  it('Should render Approve and Reject buttons for super users', async function () {
     const approveButton = await page.$('.requestors__conatainer__list__button');
     const rejectButton = await page.$('.request-details__reject__button');
     expect(approveButton).toBeTruthy();
