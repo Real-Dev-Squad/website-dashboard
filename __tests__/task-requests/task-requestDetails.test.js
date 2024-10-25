@@ -4,6 +4,7 @@ const {
   defaultMockResponseHeaders,
 } = require('../../mock-data/taskRequests');
 const { user } = require('../../mock-data/users/index.js');
+
 describe('Request container for non-super users', () => {
   let browser;
   let page;
@@ -44,15 +45,15 @@ describe('Request container for non-super users', () => {
   });
 
   it('Approve and Reject buttons should not render for non-super users', async function () {
-    const approveButton = await page.$('.requestors__conatainer__list__button');
-    const rejectButton = await page.$('.request-details__reject__button');
+    const approveButton = await page.$('[data-testid="task-approve-button"]');
+    const rejectButton = await page.$('[data-testid="task-reject-button"]');
     expect(approveButton).toBeNull();
     expect(rejectButton).toBeNull();
   });
 
   it('Should render task status for non-super users', async function () {
     const taskRequestStatus = await page.$(
-      '.requestors__container__list__status',
+      '[data-testid="requestors-task-status"]',
     );
     expect(taskRequestStatus).toBeTruthy();
   });
@@ -144,8 +145,8 @@ describe('Task request details page', () => {
   });
 
   it('Should render Approve and Reject buttons for super users', async function () {
-    const approveButton = await page.$('.requestors__conatainer__list__button');
-    const rejectButton = await page.$('.request-details__reject__button');
+    const approveButton = await page.$('[data-testid="task-approve-button"]');
+    const rejectButton = await page.$('[data-testid="task-reject-button"]');
     expect(approveButton).toBeTruthy();
     expect(rejectButton).toBeTruthy();
   });
@@ -235,8 +236,8 @@ describe('Task request details page with markdown support in description', () =>
   });
 
   it('Should render Approve and Reject buttons for super users', async function () {
-    const approveButton = await page.$('.requestors__conatainer__list__button');
-    const rejectButton = await page.$('.request-details__reject__button');
+    const approveButton = await page.$('[data-testid="task-approve-button"]');
+    const rejectButton = await page.$('[data-testid="task-reject-button"]');
     expect(approveButton).toBeTruthy();
     expect(rejectButton).toBeTruthy();
   });

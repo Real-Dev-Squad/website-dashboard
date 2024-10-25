@@ -17,6 +17,8 @@ function createCustomElement(domObjectMap) {
       }
     } else if (key === 'child') {
       el.append(...value);
+    } else if (key.startsWith('data-')) {
+      el.setAttribute(key, value);
     } else {
       el[key] = value;
     }

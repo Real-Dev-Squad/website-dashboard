@@ -216,6 +216,7 @@ function renderActionButton(requestor, taskRequest) {
       tagName: 'button',
       textContent: 'Approve',
       class: 'requestors__conatainer__list__button',
+      'data-testid': 'task-approve-button',
       eventListeners: [
         {
           event: 'click',
@@ -231,6 +232,7 @@ function renderActionButton(requestor, taskRequest) {
       taskRequest.status[0].toUpperCase() +
       taskRequest.status.slice(1).toLowerCase(),
     class: ['requestors__container__list__status'],
+    'data-testid': 'requestors-task-status',
   });
 }
 
@@ -293,6 +295,7 @@ async function renderRequestors(taskRequest) {
                   tagName: 'p',
                   textContent: 'Denied',
                   class: ['requestors__container__list__status'],
+                  'data-testid': 'requestor-container-task-status',
                 }),
           ],
         }),
@@ -432,6 +435,7 @@ const renderRejectButton = (taskRequest) => {
           textContent: 'Reject',
           id: 'reject-button',
           class: 'request-details__reject__button',
+          'data-testid': 'task-reject-button',
         }),
       ],
     });
