@@ -2,7 +2,6 @@ const puppeteer = require('puppeteer');
 const {
   urlMappings,
   defaultMockResponseHeaders,
-  normalUserData,
 } = require('../../mock-data/taskRequests');
 const { user } = require('../../mock-data/users/index.js');
 describe('Request container for non-super users', () => {
