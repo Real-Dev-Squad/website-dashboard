@@ -1,3 +1,5 @@
+const { superUserDetails } = require('../users/mockdata.js');
+
 const fetchedTaskRequests = [
   {
     id: '123CCXSDF123',
@@ -337,41 +339,7 @@ const userInformation = {
     created_at: 1698684157040,
   },
 };
-const superUserData = {
-  id: 'XAF7rSUvk4p0d098qWYS',
-  profileURL: 'https://my.realdevsquad.com/identity',
-  discordJoinedAt: '2020-02-01T08:33:38.278000+00:00',
-  roles: {
-    archived: false,
-    in_discord: true,
-    member: true,
-    super_user: true,
-    admin: true,
-  },
-  created_at: 1693166951852,
-  yoe: '8',
-  github_created_at: 1341655281000,
-  updated_at: 1693224375990,
-  company: 'Amazon',
-  twitter_id: 'ankushdharkar',
-  first_name: 'Ankush',
-  ' instagram_id': 'ankushdharkar',
-  website: 'NA',
-  incompleteUserDetails: false,
-  discordId: '154585730465660929',
-  linkedin_id: 'ankushdharkar',
-  last_name: 'Dharkar',
-  picture: {
-    publicId: 'profile/XAF7rSUvk4p0d098qWYS/me40uk7taytbjaa67mhe',
-    url: 'https://res.cloudinary.com/realdevsquad/image/upload/v1692058952/profile/XAF7rSUvk4p0d098qWYS/me40uk7taytbjaa67mhe.jpg',
-  },
-  github_display_name: 'Ankush Dharkar',
-  company_name: 'Amazon',
-  github_id: 'ankushdharkar',
-  designation: 'SDE',
-  status: 'idle',
-  username: 'ankush',
-};
+
 const defaultMockResponseHeaders = {
   status: 200,
   contentType: 'application/json',
@@ -383,7 +351,7 @@ const defaultMockResponseHeaders = {
 };
 
 const urlMappings = {
-  'https://staging-api.realdevsquad.com/users/self': superUserData,
+  'https://staging-api.realdevsquad.com/users/self': superUserDetails.user,
   'https://api.realdevsquad.com/taskRequests/dM5wwD9QsiTzi7eG7Oq5':
     individualTaskReqDetail,
   'https://api.realdevsquad.com/taskRequests/dM5wwD9QsiTzi7eG7Oq6':
