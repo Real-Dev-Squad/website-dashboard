@@ -28,6 +28,10 @@ body {
 }
 
 .container {
+  text-align: center;
+}
+
+.wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -36,4 +40,17 @@ body {
 .create-discord-invite {
   margin: 2rem;
   padding: 10px;
+}
+
+.hidden {
+  visibility: collapse;
+}
+
+#toast {
+  position: fixed;
+  top: 20px;
+  right: -300px;
+  color: #fff;
+  padding: 15px;
+  border-radius: 5px;
 }

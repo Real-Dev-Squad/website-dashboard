@@ -15,13 +15,16 @@
     </header>
     <div id="toast" class="hidden"></div>
     <div class="container">
-      <textarea
-        id="discord-invite-link-description"
-        class="discord-invite-link-description"
-      ></textarea>
-      <button id="create-discord-invite" class="create-discord-invite">
-        Create Invite
-      </button>
+      <div class="loader hidden">Loading...</div>
+      <div class="wrapper hidden">
+        <textarea
+          id="discord-invite-link-description"
+          class="discord-invite-link-description"
+        ></textarea>
+        <button id="create-discord-invite" class="create-discord-invite">
+          Create Invite
+        </button>
+      </div>
     </div>
   </body>
 </html>
