@@ -2,6 +2,7 @@ const BASE_URL =
   window.location.hostname === 'localhost'
     ? 'https://staging-api.realdevsquad.com'
     : window.API_BASE_URL;
+
 const toast = document.getElementById('toast');
 
 function createElement({ type, attributes = {}, innerText }) {
@@ -31,6 +32,28 @@ async function getIsSuperUser() {
   }
 }
 
+async function generateDiscordInviteLink(purpose) {
+  const body = {
+    purpose,
+  };
+  try {
+    const res = await fetch(`${BASE_URL}/discord-actions/invite?dev=true`, {
+      method: 'POST',
+      credentials: 'include',
+      body: JSON.stringify(body),
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    const errorMessage = error?.message || 'Something went wrong!';
+    showToast({ message: errorMessage, type: 'error' });
+  }
+}
+
 function showToast({ message, type }) {
   toast.innerText = message;
 
@@ -51,4 +74,4 @@ function showToast({ message, type }) {
   }, 3000);
 }
 
-export { createElement, getIsSuperUser, showToast };
+export { createElement, getIsSuperUser, showToast, generateDiscordInviteLink };

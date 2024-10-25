@@ -43,7 +43,7 @@ body {
 }
 
 .hidden {
-  visibility: collapse;
+  visibility: hidden;
 }
 
 #toast {
@@ -53,4 +53,17 @@ body {
   color: #fff;
   padding: 15px;
   border-radius: 5px;
+}
+
+.success {
+  background: var(--color-green);
+}
+
+.failure {
+  background: var(--color-red-variant1);
+}
+
+.animated_toast {
+  animation: slideIn 0.5s ease-in-out forwards,
+    slideOut 0.5s ease-in-out 2.5s forwards;
 }
