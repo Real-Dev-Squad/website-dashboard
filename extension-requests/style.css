@@ -781,7 +781,7 @@ body {
   gap: 0.5rem;
 }
 .title-input-error,
-.reason-input-error {
+.reason-input-error, .extension-input-error {
   font-size: 12px;
   color: var(--red-color);
 }

@@ -817,7 +817,13 @@ async function createExtensionCard(data, dev) {
       value: dateString(secondsToMilliSeconds(data.newEndsOn)),
     },
   });
+  const extensionInputError = createElement({
+    type: 'div',
+    attributes: { class: 'extension-input-error hidden' },
+    innerText: "Past date can't be the new deadline",
+  });
   newDeadlineContainer.appendChild(extensionInput);
+  newDeadlineContainer.appendChild(extensionInputError)
   extensionForContainer.appendChild(extensionForValue);
 
   const extensionRequestNumberContainer = createElement({ type: 'div' });
@@ -984,11 +990,15 @@ async function createExtensionCard(data, dev) {
     updateButton.addEventListener('click', (event) => {
       const isTitleMissing = !titleInput.value;
       const isReasonMissing = !reasonInput.value;
+      const todayDate = Math.floor(new Date().getTime() / 1000)
+      const newDeadline = new Date(extensionInput.value).getTime() / 1000
+      const isDeadlineInPast = newDeadline<todayDate
 
       titleInputError.classList.toggle('hidden', !isTitleMissing);
       reasonInputError.classList.toggle('hidden', !isReasonMissing);
+      extensionInputError.classList.toggle('hidden', !isDeadlineInPast);
 
-      if (!isTitleMissing && !isReasonMissing) {
+      if (!isTitleMissing && !isReasonMissing && !isDeadlineInPast) {
         toggleInputs();
         toggleActionButtonVisibility();
         editButton.classList.toggle('hidden');
@@ -1199,7 +1209,8 @@ async function createExtensionCard(data, dev) {
     e.preventDefault();
     let formData = formDataToObject(new FormData(e.target));
     formData['newEndsOn'] = new Date(formData['newEndsOn']).getTime() / 1000;
-    if (!formData.title || !formData.reason) {
+    const todayDate = Math.floor(new Date().getTime() / 1000)
+    if (!formData.title || !formData.reason || formData['newEndsOn'] < todayDate) {
       return;
     }
     const removeSpinner = addSpinner(rootElement);
