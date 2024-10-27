@@ -980,6 +980,7 @@ async function createExtensionCard(data, dev) {
       handleFormPropagation(event);
       toggleInputs();
       toggleActionButtonVisibility();
+      extensionInputError.classList.add('hidden')
       editButton.classList.toggle('hidden');
       updateWrapper.classList.toggle('hidden');
       if (!panel.style.maxHeight) {
@@ -1017,6 +1018,7 @@ async function createExtensionCard(data, dev) {
       updateWrapper.classList.toggle('hidden');
       titleInputError.classList.add('hidden');
       reasonInputError.classList.add('hidden');
+      extensionInputError.classList.add('hidden')
     });
     const payloadForLog = {
       body: {},
