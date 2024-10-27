@@ -773,7 +773,17 @@ body {
   align-items: center;
   justify-content: space-between;
   position: relative;
-  height: 1.6rem;
+  height: 2rem;
+}
+.title-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.title-input-error,
+.reason-input-error {
+  font-size: 12px;
+  color: var(--red-color);
 }
 .disabled {
   opacity: 0.5;

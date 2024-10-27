@@ -540,6 +540,17 @@ async function createExtensionCard(data, dev) {
       value: data.title,
     },
   });
+  const titleInputWrapper = createElement({
+    type: 'div',
+    attributes: { class: 'title-input-wrapper hidden' },
+  });
+  const titleInputError = createElement({
+    type: 'div',
+    attributes: { class: 'title-input-error hidden' },
+    innerText: 'Title is required',
+  });
+  titleInputWrapper.appendChild(titleInput);
+  titleInputWrapper.appendChild(titleInputError);
   const commitedHoursHoverCard = createElement({
     type: 'div',
     attributes: { class: 'comitted-hours hidden' },
@@ -562,7 +573,7 @@ async function createExtensionCard(data, dev) {
   });
   commitedHoursHoverCard.appendChild(CommitedHourslabel);
   commitedHoursHoverCard.appendChild(CommitedHoursContent);
-  extensionCardHeaderWrapper.appendChild(titleInput);
+  extensionCardHeaderWrapper.appendChild(titleInputWrapper);
   extensionCardHeaderWrapper.appendChild(titleText);
   extensionCardHeaderWrapper.appendChild(commitedHoursHoverTrigger);
   extensionCardHeaderWrapper.appendChild(commitedHoursHoverCard);
@@ -971,10 +982,19 @@ async function createExtensionCard(data, dev) {
       updateAccordionHeight(panel);
     });
     updateButton.addEventListener('click', (event) => {
-      toggleInputs();
-      toggleActionButtonVisibility();
-      editButton.classList.toggle('hidden');
-      updateWrapper.classList.toggle('hidden');
+      const isTitleMissing = !titleInput.value;
+      const isReasonMissing = !reasonInput.value;
+
+      titleInputError.classList.toggle('hidden', !isTitleMissing);
+      reasonInputError.classList.toggle('hidden', !isReasonMissing);
+
+      if (!isTitleMissing && !isReasonMissing) {
+        toggleInputs();
+        toggleActionButtonVisibility();
+        editButton.classList.toggle('hidden');
+        updateWrapper.classList.toggle('hidden');
+        titleInputWrapper.classList.add('hidden')
+      }
     });
     cancelButton.addEventListener('click', (event) => {
       titleInput.value = data.title;
@@ -985,6 +1005,8 @@ async function createExtensionCard(data, dev) {
       toggleActionButtonVisibility();
       editButton.classList.toggle('hidden');
       updateWrapper.classList.toggle('hidden');
+      titleInputError.classList.add('hidden');
+      reasonInputError.classList.add('hidden');
     });
     const payloadForLog = {
       body: {},
@@ -1115,7 +1137,13 @@ async function createExtensionCard(data, dev) {
     },
     innerText: data.reason,
   });
+  const reasonInputError = createElement({
+    type: 'span',
+    attributes: { class: 'reason-input-error red-text hidden' },
+    innerText: 'Reason is required',
+  });
   reasonContainer.appendChild(reasonInput);
+  reasonContainer.appendChild(reasonInputError);
   reasonContainer.appendChild(reasonParagraph);
 
   const renderExtensionCreatedLog = () => {
@@ -1171,6 +1199,9 @@ async function createExtensionCard(data, dev) {
     e.preventDefault();
     let formData = formDataToObject(new FormData(e.target));
     formData['newEndsOn'] = new Date(formData['newEndsOn']).getTime() / 1000;
+    if (!formData.title || !formData.reason) {
+      return;
+    }
     const removeSpinner = addSpinner(rootElement);
     rootElement.classList.add('disabled');
     const revertDataChange = updateCardData(formData);
@@ -1257,6 +1288,7 @@ async function createExtensionCard(data, dev) {
     return revertDataChange;
   }
   function toggleInputs() {
+    titleInputWrapper.classList.toggle('hidden')
     titleInput.classList.toggle('hidden');
     titleText.classList.toggle('hidden');
     reasonInput.classList.toggle('hidden');
