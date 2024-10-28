@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 const { filteredUsersData } = require('../../mock-data/users');
 const { mockUserData } = require('../../mock-data/users/mockdata');
-const API_BASE_URL = 'https://api.realdevsquad.com';
+const API_BASE_URL = 'https://staging-api.realdevsquad.com';
 
 describe('App Component', () => {
   let browser;
