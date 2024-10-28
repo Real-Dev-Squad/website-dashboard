@@ -449,6 +449,16 @@ const renderRejectButton = (taskRequest) => {
         rejectButton.remove();
       }
     });
+  } else {
+    const existingRejectContainer =
+      document.querySelector('.reject__container');
+    if (existingRejectContainer) {
+      const rejectButton =
+        existingRejectContainer.querySelector('#reject-button');
+      if (rejectButton) {
+        rejectButton.remove();
+      }
+    }
   }
 };
 
