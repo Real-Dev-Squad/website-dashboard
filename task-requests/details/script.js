@@ -12,7 +12,6 @@ const taskSkeleton = document.querySelector('.task__skeleton');
 const requestorSkeleton = document.querySelector(
   '.requestors__container__list__skeleton',
 );
-
 const taskRequestContainer = document.getElementById('task-request-details');
 const requestDetailContainer =
   document.getElementsByClassName('request-details');
@@ -23,6 +22,8 @@ const taskRequestId = new URLSearchParams(window.location.search).get('id');
 history.pushState({}, '', window.location.href);
 const errorMessage =
   'The requested operation could not be completed. Please try again later.';
+const params = new URLSearchParams(window.location.search);
+const isDev = params.get('dev') === 'true';
 
 function renderTaskRequestDetails(taskRequest) {
   taskRequestContainer.append(
@@ -202,21 +203,55 @@ async function updateTaskRequest(action, userId) {
 }
 
 function renderActionButton(requestor, taskRequest) {
-  if (isSuperUser) {
+  if (isDev) {
+    if (isSuperUser) {
+      if (taskRequest?.status === taskRequestStatus.APPROVED) {
+        return taskRequest.approvedTo === requestor?.user?.id
+          ? createCustomElement({
+              tagName: 'p',
+              textContent: 'Approved',
+              class: ['requestors__container__list__status'],
+            })
+          : '';
+      }
+      return createCustomElement({
+        tagName: 'button',
+        textContent: 'Approve',
+        class: 'requestors__conatainer__list__button',
+        'data-testid': 'task-approve-button',
+        eventListeners: [
+          {
+            event: 'click',
+            func: () =>
+              updateTaskRequest(TaskRequestAction.APPROVE, requestor.user?.id),
+          },
+        ],
+      });
+    }
+    return createCustomElement({
+      tagName: 'p',
+      textContent:
+        taskRequest.status[0].toUpperCase() +
+        taskRequest.status.slice(1).toLowerCase(),
+      class: ['requestors__container__list__status'],
+      'data-testid': 'requestors-task-status',
+    });
+  } else {
     if (taskRequest?.status === taskRequestStatus.APPROVED) {
-      return taskRequest.approvedTo === requestor?.user?.id
-        ? createCustomElement({
-            tagName: 'p',
-            textContent: 'Approved',
-            class: ['requestors__container__list__status'],
-          })
-        : '';
+      if (taskRequest.approvedTo === requestor?.user?.id) {
+        return createCustomElement({
+          tagName: 'p',
+          textContent: 'Approved',
+          class: ['requestors__container__list__status'],
+        });
+      } else {
+        return '';
+      }
     }
     return createCustomElement({
       tagName: 'button',
       textContent: 'Approve',
       class: 'requestors__conatainer__list__button',
-      'data-testid': 'task-approve-button',
       eventListeners: [
         {
           event: 'click',
@@ -226,14 +261,6 @@ function renderActionButton(requestor, taskRequest) {
       ],
     });
   }
-  return createCustomElement({
-    tagName: 'p',
-    textContent:
-      taskRequest.status[0].toUpperCase() +
-      taskRequest.status.slice(1).toLowerCase(),
-    class: ['requestors__container__list__status'],
-    'data-testid': 'requestors-task-status',
-  });
 }
 
 async function renderRequestors(taskRequest) {
@@ -289,14 +316,18 @@ async function renderRequestors(taskRequest) {
         createCustomElement({
           tagName: 'div',
           child: [
-            taskRequest.status !== 'DENIED'
+            isDev
+              ? taskRequest.status !== 'DENIED'
+                ? renderActionButton(requestor, taskRequest)
+                : createCustomElement({
+                    tagName: 'p',
+                    textContent: 'Denied',
+                    class: ['requestors__container__list__status'],
+                    'data-testid': 'requestor-container-task-status',
+                  })
+              : taskRequest.status !== 'DENIED'
               ? renderActionButton(requestor, taskRequest)
-              : createCustomElement({
-                  tagName: 'p',
-                  textContent: 'Denied',
-                  class: ['requestors__container__list__status'],
-                  'data-testid': 'requestor-container-task-status',
-                }),
+              : '',
           ],
         }),
       ],
@@ -424,41 +455,73 @@ const renderGithubIssue = async () => {
   );
 };
 const renderRejectButton = (taskRequest) => {
-  if (!isSuperUser) return;
-  if (taskRequest?.status === 'PENDING') {
-    const rejectContainer = createCustomElement({
-      tagName: 'div',
-      class: 'reject__container',
-      child: [
-        createCustomElement({
-          tagName: 'button',
-          textContent: 'Reject',
-          id: 'reject-button',
-          class: 'request-details__reject__button',
-          'data-testid': 'task-reject-button',
-        }),
-      ],
-    });
+  if (isDev) {
+    if (!isSuperUser) return;
+    if (taskRequest?.status === 'PENDING') {
+      const rejectContainer = createCustomElement({
+        tagName: 'div',
+        class: 'reject__container',
+        child: [
+          createCustomElement({
+            tagName: 'button',
+            textContent: 'Reject',
+            id: 'reject-button',
+            class: 'request-details__reject__button',
+            'data-testid': 'task-reject-button',
+          }),
+        ],
+      });
 
-    requestDetailContainer[0].appendChild(rejectContainer);
-    const rejectButton = rejectContainer.querySelector('#reject-button');
+      requestDetailContainer[0].appendChild(rejectContainer);
+      const rejectButton = rejectContainer.querySelector('#reject-button');
+
+      rejectButton.addEventListener('click', async () => {
+        const res = await updateTaskRequest(TaskRequestAction.REJECT);
+        if (res?.ok) {
+          rejectButton.remove();
+        }
+      });
+    } else {
+      const existingRejectContainer =
+        document.querySelector('.reject__container');
+      if (existingRejectContainer) {
+        const rejectButton =
+          existingRejectContainer.querySelector('#reject-button');
+        if (rejectButton) {
+          rejectButton.remove();
+        }
+      }
+    }
+  } else {
+    const rejectContainer = document.querySelector('.reject__container');
+    if (!rejectContainer) {
+      const rejectContainer = createCustomElement({
+        tagName: 'div',
+        class: 'reject__container',
+        child: [
+          createCustomElement({
+            tagName: 'button',
+            textContent: 'Reject',
+            id: 'reject-button',
+            class: 'request-details__reject__button',
+            'data-testid': 'task-reject-button',
+          }),
+        ],
+      });
+
+      requestDetailContainer[0].appendChild(rejectContainer);
+    }
+    const rejectButton = document.querySelector('#reject-button');
+    if (taskRequest?.status !== 'PENDING') {
+      rejectButton.disabled = true;
+    }
 
     rejectButton.addEventListener('click', async () => {
       const res = await updateTaskRequest(TaskRequestAction.REJECT);
       if (res?.ok) {
-        rejectButton.remove();
+        rejectButton.disabled = true;
       }
     });
-  } else {
-    const existingRejectContainer =
-      document.querySelector('.reject__container');
-    if (existingRejectContainer) {
-      const rejectButton =
-        existingRejectContainer.querySelector('#reject-button');
-      if (rejectButton) {
-        rejectButton.remove();
-      }
-    }
   }
 };
 
