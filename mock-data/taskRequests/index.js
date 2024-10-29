@@ -1,3 +1,5 @@
+const { superUserDetails } = require('../users/mockdata.js');
+
 const fetchedTaskRequests = [
   {
     id: '123CCXSDF123',
@@ -260,7 +262,6 @@ const githubIssue = {
   performed_via_github_app: null,
   state_reason: 'completed',
 };
-
 const individualTaskDetail = {
   message: 'task returned successfully',
   taskData: {
@@ -306,7 +307,6 @@ const userInformationTaskCreation = {
     },
   },
 };
-
 const userInformation = {
   message: 'User returned successfully!',
   user: {
@@ -351,6 +351,7 @@ const defaultMockResponseHeaders = {
 };
 
 const urlMappings = {
+  'https://staging-api.realdevsquad.com/users/self': superUserDetails.user,
   'https://api.realdevsquad.com/taskRequests/dM5wwD9QsiTzi7eG7Oq5':
     individualTaskReqDetail,
   'https://api.realdevsquad.com/taskRequests/dM5wwD9QsiTzi7eG7Oq6':
