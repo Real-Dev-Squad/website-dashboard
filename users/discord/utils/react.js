@@ -8,7 +8,7 @@ const render = function (element, container) {
   const component = document.createElement(element.tag);
   element.props &&
     Object.keys(element.props).forEach((prop) =>
-      prop == 'onclick' || prop == 'onsubmit'
+      prop == 'onclick' || prop == 'onsubmit' || prop == 'onchange'
         ? (component[prop] = element.props[prop])
         : component.setAttribute(prop, element.props[prop]),
     );

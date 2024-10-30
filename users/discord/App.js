@@ -7,8 +7,8 @@ import { NoUserFound } from './components/NoUserFound.js';
 const { createElement, rerender } = react;
 
 const tabs = [
-  { display_name: 'In Discord', id: 'in_discord', value: 'In Discord' },
-  { display_name: 'Linked Accounts', id: 'verified', value: 'Verified' },
+  { display_name: 'In Discord', id: 'in_discord', value: 'in_discord' },
+  { display_name: 'Linked Accounts', id: 'verified', value: 'verified' },
 ];
 export const usersData = {
   in_discord: null,
@@ -22,7 +22,7 @@ let showUser = 0;
 usersData[activeTab] = await getUsers(activeTab);
 
 const handleTabNavigation = async (e) => {
-  const selectedTabId = e.target.getAttribute('data_key');
+  const selectedTabId = e.target.value;
   if (selectedTabId) {
     document.location.search = `tab=${selectedTabId}`;
 
