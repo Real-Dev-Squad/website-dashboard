@@ -15,6 +15,7 @@ export const usersData = {
   verified: null,
 };
 const urlParams = new URLSearchParams(window.location.search);
+const isDev = urlParams.get('dev') === 'true';
 
 let activeTab = urlParams.get('tab') ?? 'in_discord';
 const INITIAL_USERS = 10;
@@ -25,7 +26,9 @@ let showUser = 0;
 /* this is the original function for fetching user data from the API, will remove it once 
 the API pagination issue is resolved. Currently testing pagination using mock data.
  */
+
 // usersData[activeTab] = await getUsers(activeTab);
+
 // add feature flag(feature should be only visible when query params dev=true)
 
 export const paginateFetchedUsers = async (tabId, page = 1) => {
@@ -53,6 +56,7 @@ export const paginateFetchedUsers = async (tabId, page = 1) => {
         usersData[tabId] = [...usersData[tabId], ...uniqueNewUsers];
       }
       currentPage = page;
+      console.log(usersData[tabId]);
     }
   } catch (error) {
     console.error('Error fetching users', error);
@@ -114,5 +118,6 @@ export const App = () => {
     NoUserFound(),
   ]);
 };
-
-paginateFetchedUsers(activeTab, 1);
+if (isDev) {
+  paginateFetchedUsers(activeTab, 1);
+}
