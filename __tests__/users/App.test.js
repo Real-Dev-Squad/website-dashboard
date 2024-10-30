@@ -6,7 +6,7 @@ const API_BASE_URL = 'https://staging-api.realdevsquad.com';
 describe('App Component', () => {
   let browser;
   let page;
-  jest.setTimeout(60000);
+  jest.setTimeout(90000);
   let config = {
     launchOptions: {
       headless: 'new',
@@ -37,9 +37,13 @@ describe('App Component', () => {
           headers,
           body: JSON.stringify({
             ...filteredUsersData,
-            users: filteredUsersData.users.filter(
-              (user) => user.roles.in_discord,
-            ),
+            ...mockUserData,
+            users: [
+              ...filteredUsersData.users.filter(
+                (user) => user.roles.in_discord,
+              ),
+              ...mockUserData.users.filter((user) => user.roles.in_discord),
+            ],
           }),
         });
       } else if (url === `${API_BASE_URL}/users/search/?verified=true`) {
@@ -49,9 +53,11 @@ describe('App Component', () => {
           headers,
           body: JSON.stringify({
             ...filteredUsersData,
-            users: filteredUsersData.users.filter((user) => user.discordId),
             ...mockUserData,
-            users: mockUserData.users.filter((user) => user.discordId),
+            users: [
+              ...filteredUsersData.users.filter((user) => user.discordId),
+              ...mockUserData.users.filter((user) => user.discordId),
+            ],
           }),
         });
       } else {
@@ -68,6 +74,11 @@ describe('App Component', () => {
   });
 
   it('should render all sections', async () => {
+    await page.waitForSelector('.tabs_section');
+    await page.waitForSelector('.users_section');
+    await page.waitForSelector('.user_card');
+    await page.waitForSelector('.user_details_section');
+
     let tabsSection = await page.$('.tabs_section');
     let usersSection = await page.$('.users_section');
     let firstUser = await page.$('.user_card');
@@ -82,11 +93,57 @@ describe('App Component', () => {
   });
 
   it('should update the URL query string and re-render the app', async () => {
+    await page.waitForSelector('[data_key="verified"]');
+
     // Click on the "Linked Accounts" tab
     await page.click('[data_key="verified"]');
 
     // Get the current URL and make sure the query string has been updated
     const url = await page.url();
     expect(url).toContain('?tab=verified');
+  });
+
+  it('should handle user card clicks and apply active_tab class to clicked card only in discord tab', async () => {
+    await page.goto(`${BASE_URL}/users/discord/?tab=in_discord`);
+    await page.waitForNetworkIdle();
+    await page.waitForSelector('.user_card[data-key]');
+    const userCardTestIds = await page.$$eval(
+      '[data-testid^="user-card-"]',
+      (cards) => cards.map((card) => card.getAttribute('data-testid')),
+    );
+    for (let i = 0; i < userCardTestIds.length; i++) {
+      const userCardSelector = `[data-testid="${userCardTestIds[i]}"]`;
+      const userCardElement = await page.$(userCardSelector);
+      await userCardElement.click();
+      await page.waitForTimeout(1000);
+      const isActive = await page.evaluate((selector) => {
+        return document
+          .querySelector(selector)
+          ?.classList.contains('active_tab');
+      }, userCardSelector);
+      expect(isActive).toBe(true);
+    }
+  });
+
+  it('should handle user card clicks and apply active_tab class to clicked card only verified tab', async () => {
+    await page.goto(`${BASE_URL}/users/discord/?tab=verified`);
+    await page.waitForNetworkIdle();
+    await page.waitForSelector('.user_card[data-key]');
+    const userCardTestIds = await page.$$eval(
+      '[data-testid^="user-card-"]',
+      (cards) => cards.map((card) => card.getAttribute('data-testid')),
+    );
+    for (let i = 0; i < userCardTestIds.length; i++) {
+      const userCardSelector = `[data-testid="${userCardTestIds[i]}"]`;
+      const userCardElement = await page.$(userCardSelector);
+      await userCardElement.click();
+      await page.waitForTimeout(1000);
+      const isActive = await page.evaluate((selector) => {
+        return document
+          .querySelector(selector)
+          ?.classList.contains('active_tab');
+      }, userCardSelector);
+      expect(isActive).toBe(true);
+    }
   });
 });

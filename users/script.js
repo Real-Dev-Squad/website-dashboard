@@ -5,9 +5,6 @@ const userloaderElement = document.getElementById(USER_LOADER_ELEMENT);
 const tileViewBtn = document.getElementById(TILE_VIEW_BTN);
 const tableViewBtn = document.getElementById(TABLE_VIEW_BTN);
 const userSearchElement = document.getElementById(USER_SEARCH_ELEMENT);
-const paginationElement = document.getElementById(PAGINATION_ELEMENT);
-const prevBtn = document.getElementById(PREV_BUTTON);
-const nextBtn = document.getElementById(NEXT_BUTTON);
 const filterModal = document.getElementsByClassName(FILTER_MODAL)[0];
 const filterButton = document.getElementById(FILTER_BUTTON);
 const availabilityFilter = document.getElementById(AVAILABILITY_FILTER);
@@ -22,13 +19,10 @@ let page = 0;
 let run = true;
 
 const init = (
-  prevBtn,
-  nextBtn,
   tileViewBtn,
   tableViewBtn,
   userSearchElement,
   userListElement,
-  paginationElement,
   loaderElement,
 ) => {
   window.addEventListener('scroll', async () => {
@@ -45,7 +39,7 @@ const init = (
       showUserDataList(
         page++,
         userListElement,
-        paginationElement,
+
         loaderElement,
       );
     }
@@ -65,11 +59,10 @@ const init = (
         return getParticularUserData(
           event.target.value,
           userListElement,
-          paginationElement,
           loaderElement,
         );
       }
-      showUserDataList(page, userListElement, paginationElement, loaderElement);
+      showUserDataList(page, userListElement, loaderElement);
     }, 500),
   );
 };
@@ -104,12 +97,7 @@ function showTableView(userListElement, tableViewBtn, tileViewBtn) {
   });
 }
 
-function showErrorMessage(
-  msg,
-  userListElement,
-  paginationElement,
-  loaderElement,
-) {
+function showErrorMessage(msg, userListElement, loaderElement) {
   userListElement.innerHTML = '';
   const paraELe = document.createElement('p');
   const textNode = document.createTextNode(msg);
@@ -117,8 +105,6 @@ function showErrorMessage(
   paraELe.id = 'error_para';
   paraELe.classList.add('error-text');
   userListElement.appendChild(paraELe);
-  paginationElement.classList.add('remove-element');
-  paginationElement.classList.remove('pagination');
   loaderElement.classList.add('remove-element');
 }
 
@@ -146,16 +132,10 @@ function generateUserList(
   users,
   showPagination,
   userListElement,
-  paginationElement,
   loaderElement,
 ) {
   if (!users || !users.length) {
-    showErrorMessage(
-      'No data found',
-      userListElement,
-      paginationElement,
-      loaderElement,
-    );
+    showErrorMessage('No data found', userListElement, loaderElement);
     return;
   }
 
@@ -237,46 +217,24 @@ function formatUsersData(usersData) {
 async function getParticularUserData(
   searchInput,
   userListElement,
-  paginationElement,
   loaderElement,
 ) {
   try {
     page = 0;
     if (!searchInput.length) {
-      await showUserDataList(
-        page,
-        userListElement,
-        paginationElement,
-        loaderElement,
-      );
+      await showUserDataList(page, userListElement, loaderElement);
       return;
     }
     const usersData = await fetchUsersData(searchInput);
     if (usersData.users) {
       const data = formatUsersData(usersData?.users);
 
-      generateUserList(
-        data,
-        true,
-        userListElement,
-        paginationElement,
-        loaderElement,
-      );
+      generateUserList(data, true, userListElement, loaderElement);
     } else {
-      showErrorMessage(
-        usersData.message,
-        userListElement,
-        paginationElement,
-        loaderElement,
-      );
+      showErrorMessage(usersData.message, userListElement, loaderElement);
     }
   } catch (err) {
-    showErrorMessage(
-      'Something Went Wrong',
-      userListElement,
-      paginationElement,
-      loaderElement,
-    );
+    showErrorMessage('Something Went Wrong', userListElement, loaderElement);
   }
 }
 
@@ -309,8 +267,6 @@ function showUserList(users) {
       window.location.href = `/users/details/index.html?username=${userData.username}`;
     };
     ulElement.appendChild(listElement);
-    paginationElement.classList.add('remove-element');
-    paginationElement.classList.remove('pagination');
   });
 
   userListElement.innerHTML = '';
@@ -328,13 +284,13 @@ function displayLoader() {
 function clearFilters() {
   availabilityFilter.value = 'none';
   displayLoader();
-  showUserDataList(page, userListElement, paginationElement, loaderElement);
+  showUserDataList(page, userListElement, loaderElement);
 }
 
 const showUserDataList = async (
   page,
   userListElement,
-  paginationElement,
+
   loaderElement,
 ) => {
   try {
@@ -359,7 +315,7 @@ const showUserDataList = async (
         usersDataList,
         false,
         userListElement,
-        paginationElement,
+
         loaderElement,
       );
     }
@@ -368,7 +324,7 @@ const showUserDataList = async (
     showErrorMessage(
       err.message,
       userListElement,
-      paginationElement,
+
       loaderElement,
     );
   } finally {
@@ -449,23 +405,13 @@ async function generateSkills() {
 
 window.onload = function () {
   init(
-    prevBtn,
-    nextBtn,
     tileViewBtn,
     tableViewBtn,
     userSearchElement,
     userListElement,
-    paginationElement,
     loaderElement,
   );
-  showUserDataList(
-    page,
-    userListElement,
-    paginationElement,
-    loaderElement,
-    prevBtn,
-    nextBtn,
-  );
+  showUserDataList(page, userListElement, loaderElement);
 
   populateFilters();
   if (window.location.search) {
@@ -622,7 +568,7 @@ applyFilterButton.addEventListener('click', async () => {
       users,
       true,
       userListElement,
-      paginationElement,
+
       loaderElement,
       prevBtn,
     );
@@ -631,7 +577,7 @@ applyFilterButton.addEventListener('click', async () => {
     showErrorMessage(
       `User list request failed with error: ${err}`,
       userListElement,
-      paginationElement,
+
       loaderElement,
     );
   }
@@ -669,14 +615,7 @@ clearButton.addEventListener('click', function () {
   filterModal.classList.toggle('hidden');
   displayLoader();
   page = 0;
-  showUserDataList(
-    page,
-    userListElement,
-    paginationElement,
-    loaderElement,
-    prevBtn,
-    nextBtn,
-  );
+  showUserDataList(page, userListElement, loaderElement);
   manipulateQueryParamsToURL();
 });
 
