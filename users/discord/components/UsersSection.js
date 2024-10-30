@@ -5,7 +5,7 @@ export const UsersSection = ({
   users,
   showUser,
   handleUserSelected,
-  fetchUsers,
+  paginateFetchedUsers,
   activeTab,
   currentPage,
   isLoading,
@@ -13,9 +13,8 @@ export const UsersSection = ({
   window.addEventListener(
     'scroll',
     debounce(() => {
-      console.log('scroll triggered');
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-        fetchUsers(activeTab, currentPage + 1);
+        paginateFetchedUsers(activeTab, currentPage + 1);
       }
     }, 200),
   );
@@ -44,7 +43,7 @@ export const UsersSection = ({
             src: user?.picture?.url ?? dummyPicture,
             class: 'user_image',
           }),
-          createElement('span', {}, [user.username]),
+          createElement('span', {}, [user.first_name + ' ' + user.last_name]),
         ],
       );
     }),

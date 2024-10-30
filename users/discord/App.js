@@ -1,7 +1,7 @@
 import { TabsSection } from './components/TabsSection.js';
 import { UsersSection } from './components/UsersSection.js';
 import { UserDetailsSection } from './components/UserDetailsSection.js';
-import { getUsers, mockUsersData } from './utils/util.js';
+import { getUsers } from './utils/util.js';
 import { NoUserFound } from './components/NoUserFound.js';
 
 const { createElement, rerender } = react;
@@ -26,11 +26,13 @@ let showUser = 0;
 the API pagination issue is resolved. Currently testing pagination using mock data.
  */
 // usersData[activeTab] = await getUsers(activeTab);
+// add feature flag(feature should be only visible when query params dev=true)
 
-export const fetchUsers = async (tabId, page = 1) => {
+export const paginateFetchedUsers = async (tabId, page = 1) => {
   if (isLoading) {
     return;
   }
+  usersData[activeTab] = await getUsers(activeTab);
 
   isLoading = true;
 
@@ -38,7 +40,7 @@ export const fetchUsers = async (tabId, page = 1) => {
     const start = (page - 1) * INITIAL_USERS;
     const end = start + INITIAL_USERS;
 
-    const newUsers = mockUsersData[tabId].slice(start, end);
+    const newUsers = usersData[tabId].slice(start, end);
 
     if (newUsers.length > 0) {
       if (page === 1) {
@@ -99,7 +101,7 @@ export const App = () => {
         users,
         showUser,
         handleUserSelected,
-        fetchUsers,
+        paginateFetchedUsers,
         activeTab,
         currentPage,
         isLoading,
@@ -113,4 +115,4 @@ export const App = () => {
   ]);
 };
 
-fetchUsers(activeTab, 1);
+paginateFetchedUsers(activeTab, 1);
