@@ -1,6 +1,8 @@
 const puppeteer = require('puppeteer');
 const { filteredUsersData } = require('../../mock-data/users');
 const { mockUserData } = require('../../mock-data/users/mockdata');
+const { getUsers } = require('../../users/discord/utils/util');
+const { paginateFetchedUsers } = require('../../users/discord/App');
 const API_BASE_URL = 'https://staging-api.realdevsquad.com';
 
 describe('App Component', () => {
@@ -88,5 +90,27 @@ describe('App Component', () => {
     // Get the current URL and make sure the query string has been updated
     const url = await page.url();
     expect(url).toContain('?tab=verified');
+  });
+  it('should fetch and append new users on subsequent pages for both tabs', async () => {
+    // Mock the getUsers function to return full set of user data.
+    jest.spyOn(global, getUsers).mockResolveValue([mockUserData]);
+
+    // test in_discord tab
+    await paginateFetchedUsers('in_discord', 1);
+    expect(usersData['in_discord'].length).toBe(10);
+    expect(currentPage).toBe(1);
+
+    await paginateFetchedUsers('in_discord', 2);
+    expect(usersData['in_discord'].length).toBe(20);
+    expect(currentPage).toBe(2);
+
+    // test verified tab
+    await paginateFetchedUsers('verified', 1);
+    expect(usersData['verified'].length).toBe(10);
+    expect(currentPage).toBe(1);
+
+    await paginateFetchedUsers('verified', 2);
+    expect(usersData['verified'].length).toBe(20);
+    expect(currentPage).toBe(2);
   });
 });
