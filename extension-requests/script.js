@@ -25,11 +25,9 @@ let currentUserDetails;
 const filterStates = {};
 let assigneeUsernamesList = [];
 const isDev = params.get('dev') === 'true';
-let extensionRequestsData;
 
 getSelfUser().then((response) => {
   currentUserDetails = response;
-  if(extensionRequestsData){renderEditButtonsIfNotRendered();} // Render editButton after user details have 
 });
 
 const updateUrl = () => {
@@ -229,7 +227,18 @@ const getExtensionColor = (deadline, createdTime) => {
   return 'orange-text';
 };
 
+const currentUserDetailsPromise = getSelfUser()
+  .then((response) => {
+    currentUserDetails = response;
+  })
+  .catch((error) => {
+    currentUserDetails = null;
+  });
+
 async function populateExtensionRequests(query = {}, newLink) {
+  if(!currentUserDetails){
+    await currentUserDetailsPromise;
+  }
   extensionPageVersion++;
   const currentVersion = extensionPageVersion;
   try {
@@ -241,7 +250,6 @@ async function populateExtensionRequests(query = {}, newLink) {
     if (currentVersion !== extensionPageVersion) {
       return;
     }
-    extensionRequestsData = allExtensionRequests;
     for (let data of allExtensionRequests) {
       if (query.dev) {
         createExtensionCard(data, true);
@@ -1453,36 +1461,6 @@ function shouldDisplayEditButton(assigneeId) {
     currentUserDetails && 
     (assigneeId === currentUserDetails.id || currentUserDetails.roles.super_user)
   );
-}
-
-function renderEditButtonsIfNotRendered(){
-  const allCards = document.querySelectorAll(".extension-card");
-
-  allCards.forEach((card, index) => {
-    const assigneeId = extensionRequestsData[index].assigneeId;
-    if (!assigneeId) return;
-
-    if (shouldDisplayEditButton(assigneeId)) {
-      let editButton = card.querySelector(".edit-button");
-
-      if (!editButton) {
-        editButton = createElement({
-          type: 'button',
-          attributes: { class: 'edit-button' },
-        });
-        const editIcon = createElement({
-          type: 'img',
-          attributes: { src: EDIT_ICON, alt: 'edit-icon' },
-        });
-        editButton.appendChild(editIcon);
-      }
-
-      const extensionCardButtons = card.querySelector(".extension-card-buttons");
-      if (extensionCardButtons) {
-        extensionCardButtons.prepend(editButton);
-      }
-    }
-  });
 }
 
 function generateSentence(response, parentClassName, id) {
