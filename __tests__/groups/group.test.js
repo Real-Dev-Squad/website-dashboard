@@ -423,8 +423,8 @@ describe('Discord Groups Page', () => {
     await page.waitForNetworkIdle();
     await page.waitForTimeout(1000);
 
-    const deleteButton = await page.$('.delete-group');
-    await deleteButton.click();
+    const deleteIcon = await page.$('.delete-group');
+    await deleteIcon.click();
 
     const cancelButton = await page.waitForSelector('#cancel-delete');
     await cancelButton.click();
