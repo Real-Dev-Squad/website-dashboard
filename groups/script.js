@@ -11,7 +11,10 @@ import {
   renderNavbarProfile,
   renderNavbarProfileSignin,
   renderNotAuthenticatedPage,
+  renderDeleteConfirmationModal,
+  removeDeleteConfirmationModal,
 } from './render.js';
+
 import {
   addGroupRoleToMember,
   createDiscordGroupRole,
@@ -22,11 +25,14 @@ import {
   getDiscordGroupIdsFromSearch,
   getParamValueFromURL,
   setParamValueInURL,
+  deleteDiscordGroupRole,
 } from './utils.js';
 
 const QUERY_PARAM_KEY = {
+  DEV_FEATURE_FLAG: 'dev',
   GROUP_SEARCH: 'name',
 };
+const isDev = getParamValueFromURL(QUERY_PARAM_KEY.DEV_FEATURE_FLAG) === 'true';
 
 const handler = {
   set: (obj, prop, value) => {
@@ -42,11 +48,16 @@ const handler = {
           .filter(
             (ng) => JSON.stringify(oldGroups?.[ng.id]) !== JSON.stringify(ng),
           )
-          .filter((ng) => dataStore.filteredGroupsIds.includes(ng.id));
+          .filter((ng) => dataStore.filteredGroupsIds.includes(ng.id))
+          .filter((ng) => !ng.isDeleted);
         diffGroups.forEach((group) =>
           renderGroupById({
-            group,
+            group: {
+              ...dataStore.groups[group.id],
+              roleId: dataStore.groups[group.id].roleid,
+            },
             cardOnClick: () => groupCardOnAction(group.id),
+            isSuperUser: dataStore.isSuperUser,
           }),
         );
         break;
@@ -99,6 +110,9 @@ const handler = {
       case 'discordId':
         obj[prop] = value;
         break;
+      case 'isSuperUser':
+        obj[prop] = value;
+        break;
       default:
         throw new Error('Invalid property set');
     }
@@ -114,6 +128,7 @@ const dataStore = new Proxy(
     search: getParamValueFromURL(QUERY_PARAM_KEY.GROUP_SEARCH),
     discordId: null,
     isCreateGroupModalOpen: false,
+    isSuperUser: false,
   },
   handler,
 );
@@ -155,10 +170,13 @@ const onCreate = () => {
 };
 const afterAuthentication = async () => {
   renderNavbarProfile({ profile: dataStore.userSelf });
+  dataStore.isSuperUser = await checkUserIsSuperUser();
+
   await Promise.all([getDiscordGroups(), getUserGroupRoles()]).then(
     ([groups, roleData]) => {
-      dataStore.filteredGroupsIds = groups.map((group) => group.id);
-      dataStore.groups = groups.reduce((acc, group) => {
+      const nonDeletedGroups = groups.filter((group) => !group.isDeleted);
+      dataStore.filteredGroupsIds = nonDeletedGroups.map((group) => group.id);
+      dataStore.groups = nonDeletedGroups.reduce((acc, group) => {
         let title = group.rolename
           .replace('group-', '')
           .split('-')
@@ -180,6 +198,9 @@ const afterAuthentication = async () => {
         dataStore.search,
       );
       dataStore.discordId = roleData.userId;
+      renderAllGroups({
+        cardOnClick: groupCardOnAction,
+      });
     },
   );
 };
@@ -254,12 +275,52 @@ function groupCardOnAction(id) {
 function renderAllGroups({ cardOnClick }) {
   const mainContainer = document.querySelector('.group-container');
   mainContainer.innerHTML = '';
-  dataStore.filteredGroupsIds.forEach((id) =>
-    renderGroupById({
-      group: dataStore.groups[id],
-      cardOnClick: () => cardOnClick(id),
-    }),
+  const nonDeletedGroups = dataStore.filteredGroupsIds.filter(
+    (id) => !dataStore.groups[id].isDeleted,
   );
+  if (nonDeletedGroups.length === 0 && isDev) {
+    renderNoGroupFound();
+  } else {
+    nonDeletedGroups.forEach((id) => {
+      const group = dataStore.groups[id];
+      if (!group.isDeleted) {
+        renderGroupById({
+          group: group,
+          cardOnClick: () => cardOnClick(id),
+          onDelete: isDev ? showDeleteModal : undefined,
+          isSuperUser: dataStore.isSuperUser && isDev,
+        });
+      }
+    });
+  }
+}
+
+function showDeleteModal(groupId, roleId) {
+  if (!isDev) return;
+  renderDeleteConfirmationModal({
+    onClose: () => {
+      removeDeleteConfirmationModal();
+    },
+    onConfirm: async () => {
+      try {
+        await deleteDiscordGroupRole(groupId, roleId);
+        showToaster('Group deleted successfully');
+
+        updateGroup(groupId, { isDeleted: true });
+
+        dataStore.filteredGroupsIds = dataStore.filteredGroupsIds.filter(
+          (id) => id !== groupId,
+        );
+        renderAllGroups({
+          cardOnClick: groupCardOnAction,
+        });
+      } catch (error) {
+        showToaster(error.message || 'Failed to delete group');
+      } finally {
+        removeDeleteConfirmationModal();
+      }
+    },
+  });
 }
 
 onCreate();
