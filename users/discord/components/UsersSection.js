@@ -5,7 +5,7 @@ export const UsersSection = ({ users, showUser, handleUserSelected }) => {
     'aside',
     {
       class: 'users_section',
-      onClick: handleUserSelected,
+
       'data-testid': 'users-section',
     },
     users?.map((user) => {
@@ -17,6 +17,7 @@ export const UsersSection = ({ users, showUser, handleUserSelected }) => {
           }`,
           'data-testid': `user-card-${user.id}`,
           'data-key': user.id,
+          onclick: () => handleUserSelected(user.id),
         },
         [
           createElement('img', {
