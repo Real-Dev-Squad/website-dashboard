@@ -1264,11 +1264,15 @@ async function createExtensionCard(data, dev) {
         data.tile = formData.title;
         data.newEndsOn = data.newEndsOn;
         handleSuccess(rootElement);
+        const successMessage = 'Extension request successfully updated.';
+        showToast(successMessage, 'success');
         appendLogs(payloadForLog, data.id);
       })
-      .catch(() => {
+      .catch((error) => {
         revertDataChange();
         handleFailure(rootElement);
+        const errorMessage = error?.response?.data?.message || error?.message || 'An error occurred. Please try again.';
+        showToast(errorMessage, 'error');
       })
       .finally(() => {
         rootElement.classList.remove('disabled');
@@ -1461,6 +1465,25 @@ function shouldDisplayEditButton(assigneeId) {
     currentUserDetails && 
     (assigneeId === currentUserDetails.id || currentUserDetails.roles.super_user)
   );
+}
+
+function showToast(message, type) {
+  const existingToast = document.querySelector('.extension-request-update-toast');
+  if (existingToast) {
+    existingToast.remove();
+  }
+  const toast = document.createElement('div');
+  toast.className = `extension-request-update-toast toast-${type}`;
+  toast.textContent = message;
+
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add('fade-out');
+    toast.addEventListener('transitionend', () => {
+      toast.remove();
+    });
+  }, 3000);
 }
 
 function generateSentence(response, parentClassName, id) {
