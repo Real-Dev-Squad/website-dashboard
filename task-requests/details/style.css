@@ -248,7 +248,7 @@ body {
   background: #19805e;
   transition: 0.3s ease-in-out;
 }
-.requestors__container__list__approved {
+.requestors__container__list__status {
   background: transparent;
   border: none;
   color: #c3c3c3;

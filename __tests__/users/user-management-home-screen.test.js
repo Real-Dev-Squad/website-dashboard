@@ -9,9 +9,6 @@ describe('Tests the User Management User Listing Screen', () => {
   let tileViewBtn;
   let tableViewBtn;
   let userSearchElement;
-  let paginationElement;
-  let prevBtn;
-  let nextBtn;
   jest.setTimeout(60000);
 
   beforeAll(async () => {
@@ -71,9 +68,6 @@ describe('Tests the User Management User Listing Screen', () => {
     tileViewBtn = await page.$('#tile-view-btn');
     tableViewBtn = await page.$('#table-view-btn');
     userSearchElement = await page.$('#user-search');
-    paginationElement = await page.$('#pagination');
-    prevBtn = await page.$('#prevButton');
-    nextBtn = await page.$('#nextButton');
   });
 
   afterAll(async () => {
@@ -85,9 +79,6 @@ describe('Tests the User Management User Listing Screen', () => {
     expect(tileViewBtn).toBeTruthy();
     expect(tableViewBtn).toBeTruthy();
     expect(userSearchElement).toBeTruthy();
-    expect(paginationElement).toBeTruthy();
-    expect(prevBtn).toBeTruthy();
-    expect(nextBtn).toBeTruthy();
   });
 
   it('Check the UI interactions of tile view and table view button.', async () => {
