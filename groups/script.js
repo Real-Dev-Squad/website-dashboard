@@ -278,7 +278,7 @@ function renderAllGroups({ cardOnClick }) {
   const nonDeletedGroups = dataStore.filteredGroupsIds.filter(
     (id) => !dataStore.groups[id].isDeleted,
   );
-  if (nonDeletedGroups.length === 0 && isDev) {
+  if (nonDeletedGroups.length === 0) {
     renderNoGroupFound();
   } else {
     nonDeletedGroups.forEach((id) => {
