@@ -60,7 +60,7 @@ describe('Discord Groups Page', () => {
             },
             body: JSON.stringify(discordGroups),
           });
-        } else if (url === `${BASE_URL}/discord-actions/groups?dev=true`) {
+        } else if (url === `${BASE_URL}/discord-actions/groups`) {
           interceptedRequest.respond({
             status: 200,
             contentType: 'application/json',
@@ -244,9 +244,9 @@ describe('Discord Groups Page', () => {
     expect(groupCreationModalClosed).toBeFalsy();
   });
 
-  test('Should display only specified groups when dev=true and name=<group-name> with different case', async () => {
+  test('Should display only specified groups when name=<group-name> with different case', async () => {
     const groupNames = 'fIrSt,DSA+COdInG';
-    await page.goto(`${PAGE_URL}/groups?dev=true&name=${groupNames}`);
+    await page.goto(`${PAGE_URL}/groups?name=${groupNames}`);
     await page.waitForNetworkIdle();
 
     const displayedGroups = await page.evaluate(() => {
@@ -259,11 +259,42 @@ describe('Discord Groups Page', () => {
   });
 
   test('Should display no group found div when no group is present', async () => {
-    await page.goto(`${PAGE_URL}/groups?dev=true&name=no-group-present`);
+    await page.goto(`${PAGE_URL}/groups?name=no-group-present`);
     await page.waitForNetworkIdle();
 
     const noGroupDiv = await page.$('.no-group-container');
 
     expect(noGroupDiv).toBeTruthy();
+  });
+
+  it('should display the footer with the correct repo link', async () => {
+    const footer = await page.$('[data-test-id="footer"]');
+    expect(footer).toBeTruthy();
+
+    const infoRepo = await footer.$('[data-test-id="info-repo"]');
+    expect(infoRepo).toBeTruthy();
+
+    const repoLink = await infoRepo.$('[data-test-id="repo-link"]');
+    expect(repoLink).toBeTruthy();
+
+    const repoLinkHref = await page.evaluate((el) => el.href, repoLink);
+    expect(repoLinkHref).toBe(
+      'https://github.com/Real-Dev-Squad/website-dashboard',
+    );
+
+    const repoLinkTarget = await page.evaluate((el) => el.target, repoLink);
+    expect(repoLinkTarget).toBe('_blank');
+
+    const repoLinkRel = await page.evaluate((el) => el.rel, repoLink);
+    expect(repoLinkRel).toBe('noopener noreferrer');
+
+    const repoLinkText = await page.evaluate((el) => el.innerText, repoLink);
+    expect(repoLinkText).toBe('open sourced repo');
+
+    const repoLinkClass = await page.evaluate((el) => el.className, repoLink);
+    expect(repoLinkClass).toBe('');
+
+    const repoLinkStyle = await page.evaluate((el) => el.style, repoLink);
+    expect(repoLinkStyle).toBeTruthy();
   });
 });

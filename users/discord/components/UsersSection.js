@@ -27,6 +27,7 @@ export const UsersSection = ({
     'aside',
     {
       class: 'users_section',
+      'data-testid': 'users-section',
       onclick: handleUserSelected,
     },
     users?.map((user) => {
@@ -36,7 +37,9 @@ export const UsersSection = ({
           class: `user_card ${
             users[showUser].id === user.id ? 'active_tab' : ''
           }`,
-          data_key: user.id,
+          'data-testid': `user-card-${user.id}`,
+          'data-key': user.id,
+          onclick: () => handleUserSelected(user.id),
         },
         [
           createElement('img', {
