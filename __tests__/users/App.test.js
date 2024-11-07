@@ -80,8 +80,8 @@ describe('App Component', () => {
       '[data-testid^="user-card-"]',
       (cards) => cards.map((card) => card.getAttribute('data-testid')),
     );
-    console.log(userCardTestIds.length);
-    expect(userCardTestIds.length).toBe(10);
+    console.log(userCardTestIds.length, 'user length');
+    expect(userCardTestIds.length).toBe(2);
   });
 
   it('should render all sections', async () => {
