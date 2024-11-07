@@ -72,6 +72,17 @@ describe('App Component', () => {
   afterAll(async () => {
     await browser.close();
   });
+  it('should fetch and append new users on subsequent pages for both tabs', async () => {
+    await page.goto(`${BASE_URL}/users/discord/?tab=in_discord&dev=true`);
+    await page.waitForNetworkIdle();
+
+    const userCardTestIds = await page.$$eval(
+      '[data-testid^="user-card-"]',
+      (cards) => cards.map((card) => card.getAttribute('data-testid')),
+    );
+    console.log(userCardTestIds.length);
+    expect(userCardTestIds.length).toBe(10);
+  });
 
   it('should render all sections', async () => {
     await page.waitForSelector('.tabs_section');
