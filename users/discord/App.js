@@ -27,7 +27,9 @@ let showUser = 0;
 the API pagination issue is resolved. Currently testing pagination using mock data.
  */
 
-// usersData[activeTab] = await getUsers(activeTab);
+if (!isDev) {
+  usersData[activeTab] = await getUsers(activeTab);
+}
 
 // add feature flag(feature should be only visible when query params dev=true)
 
