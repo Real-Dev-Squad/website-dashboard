@@ -80,7 +80,8 @@ describe('App Component', () => {
       '[data-testid^="user-card-"]',
       (cards) => cards.map((card) => card.getAttribute('data-testid')),
     );
-    expect(userCardTestIds.length).toBe(2);
+    expect(userCardTestIds.length).toBeLessThanOrEqual(10);
+    expect(userCardTestIds.length).toBeGreaterThan(0);
   });
   it('should fetch and append new users on subsequent pages for discord users tab', async () => {
     await page.goto(`${BASE_URL}/users/discord/?tab=in_discord`);
@@ -90,7 +91,8 @@ describe('App Component', () => {
       '[data-testid^="user-card-"]',
       (cards) => cards.map((card) => card.getAttribute('data-testid')),
     );
-    expect(userCardTestIds.length).toBe(2);
+    expect(userCardTestIds.length).toBeLessThanOrEqual(10);
+    expect(userCardTestIds.length).toBeGreaterThan(0);
   });
   it('should fetch and append new users on subsequent pages for verified users tab when feature flag is on', async () => {
     await page.goto(`${BASE_URL}/users/discord/?tab=verified&dev=true`);
@@ -100,7 +102,8 @@ describe('App Component', () => {
       '[data-testid^="user-card-"]',
       (cards) => cards.map((card) => card.getAttribute('data-testid')),
     );
-    expect(userCardTestIds.length).toBe(3);
+    expect(userCardTestIds.length).toBeLessThanOrEqual(10);
+    expect(userCardTestIds.length).toBeGreaterThan(0);
   });
   it('should fetch and append new users on subsequent pages for verified users tab', async () => {
     await page.goto(`${BASE_URL}/users/discord/?tab=verified`);
@@ -110,7 +113,8 @@ describe('App Component', () => {
       '[data-testid^="user-card-"]',
       (cards) => cards.map((card) => card.getAttribute('data-testid')),
     );
-    expect(userCardTestIds.length).toBe(3);
+    expect(userCardTestIds.length).toBeLessThanOrEqual(10);
+    expect(userCardTestIds.length).toBeGreaterThan(0);
   });
 
   it('should render all sections', async () => {

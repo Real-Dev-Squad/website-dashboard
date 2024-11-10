@@ -58,7 +58,6 @@ export const paginateFetchedUsers = async (tabId, page = 1) => {
         usersData[tabId] = [...usersData[tabId], ...uniqueNewUsers];
       }
       currentPage = page;
-      console.log(usersData[tabId]);
     }
   } catch (error) {
     console.error('Error fetching users', error);

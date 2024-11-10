@@ -28,7 +28,6 @@ export const UsersSection = ({
     {
       class: 'users_section',
       'data-testid': 'users-section',
-      onclick: handleUserSelected,
     },
     users?.map((user) => {
       return createElement(
