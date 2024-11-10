@@ -100,7 +100,7 @@ describe('App Component', () => {
       '[data-testid^="user-card-"]',
       (cards) => cards.map((card) => card.getAttribute('data-testid')),
     );
-    expect(userCardTestIds.length).toBe(2);
+    expect(userCardTestIds.length).toBe(3);
   });
   it('should fetch and append new users on subsequent pages for verified users tab', async () => {
     await page.goto(`${BASE_URL}/users/discord/?tab=verified`);
