@@ -72,7 +72,7 @@ describe('App Component', () => {
   afterAll(async () => {
     await browser.close();
   });
-  it('should fetch and append new users on subsequent pages for both tabs', async () => {
+  it('should fetch and append new users on subsequent pages for discord users tab when feature flag is on', async () => {
     await page.goto(`${BASE_URL}/users/discord/?tab=in_discord&dev=true`);
     await page.waitForNetworkIdle();
 
@@ -80,8 +80,37 @@ describe('App Component', () => {
       '[data-testid^="user-card-"]',
       (cards) => cards.map((card) => card.getAttribute('data-testid')),
     );
-    console.log(userCardTestIds.length, 'user length');
     expect(userCardTestIds.length).toBe(2);
+  });
+  it('should fetch and append new users on subsequent pages for discord users tab', async () => {
+    await page.goto(`${BASE_URL}/users/discord/?tab=in_discord`);
+    await page.waitForNetworkIdle();
+
+    const userCardTestIds = await page.$$eval(
+      '[data-testid^="user-card-"]',
+      (cards) => cards.map((card) => card.getAttribute('data-testid')),
+    );
+    expect(userCardTestIds.length).toBe(10);
+  });
+  it('should fetch and append new users on subsequent pages for verified users tab when feature flag is on', async () => {
+    await page.goto(`${BASE_URL}/users/discord/?tab=verified&dev=true`);
+    await page.waitForNetworkIdle();
+
+    const userCardTestIds = await page.$$eval(
+      '[data-testid^="user-card-"]',
+      (cards) => cards.map((card) => card.getAttribute('data-testid')),
+    );
+    expect(userCardTestIds.length).toBe(2);
+  });
+  it('should fetch and append new users on subsequent pages for verified users tab', async () => {
+    await page.goto(`${BASE_URL}/users/discord/?tab=verified`);
+    await page.waitForNetworkIdle();
+
+    const userCardTestIds = await page.$$eval(
+      '[data-testid^="user-card-"]',
+      (cards) => cards.map((card) => card.getAttribute('data-testid')),
+    );
+    expect(userCardTestIds.length).toBe(10);
   });
 
   it('should render all sections', async () => {
