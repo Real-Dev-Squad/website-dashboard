@@ -227,7 +227,18 @@ const getExtensionColor = (deadline, createdTime) => {
   return 'orange-text';
 };
 
+const currentUserDetailsPromise = getSelfUser()
+  .then((response) => {
+    currentUserDetails = response;
+  })
+  .catch((error) => {
+    currentUserDetails = null;
+  });
+
 async function populateExtensionRequests(query = {}, newLink) {
+  if (query.dev && !currentUserDetails) {
+    await currentUserDetailsPromise;
+  }
   extensionPageVersion++;
   const currentVersion = extensionPageVersion;
   try {
@@ -540,6 +551,19 @@ async function createExtensionCard(data, dev) {
       value: data.title,
     },
   });
+  const titleInputWrapper = createElement({
+    type: 'div',
+    attributes: { class: 'title-input-wrapper hidden' },
+  });
+  const titleInputError = createElement({
+    type: 'div',
+    attributes: { class: 'title-input-error hidden' },
+    innerText: 'Title is required',
+  });
+  if (dev) {
+    titleInputWrapper.appendChild(titleInput);
+    titleInputWrapper.appendChild(titleInputError);
+  }
   const commitedHoursHoverCard = createElement({
     type: 'div',
     attributes: { class: 'comitted-hours hidden' },
@@ -562,7 +586,11 @@ async function createExtensionCard(data, dev) {
   });
   commitedHoursHoverCard.appendChild(CommitedHourslabel);
   commitedHoursHoverCard.appendChild(CommitedHoursContent);
-  extensionCardHeaderWrapper.appendChild(titleInput);
+  if (dev) {
+    extensionCardHeaderWrapper.appendChild(titleInputWrapper);
+  } else {
+    extensionCardHeaderWrapper.appendChild(titleInput);
+  }
   extensionCardHeaderWrapper.appendChild(titleText);
   extensionCardHeaderWrapper.appendChild(commitedHoursHoverTrigger);
   extensionCardHeaderWrapper.appendChild(commitedHoursHoverCard);
@@ -806,7 +834,15 @@ async function createExtensionCard(data, dev) {
       value: dateString(secondsToMilliSeconds(data.newEndsOn)),
     },
   });
+  const extensionInputError = createElement({
+    type: 'div',
+    attributes: { class: 'extension-input-error hidden' },
+    innerText: "Past date can't be the new deadline",
+  });
   newDeadlineContainer.appendChild(extensionInput);
+  if (dev) {
+    newDeadlineContainer.appendChild(extensionInputError);
+  }
   extensionForContainer.appendChild(extensionForValue);
 
   const extensionRequestNumberContainer = createElement({ type: 'div' });
@@ -909,7 +945,13 @@ async function createExtensionCard(data, dev) {
       type: 'button',
       attributes: { class: 'edit-button' },
     });
-    extensionCardButtons.appendChild(editButton);
+    if (dev) {
+      if (shouldDisplayEditButton(data.assigneeId)) {
+        extensionCardButtons.appendChild(editButton);
+      }
+    } else {
+      extensionCardButtons.appendChild(editButton);
+    }
     const editIcon = createElement({
       type: 'img',
       attributes: { src: EDIT_ICON, alt: 'edit-icon' },
@@ -971,10 +1013,30 @@ async function createExtensionCard(data, dev) {
       updateAccordionHeight(panel);
     });
     updateButton.addEventListener('click', (event) => {
-      toggleInputs();
-      toggleActionButtonVisibility();
-      editButton.classList.toggle('hidden');
-      updateWrapper.classList.toggle('hidden');
+      if (dev) {
+        const isTitleMissing = !titleInput.value;
+        const isReasonMissing = !reasonInput.value;
+        const todayDate = Math.floor(new Date().getTime() / 1000);
+        const newDeadline = new Date(extensionInput.value).getTime() / 1000;
+        const isDeadlineInPast = newDeadline < todayDate;
+
+        titleInputError.classList.toggle('hidden', !isTitleMissing);
+        reasonInputError.classList.toggle('hidden', !isReasonMissing);
+        extensionInputError.classList.toggle('hidden', !isDeadlineInPast);
+
+        if (!isTitleMissing && !isReasonMissing && !isDeadlineInPast) {
+          toggleInputs();
+          toggleActionButtonVisibility();
+          editButton.classList.toggle('hidden');
+          updateWrapper.classList.toggle('hidden');
+          titleInputWrapper.classList.add('hidden');
+        }
+      } else {
+        toggleInputs();
+        toggleActionButtonVisibility();
+        editButton.classList.toggle('hidden');
+        updateWrapper.classList.toggle('hidden');
+      }
     });
     cancelButton.addEventListener('click', (event) => {
       titleInput.value = data.title;
@@ -985,6 +1047,11 @@ async function createExtensionCard(data, dev) {
       toggleActionButtonVisibility();
       editButton.classList.toggle('hidden');
       updateWrapper.classList.toggle('hidden');
+      if (dev) {
+        titleInputError.classList.add('hidden');
+        reasonInputError.classList.add('hidden');
+        extensionInputError.classList.add('hidden');
+      }
     });
     const payloadForLog = {
       body: {},
@@ -1115,7 +1182,15 @@ async function createExtensionCard(data, dev) {
     },
     innerText: data.reason,
   });
+  const reasonInputError = createElement({
+    type: 'span',
+    attributes: { class: 'reason-input-error red-text hidden' },
+    innerText: 'Reason is required',
+  });
   reasonContainer.appendChild(reasonInput);
+  if (dev) {
+    reasonContainer.appendChild(reasonInputError);
+  }
   reasonContainer.appendChild(reasonParagraph);
 
   const renderExtensionCreatedLog = () => {
@@ -1171,6 +1246,16 @@ async function createExtensionCard(data, dev) {
     e.preventDefault();
     let formData = formDataToObject(new FormData(e.target));
     formData['newEndsOn'] = new Date(formData['newEndsOn']).getTime() / 1000;
+    if (dev) {
+      const todayDate = Math.floor(new Date().getTime() / 1000);
+      if (
+        !formData.title ||
+        !formData.reason ||
+        formData['newEndsOn'] < todayDate
+      ) {
+        return;
+      }
+    }
     const removeSpinner = addSpinner(rootElement);
     rootElement.classList.add('disabled');
     const revertDataChange = updateCardData(formData);
@@ -1207,11 +1292,22 @@ async function createExtensionCard(data, dev) {
         data.tile = formData.title;
         data.newEndsOn = data.newEndsOn;
         handleSuccess(rootElement);
+        if (dev) {
+          const successMessage = 'Extension request successfully updated.';
+          showToast(successMessage, 'success');
+        }
         appendLogs(payloadForLog, data.id);
       })
-      .catch(() => {
+      .catch((error) => {
         revertDataChange();
         handleFailure(rootElement);
+        if (dev) {
+          const errorMessage =
+            error?.response?.data?.message ||
+            error?.message ||
+            'An error occurred. Please try again.';
+          showToast(errorMessage, 'error');
+        }
       })
       .finally(() => {
         rootElement.classList.remove('disabled');
@@ -1257,6 +1353,9 @@ async function createExtensionCard(data, dev) {
     return revertDataChange;
   }
   function toggleInputs() {
+    if (dev) {
+      titleInputWrapper.classList.toggle('hidden');
+    }
     titleInput.classList.toggle('hidden');
     titleText.classList.toggle('hidden');
     reasonInput.classList.toggle('hidden');
@@ -1396,6 +1495,35 @@ async function createExtensionCard(data, dev) {
       logContainer.innerHTML += innerHTML;
     }
   }
+}
+
+function shouldDisplayEditButton(assigneeId) {
+  return (
+    currentUserDetails &&
+    (assigneeId === currentUserDetails.id ||
+      currentUserDetails.roles.super_user)
+  );
+}
+
+function showToast(message, type) {
+  const existingToast = document.querySelector(
+    '.extension-request-update-toast',
+  );
+  if (existingToast) {
+    existingToast.remove();
+  }
+  const toast = document.createElement('div');
+  toast.className = `extension-request-update-toast toast-${type}`;
+  toast.textContent = message;
+
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add('fade-out');
+    toast.addEventListener('transitionend', () => {
+      toast.remove();
+    });
+  }, 3000);
 }
 
 function generateSentence(response, parentClassName, id) {
