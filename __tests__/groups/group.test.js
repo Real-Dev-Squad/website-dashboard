@@ -1,9 +1,20 @@
 const puppeteer = require('puppeteer');
-const { allUsersData } = require('../../mock-data/users');
+const { allUsersData, superUserData } = require('../../mock-data/users');
 const { discordGroups, GroupRoleData } = require('../../mock-data/groups');
 
 const BASE_URL = 'https://api.realdevsquad.com';
 const PAGE_URL = 'http://localhost:8000';
+
+function setSuperUserPermission() {
+  allUsersData.users[0] = superUserData;
+}
+
+function resetUserPermission() {
+  allUsersData.users[0] = {
+    ...allUsersData.users[0],
+    roles: { archived: false },
+  };
+}
 
 describe('Discord Groups Page', () => {
   let browser;
@@ -296,5 +307,67 @@ describe('Discord Groups Page', () => {
 
     const repoLinkStyle = await page.evaluate((el) => el.style, repoLink);
     expect(repoLinkStyle).toBeTruthy();
+  });
+
+  test('Should display delete button for super users', async () => {
+    setSuperUserPermission();
+    await page.goto(`${PAGE_URL}/groups?dev=true`);
+    await page.waitForNetworkIdle();
+    await page.waitForTimeout(1000);
+
+    const deleteButtons = await page.$$('.delete-group');
+    const cards = await page.$$('.card');
+    expect(deleteButtons.length).toBe(cards.length);
+    expect(deleteButtons.length).toBeGreaterThan(0);
+  });
+
+  test('Should not display delete button when user is normal user', async () => {
+    resetUserPermission();
+    await page.goto(`${PAGE_URL}/groups?dev=true`);
+    await page.waitForNetworkIdle();
+
+    const deleteButtons = await page.$$('.delete-group');
+    expect(deleteButtons.length).toBe(0);
+  });
+
+  test('Should not display delete button when dev=false', async () => {
+    setSuperUserPermission();
+    await page.goto(`${PAGE_URL}/groups`);
+    await page.waitForNetworkIdle();
+
+    const deleteButtons = await page.$$('.delete-group');
+    expect(deleteButtons.length).toBe(0);
+  });
+
+  test('Should display delete confirmation modal on click of delete button', async () => {
+    setSuperUserPermission();
+    await page.goto(`${PAGE_URL}/groups?dev=true`);
+    await page.waitForNetworkIdle();
+    await page.waitForTimeout(1000);
+
+    const deleteButton = await page.$('.delete-group');
+    await deleteButton.click();
+
+    const deleteConfirmationModal = await page.waitForSelector(
+      '.delete-confirmation-modal',
+    );
+
+    expect(deleteConfirmationModal).toBeTruthy();
+  });
+
+  test('Should close delete confirmation modal when cancel button is clicked', async () => {
+    setSuperUserPermission();
+    await page.goto(`${PAGE_URL}/groups?dev=true`);
+    await page.waitForNetworkIdle();
+    await page.waitForTimeout(1000);
+
+    const deleteButton = await page.$('.delete-group');
+    await deleteButton.click();
+
+    const cancelButton = await page.waitForSelector('#cancel-delete');
+    await cancelButton.click();
+
+    const modalClosed = await page.$('.delete-confirmation-modal');
+    expect(modalClosed).toBeFalsy();
   });
 });
