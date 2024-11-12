@@ -23,15 +23,9 @@ let isLoading = false;
 let currentPage = 1;
 let showUser = 0;
 
-/* this is the original function for fetching user data from the API, will remove it once 
-the API pagination issue is resolved. Currently testing pagination using mock data.
- */
-
 if (!isDev) {
   usersData[activeTab] = await getUsers(activeTab);
 }
-
-// add feature flag(feature should be only visible when query params dev=true)
 
 export const paginateFetchedUsers = async (tabId, page = 1) => {
   if (isLoading) {
