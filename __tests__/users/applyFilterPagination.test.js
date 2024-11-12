@@ -78,8 +78,9 @@ describe('Apply Filter and Pagination Functionality', () => {
   });
 
   it('should update the URL query string when applying filters', async () => {
-    // click on the "Verified" tab
-    await page.click('[data_key="verified"]');
+    // select option between 'in discord' and 'linked accounts' from the dropdoen
+    await page.waitForSelector('.tabs_section');
+    await page.select('.tabs_section', 'verified');
 
     // get the current URL
     const url = await page.url();
