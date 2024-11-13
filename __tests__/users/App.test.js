@@ -93,8 +93,8 @@ describe('App Component', () => {
   });
 
   it('should update the URL query string and re-render the app', async () => {
-    await page.waitForSelector('[data_key="verified"]');
-    await page.select('.tabs_section', 'verified');
+    await page.waitForSelector('[data-testid="tabs-section-select"]');
+    await page.select('[data-testid="tabs-section-select"]', 'verified');
 
     // Get the current URL and make sure the query string has been updated
     const url = await page.url();

@@ -3,7 +3,11 @@ const { createElement } = react;
 export const TabsSection = ({ tabs, activeTab, handleTabNavigation }) => {
   return createElement(
     'select',
-    { class: 'tabs_section', onchange: handleTabNavigation },
+    {
+      class: 'tabs_section',
+      onchange: handleTabNavigation,
+      'data-testid': 'tabs-section-select',
+    },
     tabs.map((tabItem) => {
       return createElement(
         'option',

@@ -78,9 +78,8 @@ describe('Apply Filter and Pagination Functionality', () => {
   });
 
   it('should update the URL query string when applying filters', async () => {
-    // select option between 'in discord' and 'linked accounts' from the dropdoen
-    await page.waitForSelector('.tabs_section');
-    await page.select('.tabs_section', 'verified');
+    await page.waitForSelector('[data-testid="tabs-section-select"]');
+    await page.select('[data-testid="tabs-section-select"]', 'verified');
 
     // get the current URL
     const url = await page.url();
