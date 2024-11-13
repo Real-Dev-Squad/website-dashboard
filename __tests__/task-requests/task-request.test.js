@@ -3,7 +3,7 @@ const puppeteer = require('puppeteer');
 const { fetchedTaskRequests } = require('../../mock-data/taskRequests');
 
 const SITE_URL = 'http://localhost:8000';
-const API_BASE_URL = 'https://api.realdevsquad.com';
+const API_BASE_URL = 'https://staging-api.realdevsquad.com';
 
 describe('Task Requests', () => {
   let browser;
@@ -18,19 +18,19 @@ describe('Task Requests', () => {
       args: ['--incognito', '--disable-web-security'],
       devtools: false,
     });
-  });
-  beforeEach(async () => {
     page = await browser.newPage();
 
     await page.setRequestInterception(true);
 
-    page.on('request', (request) => {
+    page.on('request', (interceptedRequest) => {
+      const url = interceptedRequest.url();
+
       if (
-        request.url() === `${API_BASE_URL}/taskRequests` ||
-        request.url() ===
+        url === `${API_BASE_URL}/taskRequests` ||
+        url ===
           `${API_BASE_URL}/taskRequests?size=20&q=status%3Apending+sort%3Acreated-asc`
       ) {
-        request.respond({
+        interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({ data: fetchedTaskRequests }),
@@ -41,14 +41,14 @@ describe('Task Requests', () => {
           },
         });
       } else if (
-        request.url() ===
+        url ===
         `${API_BASE_URL}/taskRequests?size=20&q=status%3Aapproved++sort%3Acreated-asc`
       ) {
         const list = [];
         for (let i = 0; i < 20; i++) {
           list.push(fetchedTaskRequests[0]);
         }
-        request.respond({
+        interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({
@@ -57,7 +57,7 @@ describe('Task Requests', () => {
           }),
         });
       } else {
-        request.continue();
+        interceptedRequest.continue();
       }
     });
     await page.goto(`${SITE_URL}/task-requests`);

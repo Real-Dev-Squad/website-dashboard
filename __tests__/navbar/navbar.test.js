@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer');
 
-const baseUrl = 'http://localhost:8000';
+const SITE_URL = 'http://localhost:8000';
+
 describe('Tests the navbar and its components on various pages', () => {
   let browser;
   let page;
@@ -39,62 +40,62 @@ describe('Tests the navbar and its components on various pages', () => {
   });
 
   it('Renders the navbar correctly on the home page', async () => {
-    await page.goto(`${baseUrl}`);
+    await page.goto(`${SITE_URL}`);
     await testNavbar(page);
   });
 
   it('Renders the navbar correctly on the tasks page', async () => {
-    await page.goto(`${baseUrl}/task`);
+    await page.goto(`${SITE_URL}/task`);
     await testNavbar(page);
   });
 
   it('Renders the navbar correctly on the profile page', async () => {
-    await page.goto(`${baseUrl}/profile`);
+    await page.goto(`${SITE_URL}/profile`);
     await testNavbar(page);
   });
 
   it('Renders the navbar correctly on the Discord users page', async () => {
-    await page.goto(`${baseUrl}/users/discord`);
+    await page.goto(`${SITE_URL}/users/discord`);
     await testNavbar(page);
   });
 
   it('Renders the navbar correctly on the User Management page', async () => {
-    await page.goto(`${baseUrl}/users`);
+    await page.goto(`${SITE_URL}/users`);
     await testNavbar(page);
   });
 
   it('Renders the navbar correctly on the Extension Requests page', async () => {
-    await page.goto(`${baseUrl}/extension-requests`);
+    await page.goto(`${SITE_URL}/extension-requests`);
     await testNavbar(page);
   });
 
   it('Renders the navbar correctly on the Task Requests page', async () => {
-    await page.goto(`${baseUrl}/task-requests`);
+    await page.goto(`${SITE_URL}/task-requests`);
     await testNavbar(page);
   });
 
   it('Renders the navbar correctly on the Online Members page', async () => {
-    await page.goto(`${baseUrl}/online-members/online-members.html`);
+    await page.goto(`${SITE_URL}/online-members/online-members.html`);
     await testNavbar(page);
   });
 
   it('Renders the navbar correctly on the Standup Updates page', async () => {
-    await page.goto(`${baseUrl}/standup/index.html`);
+    await page.goto(`${SITE_URL}/standup/index.html`);
     await testNavbar(page);
   });
 
   it('Renders the navbar correctly on the Identity Service Logs page', async () => {
-    await page.goto(`${baseUrl}/identity-service-logs/index.html`);
+    await page.goto(`${SITE_URL}/identity-service-logs/index.html`);
     await testNavbar(page);
   });
 
   it('Renders the navbar correctly on the Requests page', async () => {
-    await page.goto(`${baseUrl}/requests/index.html`);
+    await page.goto(`${SITE_URL}/requests/index.html`);
     await testNavbar(page);
   });
 
   it('Renders the navbar correctly on the Activity Feed page', async () => {
-    await page.goto(`${baseUrl}/feed/index.html`);
+    await page.goto(`${SITE_URL}/feed/index.html`);
     await testNavbar(page);
   });
 });

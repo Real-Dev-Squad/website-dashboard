@@ -22,19 +22,19 @@ describe('Applications page', () => {
       ignoreHTTPSErrors: true,
       args: ['--incognito', '--disable-web-security'],
     });
-  });
-  beforeEach(async () => {
+
     page = await browser.newPage();
 
     await page.setRequestInterception(true);
 
-    page.on('request', (request) => {
+    page.on('request', (interceptedRequest) => {
+      const url = interceptedRequest.url();
+
       if (
-        request.url() === `${API_BASE_URL}/applications?size=6` ||
-        request.url() ===
-          `${API_BASE_URL}/applications?next=YwTi6zFNI3GlDsZVjD8C&size=6`
+        url === `${API_BASE_URL}/applications?size=6` ||
+        url === `${API_BASE_URL}/applications?next=YwTi6zFNI3GlDsZVjD8C&size=6`
       ) {
-        request.respond({
+        interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({
@@ -48,9 +48,9 @@ describe('Applications page', () => {
           },
         });
       } else if (
-        request.url() === `${API_BASE_URL}/applications?size=6&status=accepted`
+        url === `${API_BASE_URL}/applications?size=6&status=accepted`
       ) {
-        request.respond({
+        interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({ applications: acceptedApplications }),
@@ -60,8 +60,8 @@ describe('Applications page', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
         });
-      } else if (request.url() === `${API_BASE_URL}/users/self`) {
-        request.respond({
+      } else if (url === `${API_BASE_URL}/users/self`) {
+        interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
           headers: {
@@ -71,10 +71,8 @@ describe('Applications page', () => {
           },
           body: JSON.stringify(superUserForAudiLogs),
         });
-      } else if (
-        request.url() === `${API_BASE_URL}/applications/lavEduxsb2C6Bl4s289P`
-      ) {
-        request.respond({
+      } else if (url === `${API_BASE_URL}/applications/lavEduxsb2C6Bl4s289P`) {
+        interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({
@@ -87,10 +85,9 @@ describe('Applications page', () => {
           },
         });
       } else if (
-        request.url() ===
-        `${API_BASE_URL}/applications?size=6&status=accepted&dev=true`
+        url === `${API_BASE_URL}/applications?size=6&status=accepted&dev=true`
       ) {
-        request.respond({
+        interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({
@@ -104,10 +101,9 @@ describe('Applications page', () => {
           },
         });
       } else if (
-        request.url() ===
-        `${API_BASE_URL}/applications?size=6&status=pending&dev=true`
+        url === `${API_BASE_URL}/applications?size=6&status=pending&dev=true`
       ) {
-        request.respond({
+        interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({
@@ -121,7 +117,7 @@ describe('Applications page', () => {
           },
         });
       } else {
-        request.continue();
+        interceptedRequest.continue();
       }
     });
     await page.goto(`${SITE_URL}/applications`);

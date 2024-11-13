@@ -7,7 +7,7 @@ const {
 } = require('../../mock-data/requests');
 const { allUsersData } = require('../../mock-data/users');
 
-const API_BASE_URL = 'https://api.realdevsquad.com';
+const API_BASE_URL = 'https://staging-api.realdevsquad.com';
 const SITE_URL = 'http://localhost:8000';
 
 describe('Tests the request cards', () => {

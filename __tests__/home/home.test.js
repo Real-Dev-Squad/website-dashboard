@@ -1,6 +1,9 @@
 const puppeteer = require('puppeteer');
 const { superUserData } = require('../../mock-data/users');
 
+const API_BASE_URL = 'https://staging-api.realdevsquad.com';
+const SITE_URL = 'http://localhost:8000';
+
 describe('Home Page', () => {
   let browser;
   let page;
@@ -17,7 +20,8 @@ describe('Home Page', () => {
     await page.setRequestInterception(true);
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-      if (url === `https://api.realdevsquad.com/users/self`) {
+
+      if (url === `${API_BASE_URL}/users/self`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -28,9 +32,7 @@ describe('Home Page', () => {
           },
           body: JSON.stringify(superUserData),
         });
-      } else if (
-        url === `https://api.realdevsquad.com/discord-actions/group-idle-7d`
-      ) {
+      } else if (url === `${API_BASE_URL}/discord-actions/group-idle-7d`) {
         interceptedRequest.respond({
           status: 200,
           ok: true,
@@ -61,8 +63,7 @@ describe('Home Page', () => {
           }),
         });
       } else if (
-        url ===
-        `https://api.realdevsquad.com/discord-actions/nicknames/sync?dev=true`
+        url === `${API_BASE_URL}/discord-actions/nicknames/sync?dev=true`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -79,8 +80,7 @@ describe('Home Page', () => {
           }),
         });
       } else if (
-        url ===
-        `https://api.realdevsquad.com/discord-actions/group-onboarding-31d-plus`
+        url === `${API_BASE_URL}/discord-actions/group-onboarding-31d-plus`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -156,7 +156,7 @@ describe('Home Page', () => {
     await browser.close();
   });
   beforeEach(async () => {
-    await page.goto('http://localhost:8000/');
+    await page.goto(`${SITE_URL}/`);
     await page.waitForNetworkIdle();
   });
   it('should display the Sync Users Status button', async () => {
@@ -186,13 +186,13 @@ describe('Home Page', () => {
     expect(syncExternalAccountsUpdate).toBeTruthy();
   });
   it('should display the task requests button', async () => {
-    await page.goto('http://localhost:8000');
+    await page.goto(`${SITE_URL}`);
     await page.waitForNetworkIdle();
     const taskRequestsButton = await page.$('#task-requests-link');
     expect(taskRequestsButton).toBeTruthy();
   });
   it('should go to the task requests page', async () => {
-    await page.goto('http://localhost:8000');
+    await page.goto(`${SITE_URL}`);
     await page.waitForNetworkIdle();
 
     const taskRequestsButton = await page.$('#task-requests-link');
@@ -208,7 +208,7 @@ describe('Home Page', () => {
       const httpMethod = interceptedRequest.method();
       if (
         url ===
-          'https://api.realdevsquad.com/external-accounts/users?action=discord-users-sync' &&
+          `${API_BASE_URL}/external-accounts/users?action=discord-users-sync` &&
         httpMethod === 'POST'
       ) {
         isRightUrlCalled = true;
@@ -534,7 +534,7 @@ describe('Home Page', () => {
 
   it('should close hamburger menu on clicking anywhere on the screen except the menu', async () => {
     await page.setViewport({ width: 970, height: 1800 });
-    await page.goto('http://localhost:8000/index.html');
+    await page.goto(`${SITE_URL}/index.html`);
     await page.evaluate(() => {
       Object.defineProperty(window, 'innerWidth', { value: 970 });
     });

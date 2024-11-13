@@ -24,7 +24,9 @@ describe('Tests the User Management User Listing Screen', () => {
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-      if (url === 'https://api.realdevsquad.com/users?size=100&page=0') {
+      if (
+        url === 'https://staging-api.realdevsquad.com/users?size=100&page=0'
+      ) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -35,7 +37,9 @@ describe('Tests the User Management User Listing Screen', () => {
           },
           body: JSON.stringify(allUsersData),
         });
-      } else if (url === 'https://api.realdevsquad.com/users?search=randhir') {
+      } else if (
+        url === 'https://staging-api.realdevsquad.com/users?search=randhir'
+      ) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -46,7 +50,7 @@ describe('Tests the User Management User Listing Screen', () => {
           },
           body: JSON.stringify(filteredUsersData),
         });
-      } else if (url === 'https://api.realdevsquad.com/tags') {
+      } else if (url === 'https://staging-api.realdevsquad.com/tags') {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',

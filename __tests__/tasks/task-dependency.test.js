@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://api.realdevsquad.com';
+const API_BASE_URL = 'https://staging-api.realdevsquad.com';
 const puppeteer = require('puppeteer');
 const { tags } = require('../../mock-data/tags');
 const { levels } = require('../../mock-data/levels');
@@ -21,7 +21,6 @@ describe('Input box', () => {
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-
       if (url === `${API_BASE_URL}/levels`) {
         interceptedRequest.respond({
           status: 200,

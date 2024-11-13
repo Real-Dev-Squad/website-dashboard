@@ -1,6 +1,8 @@
 const puppeteer = require('puppeteer');
 const { userDetails } = require('../../mock-data/user-details/index');
 
+const API_BASE_URL = 'https://staging-api.realdevsquad.com';
+
 describe('Intro User Button Users Detail Page', () => {
   let browser;
   let page;
@@ -20,7 +22,7 @@ describe('Intro User Button Users Detail Page', () => {
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-      if (url === 'https://api.realdevsquad.com/users/randhir') {
+      if (url === `${API_BASE_URL}/users/randhir`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
