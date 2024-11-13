@@ -549,6 +549,7 @@ async function createExtensionCard(data, dev) {
       id: 'title',
       name: 'title',
       value: data.title,
+      'data-testid': 'title-text-input',
     },
   });
   const titleInputWrapper = createElement({
@@ -557,7 +558,10 @@ async function createExtensionCard(data, dev) {
   });
   const titleInputError = createElement({
     type: 'div',
-    attributes: { class: 'title-input-error hidden' },
+    attributes: {
+      class: 'title-input-error hidden',
+      'data-testid': 'title-input-error',
+    },
     innerText: 'Title is required',
   });
   if (dev) {
@@ -832,11 +836,15 @@ async function createExtensionCard(data, dev) {
       id: 'newEndsOn',
       oninput: 'this.blur()',
       value: dateString(secondsToMilliSeconds(data.newEndsOn)),
+      'data-testid': 'extension-input',
     },
   });
   const extensionInputError = createElement({
     type: 'div',
-    attributes: { class: 'extension-input-error hidden' },
+    attributes: {
+      class: 'extension-input-error hidden',
+      'data-testid': 'extension-input-error',
+    },
     innerText: "Past date can't be the new deadline",
   });
   newDeadlineContainer.appendChild(extensionInput);
@@ -943,7 +951,7 @@ async function createExtensionCard(data, dev) {
   } else {
     const editButton = createElement({
       type: 'button',
-      attributes: { class: 'edit-button' },
+      attributes: { class: 'edit-button', 'data-testid': 'edit-button' },
     });
     if (dev) {
       if (shouldDisplayEditButton(data.assigneeId)) {
@@ -959,12 +967,15 @@ async function createExtensionCard(data, dev) {
     editButton.appendChild(editIcon);
     const updateWrapper = createElement({
       type: 'div',
-      attributes: { class: 'update-wrapper hidden' },
+      attributes: {
+        class: 'update-wrapper hidden',
+        'data-testid': 'update-wrapper',
+      },
     });
     extensionCardButtons.appendChild(updateWrapper);
     const updateButton = createElement({
       type: 'button',
-      attributes: { class: 'update-button' },
+      attributes: { class: 'update-button', 'data-testid': 'update-button' },
       innerText: 'SAVE',
     });
 
@@ -1179,12 +1190,16 @@ async function createExtensionCard(data, dev) {
       class: 'input-text-area hidden',
       id: 'reason',
       name: 'reason',
+      'data-testid': 'reason-input-text-area',
     },
     innerText: data.reason,
   });
   const reasonInputError = createElement({
     type: 'span',
-    attributes: { class: 'reason-input-error red-text hidden' },
+    attributes: {
+      class: 'reason-input-error red-text hidden',
+      'data-testid': 'reason-input-error',
+    },
     innerText: 'Reason is required',
   });
   reasonContainer.appendChild(reasonInput);
