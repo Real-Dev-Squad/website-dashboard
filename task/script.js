@@ -157,7 +157,6 @@ taskForm.onsubmit = async (e) => {
   const {
     title,
     purpose,
-    type,
     links,
     endsOn,
     status,
@@ -215,24 +214,14 @@ taskForm.onsubmit = async (e) => {
     delete dataToBeSent.endsOn;
   }
 
-  if (isDev) {
-    delete dataToBeSent.featureUrl;
-    delete dataToBeSent.type;
-    delete dataToBeSent.participants;
-
+  if (dataToBeSent.type == 'feature') {
     dataToBeSent.assignee = assignee.trim() ? assignee : ' ';
-  } else {
-    if (dataToBeSent.featureUrl.trim() === '') {
-      delete dataToBeSent.featureUrl;
-    }
-    if (dataToBeSent.type == 'feature') {
-      dataToBeSent.assignee = assignee.trim() ? assignee : ' ';
-    }
-    if (dataToBeSent.type == 'group') {
-      dataToBeSent.participants = participants.trim()
-        ? participants.split(',')
-        : [];
-    }
+  }
+
+  if (dataToBeSent.type == 'group') {
+    dataToBeSent.participants = participants.trim()
+      ? participants.split(',')
+      : [];
   }
 
   if (dataToBeSent.purpose.trim() === '') {
@@ -336,8 +325,6 @@ let stateHandle = () => {
 };
 
 let hideUnusedField = (radio) => {
-  if (isDev) return;
-
   const assigneeInput = document.getElementById('assigneeInput');
   const participantsInput = document.getElementById('participantsInput');
   if (
