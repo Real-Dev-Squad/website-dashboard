@@ -12,9 +12,7 @@ const featureUrlField = document
 if (isDev && featureUrlField) {
   featureUrlField.style.display = 'none';
 }
-const featureRadio = document
-  .getElementById('feature')
-  ?.closest('.radioButtons');
+const featureRadio = document.getElementById('feature')?.closest('.inputBox');
 
 if (isDev && featureRadio) {
   featureRadio.style.display = 'none';
