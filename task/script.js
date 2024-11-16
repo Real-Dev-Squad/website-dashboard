@@ -5,25 +5,20 @@ const allUser = [];
 const params = new URLSearchParams(window.location.search);
 const isDev = params.get('dev') === 'true';
 
-// hide fields under isDev feature flag
-const containers = [
-  'featureUrlContainer',
-  'featureGroupContainer',
-  'taskLevelContainer',
-];
+const featureUrlField = document
+  .getElementById('featureUrl')
+  .closest('.inputBox');
 
-function hideElements(isDev, elementIds) {
-  if (isDev) {
-    elementIds.forEach((id) => {
-      const element = document.getElementById(id);
-      if (element) {
-        element.style.display = 'none';
-      }
-    });
-  }
+if (isDev && featureUrlField) {
+  featureUrlField.style.display = 'none';
 }
-// hide fields if dev=true
-hideElements(isDev, containers);
+const featureRadio = document
+  .getElementById('feature')
+  ?.closest('.radioButtons');
+
+if (isDev && featureRadio) {
+  featureRadio.style.display = 'none';
+}
 
 const category = document.getElementById('category');
 
@@ -162,6 +157,7 @@ taskForm.onsubmit = async (e) => {
   const {
     title,
     purpose,
+    type,
     links,
     endsOn,
     status,
@@ -176,11 +172,9 @@ taskForm.onsubmit = async (e) => {
     isNoteworthy,
   } = getObjectOfFormData(taskForm);
   if (!isDev) {
-    const { featureUrl, type, participants, category, level } =
-      getObjectOfFormData(taskForm);
+    const featureUrl = getObjectOfFormData(taskForm);
   }
-
-  if (status === StatusType.ASSIGNED && !assignee.trim()) {
+  if (status === 'ASSIGNED' && !assignee.trim()) {
     alert('Assignee can not be empty');
     showSubmitLoader(false);
     document.getElementById('assignee').focus();
