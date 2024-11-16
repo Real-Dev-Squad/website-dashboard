@@ -1,6 +1,25 @@
 const API_BASE_URL = window.API_BASE_URL;
 const suggestedUsers = [];
 const allUser = [];
+
+const params = new URLSearchParams(window.location.search);
+const isDev = params.get('dev') === 'true';
+
+const featureUrlField = document
+  .getElementById('featureUrl')
+  .closest('.inputBox');
+
+if (isDev && featureUrlField) {
+  featureUrlField.style.display = 'none';
+}
+const featureRadio = document
+  .getElementById('feature')
+  ?.closest('.radioButtons');
+
+if (isDev && featureRadio) {
+  featureRadio.style.display = 'none';
+}
+
 const category = document.getElementById('category');
 
 category.addEventListener('change', async () => {
@@ -136,7 +155,6 @@ taskForm.onsubmit = async (e) => {
   const {
     title,
     purpose,
-    featureUrl,
     type,
     links,
     endsOn,
@@ -154,7 +172,9 @@ taskForm.onsubmit = async (e) => {
     lossRateNeelam,
     isNoteworthy,
   } = getObjectOfFormData(taskForm);
-
+  if (!isDev) {
+    const featureUrl = getObjectOfFormData(taskForm);
+  }
   if (status === 'ASSIGNED' && !assignee.trim()) {
     alert('Assignee can not be empty');
     showSubmitLoader(false);
