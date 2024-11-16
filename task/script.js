@@ -155,7 +155,6 @@ taskForm.onsubmit = async (e) => {
   const {
     title,
     purpose,
-    type,
     links,
     endsOn,
     status,
@@ -163,7 +162,6 @@ taskForm.onsubmit = async (e) => {
     level,
     dependsOn,
     assignee,
-    participants,
     priority,
     percentCompleted,
     completionAwardDinero,
@@ -173,8 +171,9 @@ taskForm.onsubmit = async (e) => {
     isNoteworthy,
   } = getObjectOfFormData(taskForm);
   if (!isDev) {
-    const featureUrl = getObjectOfFormData(taskForm);
+    const { featureUrl, type, participants } = getObjectOfFormData(taskForm);
   }
+
   if (status === 'ASSIGNED' && !assignee.trim()) {
     alert('Assignee can not be empty');
     showSubmitLoader(false);
@@ -215,23 +214,27 @@ taskForm.onsubmit = async (e) => {
   if (status === 'AVIALABLE') {
     delete dataToBeSent.endsOn;
   }
-
-  if (dataToBeSent.type == 'feature') {
+  if (isDev) {
+    delete dataToBeSent.featureUrl;
+    delete dataToBeSent.type;
+    delete dataToBeSent.participants;
     dataToBeSent.assignee = assignee.trim() ? assignee : ' ';
-  }
-
-  if (dataToBeSent.type == 'group') {
-    dataToBeSent.participants = participants.trim()
-      ? participants.split(',')
-      : [];
+  } else {
+    if (dataToBeSent.featureUrl.trim() === '') {
+      delete dataToBeSent.featureUrl;
+    }
+    if (dataToBeSent.type == 'feature') {
+      dataToBeSent.assignee = assignee.trim() ? assignee : ' ';
+    }
+    if (dataToBeSent.type == 'group') {
+      dataToBeSent.participants = participants.trim()
+        ? participants.split(',')
+        : [];
+    }
   }
 
   if (dataToBeSent.purpose.trim() === '') {
     delete dataToBeSent.purpose;
-  }
-
-  if (dataToBeSent.featureUrl.trim() === '') {
-    delete dataToBeSent.featureUrl;
   }
 
   dataToBeSent.links = dataToBeSent.links.filter((link) => link);
@@ -328,6 +331,7 @@ let stateHandle = () => {
 };
 
 let hideUnusedField = (radio) => {
+  if (isDev) return;
   const assigneeInput = document.getElementById('assigneeInput');
   const participantsInput = document.getElementById('participantsInput');
   if (
