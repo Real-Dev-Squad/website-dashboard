@@ -24,7 +24,7 @@ const taskLevelDiv = document
 if (isDev && taskLevelDiv) {
   taskLevelDiv.style.display = 'none';
 }
-
+console.log('hehehe');
 const category = document.getElementById('category');
 
 category.addEventListener('change', async () => {
@@ -161,11 +161,16 @@ taskForm.onsubmit = async (e) => {
   const {
     title,
     purpose,
+    featureUrl,
+    type,
     links,
     endsOn,
     status,
+    category,
+    level,
     dependsOn,
     assignee,
+    participants,
     priority,
     percentCompleted,
     completionAwardDinero,
@@ -174,10 +179,6 @@ taskForm.onsubmit = async (e) => {
     lossRateNeelam,
     isNoteworthy,
   } = getObjectOfFormData(taskForm);
-  if (!isDev) {
-    const { featureUrl, type, participants, category, level } =
-      getObjectOfFormData(taskForm);
-  }
 
   if (status === 'ASSIGNED' && !assignee.trim()) {
     alert('Assignee can not be empty');
@@ -264,6 +265,7 @@ taskForm.onsubmit = async (e) => {
   }
 
   try {
+    console.log(dataToBeSent);
     const response = await fetch(`${API_BASE_URL}/tasks?userStatusFlag=true`, {
       method: 'POST',
       credentials: 'include',
