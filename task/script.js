@@ -26,7 +26,6 @@ const taskLevelDiv = document
 if (isDev && taskLevelDiv) {
   taskLevelDiv.style.display = 'none';
 }
-
 const category = document.getElementById('category');
 
 category.addEventListener('change', async () => {
@@ -217,7 +216,7 @@ taskForm.onsubmit = async (e) => {
     delete dataToBeSent.endsOn;
   }
 
-  if (status === StatusType.AVAILABLE) {
+  if (status === 'AVAILABLE') {
     delete dataToBeSent.endsOn;
   }
 
