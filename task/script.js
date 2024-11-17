@@ -24,7 +24,6 @@ const taskLevelDiv = document
 if (isDev && taskLevelDiv) {
   taskLevelDiv.style.display = 'none';
 }
-console.log('hehehe');
 const category = document.getElementById('category');
 
 category.addEventListener('change', async () => {
@@ -217,7 +216,7 @@ taskForm.onsubmit = async (e) => {
     delete dataToBeSent.endsOn;
   }
 
-  if (status === StatusType.AVAILABLE) {
+  if (status === 'AVAILABLE') {
     delete dataToBeSent.endsOn;
   }
   if (isDev) {
@@ -265,7 +264,6 @@ taskForm.onsubmit = async (e) => {
   }
 
   try {
-    console.log(dataToBeSent);
     const response = await fetch(`${API_BASE_URL}/tasks?userStatusFlag=true`, {
       method: 'POST',
       credentials: 'include',
