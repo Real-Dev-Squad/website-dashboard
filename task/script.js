@@ -19,12 +19,18 @@ const featureRadio = document
 if (isDev && featureRadio) {
   featureRadio.style.display = 'none';
 }
+const taskLevelDiv = document
+  .querySelector('.inputBox label[for="taskLevel"]')
+  .closest('.inputBox');
+
+if (isDev && taskLevelDiv) {
+  taskLevelDiv.style.display = 'none';
+}
 
 const category = document.getElementById('category');
 
 category.addEventListener('change', async () => {
   if (isDev) return;
-
   try {
     showSubmitLoader();
     const categoryValue = category.value;
@@ -171,7 +177,8 @@ taskForm.onsubmit = async (e) => {
     isNoteworthy,
   } = getObjectOfFormData(taskForm);
   if (!isDev) {
-    const featureUrl = getObjectOfFormData(taskForm);
+    const { featureUrl, type, participants, category, level } =
+      getObjectOfFormData(taskForm);
   }
   if (status === 'ASSIGNED' && !assignee.trim()) {
     alert('Assignee can not be empty');
@@ -268,7 +275,6 @@ taskForm.onsubmit = async (e) => {
           itemType: 'task',
           tagPayload: [{ tagId: category, levelId: level }],
         };
-
         await fetch(`${API_BASE_URL}/items`, {
           method: 'POST',
           credentials: 'include',
@@ -424,7 +430,6 @@ function debounce(func, delay) {
 
 async function fetchTags() {
   if (isDev) return;
-
   const response = await fetch(`${API_BASE_URL}/tags`);
   const data = await response.json();
   const { tags } = data;
@@ -441,7 +446,6 @@ async function fetchTags() {
 
 async function fetchLevel() {
   if (isDev) return;
-
   const response = await fetch(`${API_BASE_URL}/levels`);
   const data = await response.json();
   const { levels } = data;
