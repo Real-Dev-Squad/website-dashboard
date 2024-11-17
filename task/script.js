@@ -17,10 +17,18 @@ const featureRadio = document.getElementById('feature')?.closest('.inputBox');
 if (isDev && featureRadio) {
   featureRadio.style.display = 'none';
 }
+const taskLevelDiv = document
+  .querySelector('.inputBox label[for="taskLevel"]')
+  .closest('.inputBox');
+
+if (isDev && taskLevelDiv) {
+  taskLevelDiv.style.display = 'none';
+}
 
 const category = document.getElementById('category');
 
 category.addEventListener('change', async () => {
+  if (isDev) return;
   try {
     showSubmitLoader();
     const categoryValue = category.value;
@@ -156,8 +164,6 @@ taskForm.onsubmit = async (e) => {
     links,
     endsOn,
     status,
-    category,
-    level,
     dependsOn,
     assignee,
     priority,
@@ -169,7 +175,8 @@ taskForm.onsubmit = async (e) => {
     isNoteworthy,
   } = getObjectOfFormData(taskForm);
   if (!isDev) {
-    const { featureUrl, type, participants } = getObjectOfFormData(taskForm);
+    const { featureUrl, type, participants, category, level } =
+      getObjectOfFormData(taskForm);
   }
 
   if (status === 'ASSIGNED' && !assignee.trim()) {
@@ -269,19 +276,21 @@ taskForm.onsubmit = async (e) => {
     const result = await response.json();
 
     if (response.ok) {
-      const body = {
-        itemId: result.id,
-        itemType: 'task',
-        tagPayload: [{ tagId: category, levelId: level }],
-      };
-      await fetch(`${API_BASE_URL}/items`, {
-        method: 'POST',
-        credentials: 'include',
-        body: JSON.stringify(body),
-        headers: {
-          'Content-type': 'application/json',
-        },
-      });
+      if (!isDev) {
+        const body = {
+          itemId: result.id,
+          itemType: 'task',
+          tagPayload: [{ tagId: category, levelId: level }],
+        };
+        await fetch(`${API_BASE_URL}/items`, {
+          method: 'POST',
+          credentials: 'include',
+          body: JSON.stringify(body),
+          headers: {
+            'Content-type': 'application/json',
+          },
+        });
+      }
       alert(result.message);
       window.location.reload(true);
     }
@@ -426,6 +435,7 @@ function debounce(func, delay) {
 }
 
 async function fetchTags() {
+  if (isDev) return;
   const response = await fetch(`${API_BASE_URL}/tags`);
   const data = await response.json();
   const { tags } = data;
@@ -441,6 +451,7 @@ async function fetchTags() {
 }
 
 async function fetchLevel() {
+  if (isDev) return;
   const response = await fetch(`${API_BASE_URL}/levels`);
   const data = await response.json();
   const { levels } = data;
