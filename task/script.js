@@ -1,4 +1,6 @@
 const API_BASE_URL = window.API_BASE_URL;
+const SKILLS_API = 'https://services.realdevsquad.com/skilltree/v1/skills';
+
 const suggestedUsers = [];
 const allUser = [];
 
@@ -24,6 +26,263 @@ function hideElements(isDev, elementIds) {
 }
 // hide fields if dev=true
 hideElements(isDev, containers);
+
+const skillComponentDiv = document
+  .querySelector('.multi-select-button')
+  ?.closest('.inputBox');
+if (!isDev && skillComponentDiv) {
+  skillComponentDiv.style.display = 'none';
+}
+class MultiSelect {
+  constructor(container) {
+    this.container = container;
+    this.selectedValues = new Set();
+    this.button = container.querySelector('.multi-select-button');
+    this.selectedItemsContainer = container.querySelector('.selected-items');
+    this.placeholder = container.querySelector('.placeholder');
+    this.popover = container.querySelector('.popover');
+    this.searchInput = container.querySelector('.search-input');
+    this.optionsList = container.querySelector('.options-list');
+    this.options = [];
+    this.focusedIndex = -1;
+
+    this.initializeSkills();
+    this.bindEvents();
+  }
+
+  async initializeSkills() {
+    try {
+      const skills = await this.fetchSkills();
+      this.options = skills.map((skill) => ({
+        value: skill.id.toString(),
+        label: skill.name,
+      }));
+      this.init();
+    } catch (error) {
+      alert(`Error Initializing skills: ${error}`);
+    }
+  }
+
+  async fetchSkills() {
+    if (!isDev) return [];
+    try {
+      const response = await fetch(SKILLS_API, {
+        credentials: 'include',
+      });
+      return await response.json();
+    } catch (error) {
+      alert(`Error fetching skills: ${error}`);
+      return [];
+    }
+  }
+  getSelectedSkills() {
+    return Array.from(this.selectedValues)
+      .map((value) => {
+        const option = this.options.find((opt) => opt.value === value);
+        return option
+          ? {
+              id: option.value,
+              name: option.label,
+            }
+          : null;
+      })
+      .filter(Boolean);
+  }
+
+  init() {
+    this.optionsList.innerHTML = `
+      <div class="option" data-value="select-all">
+      <span class="option-label">(Select All)</span>
+        <span class="checkbox"></span>
+      </div>
+    `;
+
+    this.options.forEach((option) => {
+      const optionElement = document.createElement('div');
+      optionElement.className = 'option';
+      optionElement.dataset.value = option.value;
+      optionElement.innerHTML = `
+      <span class="option-label">${option.label}</span>
+      <span class="checkbox"></span>
+      `;
+      this.optionsList.appendChild(optionElement);
+    });
+  }
+  bindEvents() {
+    this.button.addEventListener('click', () => this.togglePopover());
+
+    this.optionsList.addEventListener('click', (e) => {
+      const option = e.target.closest('.option');
+      if (option) {
+        const value = option.dataset.value;
+        if (value === 'select-all') {
+          this.toggleAll();
+        } else {
+          this.toggleOption(value);
+        }
+      }
+    });
+
+    this.searchInput.addEventListener('keydown', (e) => this.handleKeydown(e));
+    this.searchInput.addEventListener('input', (e) => {
+      const searchText = e.target.value.toLowerCase();
+      const options = this.optionsList.querySelectorAll(
+        '.option:not([data-value="select-all"])',
+      );
+      options.forEach((option) => {
+        const text = option.textContent.toLowerCase();
+        option.style.display = text.includes(searchText) ? '' : 'none';
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!this.container.contains(e.target)) {
+        this.closePopover();
+      }
+    });
+  }
+
+  handleKeydown(e) {
+    const visibleOptions = Array.from(
+      this.optionsList.querySelectorAll('.option'),
+    ).filter((option) => option.style.display !== 'none');
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        this.focusedIndex = Math.min(
+          this.focusedIndex + 1,
+          visibleOptions.length - 1,
+        );
+        this.updateFocusedOption(visibleOptions);
+        break;
+
+      case 'ArrowUp':
+        e.preventDefault();
+        this.focusedIndex = Math.max(this.focusedIndex - 1, 0);
+        this.updateFocusedOption(visibleOptions);
+        break;
+
+      case 'Enter':
+        e.preventDefault();
+        if (this.focusedIndex >= 0) {
+          const focusedOption = visibleOptions[this.focusedIndex];
+          const value = focusedOption.dataset.value;
+          if (value === 'select-all') {
+            this.toggleAll();
+          } else {
+            this.toggleOption(value);
+          }
+        }
+        break;
+
+      case 'Escape':
+        this.closePopover();
+        break;
+    }
+  }
+
+  updateFocusedOption(options) {
+    options.forEach((option, index) => {
+      if (index === this.focusedIndex) {
+        option.classList.add('focused');
+        option.scrollIntoView({ block: 'nearest' });
+      } else {
+        option.classList.remove('focused');
+      }
+    });
+  }
+
+  createBadge(option) {
+    const badge = document.createElement('div');
+    badge.className = 'badge';
+    badge.innerHTML = `
+      <span class="text">${option.label}</span>
+      <span class="remove">×</span>
+    `;
+
+    badge.querySelector('.remove').addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.toggleOption(option.value);
+    });
+    return badge;
+  }
+
+  togglePopover() {
+    const isVisible = this.popover.style.display === 'block';
+    this.popover.style.display = isVisible ? 'none' : 'block';
+    if (!isVisible) {
+      this.searchInput.focus();
+      this.searchInput.value = '';
+      this.focusedIndex = -1;
+      const options = this.optionsList.querySelectorAll('.option');
+      options.forEach((option) => {
+        option.style.display = '';
+        option.classList.remove('focused');
+      });
+    }
+  }
+
+  closePopover() {
+    this.popover.style.display = 'none';
+  }
+
+  toggleOption(value) {
+    if (this.selectedValues.has(value)) {
+      this.selectedValues.delete(value);
+    } else {
+      this.selectedValues.add(value);
+    }
+    this.updateUI();
+  }
+
+  toggleAll() {
+    if (this.selectedValues.size === this.options.length) {
+      this.clearSelection();
+    } else {
+      this.options.forEach((option) => this.selectedValues.add(option.value));
+    }
+    this.updateUI();
+  }
+
+  clearSelection() {
+    this.selectedValues.clear();
+    this.updateUI();
+  }
+
+  updateUI() {
+    this.selectedItemsContainer.innerHTML = '';
+    this.placeholder.style.display = this.selectedValues.size ? 'none' : '';
+
+    const selectedOptions = Array.from(this.selectedValues)
+      .map((value) => this.options.find((opt) => opt.value === value))
+      .filter(Boolean);
+
+    selectedOptions.forEach((option) => {
+      this.selectedItemsContainer.appendChild(this.createBadge(option));
+    });
+
+    this.optionsList.querySelectorAll('.option').forEach((option) => {
+      const checkbox = option.querySelector('.checkbox');
+      if (option.dataset.value === 'select-all') {
+        checkbox.classList.toggle(
+          'checked',
+          this.selectedValues.size === this.options.length,
+        );
+      } else {
+        checkbox.classList.toggle(
+          'checked',
+          this.selectedValues.has(option.dataset.value),
+        );
+      }
+    });
+  }
+}
+
+// Initialize the component
+const multiSelect = new MultiSelect(
+  document.querySelector('.multi-select-container'),
+);
 
 const category = document.getElementById('category');
 
@@ -228,6 +487,7 @@ taskForm.onsubmit = async (e) => {
     delete dataToBeSent.participants;
 
     dataToBeSent.assignee = assignee.trim() ? assignee : ' ';
+    dataToBeSent.skills = multiSelect.getSelectedSkills();
   } else {
     if (dataToBeSent.featureUrl.trim() === '') {
       delete dataToBeSent.featureUrl;
