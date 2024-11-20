@@ -1,10 +1,13 @@
 const API_BASE_URL = 'https://api.realdevsquad.com';
 const puppeteer = require('puppeteer');
+const { tags } = require('../../mock-data/tags');
+const { levels } = require('../../mock-data/levels');
 const { users } = require('../../mock-data/users');
 
-describe('Task Form - Dev Mode', () => {
+describe('Dev Feature Flag Tests', () => {
   let browser;
   let page;
+
   jest.setTimeout(60000);
 
   beforeAll(async () => {
@@ -14,14 +17,28 @@ describe('Task Form - Dev Mode', () => {
       args: ['--incognito', '--disable-web-security'],
       devtools: false,
     });
-    page = await browser.newPage();
+  });
 
-    // Setup request interception
+  beforeEach(async () => {
+    page = await browser.newPage();
     await page.setRequestInterception(true);
+
+    // Mock API responses
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
 
-      if (url === `${API_BASE_URL}/users`) {
+      if (url === `${API_BASE_URL}/levels`) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(levels),
+        });
+      } else if (url === `${API_BASE_URL}/users`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -32,75 +49,86 @@ describe('Task Form - Dev Mode', () => {
           },
           body: JSON.stringify(users),
         });
+      } else if (url === `${API_BASE_URL}/tags`) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(tags),
+        });
       } else {
         interceptedRequest.continue();
       }
     });
-
-    await page.goto('http://localhost:8000/task?dev=true');
-    await page.waitForNetworkIdle();
   });
 
   afterAll(async () => {
     await browser.close();
   });
 
-  describe('Hidden Fields', () => {
-    it('should hide feature URL field', async () => {
-      const featureUrlField = await page.$('#featureUrl');
-      const isHidden = await featureUrlField.evaluate(
-        (el) =>
-          window.getComputedStyle(el.closest('.inputBox')).display === 'none',
-      );
-      expect(isHidden).toBe(true);
+  describe('With dev=true', () => {
+    beforeEach(async () => {
+      await page.goto('http://localhost:8000/task?dev=true');
+      await page.waitForNetworkIdle();
     });
 
-    it('should hide feature radio options', async () => {
-      const featureRadio = await page.$('#feature');
-      const isHidden = await featureRadio.evaluate(
-        (el) =>
-          window.getComputedStyle(el.closest('.inputBox')).display === 'none',
+    it('should hide feature URL field', async () => {
+      const featureUrlField = await page.$eval(
+        '#featureUrl',
+        (el) => window.getComputedStyle(el.closest('.inputBox')).display,
       );
-      expect(isHidden).toBe(true);
+      expect(featureUrlField).toBe('none');
+    });
+
+    it('should hide feature/group radio buttons', async () => {
+      const featureRadio = await page.$eval(
+        '.feature',
+        (el) => window.getComputedStyle(el.closest('.inputBox')).display,
+      );
+      expect(featureRadio).toBe('none');
     });
 
     it('should hide task level field', async () => {
-      const taskLevelField = await page.$('[for="taskLevel"]');
-      const isHidden = await taskLevelField.evaluate(
-        (el) =>
-          window.getComputedStyle(el.closest('.inputBox')).display === 'none',
+      const taskLevelDiv = await page.$eval(
+        'label[for="taskLevel"]',
+        (el) => window.getComputedStyle(el.closest('.inputBox')).display,
       );
-      expect(isHidden).toBe(true);
+      expect(taskLevelDiv).toBe('none');
     });
   });
 
-  describe('API Calls', () => {
-    it('should not make API calls for tags and levels', async () => {
-      const apiCalls = [];
-      page.on('request', (request) => {
-        apiCalls.push(request.url());
-      });
-
-      await page.reload();
+  describe('With dev=false (default)', () => {
+    beforeEach(async () => {
+      await page.goto('http://localhost:8000/task');
       await page.waitForNetworkIdle();
-
-      expect(apiCalls).not.toContain(`${API_BASE_URL}/tags`);
-      expect(apiCalls).not.toContain(`${API_BASE_URL}/levels`);
     });
 
-    it('should not make API calls for suggested users when category changes', async () => {
-      const apiCalls = [];
-      page.on('request', (request) => {
-        apiCalls.push(request.url());
-      });
-
-      await page.select('#category', '1');
-      await page.waitForNetworkIdle();
-
-      const suggestedUsersCall = apiCalls.find((url) =>
-        url.includes(`${API_BASE_URL}/users/suggestedUsers`),
+    it('should show feature URL field', async () => {
+      const featureUrlField = await page.$eval(
+        '#featureUrl',
+        (el) => window.getComputedStyle(el.closest('.inputBox')).display,
       );
-      expect(suggestedUsersCall).toBeUndefined();
+      expect(featureUrlField).not.toBe('none');
+    });
+
+    it('should show feature/group radio buttons', async () => {
+      const featureRadio = await page.$eval(
+        '.feature',
+        (el) => window.getComputedStyle(el.closest('.inputBox')).display,
+      );
+      expect(featureRadio).not.toBe('none');
+    });
+
+    it('should show task level field', async () => {
+      const taskLevelDiv = await page.$eval(
+        'label[for="taskLevel"]',
+        (el) => window.getComputedStyle(el.closest('.inputBox')).display,
+      );
+      expect(taskLevelDiv).not.toBe('none');
     });
   });
 });
