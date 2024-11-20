@@ -387,7 +387,7 @@ footer {
   position: relative;
 }
 
-.popover.checkbox.checked::after {
+.popover .checkbox.checked::after {
   content: '';
   position: absolute;
   left: 50%;
