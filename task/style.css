@@ -68,7 +68,10 @@ body {
   border: 1px solid #666;
   resize: vertical;
 }
-
+.radioButtons {
+  display: flex;
+  flex-direction: row;
+}
 .checkBox {
   display: flex;
   flex-direction: row;
@@ -98,7 +101,8 @@ body {
   color: red;
   font-size: medium;
 }
-
+#category,
+#level,
 #status,
 #priority,
 #dependsOn {
@@ -376,14 +380,14 @@ footer {
   background-color: #f0f0f0;
 }
 
-.checkbox {
+.popover .checkbox {
   width: 20px;
   height: 20px;
   border: none;
   position: relative;
 }
 
-.checkbox.checked::after {
+.popover.checkbox.checked::after {
   content: '';
   position: absolute;
   left: 50%;
