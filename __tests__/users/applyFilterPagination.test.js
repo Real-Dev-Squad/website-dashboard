@@ -78,8 +78,8 @@ describe('Apply Filter and Pagination Functionality', () => {
   });
 
   it('should update the URL query string when applying filters', async () => {
-    // click on the "Verified" tab
-    await page.click('[data_key="verified"]');
+    await page.waitForSelector('[data-testid="tabs-section-select"]');
+    await page.select('[data-testid="tabs-section-select"]', 'verified');
 
     // get the current URL
     const url = await page.url();
