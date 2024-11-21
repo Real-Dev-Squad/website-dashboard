@@ -90,13 +90,6 @@ class MultiSelect {
   }
 
   init() {
-    this.optionsList.innerHTML = `
-      <div class="option" data-value="select-all">
-      <span class="option-label">(Select All)</span>
-        <span class="checkbox"></span>
-      </div>
-    `;
-
     this.options.forEach((option) => {
       const optionElement = document.createElement('div');
       optionElement.className = 'option';
