@@ -6,9 +6,10 @@ const {
   extensionRequest,
 } = require('../../mock-data/requests');
 const { allUsersData } = require('../../mock-data/users');
-
-const API_BASE_URL = 'https://staging-api.realdevsquad.com';
-const SITE_URL = 'http://localhost:8000';
+const {
+  STAGING_API_URL,
+  LOCAL_TEST_PAGE_URL,
+} = require('../../mock-data/constants');
 
 describe('Tests the request cards', () => {
   let browser;
@@ -28,8 +29,7 @@ describe('Tests the request cards', () => {
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-
-      if (url === `${API_BASE_URL}/users/search?role=in_discord`) {
+      if (url === `${STAGING_API_URL}/users/search?role=in_discord`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -40,7 +40,9 @@ describe('Tests the request cards', () => {
           },
           body: JSON.stringify(allUsersData),
         });
-      } else if (url === `${API_BASE_URL}/requests?dev=true&type=OOO&size=12`) {
+      } else if (
+        url === `${STAGING_API_URL}/requests?dev=true&type=OOO&size=12`
+      ) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -52,7 +54,7 @@ describe('Tests the request cards', () => {
           body: JSON.stringify(pendingRequest),
         });
       } else if (
-        url === `${API_BASE_URL}/requests?dev=true&type=extension&size=12`
+        url === `${STAGING_API_URL}/requests?dev=true&type=extension&size=12`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -65,7 +67,7 @@ describe('Tests the request cards', () => {
           body: JSON.stringify(extensionRequest),
         });
       } else if (
-        url === `${API_BASE_URL}/requests/Wl4TTbpSrQDIjs6KLJwD?dev=true`
+        url === `${STAGING_API_URL}/requests/Wl4TTbpSrQDIjs6KLJwD?dev=true`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -78,7 +80,7 @@ describe('Tests the request cards', () => {
           body: JSON.stringify(requestActionResponse),
         });
       } else if (
-        url === `${API_BASE_URL}/requests?dev=true&id=Wl4TTbpSrQDIjs6KLJwD`
+        url === `${STAGING_API_URL}/requests?dev=true&id=Wl4TTbpSrQDIjs6KLJwD`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -94,7 +96,7 @@ describe('Tests the request cards', () => {
         interceptedRequest.continue();
       }
     });
-    await page.goto(`${SITE_URL}/requests`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/requests`);
     await page.waitForNetworkIdle();
   });
 

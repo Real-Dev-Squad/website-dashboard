@@ -1,15 +1,16 @@
 const puppeteer = require('puppeteer');
 const { filteredUsersData } = require('../../mock-data/users');
 const { mockUserData } = require('../../mock-data/users/mockdata');
-const API_BASE_URL = 'https://staging-api.realdevsquad.com';
+const {
+  STAGING_API_URL,
+  LOCAL_TEST_PAGE_URL,
+} = require('../../mock-data/constants');
 
 describe('Apply Filter and Pagination Functionality', () => {
   let browser;
   let page;
 
   jest.setTimeout(60000);
-
-  const BASE_URL = 'http://localhost:8000';
 
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -29,7 +30,7 @@ describe('Apply Filter and Pagination Functionality', () => {
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-      if (url === `${API_BASE_URL}/users/search/?role=in_discord`) {
+      if (url === `${STAGING_API_URL}/users/search/?role=in_discord`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -41,7 +42,7 @@ describe('Apply Filter and Pagination Functionality', () => {
             ),
           }),
         });
-      } else if (url === `${API_BASE_URL}/users/search/?verified=true`) {
+      } else if (url === `${STAGING_API_URL}/users/search/?verified=true`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -56,7 +57,7 @@ describe('Apply Filter and Pagination Functionality', () => {
       }
     });
 
-    await page.goto(`${BASE_URL}/users/discord/`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/users/discord/`);
     await page.waitForNetworkIdle();
   });
 

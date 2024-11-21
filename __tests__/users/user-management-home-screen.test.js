@@ -1,6 +1,10 @@
 const puppeteer = require('puppeteer');
 const { allUsersData, filteredUsersData } = require('../../mock-data/users');
 const { tags } = require('../../mock-data/tags');
+const {
+  STAGING_API_URL,
+  LOCAL_TEST_PAGE_URL,
+} = require('../../mock-data/constants');
 
 describe('Tests the User Management User Listing Screen', () => {
   let browser;
@@ -24,9 +28,7 @@ describe('Tests the User Management User Listing Screen', () => {
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-      if (
-        url === 'https://staging-api.realdevsquad.com/users?size=100&page=0'
-      ) {
+      if (url === `${STAGING_API_URL}/users?size=100&page=0`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -37,9 +39,7 @@ describe('Tests the User Management User Listing Screen', () => {
           },
           body: JSON.stringify(allUsersData),
         });
-      } else if (
-        url === 'https://staging-api.realdevsquad.com/users?search=randhir'
-      ) {
+      } else if (url === `${STAGING_API_URL}/users?search=randhir`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -50,7 +50,7 @@ describe('Tests the User Management User Listing Screen', () => {
           },
           body: JSON.stringify(filteredUsersData),
         });
-      } else if (url === 'https://staging-api.realdevsquad.com/tags') {
+      } else if (url === `${STAGING_API_URL}/tags`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -65,7 +65,7 @@ describe('Tests the User Management User Listing Screen', () => {
         interceptedRequest.continue();
       }
     });
-    await page.goto('http://localhost:8000/users');
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/users`);
     await page.waitForNetworkIdle();
 
     userListElement = await page.$('#user-list');
@@ -130,7 +130,7 @@ describe('Tests the User Management User Listing Screen', () => {
   });
 
   it('checks infinite scroll functionality to load more users', async () => {
-    await page.goto('http://localhost:8000/users');
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/users`);
     await page.waitForNetworkIdle();
     const userList = await page.$('#user-list');
     let initialUserCount = await userList.$$eval('li', (items) => items.length);

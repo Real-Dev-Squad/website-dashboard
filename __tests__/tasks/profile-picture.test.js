@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer');
 const { allUsersData } = require('../../mock-data/users');
-const API_BASE_URL = 'https://staging-api.realdevsquad.com';
+const { STAGING_API_URL } = require('../../mock-data/constants');
 
 describe('Task Page - Assignee Profile Pic', () => {
   let browser;
@@ -19,7 +19,7 @@ describe('Task Page - Assignee Profile Pic', () => {
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-      if (url === `${API_BASE_URL}/users`) {
+      if (url === `${STAGING_API_URL}/users`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',

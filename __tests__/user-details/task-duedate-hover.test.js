@@ -8,8 +8,10 @@ const {
 } = require('../../mock-data/tasks-card-date-time-end-date-self/index'); // has super user info
 const { userDetails } = require('../../mock-data/user-details/index');
 const { usersStatus } = require('../../mock-data/users-status/index');
-
-const API_BASE_URL = 'https://staging-api.realdevsquad.com';
+const {
+  STAGING_API_URL,
+  LOCAL_TEST_PAGE_URL,
+} = require('../../mock-data/constants');
 
 describe('Tasks On User Management Page', () => {
   let browser;
@@ -31,7 +33,7 @@ describe('Tasks On User Management Page', () => {
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
 
-      if (url === `${API_BASE_URL}/users/sunny-s`) {
+      if (url === `${STAGING_API_URL}/users/sunny-s`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -43,8 +45,8 @@ describe('Tasks On User Management Page', () => {
           body: JSON.stringify(userDetails),
         });
       } else if (
-        url === `${API_BASE_URL}/users/self` ||
-        url === `${API_BASE_URL}/users/ankush`
+        url === `${STAGING_API_URL}/users/self` ||
+        url === `${STAGING_API_URL}/users/ankush`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -57,8 +59,8 @@ describe('Tasks On User Management Page', () => {
           body: JSON.stringify(superUserDetails),
         });
       } else if (
-        url === `${API_BASE_URL}/tasks/?size=3&dev=true&assignee=sunny-s` ||
-        url === `${API_BASE_URL}/tasks/?size=3&dev=true&assignee=ankush`
+        url === `${STAGING_API_URL}/tasks/?size=3&dev=true&assignee=sunny-s` ||
+        url === `${STAGING_API_URL}/tasks/?size=3&dev=true&assignee=ankush`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -70,7 +72,9 @@ describe('Tasks On User Management Page', () => {
           },
           body: JSON.stringify(usersTasksInDev['initial']),
         });
-      } else if (url === `${API_BASE_URL}/users/status/DtR9sK7CysOVHP17zl8N`) {
+      } else if (
+        url === `${STAGING_API_URL}/users/status/DtR9sK7CysOVHP17zl8N`
+      ) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -83,7 +87,7 @@ describe('Tasks On User Management Page', () => {
         });
       } else if (
         url ===
-        `${API_BASE_URL}/tasks?dev=true&assignee=ajeyakrishna&size=3&next=vvTPGHAs9w36oY1UnV8rr`
+        `${STAGING_API_URL}/tasks?dev=true&assignee=ajeyakrishna&size=3&next=vvTPGHAs9w36oY1UnV8rr`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -100,7 +104,7 @@ describe('Tasks On User Management Page', () => {
       }
     });
     await page.goto(
-      'http://localhost:8000/users/details/index.html?username=sunny-s',
+      `${LOCAL_TEST_PAGE_URL}/users/details/index.html?username=sunny-s`,
     );
 
     await page.waitForNetworkIdle();
@@ -163,7 +167,7 @@ describe('Tasks On User Management Page', () => {
 
   it('Scroll of task should work', async () => {
     await page.goto(
-      'http://localhost:8000/users/details/index.html?username=ankush',
+      `${LOCAL_TEST_PAGE_URL}/users/details/index.html?username=ankush`,
     );
     await page.waitForNetworkIdle();
     const taskDiv = await page.$$('.accordion-tasks');
@@ -199,7 +203,7 @@ describe('Tasks On User Management Page', () => {
 
   it('New task card should have all the detail fields', async () => {
     await page.goto(
-      'http://localhost:8000/users/details/index.html?username=sunny',
+      `${LOCAL_TEST_PAGE_URL}/users/details/index.html?username=sunny`,
     );
     await page.waitForNetworkIdle();
     const taskDiv = await page.$$('.accordion-tasks');

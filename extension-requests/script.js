@@ -623,26 +623,16 @@ async function createExtensionCard(data, dev) {
   });
   deadlineContainer.appendChild(deadlineText);
 
-  let deadlineValue;
-  if (dev) {
-    deadlineValue = createElement({
-      type: 'span',
-      attributes: {
-        class: 'skeleton-span',
-        'data-testid': 'skeleton-span',
-      },
-    });
-  } else {
-    deadlineValue = createElement({
-      type: 'span',
-      innerText: `${deadlineDays}`,
-      attributes: {
-        class: `tooltip-container ${
-          isDeadLineCrossed && isStatusPending ? 'red-text' : ''
-        }`,
-      },
-    });
-  }
+  const deadlineValue = createElement({
+    type: 'span',
+    innerText: `${deadlineDays}`,
+    attributes: {
+      class: `tooltip-container ${
+        isDeadLineCrossed && isStatusPending ? 'red-text' : ''
+      }`,
+    },
+  });
+
   deadlineContainer.appendChild(deadlineValue);
   const deadlineTooltip = createElement({
     type: 'span',
@@ -662,24 +652,14 @@ async function createExtensionCard(data, dev) {
   });
   requestedContainer.appendChild(requestedText);
 
-  let requestedValue;
-  if (dev) {
-    requestedValue = createElement({
-      type: 'span',
-      attributes: {
-        class: 'skeleton-text',
-        'data-testid': 'skeleton-text',
-      },
-    });
-  } else {
-    requestedValue = createElement({
-      type: 'span',
-      attributes: {
-        class: `requested-day tooltip-container ${requestedDaysTextColor}`,
-      },
-      innerText: `${requestedDaysAgo}`,
-    });
-  }
+  const requestedValue = createElement({
+    type: 'span',
+    attributes: {
+      class: `requested-day tooltip-container ${requestedDaysTextColor}`,
+    },
+    innerText: ` ${requestedDaysAgo}`,
+  });
+
   const requestedToolTip = createElement({
     type: 'span',
     attributes: { class: 'tooltip' },
@@ -744,19 +724,12 @@ async function createExtensionCard(data, dev) {
   });
   newDeadlineContainer.appendChild(newDeadlineText);
 
-  let newDeadlineValue;
-  if (dev) {
-    newDeadlineValue = createElement({
-      type: 'span',
-      attributes: { class: 'skeleton-span', 'data-testid': 'skeleton-span' },
-    });
-  } else {
-    newDeadlineValue = createElement({
-      type: 'span',
-      attributes: { class: 'requested-day tooltip-container' },
-      innerText: ` ${newDeadlineDays}`,
-    });
-  }
+  const newDeadlineValue = createElement({
+    type: 'span',
+    attributes: { class: 'requested-day tooltip-container' },
+    innerText: ` ${newDeadlineDays}`,
+  });
+
   const newDeadlineToolTip = createElement({
     type: 'span',
     attributes: { class: 'tooltip' },
@@ -776,19 +749,12 @@ async function createExtensionCard(data, dev) {
   });
   extensionForContainer.appendChild(extensionForText);
 
-  let extensionForValue;
-  if (dev) {
-    extensionForValue = createElement({
-      type: 'span',
-      attributes: { class: 'skeleton-span' },
-    });
-  } else {
-    extensionForValue = createElement({
-      type: 'span',
-      attributes: { class: 'tooltip-container' },
-      innerText: ` +${extensionDays}`,
-    });
-  }
+  const extensionForValue = createElement({
+    type: 'span',
+    attributes: { class: 'tooltip-container' },
+    innerText: ` +${extensionDays}`,
+  });
+
   const extensionToolTip = createElement({
     type: 'span',
     attributes: { class: 'tooltip' },
@@ -821,19 +787,12 @@ async function createExtensionCard(data, dev) {
 
   const requestNumber = data.requestNumber || 1;
 
-  let extensionRequestNumberValue;
-  if (dev) {
-    extensionRequestNumberValue = createElement({
-      type: 'span',
-      attributes: { class: 'skeleton-span', 'data-testid': 'skeleton-span' },
-    });
-  } else {
-    extensionRequestNumberValue = createElement({
-      type: 'span',
-      attributes: { class: 'extension-request-number' },
-      innerText: `#${requestNumber}`,
-    });
-  }
+  const extensionRequestNumberValue = createElement({
+    type: 'span',
+    attributes: { class: 'extension-request-number' },
+    innerText: `#${requestNumber}`,
+  });
+
   extensionRequestNumberContainer.appendChild(extensionRequestNumberValue);
   const cardAssigneeButtonContainer = createElement({
     type: 'div',
@@ -1330,44 +1289,7 @@ async function createExtensionCard(data, dev) {
       CommitedHoursContent.innerText = 'Missing';
       CommitedHoursContent.classList.add('label-content-missing');
     }
-    if (dev) {
-      deadlineValue.classList.remove('skeleton-span');
-      deadlineValue.innerText = `${deadlineDays}`;
 
-      deadlineValue.classList.add('tooltip-container');
-      if (isDeadLineCrossed && isStatusPending) {
-        deadlineValue.classList.add('red-text');
-      }
-    }
-
-    if (dev) {
-      requestedValue.classList.remove('skeleton-text');
-      requestedValue.innerText = `${requestedDaysAgo}`;
-
-      requestedValue.classList.add(
-        'requested-day',
-        'tooltip-container',
-        requestedDaysTextColor,
-      );
-    }
-
-    if (dev) {
-      newDeadlineValue.classList.remove('skeleton-span');
-      newDeadlineValue.innerText = ` ${newDeadlineDays}`;
-      newDeadlineValue.classList.add('requested-day', 'tooltip-container');
-    }
-
-    if (dev) {
-      extensionForValue.classList.remove('skeleton-span');
-      extensionForValue.innerText = ` +${extensionDays}`;
-      extensionForValue.classList.add('tooltip-container');
-    }
-
-    if (dev) {
-      extensionRequestNumberValue.classList.remove('skeleton-span');
-      extensionRequestNumberValue.innerText = `#${requestNumber}`;
-      extensionRequestNumberValue.classList.add('extension-request-number');
-    }
     if (!dev) {
       removeSpinner();
       renderExtensionCreatedLog();

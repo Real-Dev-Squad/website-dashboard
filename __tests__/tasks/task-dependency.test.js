@@ -1,8 +1,9 @@
-const API_BASE_URL = 'https://staging-api.realdevsquad.com';
 const puppeteer = require('puppeteer');
 const { tags } = require('../../mock-data/tags');
 const { levels } = require('../../mock-data/levels');
 const { users } = require('../../mock-data/users');
+const { STAGING_API_URL } = require('../../mock-data/constants');
+
 describe('Input box', () => {
   let browser;
   let page;
@@ -21,7 +22,7 @@ describe('Input box', () => {
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-      if (url === `${API_BASE_URL}/levels`) {
+      if (url === `${STAGING_API_URL}/levels`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -32,7 +33,7 @@ describe('Input box', () => {
           },
           body: JSON.stringify(levels),
         });
-      } else if (url === `${API_BASE_URL}/users`) {
+      } else if (url === `${STAGING_API_URL}/users`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -43,7 +44,7 @@ describe('Input box', () => {
           },
           body: JSON.stringify(users),
         });
-      } else if (url === `${API_BASE_URL}/tags`) {
+      } else if (url === `${STAGING_API_URL}/tags`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',

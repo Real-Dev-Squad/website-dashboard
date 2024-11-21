@@ -21,9 +21,10 @@ const {
 } = require('../../mock-data/users');
 const { usersStatus } = require('../../mock-data/users-status');
 const { taskDone, auditLogTasks } = require('../../mock-data/tasks/index');
-
-const SITE_URL = 'http://localhost:8000/extension-requests';
-const API_BASE_URL = 'https://staging-api.realdevsquad.com';
+const {
+  STAGING_API_URL,
+  LOCAL_TEST_PAGE_URL,
+} = require('../../mock-data/constants');
 
 describe('Tests the Extension Requests Screen', () => {
   let browser;
@@ -47,10 +48,11 @@ describe('Tests the Extension Requests Screen', () => {
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
+
       if (
         url ===
-          `${API_BASE_URL}/extension-requests?order=desc&size=5&q=status%3APENDING` ||
-        url === `${API_BASE_URL}/extension-requests?dev=true&order=desc`
+          `${STAGING_API_URL}/extension-requests?order=desc&size=5&q=status%3APENDING` ||
+        url === `${STAGING_API_URL}/extension-requests?dev=true&order=desc`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -62,7 +64,7 @@ describe('Tests the Extension Requests Screen', () => {
           },
           body: JSON.stringify(extensionRequestsListPending),
         });
-      } else if (url === `${API_BASE_URL}/users/search?role=in_discord`) {
+      } else if (url === `${STAGING_API_URL}/users/search?role=in_discord`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -73,7 +75,7 @@ describe('Tests the Extension Requests Screen', () => {
           },
           body: JSON.stringify(allUsersData),
         });
-      } else if (url === `${API_BASE_URL}/users/status`) {
+      } else if (url === `${STAGING_API_URL}/users/status`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -86,7 +88,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        `${API_BASE_URL}/extension-requests?order=asc&size=5&q=status%3APENDING`
+        `${STAGING_API_URL}/extension-requests?order=asc&size=5&q=status%3APENDING`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -98,7 +100,7 @@ describe('Tests the Extension Requests Screen', () => {
           },
           body: JSON.stringify(extensionRequestsListPendingAscending),
         });
-      } else if (url === `${API_BASE_URL}/users?search=sunny&size=1`) {
+      } else if (url === `${STAGING_API_URL}/users?search=sunny&size=1`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -109,7 +111,7 @@ describe('Tests the Extension Requests Screen', () => {
           },
           body: JSON.stringify(userSunny),
         });
-      } else if (url === `${API_BASE_URL}/users?search=randhir&size=1`) {
+      } else if (url === `${STAGING_API_URL}/users?search=randhir&size=1`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -120,18 +122,9 @@ describe('Tests the Extension Requests Screen', () => {
           },
           body: JSON.stringify(userRandhir),
         });
-      } else if (url === `${API_BASE_URL}/tasks/PYj79ki2agB0q5JN3kUf/details`) {
-        interceptedRequest.respond({
-          status: 200,
-          contentType: 'application/json',
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-          },
-          body: JSON.stringify(taskDone),
-        });
-      } else if (url === `${API_BASE_URL}/tasks/GCYGDiU0lw4fwc3qljSY/details`) {
+      } else if (
+        url === `${STAGING_API_URL}/tasks/PYj79ki2agB0q5JN3kUf/details`
+      ) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -143,7 +136,21 @@ describe('Tests the Extension Requests Screen', () => {
           body: JSON.stringify(taskDone),
         });
       } else if (
-        url === `${API_BASE_URL}/extension-requests/QISvF7kAmnD9vXHwwIsG/status`
+        url === `${STAGING_API_URL}/tasks/GCYGDiU0lw4fwc3qljSY/details`
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(taskDone),
+        });
+      } else if (
+        url ===
+        `${STAGING_API_URL}/extension-requests/QISvF7kAmnD9vXHwwIsG/status`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -157,7 +164,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        `${API_BASE_URL}m/extension-requests/lGQ3AjUlgNB6Jd8jXaEC/status`
+        `${STAGING_API_URL}m/extension-requests/lGQ3AjUlgNB6Jd8jXaEC/status`
       ) {
         interceptedRequest.respond({
           status: 400,
@@ -170,7 +177,7 @@ describe('Tests the Extension Requests Screen', () => {
           body: JSON.stringify(extensionRequestResponse),
         });
       } else if (
-        url === `${API_BASE_URL}/extension-requests/lGQ3AjUlgNB6Jd8jXaEC`
+        url === `${STAGING_API_URL}/extension-requests/lGQ3AjUlgNB6Jd8jXaEC`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -184,7 +191,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        `${API_BASE_URL}/extension-requests?order=desc&size=5&q=status%3APENDING%2Cassignee%3AiODXB6gfsjaZB9p0XlBw`
+        `${STAGING_API_URL}/extension-requests?order=desc&size=5&q=status%3APENDING%2Cassignee%3AiODXB6gfsjaZB9p0XlBw`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -198,7 +205,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        `${API_BASE_URL}/extension-requests?order=desc&size=5&q=status%3APENDING%2Cassignee%3AiODXB6gfsjaZB9p0XlBw%2B7yzVDl8s1ORNCtH9Ps7K`
+        `${STAGING_API_URL}/extension-requests?order=desc&size=5&q=status%3APENDING%2Cassignee%3AiODXB6gfsjaZB9p0XlBw%2B7yzVDl8s1ORNCtH9Ps7K`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -210,7 +217,9 @@ describe('Tests the Extension Requests Screen', () => {
           },
           body: JSON.stringify(extensionRequestsList),
         });
-      } else if (url === `${API_BASE_URL}/tasks/mZB0akqPUa1GQQdrgsx7/details`) {
+      } else if (
+        url === `${STAGING_API_URL}/tasks/mZB0akqPUa1GQQdrgsx7/details`
+      ) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -221,7 +230,9 @@ describe('Tests the Extension Requests Screen', () => {
           },
           body: JSON.stringify(auditLogTasks['mZB0akqPUa1GQQdrgsx7']),
         });
-      } else if (url === `${API_BASE_URL}/tasks/7gZ9E0XTQCEFvUynVqAw/details`) {
+      } else if (
+        url === `${STAGING_API_URL}/tasks/7gZ9E0XTQCEFvUynVqAw/details`
+      ) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -232,7 +243,7 @@ describe('Tests the Extension Requests Screen', () => {
           },
           body: JSON.stringify(auditLogTasks['7gZ9E0XTQCEFvUynVqAw']),
         });
-      } else if (url === `${API_BASE_URL}/users?search=testunity&size=1`) {
+      } else if (url === `${STAGING_API_URL}/users?search=testunity&size=1`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -243,7 +254,7 @@ describe('Tests the Extension Requests Screen', () => {
           },
           body: JSON.stringify(searchedUserForAuditLogs['testunity']),
         });
-      } else if (url === `${API_BASE_URL}/users?search=joygupta&size=1`) {
+      } else if (url === `${STAGING_API_URL}/users?search=joygupta&size=1`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -256,9 +267,9 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-          `${API_BASE_URL}/extension-requests?order=desc&size=5&q=status%3AAPPROVED%2BPENDING%2BDENIED` ||
+          `${STAGING_API_URL}/extension-requests?order=desc&size=5&q=status%3AAPPROVED%2BPENDING%2BDENIED` ||
         url ===
-          `${API_BASE_URL}/extension-requests?dev=true&order=desc&q=status%3AAPPROVED%2BDENIED`
+          `${STAGING_API_URL}/extension-requests?dev=true&order=desc&q=status%3AAPPROVED%2BDENIED`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -270,7 +281,7 @@ describe('Tests the Extension Requests Screen', () => {
           },
           body: JSON.stringify(extensionRequestListForAuditLogs),
         });
-      } else if (url === `${API_BASE_URL}/users/self`) {
+      } else if (url === `${STAGING_API_URL}/users/self`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -283,7 +294,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        `${API_BASE_URL}/logs/extensionRequests/?meta.extensionRequestId=fuQs71a0Y7BX3n4rc5Ii`
+        `${STAGING_API_URL}/logs/extensionRequests/?meta.extensionRequestId=fuQs71a0Y7BX3n4rc5Ii`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -296,7 +307,7 @@ describe('Tests the Extension Requests Screen', () => {
           body: JSON.stringify(extensionRequestLogs['fuQs71a0Y7BX3n4rc5Ii']),
         });
       } else if (
-        url === `${API_BASE_URL}/extension-requests/fuQs71a0Y7BX3n4rc5Ii`
+        url === `${STAGING_API_URL}/extension-requests/fuQs71a0Y7BX3n4rc5Ii`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -309,7 +320,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        `${API_BASE_URL}/logs/extensionRequests/?meta.extensionRequestId=lw7dRB0I3a6ivsFR5Izs`
+        `${STAGING_API_URL}/logs/extensionRequests/?meta.extensionRequestId=lw7dRB0I3a6ivsFR5Izs`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -323,7 +334,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        `${API_BASE_URL}/extension-requests?order=desc&size=5&q=status%3AAPPROVED%2Cassignee%3AiODXB6gfsjaZB9p0XlBw%2B7yzVDl8s1ORNCtH9Ps7K`
+        `${STAGING_API_URL}/extension-requests?order=desc&size=5&q=status%3AAPPROVED%2Cassignee%3AiODXB6gfsjaZB9p0XlBw%2B7yzVDl8s1ORNCtH9Ps7K`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -337,7 +348,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        `${API_BASE_URL}/extension-requests?order=desc&size=1&q=status%3APENDING`
+        `${STAGING_API_URL}/extension-requests?order=desc&size=1&q=status%3APENDING`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -360,7 +371,7 @@ describe('Tests the Extension Requests Screen', () => {
       }
     });
 
-    await page.goto(SITE_URL);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests`);
 
     await page.waitForNetworkIdle();
 
@@ -371,7 +382,7 @@ describe('Tests the Extension Requests Screen', () => {
   });
 
   afterEach(async () => {
-    await page.goto('http://localhost:8000/extension-requests');
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests`);
     await page.waitForNetworkIdle();
   });
   afterAll(async () => {
@@ -617,106 +628,6 @@ describe('Tests the Extension Requests Screen', () => {
     expect(cardCount === 3 || cardCount === 7).toBe(true);
   });
 
-  it('checks whether the shimmer effect is visible under dev flag only for the assignee image element', async () => {
-    await page.goto(`${SITE_URL}/?dev=true`);
-    const assignImageSelector = await page.$$(
-      '[data-testid="assignee-image skeleton"]',
-    );
-    expect(assignImageSelector).toBeTruthy();
-
-    await page.waitForTimeout(5000);
-    const hasSkeletonClassAfter = await page.$eval('.assignee-image', (el) =>
-      el.classList.contains('skeleton'),
-    );
-    expect(hasSkeletonClassAfter).toBe(false);
-  });
-
-  it('checks whether the shimmer effect is visible under dev flag only for the assignee name element', async () => {
-    await page.goto(`${SITE_URL}/?dev=true`);
-    const assignNameSelector = await page.$$(
-      '[data-testid="assignee-name skeleton-text"]',
-    );
-    expect(assignNameSelector).toBeTruthy();
-    await page.waitForTimeout(5000);
-    const hasSkeletonClassAfter = await page.$eval('.assignee-name', (el) =>
-      el.classList.contains('skeleton-text'),
-    );
-    expect(hasSkeletonClassAfter).toBe(false);
-  });
-
-  it('checks whether the shimmer effect is working for deadlineValue element under feature flag', async () => {
-    await page.goto(`${SITE_URL}/?dev=true`);
-    const deadlineValueSelector = await page.$$(
-      '[data-testid="skeleton-span"]',
-    );
-    expect(deadlineValueSelector).toBeTruthy();
-    await page.waitForTimeout(5000);
-    const hasSkeletonClassAfter = await page.$eval('.tooltip-container', (el) =>
-      el.classList.contains('skeleton-span'),
-    );
-    expect(hasSkeletonClassAfter).toBe(false);
-  });
-
-  it('checks whether the shimmer effect is working for requestedValue element under feature flag', async () => {
-    await page.goto(`${SITE_URL}/?dev=true`);
-    const requestedValueSelector = await page.$$(
-      '[data-testid="skeleton-text"]',
-    );
-    expect(requestedValueSelector).toBeTruthy();
-    await page.waitForTimeout(5000);
-    const hasSkeletonClassAfter = await page.$eval('.requested-day', (el) =>
-      el.classList.contains('skeleton-text'),
-    );
-    expect(hasSkeletonClassAfter).toBe(false);
-  });
-  it('checks whether the shimmer effect is working for newDeadlineValue element under feature flag', async () => {
-    await page.goto(`${SITE_URL}/?dev=true`);
-    const newDeadlineValueSelector = await page.$$(
-      '[data-testid="skeleton-span"]',
-    );
-    expect(newDeadlineValueSelector).toBeTruthy();
-    await page.waitForTimeout(5000);
-    const hasSkeletonClassAfter = await page.$eval('.requested-day', (el) =>
-      el.classList.contains('skeleton-span'),
-    );
-    expect(hasSkeletonClassAfter).toBe(false);
-  });
-
-  it('checks whether the shimmer effect is working for extensionRequestNumberValue element under feature flag', async () => {
-    await page.goto(`${SITE_URL}/?dev=true`);
-    const extensionRequestNumberValueSelector = await page.$$(
-      '[data-testid="skeleton-span"]',
-    );
-    expect(extensionRequestNumberValueSelector).toBeTruthy();
-    await page.waitForTimeout(5000);
-    const hasSkeletonClassAfter = await page.$eval(
-      '.extension-request-number',
-      (el) => el.classList.contains('skeleton-span'),
-    );
-    expect(hasSkeletonClassAfter).toBe(false);
-  });
-
-  it('checks whether the shimmer effect is visible under dev flag only for the statusSiteLink element', async () => {
-    await page.goto(`${SITE_URL}/?dev=true`);
-    const statusSiteLinkSelector = await page.$$(
-      '[data-testid="external-link skeleton-link"]',
-    );
-    expect(statusSiteLinkSelector).toBeTruthy();
-    await page.waitForTimeout(5000);
-    const hasSkeletonClassAfter = await page.$eval('.external-link', (el) =>
-      el.classList.contains('skeleton-link'),
-    );
-    expect(hasSkeletonClassAfter).toBe(false);
-  });
-
-  it('checks whether the shimmer effect is visible under dev flag only for the taskStatusValue element', async () => {
-    await page.goto(`${SITE_URL}/?dev=true`);
-    const taskStatusValueElement = await page.$$(
-      '[data-testid="skeleton-span"]',
-    );
-    expect(taskStatusValueElement).toBeTruthy();
-  });
-
   it('Checks whether the card is not removed from display when api call is unsuccessful', async () => {
     const extensionCards = await page.$$('.extension-card');
 
@@ -870,7 +781,7 @@ describe('Tests the Extension Requests Screen', () => {
     expect(isTooltipVisible).toBe(true);
   });
   it('Validating audit logs for extension request', async () => {
-    await page.goto('http://localhost:8000/extension-requests');
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests`);
     const extensionRequestIds = [
       'log-container-fuQs71a0Y7BX3n4rc5Ii',
       'log-container-lw7dRB0I3a6ivsFR5Izs',
@@ -900,8 +811,7 @@ describe('Tests the Extension Requests Screen', () => {
   });
 
   test('Checks the Request Number and request value element on Extension requests listing page', async () => {
-    const url = 'http://localhost:8000/extension-requests';
-    await page.goto(url);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests`);
 
     const extensionRequestNumberContainer = await page.$$(
       '.extension-request-number',
@@ -916,8 +826,7 @@ describe('Tests the Extension Requests Screen', () => {
   });
 
   test('Default Request Number to 1 if requestNumber field is missing in API Response', async () => {
-    const url = 'http://localhost:8000/extension-requests';
-    await page.goto(url);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests`);
 
     const extensionRequestNumberContainer = await page.$$(
       '.extension-request-number',
@@ -933,7 +842,7 @@ describe('Tests the Extension Requests Screen', () => {
   });
 
   it('Validating if audit logs are being generated in realtime', async () => {
-    await page.goto('http://localhost:8000/extension-requests');
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests`);
     const extensionRequestIds = [
       'log-container-fuQs71a0Y7BX3n4rc5Ii',
       'log-container-lw7dRB0I3a6ivsFR5Izs',
@@ -992,12 +901,12 @@ describe('Tests the Extension Requests Screen', () => {
     await page.waitForNetworkIdle();
     const url = page.url();
     expect(url).toBe(
-      `${SITE_URL}?order=desc&size=5&q=status%3AAPPROVED%2Cassignee%3Asunny%2Brandhir`,
+      `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&size=5&q=status%3AAPPROVED%2Cassignee%3Asunny%2Brandhir`,
     );
   });
   it('Should have UI elements in sync with url', async () => {
     await page.goto(
-      `${SITE_URL}/?order=desc&size=5&q=status%3AAPPROVED%2Cassignee%3Asunny%2Brandhir`,
+      `${LOCAL_TEST_PAGE_URL}/extension-requests/?order=desc&size=5&q=status%3AAPPROVED%2Cassignee%3Asunny%2Brandhir`,
     );
     const filterButton = await page.$('#filter-button');
     await filterButton.click();
@@ -1020,7 +929,9 @@ describe('Tests the Extension Requests Screen', () => {
   });
 
   it('Should show empty message if all extension requests have been addressed', async () => {
-    await page.goto(`${SITE_URL}/?order=desc&size=1&q=status%3APENDING`);
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&size=1&q=status%3APENDING`,
+    );
     await page.waitForNetworkIdle();
 
     extensionRequestsElement = await page.$('.extension-requests');
