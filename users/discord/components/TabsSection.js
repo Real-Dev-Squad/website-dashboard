@@ -2,18 +2,20 @@ const { createElement } = react;
 
 export const TabsSection = ({ tabs, activeTab, handleTabNavigation }) => {
   return createElement(
-    'div',
+    'select',
     {
       class: 'tabs_section',
-      onclick: handleTabNavigation,
-      'data-testid': 'tabs-section',
+      onchange: handleTabNavigation,
+      'data-testid': 'tabs-section-select',
     },
     tabs.map((tabItem) => {
       return createElement(
-        'span',
+        'option',
         {
           data_key: `${tabItem.id}`,
           class: `tab ${activeTab === tabItem.id ? 'active_tab' : ''}`,
+          value: `${tabItem.value}`,
+          ...(activeTab === tabItem.id && { selected: 'true' }),
         },
         [tabItem.display_name],
       );
