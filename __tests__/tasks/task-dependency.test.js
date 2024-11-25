@@ -14,7 +14,6 @@ describe('Input box', () => {
       headless: 'new',
       ignoreHTTPSErrors: true,
       args: ['--incognito', '--disable-web-security'],
-      devtools: false,
     });
 
     // Mock API response setup
@@ -22,11 +21,10 @@ describe('Input box', () => {
       await page.setRequestInterception(true);
       page.on('request', (interceptedRequest) => {
         const url = interceptedRequest.url();
-
         const mockResponses = {
-          [`${STAGING_API_URL}/levels`]: levels,
-          [`${STAGING_API_URL}/users`]: users,
-          [`${STAGING_API_URL}/tags`]: tags,
+          [`${API_BASE_URL}/levels`]: levels,
+          [`${API_BASE_URL}/users`]: users,
+          [`${API_BASE_URL}/tags`]: tags,
         };
 
         if (mockResponses[url]) {
@@ -167,7 +165,6 @@ describe('Input box', () => {
       );
       expect(display).toBe('none');
     });
-
     it('should display the dependsOn field in dev mode', async () => {
       const dependsOnField = await page.$('[data-testid="dependsOn"]');
       expect(dependsOnField).toBeTruthy();
