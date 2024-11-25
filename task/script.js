@@ -79,7 +79,7 @@ const getDaysInEpoch = (remainingDays) => {
 };
 
 const setDefaultDates = () => {
-  if (document.getElementById('status').value === StatusType.ASSIGNED) {
+  if (document.getElementById('status').value === 'ASSIGNED') {
     const endsOn = document.getElementById('endsOn');
     endsOn.value = getFutureDateString(14);
     endsOn.min = getFutureDateString(1);
@@ -96,7 +96,7 @@ function getObjectOfFormData(formId) {
   const object = {};
   const data = new FormData(formId);
   const isStatusAssigned =
-    document.getElementById('status').value === StatusType.ASSIGNED;
+    document.getElementById('status').value === 'ASSIGNED';
 
   data.forEach((value, key) => {
     if (!Reflect.has(object, key)) {
@@ -208,7 +208,7 @@ taskForm.onsubmit = async (e) => {
     isNoteworthy: isNoteworthy == 'on',
   };
 
-  if (status === StatusType.ASSIGNED) {
+  if (status === 'ASSIGNED') {
     dataToBeSent.startedOn = new Date() / 1000;
   }
 
@@ -319,7 +319,7 @@ let stateHandle = () => {
     ) {
       return true;
     } else if (
-      item.value === StatusType.ASSIGNED &&
+      item.value === 'ASSIGNED' &&
       (wasAssigneeSet === false || assigneeEl.value === '')
     ) {
       return true;
@@ -395,14 +395,12 @@ const handleDateChange = (event) => {
   previewDate.innerHTML = !!input.value ? getRemainingDays(input.value) : 14;
 };
 
-function handleStatusChange(
-  event = { target: { value: StatusType.AVAILABLE } },
-) {
+function handleStatusChange(event = { target: { value: 'AVAILABLE' } }) {
   const assignee = document.getElementById('assigneeInput');
   const assigneeEl = document.getElementById('assignee');
   const endsOnWrapper = document.getElementById('endsOnWrapper');
   const featureRadio = document.getElementById('feature');
-  if (event.target.value === StatusType.ASSIGNED) {
+  if (event.target.value === 'ASSIGNED') {
     setDefaultDates();
     assignee.classList.add('show-assignee-field');
     assignee.style.display = 'none';
@@ -414,7 +412,7 @@ function handleStatusChange(
     document.getElementById('endsOn').value = '';
     assigneeEl.value = '';
   }
-  if (event.target.value === StatusType.ASSIGNED && featureRadio.checked) {
+  if (event.target.value === 'ASSIGNED' && featureRadio.checked) {
     assignee.style.display = 'flex';
   }
 }
