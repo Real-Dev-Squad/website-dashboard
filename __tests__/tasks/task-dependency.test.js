@@ -14,6 +14,7 @@ describe('Input box', () => {
       headless: 'new',
       ignoreHTTPSErrors: true,
       args: ['--incognito', '--disable-web-security'],
+      devtools: false,
     });
 
     // Mock API response setup
