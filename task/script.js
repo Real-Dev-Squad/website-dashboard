@@ -95,8 +95,8 @@ class MultiSelect {
       optionElement.className = 'option';
       optionElement.dataset.value = option.value;
       optionElement.innerHTML = `
-      <span class="option-label">${option.label}</span>
-      <span class="checkbox"></span>
+      <span class="option-label" data-testid="option-label">${option.label}</span>
+      <span class="checkbox" data-testid="option-checkbox"></span>
       `;
       this.optionsList.appendChild(optionElement);
     });
