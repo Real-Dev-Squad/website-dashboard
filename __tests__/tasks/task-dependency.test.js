@@ -166,6 +166,7 @@ describe('Input box', () => {
       );
       expect(display).toBe('none');
     });
+
     it('should display the dependsOn field in dev mode', async () => {
       const dependsOnField = await page.$('[data-testid="dependsOn"]');
       expect(dependsOnField).toBeTruthy();
