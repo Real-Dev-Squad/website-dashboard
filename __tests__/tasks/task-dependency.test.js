@@ -24,6 +24,7 @@ describe('Input box', () => {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
         const mockResponses = {
           [`${STAGING_API_URL}/levels`]: levels,
@@ -36,6 +37,9 @@ describe('Input box', () => {
 >>>>>>> aa0f2dc (refactored for readability)
 =======
 >>>>>>> 93a5221 (Added data-testid for testing,also added new tests)
+=======
+
+>>>>>>> aa0f2dc (refactored for readability)
         const mockResponses = {
           [`${API_BASE_URL}/levels`]: levels,
           [`${API_BASE_URL}/users`]: users,
@@ -189,6 +193,7 @@ describe('Input box', () => {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> 93a5221 (Added data-testid for testing,also added new tests)
@@ -197,6 +202,9 @@ describe('Input box', () => {
 >>>>>>> aa0f2dc (refactored for readability)
 =======
 >>>>>>> 93a5221 (Added data-testid for testing,also added new tests)
+=======
+
+>>>>>>> aa0f2dc (refactored for readability)
     it('should display the dependsOn field in dev mode', async () => {
       const dependsOnField = await page.$('[data-testid="dependsOn"]');
       expect(dependsOnField).toBeTruthy();
