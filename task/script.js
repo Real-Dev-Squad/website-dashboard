@@ -5,29 +5,31 @@ const allUser = [];
 const params = new URLSearchParams(window.location.search);
 const isDev = params.get('dev') === 'true';
 
-const featureUrlField = document
-  .getElementById('featureUrl')
-  .closest('.inputBox');
+// hide fields under isDev feature flag
+const containers = [
+  'featureUrlContainer',
+  'featureGroupContainer',
+  'taskLevelContainer',
+];
 
-if (isDev && featureUrlField) {
-  featureUrlField.style.display = 'none';
+function hideElements(isDev, elementIds) {
+  if (isDev) {
+    elementIds.forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.style.display = 'none';
+      }
+    });
+  }
 }
-const featureRadio = document.getElementById('feature')?.closest('.inputBox');
+// hide fields if dev=true
+hideElements(isDev, containers);
 
-if (isDev && featureRadio) {
-  featureRadio.style.display = 'none';
-}
-const taskLevelDiv = document
-  .querySelector('.inputBox label[for="taskLevel"]')
-  .closest('.inputBox');
-
-if (isDev && taskLevelDiv) {
-  taskLevelDiv.style.display = 'none';
-}
 const category = document.getElementById('category');
 
 category.addEventListener('change', async () => {
   if (isDev) return;
+
   try {
     showSubmitLoader();
     const categoryValue = category.value;
@@ -219,10 +221,12 @@ taskForm.onsubmit = async (e) => {
   if (status === 'AVAILABLE') {
     delete dataToBeSent.endsOn;
   }
+
   if (isDev) {
     delete dataToBeSent.featureUrl;
     delete dataToBeSent.type;
     delete dataToBeSent.participants;
+
     dataToBeSent.assignee = assignee.trim() ? assignee : ' ';
   } else {
     if (dataToBeSent.featureUrl.trim() === '') {
@@ -282,6 +286,7 @@ taskForm.onsubmit = async (e) => {
           itemType: 'task',
           tagPayload: [{ tagId: category, levelId: level }],
         };
+
         await fetch(`${API_BASE_URL}/items`, {
           method: 'POST',
           credentials: 'include',
@@ -339,6 +344,7 @@ let stateHandle = () => {
 
 let hideUnusedField = (radio) => {
   if (isDev) return;
+
   const assigneeInput = document.getElementById('assigneeInput');
   const participantsInput = document.getElementById('participantsInput');
   if (
@@ -436,6 +442,7 @@ function debounce(func, delay) {
 
 async function fetchTags() {
   if (isDev) return;
+
   const response = await fetch(`${API_BASE_URL}/tags`);
   const data = await response.json();
   const { tags } = data;
@@ -452,6 +459,7 @@ async function fetchTags() {
 
 async function fetchLevel() {
   if (isDev) return;
+
   const response = await fetch(`${API_BASE_URL}/levels`);
   const data = await response.json();
   const { levels } = data;

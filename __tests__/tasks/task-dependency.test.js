@@ -22,6 +22,7 @@ describe('Input box', () => {
       await page.setRequestInterception(true);
       page.on('request', (interceptedRequest) => {
         const url = interceptedRequest.url();
+
         const mockResponses = {
           [`${API_BASE_URL}/levels`]: levels,
           [`${API_BASE_URL}/users`]: users,
@@ -166,6 +167,7 @@ describe('Input box', () => {
       );
       expect(display).toBe('none');
     });
+
     it('should display the dependsOn field in dev mode', async () => {
       const dependsOnField = await page.$('[data-testid="dependsOn"]');
       expect(dependsOnField).toBeTruthy();
