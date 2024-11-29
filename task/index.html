@@ -50,7 +50,7 @@
           ></textarea>
           <span id="purposeDisplay" class="display"></span>
         </div>
-        <div class="inputBox" data-testid="featureUrl">
+        <div class="inputBox" id="featureUrlContainer" data-testid="featureUrl">
           <label for="featureUrl" class="editable">Feature URL:</label>
           <input
             type="url"
@@ -61,7 +61,11 @@
           />
           <span id="featureUrlDisplay" class="display"></span>
         </div>
-        <div class="inputBox" data-testid="radioButtons">
+        <div
+          class="inputBox"
+          id="featureGroupContainer"
+          data-testid="radioButtons"
+        >
           <div class="radioButtons">
             <div class="feature" onclick="hideUnusedField('assignee');">
               <label for="feature">Feature</label>
@@ -117,7 +121,7 @@
             <option value="ASSIGNED">Assigned</option>
           </select>
         </div>
-        <div class="inputBox" data-testid="taskLevel">
+        <div class="inputBox" id="taskLevelContainer" data-testid="taskLevel">
           <label for="taskLevel">Task Level</label>
           <br />
           <div class="inputBox">
@@ -143,7 +147,7 @@
             </select>
           </div>
         </div>
-        <div class="inputBox" data-testid="dependsOn">
+        <div class="inputBox" id="dependsOnContainer" data-testid="dependsOn">
           <label for="dependsOn" class="editable">DependsOn</label>
           <input
             type="text"
