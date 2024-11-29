@@ -366,7 +366,7 @@ footer {
   color: #101828;
   display: flex;
   align-items: center;
-  justify-content: space-between; /* This moves checkbox to right */
+  justify-content: space-between;
   padding: 8px 12px;
   border-radius: 4px;
   margin: 2px 0;

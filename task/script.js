@@ -27,12 +27,27 @@ function hideElements(isDev, elementIds) {
 // hide fields if dev=true
 hideElements(isDev, containers);
 
-const skillComponentDiv = document
-  .querySelector('.multi-select-button')
-  ?.closest('.inputBox');
-if (!isDev && skillComponentDiv) {
-  skillComponentDiv.style.display = 'none';
+//Skills field under dev=true
+const skillsContainer = document.getElementById('skillsContainer');
+
+if (!isDev && skillsContainer) {
+  skillsContainer.style.display = 'none';
 }
+
+async function fetchSkills() {
+  if (!isDev) return [];
+
+  try {
+    const response = await fetch(SKILLS_API, {
+      credentials: 'include',
+    });
+    return await response.json();
+  } catch (error) {
+    alert(`Error fetching skills: ${error}`);
+    return [];
+  }
+}
+
 class MultiSelect {
   constructor(container) {
     this.container = container;
@@ -52,7 +67,7 @@ class MultiSelect {
 
   async initializeSkills() {
     try {
-      const skills = await this.fetchSkills();
+      const skills = await fetchSkills();
       this.options = skills.map((skill) => ({
         value: skill.id.toString(),
         label: skill.name,
@@ -63,18 +78,6 @@ class MultiSelect {
     }
   }
 
-  async fetchSkills() {
-    if (!isDev) return [];
-    try {
-      const response = await fetch(SKILLS_API, {
-        credentials: 'include',
-      });
-      return await response.json();
-    } catch (error) {
-      alert(`Error fetching skills: ${error}`);
-      return [];
-    }
-  }
   getSelectedSkills() {
     return Array.from(this.selectedValues)
       .map((value) => {
@@ -93,6 +96,7 @@ class MultiSelect {
     this.options.forEach((option) => {
       const optionElement = document.createElement('div');
       optionElement.className = 'option';
+      optionElement.dataset.testid = 'option';
       optionElement.dataset.value = option.value;
       optionElement.innerHTML = `
       <span class="option-label" data-testid="option-label">${option.label}</span>

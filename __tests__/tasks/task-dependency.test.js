@@ -1,6 +1,6 @@
-const API_BASE_URL = 'https://staging-api.realdevsquad.com';
+const API_BASE_URL = 'https://api.realdevsquad.com';
 const SKILL_TREE_BACKEND_BASE_URL =
-  'https://services.realdevsquad.com/staging-skilltree/v1';
+  'https://services.realdevsquad.com/skilltree/v1';
 const puppeteer = require('puppeteer');
 const { tags } = require('../../mock-data/tags');
 const { levels } = require('../../mock-data/levels');
@@ -176,6 +176,7 @@ describe('Input box', () => {
       const dependsOnField = await page.$('[data-testid="dependsOn"]');
       expect(dependsOnField).toBeTruthy();
     });
+
     it('should show skills multi-select component', async () => {
       const skillsComponent = await page.$eval(
         '[data-testid="skills"] .multi-select-container',
