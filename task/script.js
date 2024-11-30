@@ -180,7 +180,7 @@ taskForm.onsubmit = async (e) => {
       getObjectOfFormData(taskForm);
   }
 
-  if (status === 'ASSIGNED' && !assignee.trim()) {
+  if (status === StatusType.ASSIGNED && !assignee.trim()) {
     alert('Assignee can not be empty');
     showSubmitLoader(false);
     document.getElementById('assignee').focus();
@@ -217,7 +217,7 @@ taskForm.onsubmit = async (e) => {
     delete dataToBeSent.endsOn;
   }
 
-  if (status === 'AVAILABLE') {
+  if (status === StatusType.AVAILABLE) {
     delete dataToBeSent.endsOn;
   }
 
