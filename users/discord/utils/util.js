@@ -1,7 +1,4 @@
-const API_BASE_URL =
-  window.location.hostname === 'localhost'
-    ? 'https://staging-api.realdevsquad.com'
-    : window.API_BASE_URL;
+const API_BASE_URL = window.API_BASE_URL;
 
 export const getUsers = async (tab) => {
   let URL = {

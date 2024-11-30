@@ -4,6 +4,10 @@ const {
   defaultMockResponseHeaders,
 } = require('../../mock-data/taskRequests');
 const { user } = require('../../mock-data/users/index.js');
+const {
+  STAGING_API_URL,
+  LOCAL_TEST_PAGE_URL,
+} = require('../../mock-data/constants');
 
 describe('Request container for non-super users', () => {
   let browser;
@@ -21,7 +25,7 @@ describe('Request container for non-super users', () => {
     await page.setRequestInterception(true);
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-      if (url == 'https://staging-api.realdevsquad.com/users/self') {
+      if (url == `${STAGING_API_URL}/users/self`) {
         interceptedRequest.respond({
           ...defaultMockResponseHeaders,
           body: JSON.stringify(user),
@@ -36,7 +40,7 @@ describe('Request container for non-super users', () => {
       }
     });
     await page.goto(
-      'http://localhost:8000/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq5&dev=true',
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq5&dev=true`,
     );
   });
 
@@ -87,7 +91,7 @@ describe('Task request details page', () => {
       }
     });
     await page.goto(
-      'http://localhost:8000/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq5',
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq5`,
     );
   });
 
@@ -148,7 +152,7 @@ describe('Task request details page', () => {
 
   it('Should render Approve and Reject buttons for super users', async function () {
     await page.goto(
-      'http://localhost:8000/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq5&dev=true',
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq5&dev=true`,
     );
     await page.waitForNetworkIdle();
     const approveButton = await page.$('[data-testid="task-approve-button"]');
@@ -184,7 +188,7 @@ describe('Task request details page with markdown support in description', () =>
       }
     });
     await page.goto(
-      'http://localhost:8000/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq6',
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq6`,
     );
   });
 
@@ -243,7 +247,7 @@ describe('Task request details page with markdown support in description', () =>
 
   it('Should render Approve and Reject buttons for super users', async function () {
     await page.goto(
-      'http://localhost:8000/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq6&dev=true',
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq6&dev=true`,
     );
     await page.waitForNetworkIdle();
     const approveButton = await page.$('[data-testid="task-approve-button"]');
@@ -279,7 +283,7 @@ describe('Task request details page with status creation', () => {
       }
     });
     await page.goto(
-      'http://localhost:8000/task-requests/details/?id=uC0IUpkFMx393XjnKx4w',
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=uC0IUpkFMx393XjnKx4w`,
     );
   });
 

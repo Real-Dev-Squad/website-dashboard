@@ -5,10 +5,10 @@ const {
   acceptedApplications,
 } = require('../../mock-data/applications');
 const { superUserForAudiLogs } = require('../../mock-data/users');
-
-const SITE_URL = 'http://localhost:8000';
-// helper/loadEnv.js file causes API_BASE_URL to be stagin-api on local env url in taskRequest/index.html
-const API_BASE_URL = 'https://staging-api.realdevsquad.com';
+const {
+  STAGING_API_URL,
+  LOCAL_TEST_PAGE_URL,
+} = require('../../mock-data/constants');
 
 describe('Applications page', () => {
   let browser;
@@ -22,19 +22,19 @@ describe('Applications page', () => {
       ignoreHTTPSErrors: true,
       args: ['--incognito', '--disable-web-security'],
     });
-  });
-  beforeEach(async () => {
+
     page = await browser.newPage();
 
     await page.setRequestInterception(true);
 
-    page.on('request', (request) => {
+    page.on('request', (interceptedRequest) => {
+      const url = interceptedRequest.url();
       if (
-        request.url() === `${API_BASE_URL}/applications?size=6` ||
-        request.url() ===
-          `${API_BASE_URL}/applications?next=YwTi6zFNI3GlDsZVjD8C&size=6`
+        url === `${STAGING_API_URL}/applications?size=6` ||
+        url ===
+          `${STAGING_API_URL}/applications?next=YwTi6zFNI3GlDsZVjD8C&size=6`
       ) {
-        request.respond({
+        interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({
@@ -48,9 +48,9 @@ describe('Applications page', () => {
           },
         });
       } else if (
-        request.url() === `${API_BASE_URL}/applications?size=6&status=accepted`
+        url === `${STAGING_API_URL}/applications?size=6&status=accepted`
       ) {
-        request.respond({
+        interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({ applications: acceptedApplications }),
@@ -60,8 +60,8 @@ describe('Applications page', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
         });
-      } else if (request.url() === `${API_BASE_URL}/users/self`) {
-        request.respond({
+      } else if (url === `${STAGING_API_URL}/users/self`) {
+        interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
           headers: {
@@ -72,9 +72,9 @@ describe('Applications page', () => {
           body: JSON.stringify(superUserForAudiLogs),
         });
       } else if (
-        request.url() === `${API_BASE_URL}/applications/lavEduxsb2C6Bl4s289P`
+        url === `${STAGING_API_URL}/applications/lavEduxsb2C6Bl4s289P`
       ) {
-        request.respond({
+        interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({
@@ -87,10 +87,10 @@ describe('Applications page', () => {
           },
         });
       } else if (
-        request.url() ===
-        `${API_BASE_URL}/applications?size=6&status=accepted&dev=true`
+        url ===
+        `${STAGING_API_URL}/applications?size=6&status=accepted&dev=true`
       ) {
-        request.respond({
+        interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({
@@ -104,10 +104,9 @@ describe('Applications page', () => {
           },
         });
       } else if (
-        request.url() ===
-        `${API_BASE_URL}/applications?size=6&status=pending&dev=true`
+        url === `${STAGING_API_URL}/applications?size=6&status=pending&dev=true`
       ) {
-        request.respond({
+        interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({
@@ -121,10 +120,10 @@ describe('Applications page', () => {
           },
         });
       } else {
-        request.continue();
+        interceptedRequest.continue();
       }
     });
-    await page.goto(`${SITE_URL}/applications`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/applications`);
     await page.waitForNetworkIdle();
   });
 
@@ -147,13 +146,15 @@ describe('Applications page', () => {
   });
 
   it('should render the index of pending applications under dev flag === true', async function () {
-    await page.goto(`${SITE_URL}/applications?dev=true&status=pending`);
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/applications?dev=true&status=pending`,
+    );
     const indexOfApplication = await page.$$('[data-testid="user-index"]');
     expect(indexOfApplication).toBeTruthy();
   });
 
   it('should render the initial UI elements under dev flag === true', async function () {
-    await page.goto(`${SITE_URL}/applications?dev=true`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/applications?dev=true`);
     const title = await page.$('.header h1');
     const filterButton = await page.$('.filter-button');
     const applicationCards = await page.$$('.application-card');
@@ -191,7 +192,7 @@ describe('Applications page', () => {
   });
 
   it('should load and render the accepted application requests when accept filter is selected from filter under dev flag === true along with the total count of the accepted applications', async function () {
-    await page.goto(`${SITE_URL}/applications?dev=true`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/applications?dev=true`);
     await page.click('.filter-button');
 
     await page.$eval('input[name="status"][value="accepted"]', (radio) =>
@@ -234,7 +235,7 @@ describe('Applications page', () => {
   });
 
   it('under feature flag should open application details modal for application, when user click on card', async function () {
-    await page.goto(`${SITE_URL}/applications/?dev=true`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/applications/?dev=true`);
     await page.waitForNetworkIdle();
     const applicationDetailsModal = await page.$('.application-details');
     expect(
