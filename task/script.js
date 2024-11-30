@@ -80,7 +80,7 @@ const getDaysInEpoch = (remainingDays) => {
 };
 
 const setDefaultDates = () => {
-  if (document.getElementById('status').value === 'ASSIGNED') {
+  if (document.getElementById('status').value === StatusType.ASSIGNED) {
     const endsOn = document.getElementById('endsOn');
     endsOn.value = getFutureDateString(14);
     endsOn.min = getFutureDateString(1);
@@ -97,7 +97,7 @@ function getObjectOfFormData(formId) {
   const object = {};
   const data = new FormData(formId);
   const isStatusAssigned =
-    document.getElementById('status').value === 'ASSIGNED';
+    document.getElementById('status').value === StatusType.ASSIGNED;
 
   data.forEach((value, key) => {
     if (!Reflect.has(object, key)) {
@@ -180,7 +180,7 @@ taskForm.onsubmit = async (e) => {
       getObjectOfFormData(taskForm);
   }
 
-  if (status === 'ASSIGNED' && !assignee.trim()) {
+  if (status === StatusType.ASSIGNED && !assignee.trim()) {
     alert('Assignee can not be empty');
     showSubmitLoader(false);
     document.getElementById('assignee').focus();
@@ -209,7 +209,7 @@ taskForm.onsubmit = async (e) => {
     isNoteworthy: isNoteworthy == 'on',
   };
 
-  if (status === 'ASSIGNED') {
+  if (status === StatusType.ASSIGNED) {
     dataToBeSent.startedOn = new Date() / 1000;
   }
 
@@ -217,7 +217,11 @@ taskForm.onsubmit = async (e) => {
     delete dataToBeSent.endsOn;
   }
 
+<<<<<<< HEAD
   if (status === 'AVIALABLE') {
+=======
+  if (status === StatusType.AVAILABLE) {
+>>>>>>> 130fd76 (created a constants file)
     delete dataToBeSent.endsOn;
   }
 
@@ -323,7 +327,7 @@ let stateHandle = () => {
     ) {
       return true;
     } else if (
-      item.value === 'ASSIGNED' &&
+      item.value === StatusType.ASSIGNED &&
       (wasAssigneeSet === false || assigneeEl.value === '')
     ) {
       return true;
@@ -400,12 +404,14 @@ const handleDateChange = (event) => {
   previewDate.innerHTML = !!input.value ? getRemainingDays(input.value) : 14;
 };
 
-function handleStatusChange(event = { target: { value: 'AVAILABLE' } }) {
+function handleStatusChange(
+  event = { target: { value: StatusType.AVAILABLE } },
+) {
   const assignee = document.getElementById('assigneeInput');
   const assigneeEl = document.getElementById('assignee');
   const endsOnWrapper = document.getElementById('endsOnWrapper');
   const featureRadio = document.getElementById('feature');
-  if (event.target.value === 'ASSIGNED') {
+  if (event.target.value === StatusType.ASSIGNED) {
     setDefaultDates();
     assignee.classList.add('show-assignee-field');
     assignee.style.display = 'none';
@@ -417,7 +423,7 @@ function handleStatusChange(event = { target: { value: 'AVAILABLE' } }) {
     document.getElementById('endsOn').value = '';
     assigneeEl.value = '';
   }
-  if (event.target.value === 'ASSIGNED' && featureRadio.checked) {
+  if (event.target.value === StatusType.ASSIGNED && featureRadio.checked) {
     assignee.style.display = 'flex';
   }
 }
