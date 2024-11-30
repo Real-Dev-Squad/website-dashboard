@@ -22,14 +22,8 @@ function hideElements(isDev, elementIds) {
     });
   }
 }
-<<<<<<< HEAD
-const featureRadio = document
-  .getElementById('feature')
-  ?.closest('.radioButtons');
-=======
 // hide fields if dev=true
 hideElements(isDev, containers);
->>>>>>> aa0f2dc (refactored for readability)
 
 const category = document.getElementById('category');
 
@@ -168,11 +162,16 @@ taskForm.onsubmit = async (e) => {
   const {
     title,
     purpose,
+    featureUrl,
+    type,
     links,
     endsOn,
     status,
+    category,
+    level,
     dependsOn,
     assignee,
+    participants,
     priority,
     percentCompleted,
     completionAwardDinero,
@@ -181,11 +180,8 @@ taskForm.onsubmit = async (e) => {
     lossRateNeelam,
     isNoteworthy,
   } = getObjectOfFormData(taskForm);
-  if (!isDev) {
-    const { featureUrl, type, participants, category, level } =
-      getObjectOfFormData(taskForm);
-  }
-  if (status === 'ASSIGNED' && !assignee.trim()) {
+
+  if (status === StatusType.ASSIGNED && !assignee.trim()) {
     alert('Assignee can not be empty');
     showSubmitLoader(false);
     document.getElementById('assignee').focus();
@@ -222,26 +218,28 @@ taskForm.onsubmit = async (e) => {
     delete dataToBeSent.endsOn;
   }
 
-  if (status === 'AVAILABLE') {
+  if (status === StatusType.AVAILABLE) {
     delete dataToBeSent.endsOn;
   }
 
-<<<<<<< HEAD
-  if (dataToBeSent.type == 'feature') {
-=======
   if (isDev) {
     delete dataToBeSent.featureUrl;
     delete dataToBeSent.type;
     delete dataToBeSent.participants;
 
->>>>>>> aa0f2dc (refactored for readability)
     dataToBeSent.assignee = assignee.trim() ? assignee : ' ';
-  }
-
-  if (dataToBeSent.type == 'group') {
-    dataToBeSent.participants = participants.trim()
-      ? participants.split(',')
-      : [];
+  } else {
+    if (dataToBeSent.featureUrl.trim() === '') {
+      delete dataToBeSent.featureUrl;
+    }
+    if (dataToBeSent.type == 'feature') {
+      dataToBeSent.assignee = assignee.trim() ? assignee : ' ';
+    }
+    if (dataToBeSent.type == 'group') {
+      dataToBeSent.participants = participants.trim()
+        ? participants.split(',')
+        : [];
+    }
   }
 
   if (dataToBeSent.purpose.trim() === '') {
@@ -345,11 +343,8 @@ let stateHandle = () => {
 };
 
 let hideUnusedField = (radio) => {
-<<<<<<< HEAD
-=======
   if (isDev) return;
 
->>>>>>> aa0f2dc (refactored for readability)
   const assigneeInput = document.getElementById('assigneeInput');
   const participantsInput = document.getElementById('participantsInput');
   if (
