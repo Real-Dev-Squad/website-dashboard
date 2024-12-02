@@ -24,9 +24,9 @@ describe('Input box', () => {
         const url = interceptedRequest.url();
 
         const mockResponses = {
-          [`${API_BASE_URL}/levels`]: levels,
-          [`${API_BASE_URL}/users`]: users,
-          [`${API_BASE_URL}/tags`]: tags,
+          [`${STAGING_API_URL}/levels`]: levels,
+          [`${STAGING_API_URL}/users`]: users,
+          [`${STAGING_API_URL}/tags`]: tags,
         };
 
         if (mockResponses[url]) {
