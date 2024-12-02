@@ -14,6 +14,7 @@ describe('Input box', () => {
       headless: 'new',
       ignoreHTTPSErrors: true,
       args: ['--incognito', '--disable-web-security'],
+      devtools: false,
     });
 
     // Mock API response setup
@@ -21,35 +22,11 @@ describe('Input box', () => {
       await page.setRequestInterception(true);
       page.on('request', (interceptedRequest) => {
         const url = interceptedRequest.url();
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 
         const mockResponses = {
           [`${STAGING_API_URL}/levels`]: levels,
           [`${STAGING_API_URL}/users`]: users,
           [`${STAGING_API_URL}/tags`]: tags,
-<<<<<<< HEAD
-=======
-=======
-
->>>>>>> aa0f2dc (refactored for readability)
-=======
->>>>>>> 93a5221 (Added data-testid for testing,also added new tests)
-=======
-
->>>>>>> aa0f2dc (refactored for readability)
-        const mockResponses = {
-          [`${API_BASE_URL}/levels`]: levels,
-          [`${API_BASE_URL}/users`]: users,
-          [`${API_BASE_URL}/tags`]: tags,
-<<<<<<< HEAD
->>>>>>> 93a5221 (Added data-testid for testing,also added new tests)
-=======
->>>>>>> 14374bd (API_BASE_URL changed to stating for testing)
-=======
->>>>>>> 93a5221 (Added data-testid for testing,also added new tests)
         };
 
         if (mockResponses[url]) {
@@ -190,21 +167,7 @@ describe('Input box', () => {
       );
       expect(display).toBe('none');
     });
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-=======
->>>>>>> 93a5221 (Added data-testid for testing,also added new tests)
-=======
-
->>>>>>> aa0f2dc (refactored for readability)
-=======
->>>>>>> 93a5221 (Added data-testid for testing,also added new tests)
-=======
-
->>>>>>> aa0f2dc (refactored for readability)
     it('should display the dependsOn field in dev mode', async () => {
       const dependsOnField = await page.$('[data-testid="dependsOn"]');
       expect(dependsOnField).toBeTruthy();
