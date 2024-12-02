@@ -32,7 +32,6 @@ const QUERY_PARAM_KEY = {
   DEV_FEATURE_FLAG: 'dev',
   GROUP_SEARCH: 'name',
 };
-const isDev = getParamValueFromURL(QUERY_PARAM_KEY.DEV_FEATURE_FLAG) === 'true';
 
 const handler = {
   set: (obj, prop, value) => {
@@ -287,23 +286,22 @@ function renderAllGroups({ cardOnClick }) {
         renderGroupById({
           group: group,
           cardOnClick: () => cardOnClick(id),
-          onDelete: isDev ? showDeleteModal : undefined,
-          isSuperUser: dataStore.isSuperUser && isDev,
+          onDelete: showDeleteModal,
+          isSuperUser: dataStore.isSuperUser,
         });
       }
     });
   }
 }
 
-function showDeleteModal(groupId, roleId) {
-  if (!isDev) return;
+function showDeleteModal(groupId) {
   renderDeleteConfirmationModal({
     onClose: () => {
       removeDeleteConfirmationModal();
     },
     onConfirm: async () => {
       try {
-        await deleteDiscordGroupRole(groupId, roleId);
+        await deleteDiscordGroupRole(groupId);
         showToaster('Group deleted successfully');
 
         updateGroup(groupId, { isDeleted: true });
