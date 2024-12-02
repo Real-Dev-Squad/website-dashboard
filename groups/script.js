@@ -13,6 +13,8 @@ import {
   renderNotAuthenticatedPage,
   renderDeleteConfirmationModal,
   removeDeleteConfirmationModal,
+  renderLoader,
+  removeLoader,
 } from './render.js';
 
 import {
@@ -300,6 +302,7 @@ function showDeleteModal(groupId) {
       removeDeleteConfirmationModal();
     },
     onConfirm: async () => {
+      renderLoader();
       try {
         await deleteDiscordGroupRole(groupId);
         showToaster('Group deleted successfully');
@@ -316,6 +319,7 @@ function showDeleteModal(groupId) {
         showToaster(error.message || 'Failed to delete group');
       } finally {
         removeDeleteConfirmationModal();
+        removeLoader();
       }
     },
   });
