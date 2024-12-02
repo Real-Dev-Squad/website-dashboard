@@ -217,11 +217,7 @@ taskForm.onsubmit = async (e) => {
     delete dataToBeSent.endsOn;
   }
 
-<<<<<<< HEAD
-  if (status === 'AVIALABLE') {
-=======
   if (status === StatusType.AVAILABLE) {
->>>>>>> 130fd76 (created a constants file)
     delete dataToBeSent.endsOn;
   }
 

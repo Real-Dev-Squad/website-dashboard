@@ -29,6 +29,7 @@ describe('Input box', () => {
           [`${STAGING_API_URL}/levels`]: levels,
           [`${STAGING_API_URL}/users`]: users,
           [`${STAGING_API_URL}/tags`]: tags,
+<<<<<<< HEAD
 =======
 =======
 
@@ -38,6 +39,8 @@ describe('Input box', () => {
           [`${API_BASE_URL}/users`]: users,
           [`${API_BASE_URL}/tags`]: tags,
 >>>>>>> 93a5221 (Added data-testid for testing,also added new tests)
+=======
+>>>>>>> 14374bd (API_BASE_URL changed to stating for testing)
         };
 
         if (mockResponses[url]) {
