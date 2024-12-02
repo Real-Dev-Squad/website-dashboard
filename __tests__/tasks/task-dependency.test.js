@@ -1,4 +1,3 @@
-const API_BASE_URL = 'https://api.realdevsquad.com';
 const SKILL_TREE_BACKEND_BASE_URL =
   'https://services.realdevsquad.com/skilltree/v1';
 const puppeteer = require('puppeteer');
@@ -8,7 +7,7 @@ const { users } = require('../../mock-data/users');
 const { STAGING_API_URL } = require('../../mock-data/constants');
 const { skills } = require('../../mock-data/skills');
 
-describe('Input box', () => {
+describe('Task Form', () => {
   let browser;
   let page;
   jest.setTimeout(60000);
@@ -31,6 +30,7 @@ describe('Input box', () => {
           [`${STAGING_API_URL}/levels`]: levels,
           [`${STAGING_API_URL}/users`]: users,
           [`${STAGING_API_URL}/tags`]: tags,
+          [`${SKILL_TREE_BACKEND_BASE_URL}/skills`]: skills,
         };
 
         if (mockResponses[url]) {
