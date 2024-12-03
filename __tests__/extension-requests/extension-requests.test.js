@@ -655,7 +655,7 @@ describe('Tests the Extension Requests Screen', () => {
   });
 
   it('shows error messages for empty title and reason inputs on update under dev feature flag', async () => {
-    await page.goto(`${baseUrl}/?dev=true`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests/?dev=true`);
     const editButtonSelector = '[data-testid="edit-button"]';
     const editButton = await page.$(editButtonSelector);
     if (!editButton) {
@@ -695,7 +695,7 @@ describe('Tests the Extension Requests Screen', () => {
   });
 
   it('shows error message if deadline is set to past date under dev feature flag', async () => {
-    await page.goto(`${baseUrl}/?dev=true`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests/?dev=true`);
     const editButtonSelector = '[data-testid="edit-button"]';
     const editButton = await page.$(editButtonSelector);
     if (!editButton) {
@@ -716,7 +716,7 @@ describe('Tests the Extension Requests Screen', () => {
   });
 
   it('hides edit button and displays update wrapper on successful update under dev feature flag', async () => {
-    await page.goto(`${baseUrl}/?dev=true`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests/?dev=true`);
     const editButtonSelector = '[data-testid="edit-button"]';
     const editButton = await page.$(editButtonSelector);
     if (!editButton) {
