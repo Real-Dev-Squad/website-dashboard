@@ -1,7 +1,10 @@
 const puppeteer = require('puppeteer');
 const { filteredUsersData } = require('../../mock-data/users');
 const { mockUserData } = require('../../mock-data/users/mockdata');
-const API_BASE_URL = 'https://staging-api.realdevsquad.com';
+const {
+  STAGING_API_URL,
+  LOCAL_TEST_PAGE_URL,
+} = require('../../mock-data/constants');
 
 describe('App Component', () => {
   let browser;
@@ -14,8 +17,6 @@ describe('App Component', () => {
       args: ['--incognito', '--disable-web-security'],
     },
   };
-
-  const BASE_URL = 'http://localhost:8000';
 
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -30,7 +31,7 @@ describe('App Component', () => {
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-      if (url === `${API_BASE_URL}/users/search/?role=in_discord`) {
+      if (url === `${STAGING_API_URL}/users/search/?role=in_discord`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -46,7 +47,7 @@ describe('App Component', () => {
             ],
           }),
         });
-      } else if (url === `${API_BASE_URL}/users/search/?verified=true`) {
+      } else if (url === `${STAGING_API_URL}/users/search/?verified=true`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -65,7 +66,7 @@ describe('App Component', () => {
       }
     });
 
-    await page.goto(`${BASE_URL}/users/discord/`); // Replace with your app's URL
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/users/discord/`); // Replace with your app's URL
     await page.waitForNetworkIdle();
   });
 
@@ -102,7 +103,7 @@ describe('App Component', () => {
   });
 
   it('should handle user card clicks and apply active_tab class to clicked card only in discord tab', async () => {
-    await page.goto(`${BASE_URL}/users/discord/?tab=in_discord`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/users/discord/?tab=in_discord`);
     await page.waitForNetworkIdle();
     await page.waitForSelector('.user_card[data-key]');
     const userCardTestIds = await page.$$eval(
@@ -124,7 +125,7 @@ describe('App Component', () => {
   });
 
   it('should handle user card clicks and apply active_tab class to clicked card only verified tab', async () => {
-    await page.goto(`${BASE_URL}/users/discord/?tab=verified`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/users/discord/?tab=verified`);
     await page.waitForNetworkIdle();
     await page.waitForSelector('.user_card[data-key]');
     const userCardTestIds = await page.$$eval(

@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 const { superUserDetails } = require('../../mock-data/users/mockdata');
+const { STAGING_API_URL } = require('../../mock-data/constants');
 
 describe('Tests the "Onboarding > 31 Days" Filter', () => {
   let browser;
@@ -20,7 +21,8 @@ describe('Tests the "Onboarding > 31 Days" Filter', () => {
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-      if (url === 'https://api.realdevsquad.com/tasks/sunny-s') {
+
+      if (url === `${STAGING_API_URL}/tasks/sunny-s`) {
         // When we encounter the respective api call we respond with the below response
         interceptedRequest.respond({
           status: 200,
@@ -32,7 +34,7 @@ describe('Tests the "Onboarding > 31 Days" Filter', () => {
           },
           body: JSON.stringify(userDetailsApi),
         });
-      } else if (url === 'https://api.realdevsquad.com/users/self') {
+      } else if (url === `${STAGING_API_URL}/users/self`) {
         // When we encounter the respective api call we respond with the below response
         interceptedRequest.respond({
           status: 200,
