@@ -814,7 +814,7 @@ describe('Tests the Extension Requests Screen', () => {
   });
 
   it('shows error messages for empty title and reason inputs on update under dev feature flag', async () => {
-    await page.goto(`${baseUrl}/?dev=true`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests/?dev=true`);
     const editButtonSelector = '[data-testid="edit-button"]';
     const editButton = await page.$(editButtonSelector);
     if (!editButton) {
@@ -854,7 +854,47 @@ describe('Tests the Extension Requests Screen', () => {
   });
 
   it('shows error message if deadline is set to past date under dev feature flag', async () => {
-    await page.goto(`${baseUrl}/?dev=true`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests/?dev=true`);
+    const editButtonSelector = '[data-testid="edit-button"]';
+    const editButton = await page.$(editButtonSelector);
+    if (!editButton) {
+      return;
+    }
+    await page.click(editButtonSelector);
+    const updateButtonSelector = '[data-testid="update-button"]';
+    const titleInputSelector = '[data-testid="title-text-input"]';
+    const reasonInputSelector = '[data-testid="reason-input-text-area"]';
+    const titleErrorSelector = '[data-testid="title-input-error"]';
+    const reasonErrorSelector = '[data-testid="reason-input-error"]';
+
+    await page.evaluate((selector) => {
+      const element = document.querySelector(selector);
+      if (element) element.value = '';
+    }, titleInputSelector);
+
+    await page.evaluate((selector) => {
+      const element = document.querySelector(selector);
+      if (element) element.value = '';
+    }, reasonInputSelector);
+
+    await page.click(updateButtonSelector);
+
+    const isTitleErrorVisible = await page
+      .$eval(titleErrorSelector, (el) => el && !el.classList.contains('hidden'))
+      .catch(() => false);
+
+    const isReasonErrorVisible = await page
+      .$eval(
+        reasonErrorSelector,
+        (el) => el && !el.classList.contains('hidden'),
+      )
+      .catch(() => false);
+    expect(isTitleErrorVisible).toBe(true);
+    expect(isReasonErrorVisible).toBe(true);
+  });
+
+  it('shows error message if deadline is set to past date under dev feature flag', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests/?dev=true`);
     const editButtonSelector = '[data-testid="edit-button"]';
     const editButton = await page.$(editButtonSelector);
     if (!editButton) {
@@ -875,7 +915,7 @@ describe('Tests the Extension Requests Screen', () => {
   });
 
   it('hides edit button and displays update wrapper on successful update under dev feature flag', async () => {
-    await page.goto(`${baseUrl}/?dev=true`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests/?dev=true`);
     const editButtonSelector = '[data-testid="edit-button"]';
     const editButton = await page.$(editButtonSelector);
     if (!editButton) {
