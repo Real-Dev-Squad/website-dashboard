@@ -363,4 +363,25 @@ describe('Discord Groups Page', () => {
     const modalClosed = await page.$('.delete-confirmation-modal');
     expect(modalClosed).toBeFalsy();
   });
+
+  test('Should render loader when deleting a group', async () => {
+    setSuperUserPermission();
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/groups`);
+    await page.waitForNetworkIdle();
+    await page.waitForTimeout(1000);
+
+    const deleteButton = await page.$('.delete-group');
+    await deleteButton.click();
+
+    const confirmButton = await page.waitForSelector('#confirm-delete');
+    confirmButton.click();
+
+    const loader = await page.waitForSelector('.loader');
+    expect(loader).toBeTruthy();
+
+    await page.waitForTimeout(1000);
+
+    const loaderAfter = await page.$('.loader');
+    expect(loaderAfter).toBeFalsy();
+  });
 });
