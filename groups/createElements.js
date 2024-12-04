@@ -56,7 +56,7 @@ const createCard = (
       .querySelector('.delete-group')
       .addEventListener('click', (e) => {
         e.stopPropagation();
-        onDelete(rawGroup.id, rawGroup.roleId);
+        onDelete(rawGroup.id);
       });
   }
 

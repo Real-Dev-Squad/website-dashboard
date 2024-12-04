@@ -313,7 +313,7 @@ describe('Discord Groups Page', () => {
 
   test('Should display delete button for super users', async () => {
     setSuperUserPermission();
-    await page.goto(`${LOCAL_TEST_PAGE_URL}/groups?dev=true`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/groups`);
     await page.waitForNetworkIdle();
     await page.waitForTimeout(1000);
 
@@ -325,15 +325,6 @@ describe('Discord Groups Page', () => {
 
   test('Should not display delete button when user is normal user', async () => {
     resetUserPermission();
-    await page.goto(`${LOCAL_TEST_PAGE_URL}/groups?dev=true`);
-    await page.waitForNetworkIdle();
-
-    const deleteButtons = await page.$$('.delete-group');
-    expect(deleteButtons.length).toBe(0);
-  });
-
-  test('Should not display delete button when dev=false', async () => {
-    setSuperUserPermission();
     await page.goto(`${LOCAL_TEST_PAGE_URL}/groups`);
     await page.waitForNetworkIdle();
 
@@ -343,7 +334,7 @@ describe('Discord Groups Page', () => {
 
   test('Should display delete confirmation modal on click of delete button', async () => {
     setSuperUserPermission();
-    await page.goto(`${LOCAL_TEST_PAGE_URL}/groups?dev=true`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/groups`);
     await page.waitForNetworkIdle();
     await page.waitForTimeout(1000);
 
@@ -359,7 +350,7 @@ describe('Discord Groups Page', () => {
 
   test('Should close delete confirmation modal when cancel button is clicked', async () => {
     setSuperUserPermission();
-    await page.goto(`${LOCAL_TEST_PAGE_URL}/groups?dev=true`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/groups`);
     await page.waitForNetworkIdle();
     await page.waitForTimeout(1000);
 
@@ -371,5 +362,26 @@ describe('Discord Groups Page', () => {
 
     const modalClosed = await page.$('.delete-confirmation-modal');
     expect(modalClosed).toBeFalsy();
+  });
+
+  test('Should render loader when deleting a group', async () => {
+    setSuperUserPermission();
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/groups`);
+    await page.waitForNetworkIdle();
+    await page.waitForTimeout(1000);
+
+    const deleteButton = await page.$('.delete-group');
+    await deleteButton.click();
+
+    const confirmButton = await page.waitForSelector('#confirm-delete');
+    confirmButton.click();
+
+    const loader = await page.waitForSelector('.loader');
+    expect(loader).toBeTruthy();
+
+    await page.waitForTimeout(1000);
+
+    const loaderAfter = await page.$('.loader');
+    expect(loaderAfter).toBeFalsy();
   });
 });

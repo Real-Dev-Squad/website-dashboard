@@ -1,9 +1,35 @@
 const API_BASE_URL = window.API_BASE_URL;
 const suggestedUsers = [];
 const allUser = [];
+
+const params = new URLSearchParams(window.location.search);
+const isDev = params.get('dev') === 'true';
+
+// hide fields under isDev feature flag
+const containers = [
+  'featureUrlContainer',
+  'featureGroupContainer',
+  'taskLevelContainer',
+];
+
+function hideElements(isDev, elementIds) {
+  if (isDev) {
+    elementIds.forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.style.display = 'none';
+      }
+    });
+  }
+}
+// hide fields if dev=true
+hideElements(isDev, containers);
+
 const category = document.getElementById('category');
 
 category.addEventListener('change', async () => {
+  if (isDev) return;
+
   try {
     showSubmitLoader();
     const categoryValue = category.value;
@@ -54,7 +80,7 @@ const getDaysInEpoch = (remainingDays) => {
 };
 
 const setDefaultDates = () => {
-  if (document.getElementById('status').value === 'ASSIGNED') {
+  if (document.getElementById('status').value === StatusType.ASSIGNED) {
     const endsOn = document.getElementById('endsOn');
     endsOn.value = getFutureDateString(14);
     endsOn.min = getFutureDateString(1);
@@ -71,7 +97,7 @@ function getObjectOfFormData(formId) {
   const object = {};
   const data = new FormData(formId);
   const isStatusAssigned =
-    document.getElementById('status').value === 'ASSIGNED';
+    document.getElementById('status').value === StatusType.ASSIGNED;
 
   data.forEach((value, key) => {
     if (!Reflect.has(object, key)) {
@@ -155,7 +181,7 @@ taskForm.onsubmit = async (e) => {
     isNoteworthy,
   } = getObjectOfFormData(taskForm);
 
-  if (status === 'ASSIGNED' && !assignee.trim()) {
+  if (status === StatusType.ASSIGNED && !assignee.trim()) {
     alert('Assignee can not be empty');
     showSubmitLoader(false);
     document.getElementById('assignee').focus();
@@ -184,7 +210,7 @@ taskForm.onsubmit = async (e) => {
     isNoteworthy: isNoteworthy == 'on',
   };
 
-  if (status === 'ASSIGNED') {
+  if (status === StatusType.ASSIGNED) {
     dataToBeSent.startedOn = new Date() / 1000;
   }
 
@@ -192,26 +218,32 @@ taskForm.onsubmit = async (e) => {
     delete dataToBeSent.endsOn;
   }
 
-  if (status === 'AVIALABLE') {
+  if (status === StatusType.AVAILABLE) {
     delete dataToBeSent.endsOn;
   }
 
-  if (dataToBeSent.type == 'feature') {
-    dataToBeSent.assignee = assignee.trim() ? assignee : ' ';
-  }
+  if (isDev) {
+    delete dataToBeSent.featureUrl;
+    delete dataToBeSent.type;
+    delete dataToBeSent.participants;
 
-  if (dataToBeSent.type == 'group') {
-    dataToBeSent.participants = participants.trim()
-      ? participants.split(',')
-      : [];
+    dataToBeSent.assignee = assignee.trim() ? assignee : ' ';
+  } else {
+    if (dataToBeSent.featureUrl.trim() === '') {
+      delete dataToBeSent.featureUrl;
+    }
+    if (dataToBeSent.type == 'feature') {
+      dataToBeSent.assignee = assignee.trim() ? assignee : ' ';
+    }
+    if (dataToBeSent.type == 'group') {
+      dataToBeSent.participants = participants.trim()
+        ? participants.split(',')
+        : [];
+    }
   }
 
   if (dataToBeSent.purpose.trim() === '') {
     delete dataToBeSent.purpose;
-  }
-
-  if (dataToBeSent.featureUrl.trim() === '') {
-    delete dataToBeSent.featureUrl;
   }
 
   dataToBeSent.links = dataToBeSent.links.filter((link) => link);
@@ -248,19 +280,22 @@ taskForm.onsubmit = async (e) => {
     const result = await response.json();
 
     if (response.ok) {
-      const body = {
-        itemId: result.id,
-        itemType: 'task',
-        tagPayload: [{ tagId: category, levelId: level }],
-      };
-      await fetch(`${API_BASE_URL}/items`, {
-        method: 'POST',
-        credentials: 'include',
-        body: JSON.stringify(body),
-        headers: {
-          'Content-type': 'application/json',
-        },
-      });
+      if (!isDev) {
+        const body = {
+          itemId: result.id,
+          itemType: 'task',
+          tagPayload: [{ tagId: category, levelId: level }],
+        };
+
+        await fetch(`${API_BASE_URL}/items`, {
+          method: 'POST',
+          credentials: 'include',
+          body: JSON.stringify(body),
+          headers: {
+            'Content-type': 'application/json',
+          },
+        });
+      }
       alert(result.message);
       window.location.reload(true);
     }
@@ -289,7 +324,7 @@ let stateHandle = () => {
     ) {
       return true;
     } else if (
-      item.value === 'ASSIGNED' &&
+      item.value === StatusType.ASSIGNED &&
       (wasAssigneeSet === false || assigneeEl.value === '')
     ) {
       return true;
@@ -308,6 +343,8 @@ let stateHandle = () => {
 };
 
 let hideUnusedField = (radio) => {
+  if (isDev) return;
+
   const assigneeInput = document.getElementById('assigneeInput');
   const participantsInput = document.getElementById('participantsInput');
   if (
@@ -364,12 +401,14 @@ const handleDateChange = (event) => {
   previewDate.innerHTML = !!input.value ? getRemainingDays(input.value) : 14;
 };
 
-function handleStatusChange(event = { target: { value: 'AVAILABLE' } }) {
+function handleStatusChange(
+  event = { target: { value: StatusType.AVAILABLE } },
+) {
   const assignee = document.getElementById('assigneeInput');
   const assigneeEl = document.getElementById('assignee');
   const endsOnWrapper = document.getElementById('endsOnWrapper');
   const featureRadio = document.getElementById('feature');
-  if (event.target.value === 'ASSIGNED') {
+  if (event.target.value === StatusType.ASSIGNED) {
     setDefaultDates();
     assignee.classList.add('show-assignee-field');
     assignee.style.display = 'none';
@@ -381,7 +420,7 @@ function handleStatusChange(event = { target: { value: 'AVAILABLE' } }) {
     document.getElementById('endsOn').value = '';
     assigneeEl.value = '';
   }
-  if (event.target.value === 'ASSIGNED' && featureRadio.checked) {
+  if (event.target.value === StatusType.ASSIGNED && featureRadio.checked) {
     assignee.style.display = 'flex';
   }
 }
@@ -404,6 +443,8 @@ function debounce(func, delay) {
 }
 
 async function fetchTags() {
+  if (isDev) return;
+
   const response = await fetch(`${API_BASE_URL}/tags`);
   const data = await response.json();
   const { tags } = data;
@@ -419,6 +460,8 @@ async function fetchTags() {
 }
 
 async function fetchLevel() {
+  if (isDev) return;
+
   const response = await fetch(`${API_BASE_URL}/levels`);
   const data = await response.json();
   const { levels } = data;
