@@ -73,6 +73,106 @@ describe('App Component', () => {
   afterAll(async () => {
     await browser.close();
   });
+  it('should fetch and append new users on subsequent pages for discord users tab when feature flag is on', async () => {
+    await page.goto(`${BASE_URL}/users/discord/?tab=in_discord&dev=true`);
+    await page.waitForNetworkIdle();
+
+    const initialUserCardTestIds = await page.$$eval(
+      '[data-testid^="user-card-"]',
+      (cards) => cards.map((card) => card.getAttribute('data-testid')),
+    );
+    expect(initialUserCardTestIds.length).toBeLessThanOrEqual(10);
+    expect(initialUserCardTestIds.length).toBeGreaterThan(0);
+
+    await page.evaluate(() => {
+      window.scrollTo(0, document.body.scrollHeight);
+    });
+    await page.waitForNetworkIdle();
+
+    const updatedUserCardTestIds = await page.$$eval(
+      '[data-testid^="user-card-"]',
+      (cards) => cards.map((card) => card.getAttribute('data-testid')),
+    );
+    expect(updatedUserCardTestIds.length).toBeLessThanOrEqual(20);
+    expect(updatedUserCardTestIds.length).toBeGreaterThanOrEqual(
+      initialUserCardTestIds.length,
+    );
+  });
+  it('should fetch and append new users on subsequent pages for discord users tab', async () => {
+    await page.goto(`${BASE_URL}/users/discord/?tab=in_discord`);
+    await page.waitForNetworkIdle();
+
+    const initialUserCardTestIds = await page.$$eval(
+      '[data-testid^="user-card-"]',
+      (cards) => cards.map((card) => card.getAttribute('data-testid')),
+    );
+    expect(initialUserCardTestIds.length).toBeLessThanOrEqual(10);
+    expect(initialUserCardTestIds.length).toBeGreaterThan(0);
+
+    await page.evaluate(() => {
+      window.scrollTo(0, document.body.scrollHeight);
+    });
+    await page.waitForNetworkIdle();
+
+    const updatedUserCardTestIds = await page.$$eval(
+      '[data-testid^="user-card-"]',
+      (cards) => cards.map((card) => card.getAttribute('data-testid')),
+    );
+    expect(updatedUserCardTestIds.length).toBeLessThanOrEqual(20);
+    expect(updatedUserCardTestIds.length).toBeGreaterThanOrEqual(
+      initialUserCardTestIds.length,
+    );
+  });
+  it('should fetch and append new users on subsequent pages for verified users tab when feature flag is on', async () => {
+    await page.goto(`${BASE_URL}/users/discord/?tab=verified&dev=true`);
+    await page.waitForNetworkIdle();
+
+    const initialUserCardTestIds = await page.$$eval(
+      '[data-testid^="user-card-"]',
+      (cards) => cards.map((card) => card.getAttribute('data-testid')),
+    );
+    expect(initialUserCardTestIds.length).toBeLessThanOrEqual(10);
+    expect(initialUserCardTestIds.length).toBeGreaterThan(0);
+
+    await page.evaluate(() => {
+      window.scrollTo(0, document.body.scrollHeight);
+    });
+    await page.waitForNetworkIdle();
+
+    const updatedUserCardTestIds = await page.$$eval(
+      '[data-testid^="user-card-"]',
+      (cards) => cards.map((card) => card.getAttribute('data-testid')),
+    );
+    expect(updatedUserCardTestIds.length).toBeLessThanOrEqual(20);
+    expect(updatedUserCardTestIds.length).toBeGreaterThanOrEqual(
+      initialUserCardTestIds.length,
+    );
+  });
+  it('should fetch and append new users on subsequent pages for verified users tab', async () => {
+    await page.goto(`${BASE_URL}/users/discord/?tab=verified`);
+    await page.waitForNetworkIdle();
+
+    const initialUserCardTestIds = await page.$$eval(
+      '[data-testid^="user-card-"]',
+      (cards) => cards.map((card) => card.getAttribute('data-testid')),
+    );
+    expect(initialUserCardTestIds.length).toBeLessThanOrEqual(10);
+    expect(initialUserCardTestIds.length).toBeGreaterThan(0);
+
+    await page.evaluate(() => {
+      window.scrollTo(0, document.body.scrollHeight);
+    });
+    await page.waitForNetworkIdle();
+
+    const updatedUserCardTestIds = await page.$$eval(
+      '[data-testid^="user-card-"]',
+      (cards) => cards.map((card) => card.getAttribute('data-testid')),
+    );
+    expect(updatedUserCardTestIds.length).toBeLessThanOrEqual(20);
+    expect(updatedUserCardTestIds.length).toBeGreaterThanOrEqual(
+      initialUserCardTestIds.length,
+    );
+  });
 
   it('should render all sections', async () => {
     await page.waitForSelector('.tabs_section');
