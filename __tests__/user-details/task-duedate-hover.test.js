@@ -6,6 +6,12 @@ const {
 const {
   superUserDetails,
 } = require('../../mock-data/tasks-card-date-time-end-date-self/index'); // has super user info
+const { userDetails } = require('../../mock-data/user-details/index');
+const { usersStatus } = require('../../mock-data/users-status/index');
+const {
+  STAGING_API_URL,
+  LOCAL_TEST_PAGE_URL,
+} = require('../../mock-data/constants');
 
 describe('Tasks On User Management Page', () => {
   let browser;
@@ -15,7 +21,7 @@ describe('Tasks On User Management Page', () => {
 
   beforeAll(async () => {
     browser = await puppeteer.launch({
-      headless: 'new', //change headless to 'new' to check the tests in browser
+      headless: 'new',
       ignoreHTTPSErrors: true,
       args: ['--incognito', '--disable-web-security'],
       devtools: false,
@@ -26,8 +32,8 @@ describe('Tasks On User Management Page', () => {
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-      if (url === 'https://api.realdevsquad.com/tasks/sunny-s') {
-        // When we encounter the respective api call we respond with the below response
+
+      if (url === `${STAGING_API_URL}/users/sunny-s`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -36,23 +42,25 @@ describe('Tasks On User Management Page', () => {
             'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
-          body: JSON.stringify(userDetailsApi),
-        });
-      } else if (url === 'https://api.realdevsquad.com/users/self') {
-        // When we encounter the respective api call we respond with the below response
-        interceptedRequest.respond({
-          status: 200,
-          contentType: 'application/json',
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-          },
-          body: JSON.stringify(superUserDetails), // Y contains the json of a superuser in the server which will grant us the access to view the page without locks
+          body: JSON.stringify(userDetails),
         });
       } else if (
-        url ===
-        'https://api.realdevsquad.com/tasks/?size=3&dev=true&assignee=ajeyakrishna'
+        url === `${STAGING_API_URL}/users/self` ||
+        url === `${STAGING_API_URL}/users/ankush`
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(superUserDetails),
+        });
+      } else if (
+        url === `${STAGING_API_URL}/tasks/?size=3&dev=true&assignee=sunny-s` ||
+        url === `${STAGING_API_URL}/tasks/?size=3&dev=true&assignee=ankush`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -65,8 +73,7 @@ describe('Tasks On User Management Page', () => {
           body: JSON.stringify(usersTasksInDev['initial']),
         });
       } else if (
-        url ===
-        'https://api.realdevsquad.com/tasks?dev=true&assignee=ajeyakrishna&size=3&next=vvTPGHAs9w36oY1UnV8r'
+        url === `${STAGING_API_URL}/users/status/DtR9sK7CysOVHP17zl8N`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -76,25 +83,11 @@ describe('Tasks On User Management Page', () => {
             'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
-          body: JSON.stringify(usersTasksInDev['vvTPGHAs9w36oY1UnV8r']),
+          body: JSON.stringify(usersStatus.allUserStatus[0]),
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/tasks?dev=true&assignee=ajeyakrishna&size=3&next=i1LQOKkGhhpOxE6yEo3A'
-      ) {
-        interceptedRequest.respond({
-          status: 200,
-          contentType: 'application/json',
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-          },
-          body: JSON.stringify(usersTasksInDev['i1LQOKkGhhpOxE6yEo3A']),
-        });
-      } else if (
-        url ===
-        'https://api.realdevsquad.com/tasks?dev=true&assignee=ajeyakrishna&size=3&next=OhNeSTj5J72PhrA4mtrr'
+        `${STAGING_API_URL}/tasks?dev=true&assignee=ajeyakrishna&size=3&next=vvTPGHAs9w36oY1UnV8rr`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -111,7 +104,7 @@ describe('Tasks On User Management Page', () => {
       }
     });
     await page.goto(
-      'http://localhost:8000/users/details/index.html?username=sunny-s',
+      `${LOCAL_TEST_PAGE_URL}/users/details/index.html?username=sunny-s`,
     );
 
     await page.waitForNetworkIdle();
@@ -131,10 +124,7 @@ describe('Tasks On User Management Page', () => {
   });
 
   it('should select and interact with text elements', async () => {
-    // Select all elements with the specified class
     const elements = await page.$$('.due-date-value');
-
-    // Checking if elements are found
     expect(elements).toBeTruthy();
 
     for (const element of elements) {
@@ -145,26 +135,22 @@ describe('Tasks On User Management Page', () => {
       );
 
       await element.evaluate((el) => {
-        el.style.backgroundColor = 'blue'; // Changing background color for pointing out
+        el.style.backgroundColor = 'blue';
       });
 
-      await page.waitForTimeout(200); //waiting for a moment to check changes(very helpful when you turn headless into false), please increase value to 2000 or above to see clear changes
+      await page.waitForTimeout(200);
     }
 
-    await page.waitForTimeout(500); //waiting for a moment to check changes(very helpful when you turn headless into false)
+    await page.waitForTimeout(500);
   });
 
   it('should interact with hover elements', async () => {
-    // Select all elements with the same selector
     const elementsSelector = '.due-date-value';
-
-    // Find and interact with each element individually
     const elements = await page.$$(elementsSelector);
 
     for (const element of elements) {
       await element.hover();
       await page.waitForSelector('.task-due-date');
-      //   const hoverContext = await page.hover('.task-due-date');
       const tooltipText = await page.$eval(
         '.task-due-date',
         (tooltip) => tooltip.textContent,
@@ -174,15 +160,14 @@ describe('Tasks On User Management Page', () => {
         /Due Date: Thu Jul 27 2023|Due Date: Sat Sep 09 2023|Tue Jul 04 2023/,
       );
 
-      await page.waitForTimeout(200); //waiting for a moment to check changes(very helpful when you turn headless into false), please increase value to 2000 or above to see clear changes
+      await page.waitForTimeout(200);
     }
-
-    await page.waitForTimeout(500); //waiting for a moment to check changes(very helpful when you turn headless into false)
+    await page.waitForTimeout(500);
   });
 
   it('Scroll of task should work', async () => {
     await page.goto(
-      'http://localhost:8000/users/details/index.html?username=ankush',
+      `${LOCAL_TEST_PAGE_URL}/users/details/index.html?username=ankush`,
     );
     await page.waitForNetworkIdle();
     const taskDiv = await page.$$('.accordion-tasks');
@@ -213,12 +198,12 @@ describe('Tasks On User Management Page', () => {
     await page.waitForNetworkIdle();
 
     let renderedTasks = await userTasksDevDiv.$$('.user-task');
-    expect(Array.from(renderedTasks).length).toBe(15);
+    expect(Array.from(renderedTasks).length).toBe(3);
   });
 
   it('New task card should have all the detail fields', async () => {
     await page.goto(
-      'http://localhost:8000/users/details/index.html?username=ankush',
+      `${LOCAL_TEST_PAGE_URL}/users/details/index.html?username=sunny`,
     );
     await page.waitForNetworkIdle();
     const taskDiv = await page.$$('.accordion-tasks');

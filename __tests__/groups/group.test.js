@@ -1,9 +1,10 @@
 const puppeteer = require('puppeteer');
 const { allUsersData, superUserData } = require('../../mock-data/users');
 const { discordGroups, GroupRoleData } = require('../../mock-data/groups');
-
-const BASE_URL = 'https://api.realdevsquad.com';
-const PAGE_URL = 'http://localhost:8000';
+const {
+  STAGING_API_URL,
+  LOCAL_TEST_PAGE_URL,
+} = require('../../mock-data/constants');
 
 function setSuperUserPermission() {
   allUsersData.users[0] = superUserData;
@@ -37,8 +38,9 @@ describe('Discord Groups Page', () => {
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
+
       if (interceptedRequest.method() === 'GET') {
-        if (url === `${BASE_URL}/users/`) {
+        if (url === `${STAGING_API_URL}/users/`) {
           interceptedRequest.respond({
             status: 200,
             contentType: 'application/json',
@@ -49,7 +51,7 @@ describe('Discord Groups Page', () => {
             },
             body: JSON.stringify(allUsersData),
           });
-        } else if (url === `${BASE_URL}/users/self`) {
+        } else if (url === `${STAGING_API_URL}/users/self`) {
           interceptedRequest.respond({
             status: 200,
             contentType: 'application/json',
@@ -60,7 +62,7 @@ describe('Discord Groups Page', () => {
             },
             body: JSON.stringify(allUsersData.users[0]),
           });
-        } else if (url === `${BASE_URL}/discord-actions/groups`) {
+        } else if (url === `${STAGING_API_URL}/discord-actions/groups`) {
           interceptedRequest.respond({
             status: 200,
             contentType: 'application/json',
@@ -71,7 +73,7 @@ describe('Discord Groups Page', () => {
             },
             body: JSON.stringify(discordGroups),
           });
-        } else if (url === `${BASE_URL}/discord-actions/groups`) {
+        } else if (url === `${STAGING_API_URL}/discord-actions/groups`) {
           interceptedRequest.respond({
             status: 200,
             contentType: 'application/json',
@@ -82,7 +84,7 @@ describe('Discord Groups Page', () => {
             },
             body: JSON.stringify(discordGroups),
           });
-        } else if (url === `${BASE_URL}/discord-actions/roles`) {
+        } else if (url === `${STAGING_API_URL}/discord-actions/roles`) {
           interceptedRequest.respond({
             status: 200,
             contentType: 'application/json',
@@ -97,7 +99,7 @@ describe('Discord Groups Page', () => {
           interceptedRequest.continue();
         }
       } else if (interceptedRequest.method() === 'POST') {
-        if (url === `${BASE_URL}/discord-actions/groups`) {
+        if (url === `${STAGING_API_URL}/discord-actions/groups`) {
           const postData = interceptedRequest.postData();
           const groupData = JSON.parse(postData);
           // discordGroups.push(groupData);
@@ -111,7 +113,7 @@ describe('Discord Groups Page', () => {
             },
             body: JSON.stringify({ message: 'Group created successfully' }),
           });
-        } else if (url === `${BASE_URL}/discord-actions/roles`) {
+        } else if (url === `${STAGING_API_URL}/discord-actions/roles`) {
           interceptedRequest.respond({
             status: 201,
             contentType: 'application/json',
@@ -126,7 +128,7 @@ describe('Discord Groups Page', () => {
           interceptedRequest.continue();
         }
       } else if (interceptedRequest.method() === 'DELETE') {
-        if (url === `${BASE_URL}/discord-actions/roles`) {
+        if (url === `${STAGING_API_URL}/discord-actions/roles`) {
           interceptedRequest.respond({
             status: 200,
             contentType: 'application/json',
@@ -144,7 +146,7 @@ describe('Discord Groups Page', () => {
         interceptedRequest.continue();
       }
     });
-    await page.goto(`${PAGE_URL}/groups`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/groups`);
     await page.waitForNetworkIdle();
   });
 
@@ -257,7 +259,7 @@ describe('Discord Groups Page', () => {
 
   test('Should display only specified groups when name=<group-name> with different case', async () => {
     const groupNames = 'fIrSt,DSA+COdInG';
-    await page.goto(`${PAGE_URL}/groups?name=${groupNames}`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/groups?name=${groupNames}`);
     await page.waitForNetworkIdle();
 
     const displayedGroups = await page.evaluate(() => {
@@ -270,7 +272,7 @@ describe('Discord Groups Page', () => {
   });
 
   test('Should display no group found div when no group is present', async () => {
-    await page.goto(`${PAGE_URL}/groups?name=no-group-present`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/groups?name=no-group-present`);
     await page.waitForNetworkIdle();
 
     const noGroupDiv = await page.$('.no-group-container');
@@ -311,7 +313,7 @@ describe('Discord Groups Page', () => {
 
   test('Should display delete button for super users', async () => {
     setSuperUserPermission();
-    await page.goto(`${PAGE_URL}/groups?dev=true`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/groups`);
     await page.waitForNetworkIdle();
     await page.waitForTimeout(1000);
 
@@ -323,16 +325,7 @@ describe('Discord Groups Page', () => {
 
   test('Should not display delete button when user is normal user', async () => {
     resetUserPermission();
-    await page.goto(`${PAGE_URL}/groups?dev=true`);
-    await page.waitForNetworkIdle();
-
-    const deleteButtons = await page.$$('.delete-group');
-    expect(deleteButtons.length).toBe(0);
-  });
-
-  test('Should not display delete button when dev=false', async () => {
-    setSuperUserPermission();
-    await page.goto(`${PAGE_URL}/groups`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/groups`);
     await page.waitForNetworkIdle();
 
     const deleteButtons = await page.$$('.delete-group');
@@ -341,7 +334,7 @@ describe('Discord Groups Page', () => {
 
   test('Should display delete confirmation modal on click of delete button', async () => {
     setSuperUserPermission();
-    await page.goto(`${PAGE_URL}/groups?dev=true`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/groups`);
     await page.waitForNetworkIdle();
     await page.waitForTimeout(1000);
 
@@ -357,7 +350,7 @@ describe('Discord Groups Page', () => {
 
   test('Should close delete confirmation modal when cancel button is clicked', async () => {
     setSuperUserPermission();
-    await page.goto(`${PAGE_URL}/groups?dev=true`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/groups`);
     await page.waitForNetworkIdle();
     await page.waitForTimeout(1000);
 
@@ -369,5 +362,26 @@ describe('Discord Groups Page', () => {
 
     const modalClosed = await page.$('.delete-confirmation-modal');
     expect(modalClosed).toBeFalsy();
+  });
+
+  test('Should render loader when deleting a group', async () => {
+    setSuperUserPermission();
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/groups`);
+    await page.waitForNetworkIdle();
+    await page.waitForTimeout(1000);
+
+    const deleteButton = await page.$('.delete-group');
+    await deleteButton.click();
+
+    const confirmButton = await page.waitForSelector('#confirm-delete');
+    confirmButton.click();
+
+    const loader = await page.waitForSelector('.loader');
+    expect(loader).toBeTruthy();
+
+    await page.waitForTimeout(1000);
+
+    const loaderAfter = await page.$('.loader');
+    expect(loaderAfter).toBeFalsy();
   });
 });

@@ -87,6 +87,27 @@ const removeLoadingCards = () => {
   loadingCards.forEach((card) => mainContainer.removeChild(card));
 };
 
+const renderLoader = () => {
+  const loaderContainer = document.querySelector('.loader');
+
+  if (!loaderContainer) {
+    const loaderContainer = document.createElement('div');
+    loaderContainer.className = 'loader';
+    loaderContainer.innerHTML = `
+      <div class="loader-spin"></div>
+    `;
+
+    document.body.appendChild(loaderContainer);
+  }
+};
+
+const removeLoader = () => {
+  const loader = document.querySelector('.loader');
+  if (loader) {
+    document.body.removeChild(loader);
+  }
+};
+
 const renderGroupById = ({
   group,
   cardOnClick = () => {},
@@ -148,4 +169,6 @@ export {
   renderNoGroupFound,
   renderDeleteConfirmationModal,
   removeDeleteConfirmationModal,
+  renderLoader,
+  removeLoader,
 };

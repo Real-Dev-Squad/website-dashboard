@@ -1,7 +1,10 @@
 const puppeteer = require('puppeteer');
-const API_BASE_URL = 'https://staging-api.realdevsquad.com';
 const { user } = require('../../mock-data/users');
 const { standup } = require('../../mock-data/standup');
+const {
+  STAGING_API_URL,
+  LOCAL_TEST_PAGE_URL,
+} = require('../../mock-data/constants');
 
 const oneDay = 24 * 60 * 60 * 1000;
 const numberOfMonthsAgo = 3;
@@ -52,7 +55,7 @@ describe('Standup Page', () => {
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
 
-      if (url === `${API_BASE_URL}/users/sunny`) {
+      if (url === `${STAGING_API_URL}/users/sunny`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -65,7 +68,7 @@ describe('Standup Page', () => {
           body: JSON.stringify(user),
         });
       } else if (
-        url === `${API_BASE_URL}/progresses?userId=YleviOe1SsOML8eitV9W`
+        url === `${STAGING_API_URL}/progresses?userId=YleviOe1SsOML8eitV9W`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -81,7 +84,7 @@ describe('Standup Page', () => {
         interceptedRequest.continue();
       }
     });
-    await page.goto('http://localhost:8000/standup');
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/standup`);
     await page.waitForNetworkIdle();
   });
 
