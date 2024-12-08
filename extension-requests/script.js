@@ -989,12 +989,28 @@ async function createExtensionCard(data, dev) {
         const todayDate = Math.floor(new Date().getTime() / 1000);
         const newDeadline = new Date(extensionInput.value).getTime() / 1000;
         const isDeadlineInPast = newDeadline < todayDate;
+        const isInvalidDateFormat = isNaN(newDeadline);
+
+        if (isInvalidDateFormat) {
+          extensionInputError.innerText =
+            'Invalid date format. Please provide a valid date.';
+        } else if (isDeadlineInPast) {
+          extensionInputError.innerText =
+            "Past date can't be the new deadline.";
+        }
 
         titleInputError.classList.toggle('hidden', !isTitleMissing);
         reasonInputError.classList.toggle('hidden', !isReasonMissing);
-        extensionInputError.classList.toggle('hidden', !isDeadlineInPast);
+        extensionInputError.classList.toggle(
+          'hidden',
+          !(isDeadlineInPast || isInvalidDateFormat),
+        );
 
-        if (!isTitleMissing && !isReasonMissing && !isDeadlineInPast) {
+        if (
+          !isTitleMissing &&
+          !isReasonMissing &&
+          !(isDeadlineInPast || isInvalidDateFormat)
+        ) {
           toggleInputs();
           toggleActionButtonVisibility();
           editButton.classList.toggle('hidden');
@@ -1225,6 +1241,7 @@ async function createExtensionCard(data, dev) {
       if (
         !formData.title ||
         !formData.reason ||
+        isNaN(formData['newEndsOn']) ||
         formData['newEndsOn'] < todayDate
       ) {
         return;
