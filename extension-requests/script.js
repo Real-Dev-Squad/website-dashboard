@@ -1277,7 +1277,7 @@ async function createExtensionCard(data, dev) {
     updateExtensionRequest({
       id: data.id,
       body: formData,
-      dev: dev,
+      underDevFeatureFlag: dev,
     })
       .then(() => {
         data.reason = formData.reason;
