@@ -116,19 +116,15 @@ async function removeRoleFromMember(roleId, discordId) {
   }
 }
 
-async function deleteDiscordGroupRole(groupId, roleId) {
+async function deleteDiscordGroupRole(groupId) {
   try {
-    const res = await fetch(
-      `${BASE_URL}/discord-actions/groups/${groupId}?dev=true`,
-      {
-        method: 'DELETE',
-        credentials: 'include',
-        headers: {
-          'Content-type': 'application/json',
-        },
-        body: JSON.stringify({ roleid: roleId }),
+    const res = await fetch(`${BASE_URL}/discord-actions/groups/${groupId}`, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json',
       },
-    );
+    });
 
     if (!res.ok) {
       const errorResponse = await res.json();
