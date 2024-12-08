@@ -706,11 +706,15 @@ describe('Tests the Extension Requests Screen', () => {
 
     const extensionInputSelector = '[data-testid="extension-input"]';
     const extensionErrorSelector = '[data-testid="extension-input-error"]';
-    await page.type(extensionInputSelector, '2020-01-01');
+    await page.$eval(extensionInputSelector, (input) => {
+      input.value = '2020-01-01';
+    });
     await page.click('[data-testid="update-button"]');
     const isExtensionErrorVisible = await page.$eval(
       extensionErrorSelector,
-      (el) => !el.classList.contains('hidden'),
+      (el) =>
+        !el.classList.contains('hidden') &&
+        el.innerText.includes("Past date can't be the new deadline"),
     );
     expect(isExtensionErrorVisible).toBe(true);
   });
