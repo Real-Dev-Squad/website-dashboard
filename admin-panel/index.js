@@ -5,7 +5,7 @@ const loading = document.getElementById('loading');
 const selectElement = document.getElementById('select-tags');
 (async function setAuth() {
   try {
-    const res = await fetch(`${API_BASE_URL}/users/self`, {
+    const res = await fetch(`${API_BASE_URL}/users?profile=true`, {
       method: 'GET',
       credentials: 'include',
       headers: {
