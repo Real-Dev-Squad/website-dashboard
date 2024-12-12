@@ -233,6 +233,9 @@ const currentUserDetailsPromise = getSelfUser()
   })
   .catch((error) => {
     currentUserDetails = null;
+    if (isDev) {
+      showToast(error?.message || "Couldn't fetch user details.", 'error');
+    }
   });
 
 async function populateExtensionRequests(query = {}, newLink) {
