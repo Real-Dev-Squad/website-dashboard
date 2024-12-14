@@ -25,7 +25,7 @@ describe('Request container for non-super users', () => {
     await page.setRequestInterception(true);
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-      if (url == `${STAGING_API_URL}/users/self`) {
+      if (url == `${STAGING_API_URL}/users?profile=true`) {
         interceptedRequest.respond({
           ...defaultMockResponseHeaders,
           body: JSON.stringify(user),
