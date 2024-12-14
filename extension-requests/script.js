@@ -1481,7 +1481,7 @@ function showToast(message, type) {
     toast.addEventListener('transitionend', () => {
       toast.remove();
     });
-  }, 3000);
+  }, UPDATE_TOAST_TIMING);
 }
 
 function generateSentence(response, parentClassName, id) {
