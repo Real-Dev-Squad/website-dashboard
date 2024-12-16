@@ -281,7 +281,7 @@ describe('Tests the Extension Requests Screen', () => {
           },
           body: JSON.stringify(extensionRequestListForAuditLogs),
         });
-      } else if (url === `${STAGING_API_URL}/users/self`) {
+      } else if (url === `${STAGING_API_URL}/users?profile=true`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',

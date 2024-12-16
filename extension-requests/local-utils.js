@@ -10,7 +10,7 @@ const Order = {
 };
 async function getSelfUser() {
   try {
-    const res = await fetch(`${API_BASE_URL}/users/self`, {
+    const res = await fetch(`${API_BASE_URL}/users?profile=true`, {
       method: 'GET',
       credentials: 'include',
       headers: {
