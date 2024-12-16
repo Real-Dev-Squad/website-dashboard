@@ -41,3 +41,5 @@ const SORT_ASC_ICON = 'asc-sort-icon';
 const SORT_DESC_ICON = 'desc-sort-icon';
 const OLDEST_FIRST = 'Oldest first';
 const NEWEST_FIRST = 'Newest first';
+
+const UPDATE_TOAST_TIMING = 3000;

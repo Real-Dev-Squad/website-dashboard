@@ -790,13 +790,13 @@ body {
 
 .extension-request-update-toast {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 15px 20px;
+  bottom: 24px;
+  right: 24px;
+  padding: 16px 24px;
   background-color: var(--red-color);
   color: #fff;
-  font-size: 14px;
-  border-radius: 5px;
+  font-size: 16px;
+  border-radius: 4px;
   opacity: 1;
   transition: opacity 0.3s ease;
   z-index: 1000;
