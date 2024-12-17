@@ -916,7 +916,7 @@ async function createExtensionCard(data, dev) {
       attributes: { class: 'edit-button', 'data-testid': 'edit-button' },
     });
     if (dev) {
-      if (shouldDisplayEditButton(data.assigneeId)) {
+      if (shouldDisplayEditButton(data.assigneeId, currentUserDetails)) {
         extensionCardButtons.appendChild(editButton);
       }
     } else {
@@ -1455,11 +1455,10 @@ async function createExtensionCard(data, dev) {
   }
 }
 
-function shouldDisplayEditButton(assigneeId) {
+function shouldDisplayEditButton(assigneeId, currentUserData) {
   return (
-    currentUserDetails &&
-    (assigneeId === currentUserDetails.id ||
-      currentUserDetails.roles.super_user)
+    currentUserData &&
+    (assigneeId === currentUserData.id || currentUserData.roles.super_user)
   );
 }
 
