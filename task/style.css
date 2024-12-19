@@ -68,12 +68,10 @@ body {
   border: 1px solid #666;
   resize: vertical;
 }
-
 .radioButtons {
   display: flex;
   flex-direction: row;
 }
-
 .checkBox {
   display: flex;
   flex-direction: row;
@@ -103,7 +101,6 @@ body {
   color: red;
   font-size: medium;
 }
-
 #category,
 #level,
 #status,
@@ -278,4 +275,149 @@ footer {
   height: 2rem;
   border-radius: 50%;
   margin: 0 1rem;
+}
+/* Skills field */
+/* Multi-select container styles */
+.multi-select-container {
+  position: relative;
+  width: 100%;
+}
+
+.multi-select-button {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0.5rem;
+  width: 100%;
+  border: 1px solid #666;
+  border-radius: 5px;
+  background: white;
+  cursor: pointer;
+  text-align: left;
+}
+
+.multi-select-button .placeholder {
+  color: #666;
+}
+
+.selected-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  background: #f0f0f0;
+  border-radius: 16px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  margin-right: 4px;
+}
+
+.badge .text {
+  margin-right: 4px;
+}
+
+.badge .remove {
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+  padding: 0 2px;
+}
+
+.dropdown-icon {
+  margin-left: auto;
+  width: 16px;
+  height: 16px;
+}
+
+.popover {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  border-bottom: 1px solid #ddd;
+  outline: none;
+}
+
+.options-list {
+  max-height: 320px;
+  padding: 4px;
+  overflow-y: auto;
+}
+
+.option {
+  color: #101828;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin: 2px 0;
+}
+
+.option:hover {
+  background-color: #f5f5f5;
+}
+
+.option.focused {
+  background-color: #f0f0f0;
+}
+
+.popover .checkbox {
+  width: 20px;
+  height: 20px;
+  border: none;
+  position: relative;
+}
+
+.popover .checkbox.checked::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 6px;
+  height: 12px;
+  border: solid #4945ff;
+  border-width: 0 2px 2px 0;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.option-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Custom scrollbar */
+.options-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.options-list::-webkit-scrollbar-track {
+  background: #f5f5f5;
+}
+
+.options-list::-webkit-scrollbar-thumb {
+  background: #dedede;
+  border-radius: 4px;
+}
+
+.options-list::-webkit-scrollbar-thumb:hover {
+  background: #cdcdcd;
 }
