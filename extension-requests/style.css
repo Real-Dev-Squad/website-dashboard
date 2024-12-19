@@ -773,8 +773,43 @@ body {
   align-items: center;
   justify-content: space-between;
   position: relative;
-  height: 1.6rem;
+  height: 2rem;
 }
+
+.title-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.title-input-error,
+.reason-input-error,
+.extension-input-error {
+  font-size: 12px;
+  color: var(--red-color);
+}
+
+.extension-request-update-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 16px 24px;
+  background-color: var(--red-color);
+  color: #fff;
+  font-size: 16px;
+  border-radius: 4px;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  z-index: 1000;
+}
+
+.extension-request-update-toast.fade-out {
+  opacity: 0;
+}
+
+.extension-request-update-toast.toast-success {
+  background-color: var(--green-color);
+}
+
 .disabled {
   opacity: 0.5;
   pointer-events: none;

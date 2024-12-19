@@ -281,7 +281,7 @@ describe('Tests the Extension Requests Screen', () => {
           },
           body: JSON.stringify(extensionRequestListForAuditLogs),
         });
-      } else if (url === `${STAGING_API_URL}/users/self`) {
+      } else if (url === `${STAGING_API_URL}/users?profile=true`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -652,6 +652,165 @@ describe('Tests the Extension Requests Screen', () => {
       el.classList.contains('skeleton-text'),
     );
     expect(hasSkeletonClassAfter).toBe(false);
+  });
+
+  it('shows error messages for empty title and reason inputs on update under dev feature flag', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests/?dev=true`);
+    const editButtonSelector = '[data-testid="edit-button"]';
+    const editButton = await page.$(editButtonSelector);
+    if (!editButton) {
+      return;
+    }
+    await page.click(editButtonSelector);
+    const updateButtonSelector = '[data-testid="update-button"]';
+    const titleInputSelector = '[data-testid="title-text-input"]';
+    const reasonInputSelector = '[data-testid="reason-input-text-area"]';
+    const titleErrorSelector = '[data-testid="title-input-error"]';
+    const reasonErrorSelector = '[data-testid="reason-input-error"]';
+
+    await page.evaluate((selector) => {
+      const element = document.querySelector(selector);
+      if (element) element.value = '';
+    }, titleInputSelector);
+
+    await page.evaluate((selector) => {
+      const element = document.querySelector(selector);
+      if (element) element.value = '';
+    }, reasonInputSelector);
+
+    await page.click(updateButtonSelector);
+
+    const isTitleErrorVisible = await page
+      .$eval(titleErrorSelector, (el) => el && !el.classList.contains('hidden'))
+      .catch(() => false);
+
+    const isReasonErrorVisible = await page
+      .$eval(
+        reasonErrorSelector,
+        (el) => el && !el.classList.contains('hidden'),
+      )
+      .catch(() => false);
+    expect(isTitleErrorVisible).toBe(true);
+    expect(isReasonErrorVisible).toBe(true);
+  });
+
+  it('shows error message if deadline is set to past date under dev feature flag', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests/?dev=true`);
+    const editButtonSelector = '[data-testid="edit-button"]';
+    const editButton = await page.$(editButtonSelector);
+    if (!editButton) {
+      return;
+    }
+
+    await page.click(editButtonSelector);
+
+    const extensionInputSelector = '[data-testid="extension-input"]';
+    const extensionErrorSelector = '[data-testid="extension-input-error"]';
+    await page.$eval(extensionInputSelector, (input) => {
+      input.value = '2020-01-01';
+    });
+    await page.click('[data-testid="update-button"]');
+    const isExtensionErrorVisible = await page.$eval(
+      extensionErrorSelector,
+      (el) =>
+        !el.classList.contains('hidden') &&
+        el.innerText.includes("Past date can't be the new deadline"),
+    );
+    expect(isExtensionErrorVisible).toBe(true);
+  });
+
+  it('hides edit button and displays update wrapper on successful update under dev feature flag', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests/?dev=true`);
+    const editButtonSelector = '[data-testid="edit-button"]';
+    const editButton = await page.$(editButtonSelector);
+    if (!editButton) {
+      return;
+    }
+
+    await page.click(editButtonSelector);
+
+    const updateButtonSelector = '[data-testid="update-button"]';
+    const updateWrapperSelector = '[data-testid="update-wrapper"]';
+
+    await page.type('[data-testid="title-text-input"]', 'Valid Title');
+    await page.type('[data-testid="reason-input-text-area"]', 'Valid Reason');
+    await page.type('[data-testid="extension-input"]', '2050-01-01');
+
+    await page.click(updateButtonSelector);
+
+    const isEditButtonHidden = await page.$eval(editButtonSelector, (el) =>
+      el.classList.contains('hidden'),
+    );
+    const isUpdateWrapperVisible = await page.$eval(
+      updateWrapperSelector,
+      (el) => !el.classList.contains('hidden'),
+    );
+    expect(isEditButtonHidden).toBe(true);
+    expect(isUpdateWrapperVisible).toBe(true);
+  });
+
+  it('handles long title and long reason properly under dev feature flag', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests/?dev=true`);
+
+    const editButtonSelector = '[data-testid="edit-button"]';
+    const titleInputSelector = '[data-testid="title-text-input"]';
+    const reasonInputSelector = '[data-testid="reason-input-text-area"]';
+    const titleDisplaySelector = '.title-text';
+    const reasonDisplaySelector = '.reason-text';
+
+    const longTitle = 'A'.repeat(300);
+    const longReason = 'This is a very long reason '.repeat(50);
+
+    const editButton = await page.$(editButtonSelector);
+    if (!editButton) {
+      return;
+    }
+    await page.click(editButtonSelector);
+
+    await page.type(titleInputSelector, longTitle);
+    await page.type(reasonInputSelector, longReason);
+
+    const isTitleTruncated = await page.$eval(
+      titleDisplaySelector,
+      (el) => window.getComputedStyle(el).textOverflow === 'ellipsis',
+    );
+
+    const isReasonWrapped = await page.$eval(
+      reasonDisplaySelector,
+      (el) => window.getComputedStyle(el).whiteSpace === 'normal',
+    );
+
+    expect(isTitleTruncated).toBe(true);
+    expect(isReasonWrapped).toBe(true);
+  });
+
+  it('displays an error message for invalid date format under dev feature flag', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests/?dev=true`);
+
+    const editButtonSelector = '[data-testid="edit-button"]';
+    const editButton = await page.$(editButtonSelector);
+    if (!editButton) {
+      return;
+    }
+
+    await page.click(editButtonSelector);
+
+    const extensionInputSelector = '[data-testid="extension-input"]';
+    const extensionErrorSelector = '[data-testid="extension-input-error"]';
+
+    await page.$eval(extensionInputSelector, (input) => {
+      input.value = 'invalid-date';
+    });
+    await page.click('[data-testid="update-button"]');
+
+    const isExtensionErrorVisible = await page.$eval(
+      extensionErrorSelector,
+      (el) =>
+        !el.classList.contains('hidden') &&
+        el.innerText.includes('Invalid date format.'),
+    );
+
+    expect(isExtensionErrorVisible).toBe(true);
   });
 
   it('Checks whether the card is not removed from display when api call is unsuccessful', async () => {
