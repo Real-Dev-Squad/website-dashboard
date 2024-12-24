@@ -1,10 +1,11 @@
-const SKILL_TREE_BACKEND_BASE_URL =
-  'https://services.realdevsquad.com/skilltree/v1';
 const puppeteer = require('puppeteer');
 const { tags } = require('../../mock-data/tags');
 const { levels } = require('../../mock-data/levels');
 const { users } = require('../../mock-data/users');
-const { STAGING_API_URL } = require('../../mock-data/constants');
+const {
+  STAGING_API_URL,
+  SKILL_TREE_BACKEND_BASE_URL,
+} = require('../../mock-data/constants');
 const { skills } = require('../../mock-data/skills');
 
 describe('Task Form', () => {
