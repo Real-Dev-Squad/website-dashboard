@@ -60,7 +60,7 @@ describe('Applications page', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
         });
-      } else if (url === `${STAGING_API_URL}/users/self`) {
+      } else if (url === `${STAGING_API_URL}/users?profile=true`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',

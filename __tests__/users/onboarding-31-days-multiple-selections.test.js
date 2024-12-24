@@ -33,7 +33,7 @@ describe('Tests the "Onboarding > 31 Days" Filter', () => {
           },
           body: JSON.stringify(userDetailsApi),
         });
-      } else if (url === `${STAGING_API_URL}/users/self`) {
+      } else if (url === `${STAGING_API_URL}/users?profile=true`) {
         // When we encounter the respective api call we respond with the below response
         interceptedRequest.respond({
           status: 200,

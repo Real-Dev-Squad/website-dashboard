@@ -351,7 +351,8 @@ const defaultMockResponseHeaders = {
 };
 
 const urlMappings = {
-  'https://staging-api.realdevsquad.com/users/self': superUserDetails.user,
+  'https://staging-api.realdevsquad.com/users?profile=true':
+    superUserDetails.user,
   'https://api.realdevsquad.com/taskRequests/dM5wwD9QsiTzi7eG7Oq5':
     individualTaskReqDetail,
   'https://api.realdevsquad.com/taskRequests/dM5wwD9QsiTzi7eG7Oq6':
