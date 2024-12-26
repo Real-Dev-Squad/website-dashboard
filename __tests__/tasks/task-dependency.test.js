@@ -2,9 +2,13 @@ const puppeteer = require('puppeteer');
 const { tags } = require('../../mock-data/tags');
 const { levels } = require('../../mock-data/levels');
 const { users } = require('../../mock-data/users');
-const { STAGING_API_URL } = require('../../mock-data/constants');
+const {
+  STAGING_API_URL,
+  SKILL_TREE_BACKEND_BASE_URL,
+} = require('../../mock-data/constants');
+const { skills } = require('../../mock-data/skills');
 
-describe('Input box', () => {
+describe('Task Form', () => {
   let browser;
   let page;
   jest.setTimeout(60000);
@@ -27,6 +31,7 @@ describe('Input box', () => {
           [`${STAGING_API_URL}/levels`]: levels,
           [`${STAGING_API_URL}/users`]: users,
           [`${STAGING_API_URL}/tags`]: tags,
+          [`${SKILL_TREE_BACKEND_BASE_URL}/skills`]: skills,
         };
 
         if (mockResponses[url]) {
@@ -136,7 +141,7 @@ describe('Input box', () => {
 
   // Dev Mode Tests
   describe('Dev Mode Behavior', () => {
-    beforeAll(async () => {
+    beforeEach(async () => {
       await page.goto('http://localhost:8000/task?dev=true');
       await page.waitForNetworkIdle();
     });
@@ -171,6 +176,93 @@ describe('Input box', () => {
     it('should display the dependsOn field in dev mode', async () => {
       const dependsOnField = await page.$('[data-testid="dependsOn"]');
       expect(dependsOnField).toBeTruthy();
+    });
+
+    it('should show skills multi-select component', async () => {
+      const skillsComponent = await page.$eval(
+        '[data-testid="skills"] .multi-select-container',
+        (el) =>
+          window.getComputedStyle(el.closest('[data-testid="skills"]')).display,
+      );
+      expect(skillsComponent).not.toBe('none');
+    });
+
+    it('should initialize skills multi-select with options', async () => {
+      await page.waitForSelector('[data-testid="skills-multi-select"]');
+
+      // Click to open dropdown
+      await page.click('[data-testid="skills-select-button"]');
+
+      // Check if options are loaded
+      const options = await page.$$eval(
+        '[data-testid="option-label"]',
+        (elements) => elements.map((el) => el.textContent.trim()),
+      );
+
+      expect(options).toContain('(Select All)');
+      expect(options).toContain('JavaScript');
+      expect(options).toContain('React');
+      expect(options).toContain('Node.js');
+    });
+
+    it('should allow selecting and deselecting skills', async () => {
+      await page.waitForSelector('[data-testid="skills-multi-select"]');
+
+      // Open dropdown
+      await page.click('[data-testid="skills-select-button"]');
+
+      // Select JavaScript skill
+      await page.click('[data-value="1"]');
+
+      // Check if badge is created
+      const badge = await page.$eval(
+        '[data-testid="selected-items"] .badge .text',
+        (el) => el.textContent,
+      );
+      expect(badge).toBe('JavaScript');
+
+      // Remove skill
+      await page.click('.badge .remove');
+
+      // Check if badge is removed
+      const badges = await page.$$('.badge');
+      expect(badges.length).toBe(0);
+    });
+
+    it('should allow selecting all skills with (Select All)', async () => {
+      await page.waitForSelector('[data-testid="skills-multi-select"]');
+
+      // Open dropdown
+      await page.click('[data-testid="skills-select-button"]');
+
+      // Click (Select All)
+      await page.click('[data-testid="option"][data-value="select-all"]');
+
+      // Check if all skills are selected as badges
+      const badges = await page.$$eval(
+        '[data-testid="selected-items"] .badge .text',
+        (elements) => elements.map((el) => el.textContent.trim()),
+      );
+      expect(badges).toEqual(['JavaScript', 'React', 'Node.js']);
+    });
+
+    it('should allow navigating and selecting options using the keyboard', async () => {
+      await page.waitForSelector('[data-testid="skills-multi-select"]');
+
+      // Open dropdown
+      await page.click('[data-testid="skills-select-button"]');
+
+      // Navigate and select an option
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+
+      // Verify badge is created
+      const badges = await page.$$eval(
+        '[data-testid="selected-items"] .badge .text',
+        (elements) => elements.map((el) => el.textContent.trim()),
+      );
+      expect(badges).toContain('JavaScript');
     });
   });
 });
