@@ -103,8 +103,10 @@ const parseExtensionRequestParams = (uri, nextPageParamsObject) => {
   return nextPageParamsObject;
 };
 
-async function updateExtensionRequest({ id, body }) {
-  const url = `${API_BASE_URL}/extension-requests/${id}`;
+async function updateExtensionRequest({ id, body, underDevFeatureFlag }) {
+  const url = underDevFeatureFlag
+    ? `${API_BASE_URL}/extension-requests/${id}?dev=true`
+    : `${API_BASE_URL}/extension-requests/${id}`;
   const res = await fetch(url, {
     credentials: 'include',
     method: 'PATCH',

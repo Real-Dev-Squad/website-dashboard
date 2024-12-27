@@ -298,7 +298,8 @@ body {
 .application-card .user-info {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  align-items: flex-start;
+  gap: 8px;
 }
 
 .application-card .user-info * {
@@ -309,7 +310,6 @@ body {
   color: var(--black-color);
   font-size: 20px;
   font-style: normal;
-
   font-weight: 700;
   line-height: normal;
   padding-bottom: 8px;
@@ -320,6 +320,7 @@ body {
   font-size: 14px;
   font-weight: 600;
   line-height: normal;
+  max-width: 750px;
 }
 
 .application-card .user-info .skills {
@@ -327,6 +328,7 @@ body {
   font-size: 13px;
   font-weight: 600;
   line-height: normal;
+  max-width: 750px;
 }
 
 .hide-overflow {
@@ -350,6 +352,7 @@ body {
   font-size: 16px;
   padding: 6px 16px;
   margin-left: auto;
+  margin-top: 5%;
   font-weight: 700;
   line-height: normal;
   cursor: pointer;
@@ -383,6 +386,7 @@ body {
   height: 90vh;
   max-width: 600px;
   overflow-y: hidden;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -665,5 +669,13 @@ body {
 
   .application-card {
     width: 90%;
+  }
+
+  .application-card .user-info .skills {
+    max-width: 100%;
+  }
+
+  .application-card .user-info .company-name {
+    max-width: 100%;
   }
 }

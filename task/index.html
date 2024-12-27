@@ -101,6 +101,53 @@
           />
           <span id="linksDisplay" class="display"></span>
         </div>
+        <div class="inputBox" id="skillsContainer" data-testid="skills">
+          <label for="">Skills: </label>
+          <div class="multi-select-container" data-testid="skills-multi-select">
+            <button
+              type="button"
+              class="multi-select-button"
+              data-testid="skills-select-button"
+            >
+              <span class="placeholder">Select skills</span>
+              <div class="selected-items" data-testid="selected-items"></div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="dropdown-icon"
+              >
+                <path d="m6 9 6 6 6-6"></path>
+              </svg>
+            </button>
+            <div class="popover">
+              <input
+                type="text"
+                class="search-input"
+                placeholder="Search..."
+                data-testid="search-input"
+              />
+              <div class="options-list" data-testid="options-list">
+                <div
+                  class="option"
+                  data-value="select-all"
+                  data-testid="option"
+                >
+                  <span class="option-label" data-testid="option-label"
+                    >(Select All)</span
+                  >
+                  <span class="checkbox" data-testid="option-checkbox"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="inputBox" data-testid="status">
           <label for="status" class="editable">
             Status:<span class="required">*</span>
