@@ -9,6 +9,7 @@ const startLoading = () => loader.classList.remove('hidden');
 const stopLoading = () => loader.classList.add('hidden');
 let oooTabLink = document.getElementById(OOO_TAB_ID);
 let extensionTabLink = document.getElementById(EXTENSION_TAB_ID);
+let viewAllTabLink = document.getElementById(VIEW_ALL_TAB_ID);
 let currentReqType = OOO_REQUEST_TYPE;
 let selected__tab__class = 'selected__tab';
 let statusValue = null;
@@ -47,6 +48,7 @@ oooTabLink.addEventListener('click', async function () {
   nextLink = '';
   oooTabLink.classList.add(selected__tab__class);
   extensionTabLink.classList.remove(selected__tab__class);
+  viewAllTabLink.classList.remove(selected__tab__class);
   changeFilter();
   updateUrlWithQuery(currentReqType);
   await renderRequestCards({ state: statusValue, sort: sortByValue });
@@ -57,6 +59,19 @@ extensionTabLink.addEventListener('click', async function () {
   currentReqType = EXTENSION_REQUEST_TYPE;
   nextLink = '';
   extensionTabLink.classList.add(selected__tab__class);
+  oooTabLink.classList.remove(selected__tab__class);
+  viewAllTabLink.classList.remove(selected__tab__class);
+  changeFilter();
+  updateUrlWithQuery(currentReqType);
+  await renderRequestCards({ state: statusValue, sort: sortByValue });
+});
+
+viewAllTabLink.addEventListener('click', async function () {
+  if (isDataLoading) return;
+  currentReqType = VIEW_ALL_REQUEST_TYPE;
+  nextLink = '';
+  viewAllTabLink.classList.add(selected__tab__class);
+  extensionTabLink.classList.remove(selected__tab__class);
   oooTabLink.classList.remove(selected__tab__class);
   changeFilter();
   updateUrlWithQuery(currentReqType);
@@ -129,6 +144,44 @@ async function getExtensionRequests(query = {}) {
           return;
         case 404:
           showMessage('ERROR', ErrorMessages.EXTENSION_NOT_FOUND);
+          return;
+        case 400:
+          showMessage('ERROR', data.message);
+          showToast(data.message, 'failure');
+          return;
+        default:
+          break;
+      }
+    }
+    showMessage('ERROR', ErrorMessages.SERVER_ERROR);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+async function getAllRequests(query = {}) {
+  let finalUrl =
+    API_BASE_URL +
+    (nextLink || '/requests' + getViewAllQueryParamsString(query));
+
+  try {
+    const res = await fetch(finalUrl, {
+      credentials: 'include',
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      return data;
+    } else {
+      switch (res.status) {
+        case 401:
+          showMessage('ERROR', ErrorMessages.UNAUTHENTICATED);
+          return;
+        case 403:
+          showMessage('ERROR', ErrorMessages.UNAUTHORIZED);
+          return;
+        case 404:
+          showMessage('ERROR', ErrorMessages.ALL_NOT_FOUND);
           return;
         case 400:
           showMessage('ERROR', data.message);
@@ -439,10 +492,14 @@ async function renderRequestCards(queries = {}) {
     if (userDetails.length === 0) {
       userDetails = await getInDiscordUserList();
     }
-    requestResponse =
-      currentReqType === OOO_REQUEST_TYPE
-        ? await getOooRequests(queries)
-        : await getExtensionRequests(queries);
+
+    if (currentReqType === OOO_REQUEST_TYPE) {
+      requestResponse = await getOooRequests(queries);
+    } else if (currentReqType === EXTENSION_REQUEST_TYPE) {
+      requestResponse = await getExtensionRequests(queries);
+    } else if (currentReqType === VIEW_ALL_REQUEST_TYPE) {
+      requestResponse = await getAllRequests(queries);
+    }
 
     for (const request of requestResponse?.data || []) {
       let superUserDetails;

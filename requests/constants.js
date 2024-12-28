@@ -7,9 +7,11 @@ const Status = {
 
 const OOO_REQUEST_TYPE = 'OOO';
 const EXTENSION_REQUEST_TYPE = 'EXTENSION';
+const VIEW_ALL_REQUEST_TYPE = 'ALL';
 const REQUEST_CONTAINER_ID = 'request_container';
 const OOO_TAB_ID = 'ooo_tab_link';
 const EXTENSION_TAB_ID = 'extension_tab_link';
+const VIEW_ALL_TAB_ID = 'view_all_tab_link';
 
 const DEFAULT_DATE_FORMAT = 'DD MMM YYYY';
 
@@ -24,6 +26,7 @@ const ErrorMessages = {
   UNAUTHORIZED: 'You are unauthorized to view this section',
   OOO_NOT_FOUND: 'OOO Requests not found',
   EXTENSION_NOT_FOUND: 'Extension Requests not found',
+  ALL_NOT_FOUND: 'All Requests not found',
   SERVER_ERROR: 'Unexpected error occurred',
 };
 

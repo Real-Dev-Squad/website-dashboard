@@ -56,6 +56,18 @@ function getExtensionQueryParamsString(query) {
   return `?${queryParam}`;
 }
 
+function getViewAllQueryParamsString(query) {
+  let queryParam = 'dev=true&size=12';
+  if (
+    query.state !== undefined &&
+    query.state !== null &&
+    query.state !== 'ALL'
+  ) {
+    queryParam += `&state=${query.state}`;
+  }
+  return `?${queryParam}`;
+}
+
 function convertDateToReadableStringDate(date, format) {
   if (format === undefined || format === null) {
     format = DEFAULT_DATE_FORMAT;
