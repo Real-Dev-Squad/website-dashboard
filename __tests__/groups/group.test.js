@@ -51,7 +51,7 @@ describe('Discord Groups Page', () => {
             },
             body: JSON.stringify(allUsersData),
           });
-        } else if (url === `${STAGING_API_URL}/users/self`) {
+        } else if (url === `${STAGING_API_URL}/users?profile=true`) {
           interceptedRequest.respond({
             status: 200,
             contentType: 'application/json',
