@@ -385,7 +385,7 @@ const renderGithubIssue = async () => {
       ],
     }),
   );
-  const body = DOMPurify.sanitize(res?.body ?? '');
+  const body = DOMPurify.sanitize(res?.body ?? '').replace(/\n/g, '\n\n');
   const html = converter.makeHtml(body);
   taskContainer.appendChild(
     createCustomElement({
