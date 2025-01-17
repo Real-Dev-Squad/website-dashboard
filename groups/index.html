@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -51,6 +51,69 @@
       });
     </script>
     <script src="../footer/footerComponent.js"></script>
+  </body>
+  <div class="toast">
+    <div class="toast__message"></div>
+  </div>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/images/index.ico" type="image/x-icon" />
+    <title>Discord Groups | Real Dev Squad</title>
+    <link rel="stylesheet" href="/global.css" />
+    <link rel="stylesheet" href="/groups/style.css" />
+    <script src="/helpers/loadENV.js"></script>
+    <script src="/constants.js"></script>
+    <script type="module" src="/groups/script.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <nav class="navbar">
+      <div class="navbar__container">
+        <a class="back" href="/">
+          <img src="assets/left-arrow.svg" class="back__icon" alt="Back" />
+        </a>
+        <div class="navbar__spacer"></div>
+        <div class="navbar__profile"></div>
+      </div>
+    </nav>
+    <main class="container">
+      <section class="group-header">
+        <div class="search">
+          <img class="search__icon" src="assets/search.svg" alt="search" />
+          <input class="search__input" placeholder="Serach for group" />
+        </div>
+        <div class="create-group">
+          <button class="button">
+            <span class="button__text">Create Group</span>
+            <img src="assets/plus.svg" class="button__icon" />
+          </button>
+        </div>
+      </section>
+      <div class="group-container"></div>
+    </main>
+    <footer>
+      <p class="info-repo">
+        The contents of this website are deployed from this
+        <a
+          href="https://github.com/Real-Dev-Squad/website-dashboard"
+          target="_blank"
+          rel="noopener noreferrer"
+          >open sourced repo</a
+        >
+      </p>
+    </footer>
   </body>
   <div class="toast">
     <div class="toast__message"></div>
