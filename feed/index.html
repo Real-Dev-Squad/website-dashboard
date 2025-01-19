@@ -20,6 +20,14 @@
   <body>
     <nav id="tasksNav"></nav>
     <h1 id="pageTitle">Activity Feed</h1>
+    <div class="filters">
+      <input type="text" id="assignee-search" placeholder="Username" />
+      <input type="date" id="start-date" />
+      <input type="date" id="end-date" />
+      <button id="apply-filter">Apply Filter</button>
+      <button id="clear-filter">Clear Filters</button>
+    </div>
+    <ul id="ACITIVITY_FEED_CONTAINER"></ul>
     <nav class="tabs-container">
       <ul class="tabs"></ul>
       <div class="container">

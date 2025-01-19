@@ -38,9 +38,9 @@ function createTabListItem(tab) {
 function handleTabClick(tab) {
   tabs.forEach((t) => t.classList.remove('active'));
   tab.classList.add('active');
-  const category = tab.dataset.type;
-  changeFilter();
-  populateActivityFeed({ category });
+  currentCategory = tab.dataset.type;
+
+  refreshFeed();
 }
 
 tabsData.forEach((tab) => {
@@ -335,7 +335,6 @@ async function getActivityFeedData(query = {}, nextLink) {
       'Content-type': 'application/json',
     },
   });
-
   try {
     const res = await fetch(finalUrl, {
       credentials: 'include',
@@ -368,6 +367,50 @@ async function getActivityFeedData(query = {}, nextLink) {
   } catch (e) {
     console.error(e);
   }
+}
+
+let activeFilters = {
+  username: null,
+  startDate: null,
+  endDate: null,
+};
+
+document.getElementById('apply-filter').addEventListener('click', applyFilter);
+document.getElementById('clear-filter').addEventListener('click', clearFilters);
+
+let currentCategory = CATEGORY.ALL;
+
+function handleTabClick(tab) {
+  tabs.forEach((t) => t.classList.remove('active'));
+  tab.classList.add('active');
+  currentCategory = tab.dataset.type;
+  console.log('Updated currentCategory:', currentCategory);
+  changeFilter();
+  populateActivityFeed({ category: currentCategory });
+}
+
+function applyFilter() {
+  const username = document.getElementById('assignee-search').value.trim();
+  const startDate = document.getElementById('start-date').value;
+  const endDate = document.getElementById('end-date').value;
+  activeFilters.username = username || null;
+  activeFilters.startDate = startDate
+    ? new Date(startDate).toISOString()
+    : null;
+  activeFilters.endDate = endDate ? new Date(endDate).toISOString() : null;
+
+  refreshFeed();
+}
+
+function clearFilters() {
+  document.getElementById('assignee-search').value = '';
+  document.getElementById('start-date').value = '';
+  document.getElementById('end-date').value = '';
+
+  activeFilters = {};
+
+  console.log('Cleared filters, activeFilters:', activeFilters);
+  refreshFeed();
 }
 
 // main entry
