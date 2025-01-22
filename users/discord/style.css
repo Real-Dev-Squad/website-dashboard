@@ -16,7 +16,7 @@ main {
   grid-template-areas:
     'tab tab '
     'aside details';
-  height: 100%; /* Ensure full page height */
+  height: 100%;
 }
 
 .tabs_section {
@@ -67,7 +67,7 @@ main {
   padding: 1rem;
   background-color: var(--light-gray);
   position: sticky;
-  height: 100%; /* Fill available space */
+  height: 100%;
 }
 
 .user_details_field {

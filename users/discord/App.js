@@ -57,7 +57,6 @@ export const App = () => {
     return createElement('main', {}, [
       TabsSection({ tabs, activeTab, handleTabNavigation }),
 
-      // Scrollable users section
       createElement('div', { class: 'users_section' }, [
         UsersSection({
           users,
@@ -66,7 +65,6 @@ export const App = () => {
         }),
       ]),
 
-      // Fixed user details section
       createElement('div', { class: 'user_details_section' }, [
         UserDetailsSection({ user: users[showUser] ?? {} }),
       ]),
