@@ -56,12 +56,20 @@ export const App = () => {
   if (users.length)
     return createElement('main', {}, [
       TabsSection({ tabs, activeTab, handleTabNavigation }),
-      UsersSection({
-        users,
-        showUser,
-        handleUserSelected,
-      }),
-      UserDetailsSection({ user: users[showUser] ?? {} }),
+
+      // Scrollable users section
+      createElement('div', { class: 'users_section' }, [
+        UsersSection({
+          users,
+          showUser,
+          handleUserSelected,
+        }),
+      ]),
+
+      // Fixed user details section
+      createElement('div', { class: 'user_details_section' }, [
+        UserDetailsSection({ user: users[showUser] ?? {} }),
+      ]),
     ]);
 
   return createElement('main', {}, [
