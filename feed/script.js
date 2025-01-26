@@ -21,7 +21,7 @@ const tabsData = [
 
 async function renderFeed() {
   changeFilter();
-  await populateActivityFeed({ category });
+  await populateActivityFeed({ category: currentCategory, ...activeFilters });
   addIntersectionObserver();
 }
 
@@ -297,19 +297,45 @@ function formatTaskRequestsLog(data) {
   );
 }
 
+function addEmptyPageMessage(container) {
+  const emptyMessage = document.createElement('p');
+  emptyMessage.classList.add('empty-message');
+  emptyMessage.textContent = 'No logs to show!';
+  container.appendChild(emptyMessage);
+}
+
 async function populateActivityFeed(query = {}, newLink) {
+  console.log('Populating logs with filters:', activeFilters);
+
   activityFeedPage++;
   const currentVersion = activityFeedPage;
+
+  // Combine active filters with the provided query
+  const combinedQuery = { ...query, ...activeFilters };
+
+  console.log({ combinedQuery });
+
   try {
     isDataLoading = true;
     addLoader(container);
-    const activityFeedData = await getActivityFeedData(query, newLink);
+
+    const activityFeedData = await getActivityFeedData(combinedQuery, newLink);
+
+    activityFeedContainer.innerHTML = '';
+
     if (activityFeedData) {
       nextLink = activityFeedData.next;
       const allActivityFeedData = activityFeedData.data;
+
       if (currentVersion !== activityFeedPage) {
         return;
       }
+
+      if (allActivityFeedData.length === 0) {
+        addEmptyPageMessage(activityFeedContainer);
+        return;
+      }
+
       for (const data of allActivityFeedData) {
         const renderedItem = renderActivityItem(data);
         activityFeedContainer.appendChild(renderedItem);
@@ -319,6 +345,7 @@ async function populateActivityFeed(query = {}, newLink) {
     showMessage(activityFeedContainer, error);
   } finally {
     if (currentVersion !== activityFeedPage) return;
+
     removeLoader('loader');
     isDataLoading = false;
   }
@@ -369,15 +396,6 @@ async function getActivityFeedData(query = {}, nextLink) {
   }
 }
 
-let activeFilters = {
-  username: null,
-  startDate: null,
-  endDate: null,
-};
-
-document.getElementById('apply-filter').addEventListener('click', applyFilter);
-document.getElementById('clear-filter').addEventListener('click', clearFilters);
-
 let currentCategory = CATEGORY.ALL;
 
 function handleTabClick(tab) {
@@ -389,28 +407,46 @@ function handleTabClick(tab) {
   populateActivityFeed({ category: currentCategory });
 }
 
+let activeFilters = {
+  username: null,
+  startDate: null,
+  endDate: null,
+};
+
+document
+  .getElementById('assignee-search')
+  .addEventListener('input', applyFilter);
+document
+  .getElementById('clear-username')
+  .addEventListener('click', clearUsernameFilter);
+document.getElementById('start-date').addEventListener('change', applyFilter);
+document.getElementById('end-date').addEventListener('change', applyFilter);
+
 function applyFilter() {
   const username = document.getElementById('assignee-search').value.trim();
   const startDate = document.getElementById('start-date').value;
   const endDate = document.getElementById('end-date').value;
+
+  if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+    alert('Start Date cannot be later than End Date!');
+    return;
+  }
+
   activeFilters.username = username || null;
   activeFilters.startDate = startDate
     ? new Date(startDate).toISOString()
     : null;
   activeFilters.endDate = endDate ? new Date(endDate).toISOString() : null;
 
-  refreshFeed();
+  console.log('Active filters:', activeFilters);
+  populateActivityFeed({ category: currentCategory, ...activeFilters });
 }
 
-function clearFilters() {
+function clearUsernameFilter() {
   document.getElementById('assignee-search').value = '';
-  document.getElementById('start-date').value = '';
-  document.getElementById('end-date').value = '';
-
-  activeFilters = {};
-
-  console.log('Cleared filters, activeFilters:', activeFilters);
-  refreshFeed();
+  activeFilters.username = null;
+  console.log('Username filter cleared. Active filters:', activeFilters);
+  populateActivityFeed();
 }
 
 // main entry
