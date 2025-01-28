@@ -305,15 +305,10 @@ function addEmptyPageMessage(container) {
 }
 
 async function populateActivityFeed(query = {}, newLink) {
-  console.log('Populating logs with filters:', activeFilters);
-
   activityFeedPage++;
   const currentVersion = activityFeedPage;
 
-  // Combine active filters with the provided query
   const combinedQuery = { ...query, ...activeFilters };
-
-  console.log({ combinedQuery });
 
   try {
     isDataLoading = true;
@@ -402,7 +397,6 @@ function handleTabClick(tab) {
   tabs.forEach((t) => t.classList.remove('active'));
   tab.classList.add('active');
   currentCategory = tab.dataset.type;
-  console.log('Updated currentCategory:', currentCategory);
   changeFilter();
   populateActivityFeed({ category: currentCategory });
 }
@@ -438,14 +432,12 @@ function applyFilter() {
     : null;
   activeFilters.endDate = endDate ? new Date(endDate).toISOString() : null;
 
-  console.log('Active filters:', activeFilters);
   populateActivityFeed({ category: currentCategory, ...activeFilters });
 }
 
 function clearUsernameFilter() {
   document.getElementById('assignee-search').value = '';
   activeFilters.username = null;
-  console.log('Username filter cleared. Active filters:', activeFilters);
   populateActivityFeed();
 }
 

@@ -150,16 +150,23 @@ body {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  max-width: 50rem;
+  align-items: center;
 }
 
 .filter-row {
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
-  justify-content: space-between;
+  flex-direction: column;
+  max-width: 800px;
+  margin-left: 17rem;
+  align-items: flex-end;
 }
-
+.date-filters {
+  display: flex;
+  gap: 1rem;
+  font-weight: 600;
+}
 .input-wrapper {
   position: relative;
   width: 100%;
@@ -199,4 +206,75 @@ body {
   font-size: 1rem;
   background: var(--light-gray-color);
   max-width: 15rem;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: 0 10px;
+  }
+
+  #activity_feed_container {
+    padding: 5px 0;
+    margin: 0 auto;
+  }
+
+  .filters {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .filter-row {
+    flex-direction: column;
+    gap: 10px;
+    margin: 0 auto;
+    align-items: stretch;
+  }
+
+  .input-wrapper,
+  .filters input[type='date'] {
+    max-width: 100%;
+  }
+
+  .tabs-container {
+    padding: 10px 0;
+  }
+
+  .tabs {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tabs li {
+    padding: 10px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--tab-border-color);
+  }
+
+  .tabs li.active {
+    border-bottom: none;
+    border-left: 4px solid var(--pink-color);
+  }
+
+  .activity-item {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+  }
+
+  .title {
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-start;
+  }
+
+  .date-filters {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .page-message,
+  .loader-text {
+    font-size: 1.2rem;
+  }
 }
