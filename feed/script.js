@@ -437,9 +437,105 @@ function applyFilter() {
 
 function clearUsernameFilter() {
   document.getElementById('assignee-search').value = '';
+  document.getElementById('suggestion-box').style.display = 'none';
   activeFilters.username = null;
-  populateActivityFeed();
+  populateActivityFeed({ category: currentCategory, ...activeFilters });
 }
+
+let activeIndex = -1;
+
+async function fetchSuggestions() {
+  const input = document.getElementById('assignee-search');
+  const query = input.value.trim();
+  const suggestionBox = document.getElementById('suggestion-box');
+
+  if (!query) {
+    suggestionBox.style.display = 'none';
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/users?search=${query}`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const users = data.users || [];
+      if (users.length > 0) {
+        renderSuggestions(users);
+        suggestionBox.style.display = 'block';
+      } else {
+        suggestionBox.innerHTML =
+          '<div class="suggestion-item">No users found</div>';
+        suggestionBox.style.display = 'block';
+      }
+    } else {
+      console.error('Error fetching suggestions:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+function renderSuggestions(users) {
+  const suggestionBox = document.getElementById('suggestion-box');
+  suggestionBox.innerHTML = users
+    .map((user, index) => {
+      const userIcon = `<img src="/feed/assets/user.svg" alt="User Icon" class="user-icon" />`;
+      return `<div 
+                class="suggestion-item ${
+                  index === activeIndex ? 'active' : ''
+                }" 
+                onclick="selectAssignee('${user.username}')">
+                <div class="suggestion-content">
+                  ${userIcon}
+                  <span>${user.username}</span>
+                </div>
+              </div>`;
+    })
+    .join('');
+}
+
+function selectAssignee(username) {
+  const input = document.getElementById('assignee-search');
+  input.value = username;
+  const suggestionBox = document.getElementById('suggestion-box');
+  suggestionBox.style.display = 'none';
+  applyFilter();
+}
+
+document.getElementById('assignee-search').addEventListener('keydown', (e) => {
+  const suggestionBox = document.getElementById('suggestion-box');
+  const items = suggestionBox.querySelectorAll('.suggestion-item');
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    activeIndex = (activeIndex + 1) % items.length;
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    activeIndex = (activeIndex - 1 + items.length) % items.length;
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (activeIndex >= 0 && activeIndex < items.length) {
+      items[activeIndex].click();
+    }
+  } else if (e.key === 'Escape') {
+    suggestionBox.style.display = 'none';
+  }
+
+  items.forEach((item, index) => {
+    if (index === activeIndex) {
+      item.classList.add('active');
+    } else {
+      item.classList.remove('active');
+    }
+  });
+});
 
 // main entry
 renderFeed();

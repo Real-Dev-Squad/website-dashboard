@@ -23,21 +23,35 @@
     <div class="filters">
       <div class="filter-row">
         <div class="input-wrapper">
-          <input type="text" id="assignee-search" placeholder="Username" />
-          <span id="clear-username" class="clear-icon">×</span>
+          <label for="assignee-search">Username</label>
+          <input
+            type="text"
+            id="assignee-search"
+            placeholder="Enter Username"
+            oninput="fetchSuggestions()"
+          />
+          <span
+            id="clear-username"
+            class="clear-icon"
+            onclick="clearUsernameFilter()"
+            >×</span
+          >
+          <div id="suggestion-box" class="suggestion-box"></div>
         </div>
+
         <div class="date-filters">
-          <div class="filter-start-date">
-            <label for="start-date">Start Date:</label>
-            <input type="date" id="start-date" />
+          <div class="date-inputs">
+            <label for="start-date">Start Date</label>
+            <input type="date" id="start-date" placeholder="Start Date" />
           </div>
-          <div class="filter-end-date">
-            <label for="end-date">End Date:</label>
-            <input type="date" id="end-date" />
+          <div class="date-inputs">
+            <label for="end-date">End Date</label>
+            <input type="date" id="end-date" placeholder="End Date" />
           </div>
         </div>
       </div>
     </div>
+
     <section class="tabs-container">
       <ul class="tabs"></ul>
       <div class="container">
