@@ -21,7 +21,7 @@ const tabsData = [
 
 async function renderFeed() {
   changeFilter();
-  await populateActivityFeed({ category });
+  await populateActivityFeed({ category: currentCategory, ...activeFilters });
   addIntersectionObserver();
 }
 
@@ -38,9 +38,9 @@ function createTabListItem(tab) {
 function handleTabClick(tab) {
   tabs.forEach((t) => t.classList.remove('active'));
   tab.classList.add('active');
-  const category = tab.dataset.type;
-  changeFilter();
-  populateActivityFeed({ category });
+  currentCategory = tab.dataset.type;
+
+  refreshFeed();
 }
 
 tabsData.forEach((tab) => {
@@ -297,19 +297,40 @@ function formatTaskRequestsLog(data) {
   );
 }
 
+function addEmptyPageMessage(container) {
+  const emptyMessage = document.createElement('p');
+  emptyMessage.classList.add('empty-message');
+  emptyMessage.textContent = 'No logs to show!';
+  container.appendChild(emptyMessage);
+}
+
 async function populateActivityFeed(query = {}, newLink) {
   activityFeedPage++;
   const currentVersion = activityFeedPage;
+
+  const combinedQuery = { ...query, ...activeFilters };
+
   try {
     isDataLoading = true;
     addLoader(container);
-    const activityFeedData = await getActivityFeedData(query, newLink);
+
+    const activityFeedData = await getActivityFeedData(combinedQuery, newLink);
+
+    activityFeedContainer.innerHTML = '';
+
     if (activityFeedData) {
       nextLink = activityFeedData.next;
       const allActivityFeedData = activityFeedData.data;
+
       if (currentVersion !== activityFeedPage) {
         return;
       }
+
+      if (allActivityFeedData.length === 0) {
+        addEmptyPageMessage(activityFeedContainer);
+        return;
+      }
+
       for (const data of allActivityFeedData) {
         const renderedItem = renderActivityItem(data);
         activityFeedContainer.appendChild(renderedItem);
@@ -319,6 +340,7 @@ async function populateActivityFeed(query = {}, newLink) {
     showMessage(activityFeedContainer, error);
   } finally {
     if (currentVersion !== activityFeedPage) return;
+
     removeLoader('loader');
     isDataLoading = false;
   }
@@ -335,7 +357,6 @@ async function getActivityFeedData(query = {}, nextLink) {
       'Content-type': 'application/json',
     },
   });
-
   try {
     const res = await fetch(finalUrl, {
       credentials: 'include',
@@ -368,6 +389,56 @@ async function getActivityFeedData(query = {}, nextLink) {
   } catch (e) {
     console.error(e);
   }
+}
+
+let currentCategory = CATEGORY.ALL;
+
+function handleTabClick(tab) {
+  tabs.forEach((t) => t.classList.remove('active'));
+  tab.classList.add('active');
+  currentCategory = tab.dataset.type;
+  changeFilter();
+  populateActivityFeed({ category: currentCategory });
+}
+
+let activeFilters = {
+  username: null,
+  startDate: null,
+  endDate: null,
+};
+
+document
+  .getElementById('assignee-search')
+  .addEventListener('input', applyFilter);
+document
+  .getElementById('clear-username')
+  .addEventListener('click', clearUsernameFilter);
+document.getElementById('start-date').addEventListener('change', applyFilter);
+document.getElementById('end-date').addEventListener('change', applyFilter);
+
+function applyFilter() {
+  const username = document.getElementById('assignee-search').value.trim();
+  const startDate = document.getElementById('start-date').value;
+  const endDate = document.getElementById('end-date').value;
+
+  if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+    alert('Start Date cannot be later than End Date!');
+    return;
+  }
+
+  activeFilters.username = username || null;
+  activeFilters.startDate = startDate
+    ? new Date(startDate).toISOString()
+    : null;
+  activeFilters.endDate = endDate ? new Date(endDate).toISOString() : null;
+
+  populateActivityFeed({ category: currentCategory, ...activeFilters });
+}
+
+function clearUsernameFilter() {
+  document.getElementById('assignee-search').value = '';
+  activeFilters.username = null;
+  populateActivityFeed();
 }
 
 // main entry
