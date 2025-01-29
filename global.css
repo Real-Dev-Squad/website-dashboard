@@ -173,6 +173,12 @@ body {
   border-radius: 100%;
 }
 
+.footer {
+  width: 100vw;
+  text-align: center;
+  bottom: 4px;
+}
+
 @media screen and (max-width: 970px) {
   #tasksNav {
     justify-content: space-between;

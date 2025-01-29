@@ -6,6 +6,7 @@ import {
   createNavbarProfile,
   createNavbarProfileLoading,
   createNavbarProfileSignin,
+  createDeleteConfirmationModal,
 } from './createElements.js';
 
 const renderNotAuthenticatedPage = () => {
@@ -86,8 +87,34 @@ const removeLoadingCards = () => {
   loadingCards.forEach((card) => mainContainer.removeChild(card));
 };
 
-const renderGroupById = ({ group, cardOnClick = () => {} }) => {
-  const card = createCard(group, cardOnClick);
+const renderLoader = () => {
+  const loaderContainer = document.querySelector('.loader');
+
+  if (!loaderContainer) {
+    const loaderContainer = document.createElement('div');
+    loaderContainer.className = 'loader';
+    loaderContainer.innerHTML = `
+      <div class="loader-spin"></div>
+    `;
+
+    document.body.appendChild(loaderContainer);
+  }
+};
+
+const removeLoader = () => {
+  const loader = document.querySelector('.loader');
+  if (loader) {
+    document.body.removeChild(loader);
+  }
+};
+
+const renderGroupById = ({
+  group,
+  cardOnClick = () => {},
+  onDelete = () => {},
+  isSuperUser = false,
+}) => {
+  const card = createCard(group, cardOnClick, onDelete, isSuperUser);
   const mainContainer = document.querySelector('.group-container');
   const groupElement = document.getElementById(`group-${group.id}`);
   if (groupElement) {
@@ -105,6 +132,29 @@ const renderNoGroupFound = () => {
   mainContainer.append(noGroupContainer);
 };
 
+const renderDeleteConfirmationModal = ({
+  onClose = () => {},
+  onConfirm = () => {},
+}) => {
+  const container = document.querySelector('body');
+  const existingBackdrop = document.querySelector('.backdrop');
+
+  if (existingBackdrop) {
+    container.removeChild(existingBackdrop);
+  }
+
+  const modal = createDeleteConfirmationModal(onClose, onConfirm);
+  container.appendChild(modal);
+};
+
+const removeDeleteConfirmationModal = () => {
+  const container = document.querySelector('body');
+  const backdrop = document.querySelector('.backdrop');
+  if (backdrop) {
+    container.removeChild(backdrop);
+  }
+};
+
 export {
   renderNotAuthenticatedPage,
   renderGroupCreationModal,
@@ -117,4 +167,8 @@ export {
   removeLoadingCards,
   renderGroupById,
   renderNoGroupFound,
+  renderDeleteConfirmationModal,
+  removeDeleteConfirmationModal,
+  renderLoader,
+  removeLoader,
 };

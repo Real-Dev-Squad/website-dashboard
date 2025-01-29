@@ -1,8 +1,4 @@
-const BASE_URL =
-  window.location.hostname === 'localhost'
-    ? 'https://staging-api.realdevsquad.com'
-    : window.API_BASE_URL;
-const toast = document.getElementById('toast');
+const BASE_URL = window.API_BASE_URL;
 
 function createElement({ type, attributes = {}, innerText }) {
   const element = document.createElement(type);
@@ -13,7 +9,12 @@ function createElement({ type, attributes = {}, innerText }) {
   return element;
 }
 
-async function getApplications({ applicationStatus, size = 6, next = '' }) {
+async function getApplications({
+  applicationStatus,
+  size = 6,
+  next = '',
+  dev = false,
+}) {
   let url;
 
   if (next) url = `${BASE_URL}${next}`;
@@ -21,6 +22,9 @@ async function getApplications({ applicationStatus, size = 6, next = '' }) {
     url = `${BASE_URL}/applications?size=${size}`;
   } else {
     url = `${BASE_URL}/applications?size=${size}&status=${applicationStatus}`;
+    if (dev) {
+      url += '&dev=true';
+    }
   }
 
   try {
@@ -64,7 +68,7 @@ async function getApplicationById(applicationId) {
 
 async function getIsSuperUser() {
   try {
-    const res = await fetch(`${BASE_URL}/users/self`, {
+    const res = await fetch(`${BASE_URL}/users?profile=true`, {
       method: 'GET',
       credentials: 'include',
       headers: {

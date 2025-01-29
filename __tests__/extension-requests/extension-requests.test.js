@@ -21,7 +21,11 @@ const {
 } = require('../../mock-data/users');
 const { usersStatus } = require('../../mock-data/users-status');
 const { taskDone, auditLogTasks } = require('../../mock-data/tasks/index');
-const baseUrl = 'http://localhost:8000/extension-requests';
+const {
+  STAGING_API_URL,
+  LOCAL_TEST_PAGE_URL,
+} = require('../../mock-data/constants');
+
 describe('Tests the Extension Requests Screen', () => {
   let browser;
   let page;
@@ -44,11 +48,11 @@ describe('Tests the Extension Requests Screen', () => {
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
+
       if (
         url ===
-          'https://api.realdevsquad.com/extension-requests?order=desc&size=5&q=status%3APENDING' ||
-        url ===
-          'https://api.realdevsquad.com/extension-requests?dev=true&order=desc'
+          `${STAGING_API_URL}/extension-requests?order=desc&size=5&q=status%3APENDING` ||
+        url === `${STAGING_API_URL}/extension-requests?dev=true&order=desc`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -60,9 +64,7 @@ describe('Tests the Extension Requests Screen', () => {
           },
           body: JSON.stringify(extensionRequestsListPending),
         });
-      } else if (
-        url === 'https://api.realdevsquad.com/users/search?role=in_discord'
-      ) {
+      } else if (url === `${STAGING_API_URL}/users/search?role=in_discord`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -73,7 +75,7 @@ describe('Tests the Extension Requests Screen', () => {
           },
           body: JSON.stringify(allUsersData),
         });
-      } else if (url === 'https://api.realdevsquad.com/users/status') {
+      } else if (url === `${STAGING_API_URL}/users/status`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -86,7 +88,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?order=asc&size=5&q=status%3APENDING'
+        `${STAGING_API_URL}/extension-requests?order=asc&size=5&q=status%3APENDING`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -98,9 +100,7 @@ describe('Tests the Extension Requests Screen', () => {
           },
           body: JSON.stringify(extensionRequestsListPendingAscending),
         });
-      } else if (
-        url === 'https://api.realdevsquad.com/users?search=sunny&size=1'
-      ) {
+      } else if (url === `${STAGING_API_URL}/users?search=sunny&size=1`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -111,9 +111,7 @@ describe('Tests the Extension Requests Screen', () => {
           },
           body: JSON.stringify(userSunny),
         });
-      } else if (
-        url === 'https://api.realdevsquad.com/users?search=randhir&size=1'
-      ) {
+      } else if (url === `${STAGING_API_URL}/users?search=randhir&size=1`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -125,8 +123,20 @@ describe('Tests the Extension Requests Screen', () => {
           body: JSON.stringify(userRandhir),
         });
       } else if (
-        url ===
-        'https://api.realdevsquad.com/tasks/PYj79ki2agB0q5JN3kUf/details'
+        url === `${STAGING_API_URL}/tasks/PYj79ki2agB0q5JN3kUf/details`
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(taskDone),
+        });
+      } else if (
+        url === `${STAGING_API_URL}/tasks/GCYGDiU0lw4fwc3qljSY/details`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -140,21 +150,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/tasks/GCYGDiU0lw4fwc3qljSY/details'
-      ) {
-        interceptedRequest.respond({
-          status: 200,
-          contentType: 'application/json',
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-          },
-          body: JSON.stringify(taskDone),
-        });
-      } else if (
-        url ===
-        'https://api.realdevsquad.com/extension-requests/QISvF7kAmnD9vXHwwIsG/status'
+        `${STAGING_API_URL}/extension-requests/QISvF7kAmnD9vXHwwIsG/status`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -168,7 +164,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests/lGQ3AjUlgNB6Jd8jXaEC/status'
+        `${STAGING_API_URL}m/extension-requests/lGQ3AjUlgNB6Jd8jXaEC/status`
       ) {
         interceptedRequest.respond({
           status: 400,
@@ -181,8 +177,7 @@ describe('Tests the Extension Requests Screen', () => {
           body: JSON.stringify(extensionRequestResponse),
         });
       } else if (
-        url ===
-        'https://api.realdevsquad.com/extension-requests/lGQ3AjUlgNB6Jd8jXaEC'
+        url === `${STAGING_API_URL}/extension-requests/lGQ3AjUlgNB6Jd8jXaEC`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -196,7 +191,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?order=desc&size=5&q=status%3APENDING%2Cassignee%3AiODXB6gfsjaZB9p0XlBw'
+        `${STAGING_API_URL}/extension-requests?order=desc&size=5&q=status%3APENDING%2Cassignee%3AiODXB6gfsjaZB9p0XlBw`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -210,7 +205,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?order=desc&size=5&q=status%3APENDING%2Cassignee%3AiODXB6gfsjaZB9p0XlBw%2B7yzVDl8s1ORNCtH9Ps7K'
+        `${STAGING_API_URL}/extension-requests?order=desc&size=5&q=status%3APENDING%2Cassignee%3AiODXB6gfsjaZB9p0XlBw%2B7yzVDl8s1ORNCtH9Ps7K`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -223,8 +218,7 @@ describe('Tests the Extension Requests Screen', () => {
           body: JSON.stringify(extensionRequestsList),
         });
       } else if (
-        url ===
-        'https://api.realdevsquad.com/tasks/mZB0akqPUa1GQQdrgsx7/details'
+        url === `${STAGING_API_URL}/tasks/mZB0akqPUa1GQQdrgsx7/details`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -237,8 +231,7 @@ describe('Tests the Extension Requests Screen', () => {
           body: JSON.stringify(auditLogTasks['mZB0akqPUa1GQQdrgsx7']),
         });
       } else if (
-        url ===
-        'https://api.realdevsquad.com/tasks/7gZ9E0XTQCEFvUynVqAw/details'
+        url === `${STAGING_API_URL}/tasks/7gZ9E0XTQCEFvUynVqAw/details`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -250,9 +243,7 @@ describe('Tests the Extension Requests Screen', () => {
           },
           body: JSON.stringify(auditLogTasks['7gZ9E0XTQCEFvUynVqAw']),
         });
-      } else if (
-        url === 'https://api.realdevsquad.com/users?search=testunity&size=1'
-      ) {
+      } else if (url === `${STAGING_API_URL}/users?search=testunity&size=1`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -263,9 +254,7 @@ describe('Tests the Extension Requests Screen', () => {
           },
           body: JSON.stringify(searchedUserForAuditLogs['testunity']),
         });
-      } else if (
-        url === 'https://api.realdevsquad.com/users?search=joygupta&size=1'
-      ) {
+      } else if (url === `${STAGING_API_URL}/users?search=joygupta&size=1`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -278,9 +267,9 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-          'https://api.realdevsquad.com/extension-requests?order=desc&size=5&q=status%3AAPPROVED%2BPENDING%2BDENIED' ||
+          `${STAGING_API_URL}/extension-requests?order=desc&size=5&q=status%3AAPPROVED%2BPENDING%2BDENIED` ||
         url ===
-          'https://api.realdevsquad.com/extension-requests?dev=true&order=desc&q=status%3AAPPROVED%2BDENIED'
+          `${STAGING_API_URL}/extension-requests?dev=true&order=desc&q=status%3AAPPROVED%2BDENIED`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -292,7 +281,7 @@ describe('Tests the Extension Requests Screen', () => {
           },
           body: JSON.stringify(extensionRequestListForAuditLogs),
         });
-      } else if (url === 'https://api.realdevsquad.com/users/self') {
+      } else if (url === `${STAGING_API_URL}/users?profile=true`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -305,7 +294,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/logs/extensionRequests/?meta.extensionRequestId=fuQs71a0Y7BX3n4rc5Ii'
+        `${STAGING_API_URL}/logs/extensionRequests/?meta.extensionRequestId=fuQs71a0Y7BX3n4rc5Ii`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -318,8 +307,7 @@ describe('Tests the Extension Requests Screen', () => {
           body: JSON.stringify(extensionRequestLogs['fuQs71a0Y7BX3n4rc5Ii']),
         });
       } else if (
-        url ===
-        'https://api.realdevsquad.com/extension-requests/fuQs71a0Y7BX3n4rc5Ii'
+        url === `${STAGING_API_URL}/extension-requests/fuQs71a0Y7BX3n4rc5Ii`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -332,7 +320,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/logs/extensionRequests/?meta.extensionRequestId=lw7dRB0I3a6ivsFR5Izs'
+        `${STAGING_API_URL}/logs/extensionRequests/?meta.extensionRequestId=lw7dRB0I3a6ivsFR5Izs`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -346,7 +334,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?order=desc&size=5&q=status%3AAPPROVED%2Cassignee%3AiODXB6gfsjaZB9p0XlBw%2B7yzVDl8s1ORNCtH9Ps7K'
+        `${STAGING_API_URL}/extension-requests?order=desc&size=5&q=status%3AAPPROVED%2Cassignee%3AiODXB6gfsjaZB9p0XlBw%2B7yzVDl8s1ORNCtH9Ps7K`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -360,7 +348,7 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        'https://api.realdevsquad.com/extension-requests?order=desc&size=1&q=status%3APENDING'
+        `${STAGING_API_URL}/extension-requests?order=desc&size=1&q=status%3APENDING`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -383,7 +371,7 @@ describe('Tests the Extension Requests Screen', () => {
       }
     });
 
-    await page.goto(baseUrl);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests`);
 
     await page.waitForNetworkIdle();
 
@@ -394,7 +382,7 @@ describe('Tests the Extension Requests Screen', () => {
   });
 
   afterEach(async () => {
-    await page.goto('http://localhost:8000/extension-requests');
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests`);
     await page.waitForNetworkIdle();
   });
   afterAll(async () => {
@@ -633,12 +621,196 @@ describe('Tests the Extension Requests Screen', () => {
         break;
       }
     }
-    await page.waitForTimeout(1650);
+    await page.waitForTimeout(2000);
 
     const extensionCardsAfter = await page.$$('.extension-card');
-
     const cardCount = extensionCardsAfter.length;
     expect(cardCount === 3 || cardCount === 7).toBe(true);
+  });
+  it('checks whether the shimmer effect is visible under dev flag only for the assignee image element', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests/?dev=true`);
+    const assignImageSelector = await page.$$(
+      '[data-testid="assignee-image skeleton"]',
+    );
+    expect(assignImageSelector).toBeTruthy();
+
+    await page.waitForTimeout(5000);
+    const hasSkeletonClassAfter = await page.$eval('.assignee-image', (el) =>
+      el.classList.contains('skeleton'),
+    );
+    expect(hasSkeletonClassAfter).toBe(false);
+  });
+
+  it('checks whether the shimmer effect is visible under dev flag only for the assignee name element', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests/?dev=true`);
+    const assignNameSelector = await page.$$(
+      '[data-testid="assignee-name skeleton-text"]',
+    );
+    expect(assignNameSelector).toBeTruthy();
+    await page.waitForTimeout(5000);
+    const hasSkeletonClassAfter = await page.$eval('.assignee-name', (el) =>
+      el.classList.contains('skeleton-text'),
+    );
+    expect(hasSkeletonClassAfter).toBe(false);
+  });
+
+  it('shows error messages for empty title and reason inputs on update under dev feature flag', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests/?dev=true`);
+    const editButtonSelector = '[data-testid="edit-button"]';
+    const editButton = await page.$(editButtonSelector);
+    if (!editButton) {
+      return;
+    }
+    await page.click(editButtonSelector);
+    const updateButtonSelector = '[data-testid="update-button"]';
+    const titleInputSelector = '[data-testid="title-text-input"]';
+    const reasonInputSelector = '[data-testid="reason-input-text-area"]';
+    const titleErrorSelector = '[data-testid="title-input-error"]';
+    const reasonErrorSelector = '[data-testid="reason-input-error"]';
+
+    await page.evaluate((selector) => {
+      const element = document.querySelector(selector);
+      if (element) element.value = '';
+    }, titleInputSelector);
+
+    await page.evaluate((selector) => {
+      const element = document.querySelector(selector);
+      if (element) element.value = '';
+    }, reasonInputSelector);
+
+    await page.click(updateButtonSelector);
+
+    const isTitleErrorVisible = await page
+      .$eval(titleErrorSelector, (el) => el && !el.classList.contains('hidden'))
+      .catch(() => false);
+
+    const isReasonErrorVisible = await page
+      .$eval(
+        reasonErrorSelector,
+        (el) => el && !el.classList.contains('hidden'),
+      )
+      .catch(() => false);
+    expect(isTitleErrorVisible).toBe(true);
+    expect(isReasonErrorVisible).toBe(true);
+  });
+
+  it('shows error message if deadline is set to past date under dev feature flag', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests/?dev=true`);
+    const editButtonSelector = '[data-testid="edit-button"]';
+    const editButton = await page.$(editButtonSelector);
+    if (!editButton) {
+      return;
+    }
+
+    await page.click(editButtonSelector);
+
+    const extensionInputSelector = '[data-testid="extension-input"]';
+    const extensionErrorSelector = '[data-testid="extension-input-error"]';
+    await page.$eval(extensionInputSelector, (input) => {
+      input.value = '2020-01-01';
+    });
+    await page.click('[data-testid="update-button"]');
+    const isExtensionErrorVisible = await page.$eval(
+      extensionErrorSelector,
+      (el) =>
+        !el.classList.contains('hidden') &&
+        el.innerText.includes("Past date can't be the new deadline"),
+    );
+    expect(isExtensionErrorVisible).toBe(true);
+  });
+
+  it('hides edit button and displays update wrapper on successful update under dev feature flag', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests/?dev=true`);
+    const editButtonSelector = '[data-testid="edit-button"]';
+    const editButton = await page.$(editButtonSelector);
+    if (!editButton) {
+      return;
+    }
+
+    await page.click(editButtonSelector);
+
+    const updateButtonSelector = '[data-testid="update-button"]';
+    const updateWrapperSelector = '[data-testid="update-wrapper"]';
+
+    await page.type('[data-testid="title-text-input"]', 'Valid Title');
+    await page.type('[data-testid="reason-input-text-area"]', 'Valid Reason');
+    await page.type('[data-testid="extension-input"]', '2050-01-01');
+
+    await page.click(updateButtonSelector);
+
+    const isEditButtonHidden = await page.$eval(editButtonSelector, (el) =>
+      el.classList.contains('hidden'),
+    );
+    const isUpdateWrapperVisible = await page.$eval(
+      updateWrapperSelector,
+      (el) => !el.classList.contains('hidden'),
+    );
+    expect(isEditButtonHidden).toBe(true);
+    expect(isUpdateWrapperVisible).toBe(true);
+  });
+
+  it('handles long title and long reason properly under dev feature flag', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests/?dev=true`);
+
+    const editButtonSelector = '[data-testid="edit-button"]';
+    const titleInputSelector = '[data-testid="title-text-input"]';
+    const reasonInputSelector = '[data-testid="reason-input-text-area"]';
+    const titleDisplaySelector = '.title-text';
+    const reasonDisplaySelector = '.reason-text';
+
+    const longTitle = 'A'.repeat(300);
+    const longReason = 'This is a very long reason '.repeat(50);
+
+    const editButton = await page.$(editButtonSelector);
+    if (!editButton) {
+      return;
+    }
+    await page.click(editButtonSelector);
+
+    await page.type(titleInputSelector, longTitle);
+    await page.type(reasonInputSelector, longReason);
+
+    const isTitleTruncated = await page.$eval(
+      titleDisplaySelector,
+      (el) => window.getComputedStyle(el).textOverflow === 'ellipsis',
+    );
+
+    const isReasonWrapped = await page.$eval(
+      reasonDisplaySelector,
+      (el) => window.getComputedStyle(el).whiteSpace === 'normal',
+    );
+
+    expect(isTitleTruncated).toBe(true);
+    expect(isReasonWrapped).toBe(true);
+  });
+
+  it('displays an error message for invalid date format under dev feature flag', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests/?dev=true`);
+
+    const editButtonSelector = '[data-testid="edit-button"]';
+    const editButton = await page.$(editButtonSelector);
+    if (!editButton) {
+      return;
+    }
+
+    await page.click(editButtonSelector);
+
+    const extensionInputSelector = '[data-testid="extension-input"]';
+    const extensionErrorSelector = '[data-testid="extension-input-error"]';
+
+    await page.$eval(extensionInputSelector, (input) => {
+      input.value = 'invalid-date';
+    });
+    await page.click('[data-testid="update-button"]');
+
+    const isExtensionErrorVisible = await page.$eval(
+      extensionErrorSelector,
+      (el) =>
+        !el.classList.contains('hidden') &&
+        el.innerText.includes('Invalid date format.'),
+    );
+
+    expect(isExtensionErrorVisible).toBe(true);
   });
 
   it('Checks whether the card is not removed from display when api call is unsuccessful', async () => {
@@ -794,7 +966,7 @@ describe('Tests the Extension Requests Screen', () => {
     expect(isTooltipVisible).toBe(true);
   });
   it('Validating audit logs for extension request', async () => {
-    await page.goto('http://localhost:8000/extension-requests');
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests`);
     const extensionRequestIds = [
       'log-container-fuQs71a0Y7BX3n4rc5Ii',
       'log-container-lw7dRB0I3a6ivsFR5Izs',
@@ -824,8 +996,7 @@ describe('Tests the Extension Requests Screen', () => {
   });
 
   test('Checks the Request Number and request value element on Extension requests listing page', async () => {
-    const url = 'http://localhost:8000/extension-requests';
-    await page.goto(url);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests`);
 
     const extensionRequestNumberContainer = await page.$$(
       '.extension-request-number',
@@ -840,8 +1011,7 @@ describe('Tests the Extension Requests Screen', () => {
   });
 
   test('Default Request Number to 1 if requestNumber field is missing in API Response', async () => {
-    const url = 'http://localhost:8000/extension-requests';
-    await page.goto(url);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests`);
 
     const extensionRequestNumberContainer = await page.$$(
       '.extension-request-number',
@@ -857,7 +1027,7 @@ describe('Tests the Extension Requests Screen', () => {
   });
 
   it('Validating if audit logs are being generated in realtime', async () => {
-    await page.goto('http://localhost:8000/extension-requests');
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/extension-requests`);
     const extensionRequestIds = [
       'log-container-fuQs71a0Y7BX3n4rc5Ii',
       'log-container-lw7dRB0I3a6ivsFR5Izs',
@@ -916,12 +1086,12 @@ describe('Tests the Extension Requests Screen', () => {
     await page.waitForNetworkIdle();
     const url = page.url();
     expect(url).toBe(
-      `${baseUrl}?order=desc&size=5&q=status%3AAPPROVED%2Cassignee%3Asunny%2Brandhir`,
+      `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&size=5&q=status%3AAPPROVED%2Cassignee%3Asunny%2Brandhir`,
     );
   });
   it('Should have UI elements in sync with url', async () => {
     await page.goto(
-      `${baseUrl}/?order=desc&size=5&q=status%3AAPPROVED%2Cassignee%3Asunny%2Brandhir`,
+      `${LOCAL_TEST_PAGE_URL}/extension-requests/?order=desc&size=5&q=status%3AAPPROVED%2Cassignee%3Asunny%2Brandhir`,
     );
     const filterButton = await page.$('#filter-button');
     await filterButton.click();
@@ -944,7 +1114,9 @@ describe('Tests the Extension Requests Screen', () => {
   });
 
   it('Should show empty message if all extension requests have been addressed', async () => {
-    await page.goto(`${baseUrl}/?order=desc&size=1&q=status%3APENDING`);
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&size=1&q=status%3APENDING`,
+    );
     await page.waitForNetworkIdle();
 
     extensionRequestsElement = await page.$('.extension-requests');

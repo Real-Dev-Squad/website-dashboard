@@ -4,7 +4,7 @@ function goToAuthPage() {
   window.open(authUrl, '_self');
 }
 
-async function getSelfUser(endpoint = '/users/self') {
+async function getSelfUser(endpoint = '/users?profile=true') {
   try {
     const res = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'GET',
@@ -13,7 +13,7 @@ async function getSelfUser(endpoint = '/users/self') {
         'Content-type': 'application/json',
       },
     });
-    if (endpoint === '/users/self') {
+    if (endpoint === '/users?profile=true') {
       const self_user = await res.json();
       if (res.status === 200) {
         return self_user?.user || self_user;

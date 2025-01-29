@@ -227,7 +227,21 @@ const getExtensionColor = (deadline, createdTime) => {
   return 'orange-text';
 };
 
+const currentUserDetailsPromise = getSelfUser()
+  .then((response) => {
+    currentUserDetails = response;
+  })
+  .catch((error) => {
+    currentUserDetails = null;
+    if (isDev) {
+      showToast(error?.message || "Couldn't fetch user details.", 'error');
+    }
+  });
+
 async function populateExtensionRequests(query = {}, newLink) {
+  if (query.dev && !currentUserDetails) {
+    await currentUserDetailsPromise;
+  }
   extensionPageVersion++;
   const currentVersion = extensionPageVersion;
   try {
@@ -240,7 +254,11 @@ async function populateExtensionRequests(query = {}, newLink) {
       return;
     }
     for (let data of allExtensionRequests) {
-      createExtensionCard(data);
+      if (query.dev) {
+        createExtensionCard(data, true);
+      } else {
+        createExtensionCard(data);
+      }
     }
     initializeAccordions();
   } catch (error) {
@@ -260,7 +278,11 @@ const intersectionObserver = new IntersectionObserver(async (entries) => {
     return;
   }
   if (entries[0].isIntersecting && !isDataLoading) {
-    await populateExtensionRequests({}, nextLink);
+    if (isDev) {
+      await populateExtensionRequests({ dev: true }, nextLink);
+    } else {
+      await populateExtensionRequests({}, nextLink);
+    }
   }
 });
 
@@ -462,7 +484,7 @@ const handleFormPropagation = async (event) => {
   event.preventDefault();
 };
 
-async function createExtensionCard(data) {
+async function createExtensionCard(data, dev) {
   renderLogRecord[data.id] = [];
   //Create card element
   const rootElement = createElement({
@@ -470,8 +492,12 @@ async function createExtensionCard(data) {
     attributes: { class: 'extension-card' },
   });
   extensionRequestsContainer.appendChild(rootElement);
-  const removeSpinner = addSpinner(rootElement);
-  rootElement.classList.add('disabled');
+  let removeSpinner;
+  if (!dev) {
+    removeSpinner = addSpinner(rootElement);
+    rootElement.classList.add('disabled');
+  }
+
   //Api calls
   const userDataPromise = getUser(data.assignee);
   const taskDataPromise = getTaskDetails(data.taskId);
@@ -526,8 +552,25 @@ async function createExtensionCard(data) {
       id: 'title',
       name: 'title',
       value: data.title,
+      'data-testid': 'title-text-input',
     },
   });
+  const titleInputWrapper = createElement({
+    type: 'div',
+    attributes: { class: 'title-input-wrapper hidden' },
+  });
+  const titleInputError = createElement({
+    type: 'div',
+    attributes: {
+      class: 'title-input-error hidden',
+      'data-testid': 'title-input-error',
+    },
+    innerText: 'Title is required',
+  });
+  if (dev) {
+    titleInputWrapper.appendChild(titleInput);
+    titleInputWrapper.appendChild(titleInputError);
+  }
   const commitedHoursHoverCard = createElement({
     type: 'div',
     attributes: { class: 'comitted-hours hidden' },
@@ -550,7 +593,11 @@ async function createExtensionCard(data) {
   });
   commitedHoursHoverCard.appendChild(CommitedHourslabel);
   commitedHoursHoverCard.appendChild(CommitedHoursContent);
-  extensionCardHeaderWrapper.appendChild(titleInput);
+  if (dev) {
+    extensionCardHeaderWrapper.appendChild(titleInputWrapper);
+  } else {
+    extensionCardHeaderWrapper.appendChild(titleInput);
+  }
   extensionCardHeaderWrapper.appendChild(titleText);
   extensionCardHeaderWrapper.appendChild(commitedHoursHoverTrigger);
   extensionCardHeaderWrapper.appendChild(commitedHoursHoverCard);
@@ -569,12 +616,24 @@ async function createExtensionCard(data) {
     type: 'div',
     attributes: { class: 'details-container' },
   });
-  const statusSiteLink = createElement({
-    type: 'a',
-    attributes: {
-      class: 'external-link',
-    },
-  });
+
+  let statusSiteLink;
+  if (dev) {
+    statusSiteLink = createElement({
+      type: 'a',
+      attributes: {
+        class: 'external-link skeleton-link',
+        'data-testid': 'external-link skeleton-link',
+      },
+    });
+  } else {
+    statusSiteLink = createElement({
+      type: 'a',
+      attributes: {
+        class: 'external-link',
+      },
+    });
+  }
   const taskTitle = createElement({
     type: 'span',
     attributes: { class: 'task-title' },
@@ -598,6 +657,7 @@ async function createExtensionCard(data) {
     innerText: `Deadline${isDeadLineCrossed ? ' ' : ' in '}`,
   });
   deadlineContainer.appendChild(deadlineText);
+
   const deadlineValue = createElement({
     type: 'span',
     innerText: `${deadlineDays}`,
@@ -607,6 +667,7 @@ async function createExtensionCard(data) {
       }`,
     },
   });
+
   deadlineContainer.appendChild(deadlineValue);
   const deadlineTooltip = createElement({
     type: 'span',
@@ -625,6 +686,7 @@ async function createExtensionCard(data) {
     innerText: 'Requested ',
   });
   requestedContainer.appendChild(requestedText);
+
   const requestedValue = createElement({
     type: 'span',
     attributes: {
@@ -632,6 +694,7 @@ async function createExtensionCard(data) {
     },
     innerText: ` ${requestedDaysAgo}`,
   });
+
   const requestedToolTip = createElement({
     type: 'span',
     attributes: { class: 'tooltip' },
@@ -647,9 +710,21 @@ async function createExtensionCard(data) {
     innerText: 'Task status ',
   });
   taskStatusContainer.appendChild(taskStatusText);
-  const taskStatusValue = createElement({
-    type: 'span',
-  });
+
+  let taskStatusValue;
+  if (dev) {
+    taskStatusValue = createElement({
+      type: 'span',
+      attributes: {
+        class: 'skeleton-span',
+        'data-testid': 'skeleton-span',
+      },
+    });
+  } else {
+    taskStatusValue = createElement({
+      type: 'span',
+    });
+  }
   taskStatusContainer.appendChild(taskStatusValue);
   const datesContainer = createElement({
     type: 'div',
@@ -683,11 +758,13 @@ async function createExtensionCard(data) {
     innerText: `New deadline${isNewDeadLineCrossed ? ' ' : ' in '}`,
   });
   newDeadlineContainer.appendChild(newDeadlineText);
+
   const newDeadlineValue = createElement({
     type: 'span',
     attributes: { class: 'requested-day tooltip-container' },
     innerText: ` ${newDeadlineDays}`,
   });
+
   const newDeadlineToolTip = createElement({
     type: 'span',
     attributes: { class: 'tooltip' },
@@ -712,6 +789,7 @@ async function createExtensionCard(data) {
     attributes: { class: 'tooltip-container' },
     innerText: ` +${extensionDays}`,
   });
+
   const extensionToolTip = createElement({
     type: 'span',
     attributes: { class: 'tooltip' },
@@ -727,9 +805,21 @@ async function createExtensionCard(data) {
       id: 'newEndsOn',
       oninput: 'this.blur()',
       value: dateString(secondsToMilliSeconds(data.newEndsOn)),
+      'data-testid': 'extension-input',
     },
   });
+  const extensionInputError = createElement({
+    type: 'div',
+    attributes: {
+      class: 'extension-input-error hidden',
+      'data-testid': 'extension-input-error',
+    },
+    innerText: "Past date can't be the new deadline",
+  });
   newDeadlineContainer.appendChild(extensionInput);
+  if (dev) {
+    newDeadlineContainer.appendChild(extensionInputError);
+  }
   extensionForContainer.appendChild(extensionForValue);
 
   const extensionRequestNumberContainer = createElement({ type: 'div' });
@@ -749,6 +839,7 @@ async function createExtensionCard(data) {
     attributes: { class: 'extension-request-number' },
     innerText: `#${requestNumber}`,
   });
+
   extensionRequestNumberContainer.appendChild(extensionRequestNumberValue);
   const cardAssigneeButtonContainer = createElement({
     type: 'div',
@@ -765,16 +856,40 @@ async function createExtensionCard(data) {
     innerText: 'Assigned to',
   });
   assigneeContainer.appendChild(assigneeText);
-  const assigneeImage = createElement({
-    type: 'img',
-    attributes: { class: 'assignee-image' },
-  });
+  let assigneeImage;
+  if (dev) {
+    assigneeImage = createElement({
+      type: 'img',
+      attributes: {
+        class: 'assignee-image skeleton',
+        'data-testid': 'assignee-image skeleton',
+      },
+    });
+  } else {
+    assigneeImage = createElement({
+      type: 'img',
+      attributes: { class: 'assignee-image' },
+    });
+  }
   assigneeContainer.appendChild(assigneeImage);
-  const assigneeNameElement = createElement({
-    type: 'span',
-    attributes: { class: 'assignee-name' },
-  });
+
+  let assigneeNameElement;
+  if (dev) {
+    assigneeNameElement = createElement({
+      type: 'span',
+      attributes: {
+        class: 'assignee-name skeleton-text',
+        'data-testid': 'assignee-name skeleton-text',
+      },
+    });
+  } else {
+    assigneeNameElement = createElement({
+      type: 'span',
+      attributes: { class: 'assignee-name' },
+    });
+  }
   assigneeContainer.appendChild(assigneeNameElement);
+
   const extensionCardButtons = createElement({
     type: 'div',
     attributes: { class: 'extension-card-buttons' },
@@ -798,9 +913,15 @@ async function createExtensionCard(data) {
   } else {
     const editButton = createElement({
       type: 'button',
-      attributes: { class: 'edit-button' },
+      attributes: { class: 'edit-button', 'data-testid': 'edit-button' },
     });
-    extensionCardButtons.appendChild(editButton);
+    if (dev) {
+      if (shouldDisplayEditButton(data.assigneeId, currentUserDetails)) {
+        extensionCardButtons.appendChild(editButton);
+      }
+    } else {
+      extensionCardButtons.appendChild(editButton);
+    }
     const editIcon = createElement({
       type: 'img',
       attributes: { src: EDIT_ICON, alt: 'edit-icon' },
@@ -808,12 +929,15 @@ async function createExtensionCard(data) {
     editButton.appendChild(editIcon);
     const updateWrapper = createElement({
       type: 'div',
-      attributes: { class: 'update-wrapper hidden' },
+      attributes: {
+        class: 'update-wrapper hidden',
+        'data-testid': 'update-wrapper',
+      },
     });
     extensionCardButtons.appendChild(updateWrapper);
     const updateButton = createElement({
       type: 'button',
-      attributes: { class: 'update-button' },
+      attributes: { class: 'update-button', 'data-testid': 'update-button' },
       innerText: 'SAVE',
     });
 
@@ -862,10 +986,46 @@ async function createExtensionCard(data) {
       updateAccordionHeight(panel);
     });
     updateButton.addEventListener('click', (event) => {
-      toggleInputs();
-      toggleActionButtonVisibility();
-      editButton.classList.toggle('hidden');
-      updateWrapper.classList.toggle('hidden');
+      if (dev) {
+        const isTitleMissing = !titleInput.value;
+        const isReasonMissing = !reasonInput.value;
+        const todayDate = Math.floor(new Date().getTime() / 1000);
+        const newDeadline = new Date(extensionInput.value).getTime() / 1000;
+        const isDeadlineInPast = newDeadline < todayDate;
+        const isInvalidDateFormat = isNaN(newDeadline);
+
+        if (isInvalidDateFormat) {
+          extensionInputError.innerText =
+            'Invalid date format. Please provide a valid date.';
+        } else if (isDeadlineInPast) {
+          extensionInputError.innerText =
+            "Past date can't be the new deadline.";
+        }
+
+        titleInputError.classList.toggle('hidden', !isTitleMissing);
+        reasonInputError.classList.toggle('hidden', !isReasonMissing);
+        extensionInputError.classList.toggle(
+          'hidden',
+          !(isDeadlineInPast || isInvalidDateFormat),
+        );
+
+        if (
+          !isTitleMissing &&
+          !isReasonMissing &&
+          !(isDeadlineInPast || isInvalidDateFormat)
+        ) {
+          toggleInputs();
+          toggleActionButtonVisibility();
+          editButton.classList.toggle('hidden');
+          updateWrapper.classList.toggle('hidden');
+          titleInputWrapper.classList.add('hidden');
+        }
+      } else {
+        toggleInputs();
+        toggleActionButtonVisibility();
+        editButton.classList.toggle('hidden');
+        updateWrapper.classList.toggle('hidden');
+      }
     });
     cancelButton.addEventListener('click', (event) => {
       titleInput.value = data.title;
@@ -876,6 +1036,11 @@ async function createExtensionCard(data) {
       toggleActionButtonVisibility();
       editButton.classList.toggle('hidden');
       updateWrapper.classList.toggle('hidden');
+      if (dev) {
+        titleInputError.classList.add('hidden');
+        reasonInputError.classList.add('hidden');
+        extensionInputError.classList.add('hidden');
+      }
     });
     const payloadForLog = {
       body: {},
@@ -1003,10 +1168,22 @@ async function createExtensionCard(data) {
       class: 'input-text-area hidden',
       id: 'reason',
       name: 'reason',
+      'data-testid': 'reason-input-text-area',
     },
     innerText: data.reason,
   });
+  const reasonInputError = createElement({
+    type: 'span',
+    attributes: {
+      class: 'reason-input-error red-text hidden',
+      'data-testid': 'reason-input-error',
+    },
+    innerText: 'Reason is required',
+  });
   reasonContainer.appendChild(reasonInput);
+  if (dev) {
+    reasonContainer.appendChild(reasonInputError);
+  }
   reasonContainer.appendChild(reasonParagraph);
 
   const renderExtensionCreatedLog = () => {
@@ -1062,6 +1239,17 @@ async function createExtensionCard(data) {
     e.preventDefault();
     let formData = formDataToObject(new FormData(e.target));
     formData['newEndsOn'] = new Date(formData['newEndsOn']).getTime() / 1000;
+    if (dev) {
+      const todayDate = Math.floor(new Date().getTime() / 1000);
+      if (
+        !formData.title ||
+        !formData.reason ||
+        isNaN(formData['newEndsOn']) ||
+        formData['newEndsOn'] < todayDate
+      ) {
+        return;
+      }
+    }
     const removeSpinner = addSpinner(rootElement);
     rootElement.classList.add('disabled');
     const revertDataChange = updateCardData(formData);
@@ -1092,17 +1280,29 @@ async function createExtensionCard(data) {
     updateExtensionRequest({
       id: data.id,
       body: formData,
+      underDevFeatureFlag: dev,
     })
       .then(() => {
         data.reason = formData.reason;
         data.tile = formData.title;
         data.newEndsOn = data.newEndsOn;
         handleSuccess(rootElement);
+        if (dev) {
+          const successMessage = 'Extension request successfully updated.';
+          showToast(successMessage, 'success');
+        }
         appendLogs(payloadForLog, data.id);
       })
-      .catch(() => {
+      .catch((error) => {
         revertDataChange();
         handleFailure(rootElement);
+        if (dev) {
+          const errorMessage =
+            error?.response?.data?.message ||
+            error?.message ||
+            'An error occurred. Please try again.';
+          showToast(errorMessage, 'error');
+        }
       })
       .finally(() => {
         rootElement.classList.remove('disabled');
@@ -1148,6 +1348,9 @@ async function createExtensionCard(data) {
     return revertDataChange;
   }
   function toggleInputs() {
+    if (dev) {
+      titleInputWrapper.classList.toggle('hidden');
+    }
     titleInput.classList.toggle('hidden');
     titleText.classList.toggle('hidden');
     reasonInput.classList.toggle('hidden');
@@ -1198,10 +1401,22 @@ async function createExtensionCard(data) {
     userFirstName = userFirstName ?? '';
     statusSiteLink.href = `${STATUS_BASE_URL}/tasks/${data.taskId}`;
     statusSiteLink.innerText = taskData.title;
+    if (dev) {
+      statusSiteLink.classList.remove('skeleton-link');
+    }
     assigneeImage.src = userImage;
+    if (dev) {
+      assigneeImage.classList.remove('skeleton');
+    }
     assigneeImage.alt = userFirstName;
     assigneeNameElement.innerText = userFirstName;
+    if (dev) {
+      assigneeNameElement.classList.remove('skeleton-text');
+    }
     taskStatusValue.innerText = ` ${taskStatus}`;
+    if (dev) {
+      taskStatusValue.classList.remove('skeleton-span');
+    }
     CommitedHourslabel.innerText = 'Commited Hours:';
     if (comittedHours) {
       CommitedHoursContent.innerText = `${comittedHours / 4} hrs / week`;
@@ -1210,9 +1425,11 @@ async function createExtensionCard(data) {
       CommitedHoursContent.classList.add('label-content-missing');
     }
 
-    removeSpinner();
-    renderExtensionCreatedLog();
-    rootElement.classList.remove('disabled');
+    if (!dev) {
+      removeSpinner();
+      renderExtensionCreatedLog();
+      rootElement.classList.remove('disabled');
+    }
   });
   return rootElement;
 
@@ -1236,6 +1453,34 @@ async function createExtensionCard(data) {
       logContainer.innerHTML += innerHTML;
     }
   }
+}
+
+function shouldDisplayEditButton(assigneeId, currentUserData) {
+  return (
+    currentUserData &&
+    (assigneeId === currentUserData.id || currentUserData.roles.super_user)
+  );
+}
+
+function showToast(message, type) {
+  const existingToast = document.querySelector(
+    '.extension-request-update-toast',
+  );
+  if (existingToast) {
+    existingToast.remove();
+  }
+  const toast = document.createElement('div');
+  toast.className = `extension-request-update-toast toast-${type}`;
+  toast.textContent = message;
+
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add('fade-out');
+    toast.addEventListener('transitionend', () => {
+      toast.remove();
+    });
+  }, UPDATE_TOAST_TIMING);
 }
 
 function generateSentence(response, parentClassName, id) {

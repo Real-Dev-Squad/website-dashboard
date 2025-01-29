@@ -1,14 +1,14 @@
 const puppeteer = require('puppeteer');
 
 const { fetchedTaskRequests } = require('../../mock-data/taskRequests');
-
-const SITE_URL = 'http://localhost:8000';
-const API_BASE_URL = 'https://api.realdevsquad.com';
+const {
+  LOCAL_TEST_PAGE_URL,
+  STAGING_API_URL,
+} = require('../../mock-data/constants');
 
 describe('Task Requests', () => {
   let browser;
   let page;
-
   jest.setTimeout(60000);
 
   beforeEach(async () => {
@@ -18,19 +18,19 @@ describe('Task Requests', () => {
       args: ['--incognito', '--disable-web-security'],
       devtools: false,
     });
-  });
-  beforeEach(async () => {
     page = await browser.newPage();
 
     await page.setRequestInterception(true);
 
-    page.on('request', (request) => {
+    page.on('request', (interceptedRequest) => {
+      const url = interceptedRequest.url();
+
       if (
-        request.url() === `${API_BASE_URL}/taskRequests` ||
-        request.url() ===
-          `${API_BASE_URL}/taskRequests?size=20&q=status%3Apending+sort%3Acreated-asc`
+        url === `${STAGING_API_URL}/taskRequests` ||
+        url ===
+          `${STAGING_API_URL}/taskRequests?size=20&q=status%3Apending+sort%3Acreated-asc`
       ) {
-        request.respond({
+        interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({ data: fetchedTaskRequests }),
@@ -41,14 +41,14 @@ describe('Task Requests', () => {
           },
         });
       } else if (
-        request.url() ===
-        `${API_BASE_URL}/taskRequests?size=20&q=status%3Aapproved++sort%3Acreated-asc`
+        url ===
+        `${STAGING_API_URL}/taskRequests?size=20&q=status%3Aapproved++sort%3Acreated-asc`
       ) {
         const list = [];
         for (let i = 0; i < 20; i++) {
           list.push(fetchedTaskRequests[0]);
         }
-        request.respond({
+        interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({
@@ -57,10 +57,10 @@ describe('Task Requests', () => {
           }),
         });
       } else {
-        request.continue();
+        interceptedRequest.continue();
       }
     });
-    await page.goto(`${SITE_URL}/task-requests`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/task-requests`);
     await page.waitForNetworkIdle();
   });
 
@@ -73,7 +73,6 @@ describe('Task Requests', () => {
   });
   describe('When the user is super user', () => {
     it('should display the task requests card', async () => {
-      const url = await page.evaluate(() => API_BASE_URL);
       const taskCards = await page.$$('.taskRequest__card');
       const title = await taskCards[0].evaluate(
         (el) => el.children[0].textContent,
@@ -225,7 +224,7 @@ describe('createCustomElement', () => {
 
     page = await browser.newPage();
 
-    await page.goto(`${SITE_URL}/task-requests`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/task-requests`);
     await page.waitForNetworkIdle();
   });
 
@@ -288,14 +287,14 @@ describe('createCustomElement', () => {
 
 describe('urlParams', () => {
   beforeEach(async () => {
-    await page.goto(`${SITE_URL}/task-requests`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/task-requests`);
     await page.waitForNetworkIdle();
   });
 
   it('Should update page url for default filter and sort by', async () => {
     const url = page.url();
     expect(url).toBe(
-      `${SITE_URL}/task-requests?sort=created-asc&status=pending`,
+      `${LOCAL_TEST_PAGE_URL}/task-requests?sort=created-asc&status=pending`,
     );
   });
 
@@ -310,7 +309,7 @@ describe('urlParams', () => {
     const url = page.url();
 
     expect(url).toBe(
-      `${SITE_URL}/task-requests?sort=created-asc&status=approved&status=pending&status=denied&request-type=assignment&request-type=creation`,
+      `${LOCAL_TEST_PAGE_URL}/task-requests?sort=created-asc&status=approved&status=pending&status=denied&request-type=assignment&request-type=creation`,
     );
   });
 
@@ -321,13 +320,13 @@ describe('urlParams', () => {
     const url = page.url();
 
     expect(url).toBe(
-      `${SITE_URL}/task-requests?sort=requestors-asc&status=pending`,
+      `${LOCAL_TEST_PAGE_URL}/task-requests?sort=requestors-asc&status=pending`,
     );
   });
 
   it('Should have UI elements in sync with url', async () => {
     await page.goto(
-      `${SITE_URL}/task-requests?sort=created-desc&status=approved&status=pending&status=denied&request-type=assignment&request-type=creation`,
+      `${LOCAL_TEST_PAGE_URL}/task-requests?sort=created-desc&status=approved&status=pending&status=denied&request-type=assignment&request-type=creation`,
     );
     await page.click('#filter-button');
     await page.waitForSelector('.filter-modal');
@@ -374,7 +373,7 @@ describe('Sort Icon Functionality', () => {
   });
 
   beforeEach(async () => {
-    await page.goto(`${SITE_URL}/task-requests/?dev=true`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/task-requests/?dev=true`);
     await page.waitForNetworkIdle();
   });
 
@@ -423,7 +422,9 @@ describe('Sort Icon Functionality', () => {
   });
 
   it('ensures sort icon display and sort parameter text are in sync with URL parameters', async () => {
-    await page.goto(`${SITE_URL}/task-requests?sort=requestors-desc&dev=true`);
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/task-requests?sort=requestors-desc&dev=true`,
+    );
 
     const ascSortIconDisplay = await getSortIconDetails('asc-sort-icon');
     const descSortIconDisplay = await getSortIconDetails('desc-sort-icon');
@@ -460,7 +461,7 @@ describe('badges', () => {
   });
 
   beforeEach(async () => {
-    await page.goto(`${SITE_URL}/task-requests/?dev=true`);
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/task-requests/?dev=true`);
     await page.waitForNetworkIdle();
   });
 
@@ -482,7 +483,7 @@ describe('badges', () => {
 
   it('verifies that badge is removed when clicked and filters are updated accordingly', async () => {
     await page.goto(
-      `${SITE_URL}/task-requests/?sort=created-asc&status=pending&status=denied&dev=true`,
+      `${LOCAL_TEST_PAGE_URL}/task-requests/?sort=created-asc&status=pending&status=denied&dev=true`,
     );
     await page.waitForNetworkIdle();
 
@@ -503,7 +504,9 @@ describe('badges', () => {
   });
 
   it('verifies that filters header is shown only when at least one badge is present', async () => {
-    await page.goto(`${SITE_URL}/task-requests/?sort=created-asc&dev=true`);
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/task-requests/?sort=created-asc&dev=true`,
+    );
     await page.waitForNetworkIdle();
 
     const filtersHeader = await page.$('.filters__header');
@@ -539,7 +542,7 @@ describe('badges', () => {
 
   it('verifies that badges are displayed based on URL parameters and removes all badges when the Clear all button is clicked', async () => {
     await page.goto(
-      `${SITE_URL}/task-requests/?sort=created-asc&status=denied&request-type=assignment&dev=true`,
+      `${LOCAL_TEST_PAGE_URL}/task-requests/?sort=created-asc&status=denied&request-type=assignment&dev=true`,
     );
     await page.waitForNetworkIdle();
 
@@ -556,7 +559,7 @@ describe('badges', () => {
 
   it('verifies that badge is removed when delete icon is clicked', async () => {
     await page.goto(
-      `${SITE_URL}/task-requests/?sort=created-asc&status=denied&dev=true`,
+      `${LOCAL_TEST_PAGE_URL}/task-requests/?sort=created-asc&status=denied&dev=true`,
     );
 
     let badgeTexts = await getBadgeTexts(page);

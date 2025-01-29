@@ -16,7 +16,7 @@
     <nav id="tasksNav"></nav>
     <div class="container loaderContainer">
       <form action="" id="taskForm">
-        <div class="inputBox">
+        <div class="inputBox" data-testid="title">
           <label for="title">Title:<span class="required">*</span></label>
           <input
             required
@@ -28,7 +28,7 @@
             autofocus
           />
         </div>
-        <div class="inputBox">
+        <div class="inputBox" data-testid="isNoteworthy">
           <div class="checkBox">
             <label for="isNoteworthy">Is noteworthy:</label>
             <span
@@ -36,7 +36,7 @@
             /></span>
           </div>
         </div>
-        <div class="inputBox">
+        <div class="inputBox" data-testid="purpose">
           <label for="purpose" class="editable">Purpose:</label>
           <textarea
             type="text"
@@ -47,7 +47,7 @@
           ></textarea>
           <span id="purposeDisplay" class="display"></span>
         </div>
-        <div class="inputBox">
+        <div class="inputBox" id="featureUrlContainer" data-testid="featureUrl">
           <label for="featureUrl" class="editable">Feature URL:</label>
           <input
             type="url"
@@ -58,7 +58,11 @@
           />
           <span id="featureUrlDisplay" class="display"></span>
         </div>
-        <div class="inputBox">
+        <div
+          class="inputBox"
+          id="featureGroupContainer"
+          data-testid="radioButtons"
+        >
           <div class="radioButtons">
             <div class="feature" onclick="hideUnusedField('assignee');">
               <label for="feature">Feature</label>
@@ -86,7 +90,7 @@
             <span class="required">*</span>
           </div>
         </div>
-        <div class="inputBox">
+        <div class="inputBox" data-testid="links">
           <label for="links" class="editable">Links:</label>
           <input
             type="text"
@@ -97,7 +101,54 @@
           />
           <span id="linksDisplay" class="display"></span>
         </div>
-        <div class="inputBox">
+        <div class="inputBox" id="skillsContainer" data-testid="skills">
+          <label for="">Skills: </label>
+          <div class="multi-select-container" data-testid="skills-multi-select">
+            <button
+              type="button"
+              class="multi-select-button"
+              data-testid="skills-select-button"
+            >
+              <span class="placeholder">Select skills</span>
+              <div class="selected-items" data-testid="selected-items"></div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="dropdown-icon"
+              >
+                <path d="m6 9 6 6 6-6"></path>
+              </svg>
+            </button>
+            <div class="popover">
+              <input
+                type="text"
+                class="search-input"
+                placeholder="Search..."
+                data-testid="search-input"
+              />
+              <div class="options-list" data-testid="options-list">
+                <div
+                  class="option"
+                  data-value="select-all"
+                  data-testid="option"
+                >
+                  <span class="option-label" data-testid="option-label"
+                    >(Select All)</span
+                  >
+                  <span class="checkbox" data-testid="option-checkbox"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="inputBox" data-testid="status">
           <label for="status" class="editable">
             Status:<span class="required">*</span>
           </label>
@@ -112,11 +163,11 @@
             <option value="ASSIGNED">Assigned</option>
           </select>
         </div>
-        <div class="inputBox">
+        <div class="inputBox" id="taskLevelContainer" data-testid="taskLevel">
           <label for="taskLevel">Task Level</label>
           <br />
           <div class="inputBox">
-            <label for="level" class="editable">
+            <label for="category" class="editable">
               Category:<span class="required">*</span>
             </label>
             <select
@@ -136,19 +187,19 @@
               <option disabled selected>Select Level</option>
             </select>
           </div>
-          <div class="inputBox">
-            <label for="dependsOn" class="editable">DependsOn</label>
-            <input
-              type="text"
-              name="dependsOn"
-              id="dependsOn"
-              placeholder="Task ID separated with comma "
-              class="notEditing"
-            />
-            <span id="linksDisplay" class="display"></span>
-          </div>
         </div>
-        <div class="inputBox class" id="assigneeInput">
+        <div class="inputBox" id="dependsOnContainer" data-testid="dependsOn">
+          <label for="dependsOn" class="editable">DependsOn</label>
+          <input
+            type="text"
+            name="dependsOn"
+            id="dependsOn"
+            placeholder="Task ID separated with comma "
+            class="notEditing"
+          />
+          <span id="linksDisplay" class="display"></span>
+        </div>
+        <div class="inputBox class" id="assigneeInput" data-testid="assignee">
           <label for="assignee hidden"
             >Assignee:<span class="required">*</span></label
           >
@@ -167,7 +218,7 @@
             </div>
           </div>
         </div>
-        <div class="inputBox" id="participantsInput">
+        <div class="inputBox" id="participantsInput" data-testid="participants">
           <label for="participants" class="editable">Participants:</label>
           <input
             type="text"
@@ -177,7 +228,7 @@
             class="notEditing"
           />
         </div>
-        <div id="endsOnWrapper">
+        <div id="endsOnWrapper" data-testid="endsOn">
           <div class="inputBox">
             <label for="endsOn"
               >Ends on:<span class="required">*</span>
@@ -192,7 +243,7 @@
             />
           </div>
         </div>
-        <div class="inputBox">
+        <div class="inputBox" data-testid="priority">
           <label for="priority" class="editable">
             Priority:<span class="required">*</span>
           </label>
@@ -207,7 +258,7 @@
             <option value="LOW">Low</option>
           </select>
         </div>
-        <div class="inputBox">
+        <div class="inputBox" data-testid="percentCompleted">
           <label for="percentCompleted" class="editable"
             >Percent Completed:</label
           >
@@ -221,7 +272,7 @@
             class="notEditing"
           />
         </div>
-        <div class="inputBox">
+        <div class="inputBox" data-testid="completionAward">
           <label for="completionAward">Completion Award</label>
           <br />
           <div class="inputBox">
@@ -249,7 +300,7 @@
             />
           </div>
         </div>
-        <div class="inputBox">
+        <div class="inputBox" data-testid="lossRate">
           <label for="lossRate">Loss Rate</label>
           <br />
           <div class="inputBox">
@@ -278,7 +329,7 @@
           </div>
         </div>
 
-        <div class="inputBox">
+        <div class="inputBox" data-testid="submit">
           <input
             type="submit"
             class="submit disabled"
@@ -303,6 +354,7 @@
         <div class="loader"></div>
       </div>
       <script src="/helpers/loadENV.js"></script>
+      <script src="/task/constants.js"></script>
       <script src="/task/script.js"></script>
     </div>
   </body>

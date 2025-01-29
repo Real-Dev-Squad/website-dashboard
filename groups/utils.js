@@ -1,5 +1,7 @@
 const BASE_URL = window.API_BASE_URL; // REPLACE WITH YOUR LOCALHOST URL FOR TESTING LOCAL BACKEND
+
 // const BASE_URL = "http://localhost:3000";
+
 
 async function getMembers() {
   try {
@@ -19,7 +21,7 @@ async function getMembers() {
 }
 async function getUserSelf() {
   try {
-    const res = await fetch(`${BASE_URL}/users/self`, {
+    const res = await fetch(`${BASE_URL}/users?profile=true`, {
       method: 'GET',
       credentials: 'include',
       headers: {
@@ -140,6 +142,29 @@ async function removeRoleFromMember(roleId, discordId) {
   }
 }
 
+async function deleteDiscordGroupRole(groupId) {
+  try {
+    const res = await fetch(`${BASE_URL}/discord-actions/groups/${groupId}`, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+
+    if (!res.ok) {
+      const errorResponse = await res.json();
+      throw new Error(
+        `Failed to delete group role: ${JSON.stringify(errorResponse.error)}`,
+      );
+    }
+
+    return await res.json();
+  } catch (err) {
+    throw err;
+  }
+}
+
 function removeGroupKeywordFromDiscordRoleName(groupName) {
   if (/^group.*/.test(groupName)) {
     const splitNames = groupName.split('-');
@@ -188,6 +213,7 @@ export {
   createDiscordGroupRole,
   addGroupRoleToMember,
   removeRoleFromMember,
+  deleteDiscordGroupRole,
   removeGroupKeywordFromDiscordRoleName,
   getDiscordGroupIdsFromSearch,
   getParamValueFromURL,
