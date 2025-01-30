@@ -297,13 +297,6 @@ function formatTaskRequestsLog(data) {
   );
 }
 
-function addEmptyPageMessage(container) {
-  const emptyMessage = document.createElement('p');
-  emptyMessage.classList.add('empty-message');
-  emptyMessage.textContent = 'No logs to show!';
-  container.appendChild(emptyMessage);
-}
-
 async function populateActivityFeed(query = {}, newLink) {
   activityFeedPage++;
   const currentVersion = activityFeedPage;

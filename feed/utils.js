@@ -5,19 +5,19 @@ function generateActivityFeedParams(query) {
     type: getLogTypesFromCategory(query?.category),
     username: query.username || undefined,
     startDate: query.startDate
-      ? Math.floor(new Date(query.startDate).getTime())
+      ? Math.floor(new Date(query.startDate).getTime() / 1000)
       : undefined,
     endDate: query.endDate
-      ? Math.floor(new Date(query.endDate).getTime())
+      ? Math.floor(new Date(query.endDate).getTime() / 1000)
       : undefined,
   };
-
   Object.keys(queryParams).forEach((key) => {
     if (queryParams[key] === undefined) {
       delete queryParams[key];
     }
   });
 
+  console.log('Generated activity feed params:', queryParams);
   const queryString = new URLSearchParams(queryParams).toString();
   return `?${queryString}`;
 }
