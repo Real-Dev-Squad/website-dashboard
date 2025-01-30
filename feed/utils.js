@@ -17,7 +17,6 @@ function generateActivityFeedParams(query) {
     }
   });
 
-  console.log('Generated activity feed params:', queryParams);
   const queryString = new URLSearchParams(queryParams).toString();
   return `?${queryString}`;
 }
