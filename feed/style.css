@@ -31,8 +31,8 @@ body {
 }
 
 #activity_feed_container {
-  padding: 10px 0;
-  width: 800px;
+  padding: 1rem 0;
+  width: 50rem;
   margin: 0 auto;
 }
 
@@ -51,8 +51,8 @@ body {
   margin-bottom: 0.5rem;
   display: flex;
   border: 1.5px;
-  border-radius: 5px;
-  padding: 0 10px;
+  border-radius: 0.5rem;
+  padding: 0 1rem;
   background: var(--activity-item-background);
   width: 100%;
   flex-direction: column;
@@ -74,8 +74,8 @@ body {
 
 .tabs-container {
   margin: 0 auto;
-  width: 800px;
-  padding: 15px;
+  width: 50rem;
+  padding: 0.5rem 0;
 }
 
 .tabs {
@@ -89,7 +89,7 @@ body {
 }
 
 .tabs li {
-  padding: 15px 25px;
+  padding: 1rem 1.5rem;
   font-weight: bold;
   cursor: pointer;
   text-align: center;
@@ -110,19 +110,19 @@ body {
 
 .timestamp {
   text-align: right;
-  font-size: 10px;
+  font-size: 1rem;
   color: var(--gray-color);
 }
 
 .img_icon {
-  height: 30px;
-  width: 30px;
+  height: 1.8rem;
+  width: 1.8rem;
 }
 
 .title {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 1rem;
 }
 
 .loader-text {
@@ -140,27 +140,28 @@ body {
 }
 
 .page-message {
-  text-align: center;
-  margin: auto auto;
-  font-weight: 800;
-  font-size: 2em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  font-size: 2rem;
 }
 
 .filters {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 1.2rem;
   align-items: center;
 }
 
 .filter-row {
   display: flex;
-  gap: 15px;
+  gap: 1.2rem;
   justify-content: center;
   align-items: center;
-  max-width: 800px;
+  max-width: 50rem;
   width: 100%;
-  padding: 1rem;
+  padding: 1rem 0;
 }
 
 .input-wrapper {
@@ -168,28 +169,30 @@ body {
   max-width: 12rem;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 1rem;
 }
 
 #assignee-search {
   width: 100%;
-  padding: 8px 35px 8px 10px;
+  padding: 0.8rem;
+  max-width: 15rem;
   border: 1px solid var(--input-border);
-  border-radius: 6px;
+  border-radius: 0.5rem;
   font-size: 1rem;
   background: var(--light-gray-color);
   transition: border-color 0.2s ease-in-out;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  height: 2.8rem;
 }
 
 .clear-icon {
   position: absolute;
   top: 75%;
-  right: 10px;
+  right: 1rem;
   transform: translateY(-50%);
   cursor: pointer;
   color: var(--gray-color);
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: bold;
 }
 
@@ -199,22 +202,22 @@ body {
 
 .date-filters {
   display: flex;
-  gap: 15px;
+  gap: 1.2rem;
   flex-grow: 2;
 }
 
 .date-inputs {
   display: flex;
-  gap: 10px;
+  gap: 1rem;
   flex-direction: column;
 }
 
 .date-inputs input {
   width: 100%;
   max-width: 15rem;
-  padding: 8px 10px;
+  padding: 0.8rem;
   border: 1px solid var(--input-border);
-  border-radius: 6px;
+  border-radius: 0.5rem;
   font-size: 1rem;
   background: var(--light-gray-color);
 }
@@ -223,27 +226,26 @@ body {
   position: absolute;
   top: 100%;
   left: 0;
-  max-height: 200px;
+  max-height: 12rem;
   overflow-y: auto;
   border: 1px solid var(--input-border);
   background-color: var(--white-color);
   width: 100%;
   z-index: 1000;
   display: none;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border-radius: 6px;
-  margin-top: 5px;
+  border-radius: 0.5rem;
+  margin-top: 0.4rem;
 }
 
 .suggestion-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px;
+  gap: 1.2rem;
+  padding: 0.5rem;
   cursor: pointer;
   transition: background-color 0.2s;
-  border-radius: 4px;
-  height: 35px;
+  border-radius: 0.5rem;
+  height: 2rem;
 }
 
 .suggestion-item:hover {
@@ -262,21 +264,16 @@ body {
 }
 
 .user-icon {
-  width: 30px;
-  height: 30px;
+  width: 1.8rem;
+  height: 1.8rem;
   border-radius: 50%;
 }
 
 @media (max-width: 480px) {
-  .filters {
-    flex-direction: column;
-    gap: 10px;
-    align-items: stretch;
-  }
-
+  .filters,
   .filter-row {
     flex-direction: column;
-    gap: 10px;
+    gap: 1rem;
     align-items: stretch;
   }
 
@@ -286,7 +283,7 @@ body {
   }
 
   .tabs-container {
-    width: 400px;
+    width: 25rem;
     overflow: scroll;
   }
 
