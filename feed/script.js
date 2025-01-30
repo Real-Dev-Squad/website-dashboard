@@ -3,6 +3,8 @@ const activityFeedContainer = document.getElementById(ACITIVITY_FEED_CONTAINER);
 const activityList = document.querySelector('.activity-list');
 const tabsList = document.querySelector('.tabs');
 const lastElementContainer = document.querySelector(LAST_ELEMENT_CONTAINER);
+const usernameInput = document.getElementById('assignee-search');
+const clearUsernameBtn = document.getElementById('clear-username');
 
 let query = {};
 let newLink = '';
@@ -10,6 +12,7 @@ let activityFeedPage = 0;
 let nextLink = '';
 let isDataLoading = false;
 let category = CATEGORY.ALL;
+let activeIndex = -1;
 
 const tabsData = [
   { name: 'All', 'data-type': CATEGORY.ALL, class: 'active' },
@@ -400,14 +403,19 @@ let activeFilters = {
   endDate: null,
 };
 
-document
-  .getElementById('assignee-search')
-  .addEventListener('input', applyFilter);
-document
-  .getElementById('clear-username')
-  .addEventListener('click', clearUsernameFilter);
 document.getElementById('start-date').addEventListener('change', applyFilter);
 document.getElementById('end-date').addEventListener('change', applyFilter);
+clearUsernameBtn.addEventListener('click', clearUsernameFilter);
+
+clearUsernameBtn.style.display = 'none';
+
+usernameInput.addEventListener('input', function () {
+  if (usernameInput.value.trim() !== '') {
+    clearUsernameBtn.style.display = 'inline';
+  } else {
+    clearUsernameBtn.style.display = 'none';
+  }
+});
 
 function applyFilter() {
   const username = document.getElementById('assignee-search').value.trim();
@@ -429,13 +437,17 @@ function applyFilter() {
 }
 
 function clearUsernameFilter() {
-  document.getElementById('assignee-search').value = '';
-  document.getElementById('suggestion-box').style.display = 'none';
+  const usernameInput = document.getElementById('assignee-search');
+  const suggestionBox = document.getElementById('suggestion-box');
+  const clearUsernameBtn = document.getElementById('clear-username');
+
+  usernameInput.value = '';
+  suggestionBox.style.display = 'none';
+  clearUsernameBtn.style.display = 'none';
+
   activeFilters.username = null;
   populateActivityFeed({ category: currentCategory, ...activeFilters });
 }
-
-let activeIndex = -1;
 
 async function fetchSuggestions() {
   const input = document.getElementById('assignee-search');
