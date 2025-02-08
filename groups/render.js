@@ -124,6 +124,27 @@ const renderGroupById = ({
   }
 };
 
+const renderMoreGroups = ({
+  groups,
+  cardOnClick = () => {},
+  isSuperUser = false,
+}) => {
+  const mainContainer = document.querySelector('.group-container');
+  console.log('Rendering groups:', groups);
+
+  groups.forEach((group) => {
+    if (!document.getElementById(`group-${group.id}`)) {
+      const card = createCard(
+        group,
+        () => cardOnClick(group.id),
+        () => {},
+        isSuperUser,
+      );
+      mainContainer.appendChild(card);
+    }
+  });
+};
+
 const renderNoGroupFound = () => {
   const mainContainer = document.querySelector('.group-container');
   const noGroupContainer = document.createElement('div');
@@ -166,6 +187,7 @@ export {
   renderLoadingCards,
   removeLoadingCards,
   renderGroupById,
+  renderMoreGroups,
   renderNoGroupFound,
   renderDeleteConfirmationModal,
   removeDeleteConfirmationModal,
