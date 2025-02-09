@@ -1,7 +1,13 @@
 import { getDiscordGroupsPaginated } from './utils.js';
-import { renderLoader, removeLoader, renderMoreGroups } from './render.js';
+import {
+  renderLoader,
+  removeLoader,
+  renderMoreGroups,
+  renderLoadingCards,
+  removeLoadingCards,
+} from './render.js';
 import { getParamValueFromURL } from './utils.js';
-import { groupCardOnAction } from './script.js';
+import { groupCardOnAction, dataStore } from './script.js';
 
 const isDevMode = getParamValueFromURL('dev') === 'true';
 
@@ -20,10 +26,7 @@ async function loadMoreGroups() {
   if (isFetching || !hasNextPage) return;
   isFetching = true;
 
-  // Only show loader for subsequent loads (not initial)
-  if (currentPage !== null) {
-    renderLoader();
-  }
+  renderLoadingCards(); // ✅ Show shimmer instead of white screen
 
   try {
     const { groups: rawGroups, nextPageUrl } =
@@ -31,8 +34,13 @@ async function loadMoreGroups() {
         ? await getDiscordGroupsPaginated()
         : await getDiscordGroupsPaginated(currentPage, 10);
 
-    // Process titles for paginated groups (same as non-paginated logic)
-    const groups = rawGroups.map((group) => ({
+    if (!rawGroups || rawGroups.length === 0) {
+      hasNextPage = false;
+      removeLoader();
+      return;
+    }
+
+    const formattedGroups = rawGroups.map((group) => ({
       ...group,
       title: group.rolename
         .replace('group-', '')
@@ -41,15 +49,25 @@ async function loadMoreGroups() {
         .join(' '),
     }));
 
-    console.log('Fetched groups:', groups);
-
-    if (!groups || groups.length === 0) {
-      hasNextPage = false;
-      removeLoader();
-      return;
+    if (!dataStore.groups) {
+      dataStore.groups = {};
     }
 
-    renderMoreGroups({ groups, cardOnClick: groupCardOnAction });
+    formattedGroups.forEach((group) => {
+      dataStore.groups[group.id] = {
+        ...group,
+        count: group.memberCount,
+        isMember: group.isMember,
+        isUpdating: false,
+      };
+    });
+
+    dataStore.filteredGroupsIds = Object.keys(dataStore.groups);
+
+    renderMoreGroups({
+      groups: formattedGroups,
+      cardOnClick: groupCardOnAction,
+    });
 
     currentPage = nextPageUrl
       ? currentPage === null
@@ -60,6 +78,7 @@ async function loadMoreGroups() {
   } catch (error) {
     console.error('Error fetching more groups:', error);
   } finally {
+    removeLoadingCards();
     removeLoader();
     isFetching = false;
   }

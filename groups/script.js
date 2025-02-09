@@ -178,6 +178,7 @@ const afterAuthentication = async () => {
   if (isDevMode) {
     return;
   }
+
   await Promise.all([getDiscordGroups(), getUserGroupRoles()]).then(
     ([groups, roleData]) => {
       const nonDeletedGroups = groups.filter((group) => !group.isDeleted);
@@ -258,8 +259,13 @@ function updateGroup(id, group) {
 }
 
 export function groupCardOnAction(id) {
+  if (!dataStore.groups) return;
+
   const group = dataStore.groups[id];
+  if (!group) return;
+
   updateGroup(id, { isUpdating: true });
+
   if (group.isMember) {
     removeRoleFromMember(group.roleId, dataStore.discordId)
       .then(() => updateGroup(id, { isMember: false, count: group.count - 1 }))
@@ -329,3 +335,5 @@ function showDeleteModal(groupId) {
 }
 
 onCreate();
+
+export { dataStore };
