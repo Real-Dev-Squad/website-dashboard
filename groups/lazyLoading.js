@@ -19,13 +19,27 @@ if (isDevMode) {
 async function loadMoreGroups() {
   if (isFetching || !hasNextPage) return;
   isFetching = true;
-  renderLoader();
+
+  // Only show loader for subsequent loads (not initial)
+  if (currentPage !== null) {
+    renderLoader();
+  }
 
   try {
-    const { groups, nextPageUrl } =
+    const { groups: rawGroups, nextPageUrl } =
       currentPage === null
         ? await getDiscordGroupsPaginated()
         : await getDiscordGroupsPaginated(currentPage, 10);
+
+    // Process titles for paginated groups (same as non-paginated logic)
+    const groups = rawGroups.map((group) => ({
+      ...group,
+      title: group.rolename
+        .replace('group-', '')
+        .split('-')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' '),
+    }));
 
     console.log('Fetched groups:', groups);
 
