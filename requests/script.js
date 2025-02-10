@@ -208,7 +208,7 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
   const card = createElementFromMap({
     tagName: 'div',
     class: 'request__card',
-    testId: 'request-card',
+    testId: `${type.toLowerCase()}-request-card`,
     child: [
       generateRequesterInfo(),
       generateRequestContent(),
