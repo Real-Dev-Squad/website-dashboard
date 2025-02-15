@@ -58,6 +58,7 @@ function showMessage(container, errorMsg) {
   if (errorMsg) {
     const errorHeading = createElement({
       type: 'h4',
+      attributes: { class: 'error-message' },
       innerText: errorMsg,
     });
 
