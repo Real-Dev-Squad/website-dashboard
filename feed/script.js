@@ -13,6 +13,7 @@ let nextLink = '';
 let isDataLoading = false;
 let category = CATEGORY.ALL;
 let activeIndex = -1;
+let debounceTimeout = null;
 
 const tabsData = [
   { name: 'All', 'data-type': CATEGORY.ALL, class: 'active' },
@@ -308,29 +309,29 @@ async function populateActivityFeed(query = {}, newLink) {
 
   try {
     isDataLoading = true;
-    addLoader(container);
+    addLoader(activityFeedContainer);
 
     const activityFeedData = await getActivityFeedData(combinedQuery, newLink);
 
+    if (!activityFeedData) return;
+
     activityFeedContainer.innerHTML = '';
 
-    if (activityFeedData) {
-      nextLink = activityFeedData.next;
-      const allActivityFeedData = activityFeedData.data;
+    nextLink = activityFeedData.next;
+    const allActivityFeedData = activityFeedData.data;
 
-      if (currentVersion !== activityFeedPage) {
-        return;
-      }
+    if (currentVersion !== activityFeedPage) {
+      return;
+    }
 
-      if (allActivityFeedData.length === 0) {
-        addEmptyPageMessage(activityFeedContainer);
-        return;
-      }
+    if (allActivityFeedData.length === 0) {
+      addEmptyPageMessage(activityFeedContainer);
+      return;
+    }
 
-      for (const data of allActivityFeedData) {
-        const renderedItem = renderActivityItem(data);
-        activityFeedContainer.appendChild(renderedItem);
-      }
+    for (const data of allActivityFeedData) {
+      const renderedItem = renderActivityItem(data);
+      activityFeedContainer.appendChild(renderedItem);
     }
   } catch (error) {
     showMessage(activityFeedContainer, error);
@@ -346,38 +347,32 @@ async function getActivityFeedData(query = {}, nextLink) {
   validateQuery(query);
   let finalUrl =
     API_BASE_URL + (nextLink || '/logs' + generateActivityFeedParams(query));
-  const res = await fetch(finalUrl, {
-    credentials: 'include',
-    method: 'GET',
-    headers: {
-      'Content-type': 'application/json',
-    },
-  });
+
   try {
     const res = await fetch(finalUrl, {
       credentials: 'include',
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+      },
     });
-
     const data = await res.json();
     if (res.ok) {
       return data;
     } else {
       switch (res.status) {
         case 401:
-          return showMessage(
-            activityFeedContainer,
-            ERROR_MESSAGE.UNAUTHENTICATED,
-          );
+          showMessage(activityFeedContainer, ERROR_MESSAGE.UNAUTHENTICATED);
+          return null;
         case 403:
-          return showMessage(activityFeedContainer, ERROR_MESSAGE.UNAUTHORIZED);
+          showMessage(activityFeedContainer, ERROR_MESSAGE.UNAUTHORIZED);
+          return null;
         case 404:
-          return showMessage(
-            activityFeedContainer,
-            ERROR_MESSAGE.LOGS_NOT_FOUND,
-          );
+          showMessage(activityFeedContainer, ERROR_MESSAGE.LOGS_NOT_FOUND);
+          return null;
         case 400:
           showMessage(activityFeedContainer, data.message);
-          return;
+          return null;
         default:
           break;
       }
@@ -454,37 +449,49 @@ async function fetchSuggestions() {
   const query = input.value.trim();
   const suggestionBox = document.getElementById('suggestion-box');
 
-  if (!query) {
+  if (query === '') {
     suggestionBox.style.display = 'none';
     return;
   }
 
-  try {
-    const response = await fetch(`${API_BASE_URL}/users?search=${query}`, {
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      const users = data.users || [];
-      if (users.length > 0) {
-        renderSuggestions(users);
-        suggestionBox.style.display = 'block';
-      } else {
-        suggestionBox.innerHTML =
-          '<div class="suggestion-item">No users found</div>';
-        suggestionBox.style.display = 'block';
-      }
-    } else {
-      console.error('Error fetching suggestions:', response.statusText);
-    }
-  } catch (error) {
-    console.error('Error:', error);
+  if (/^\d/.test(query)) {
+    suggestionBox.innerHTML =
+      '<div class="suggestion-item">Please enter a valid username</div>';
+    suggestionBox.style.display = 'block';
+    return;
   }
+
+  clearTimeout(debounceTimeout);
+
+  debounceTimeout = setTimeout(async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/users?search=${query}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const users = data.users || [];
+
+        if (users.length > 0) {
+          renderSuggestions(users);
+          suggestionBox.style.display = 'block';
+        } else {
+          suggestionBox.innerHTML =
+            '<div class="suggestion-item">No users found</div>';
+          suggestionBox.style.display = 'block';
+        }
+      } else {
+        console.error('Error fetching suggestions:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }, 1500);
 }
 
 function renderSuggestions(users) {
