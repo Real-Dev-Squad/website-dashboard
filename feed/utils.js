@@ -53,9 +53,12 @@ function addEmptyPageMessage(container) {
 }
 
 function showMessage(container, errorMsg) {
+  container.innerHTML = '';
+
   if (errorMsg) {
     const errorHeading = createElement({
       type: 'h4',
+      attributes: { class: 'error-message' },
       innerText: errorMsg,
     });
 
