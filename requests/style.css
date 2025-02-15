@@ -105,6 +105,8 @@ p {
   flex-wrap: wrap;
 }
 
+/* Filter modal start */
+
 .user__suggestions__container {
   display: flex;
   flex-direction: column;
@@ -113,6 +115,7 @@ p {
 .suggestions__list__container {
   max-height: 6.25rem;
   overflow-y: auto;
+  z-index: 10;
   position: absolute;
   margin-top: 2.5rem;
 }
@@ -129,9 +132,10 @@ p {
   cursor: pointer;
   width: 8rem;
   border-bottom: solid 1px var(--color-gray);
-  &:hover {
-    background-color: var(--color-gray-light);
-  }
+}
+
+.suggestion:hover {
+  background-color: var(--color-gray-light);
 }
 
 .filter__options__container {
