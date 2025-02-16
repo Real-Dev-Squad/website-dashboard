@@ -29,6 +29,7 @@ import {
   setParamValueInURL,
   deleteDiscordGroupRole,
 } from './utils.js';
+const isDevMode = getParamValueFromURL('dev') === 'true';
 
 const QUERY_PARAM_KEY = {
   DEV_FEATURE_FLAG: 'dev',
@@ -169,9 +170,14 @@ const onCreate = () => {
   bindSearchFocus();
   bindGroupCreationButton();
 };
+
 const afterAuthentication = async () => {
   renderNavbarProfile({ profile: dataStore.userSelf });
   dataStore.isSuperUser = await checkUserIsSuperUser();
+
+  if (isDevMode) {
+    return;
+  }
 
   await Promise.all([getDiscordGroups(), getUserGroupRoles()]).then(
     ([groups, roleData]) => {
@@ -199,9 +205,7 @@ const afterAuthentication = async () => {
         dataStore.search,
       );
       dataStore.discordId = roleData.userId;
-      renderAllGroups({
-        cardOnClick: groupCardOnAction,
-      });
+      renderAllGroups({ cardOnClick: groupCardOnAction });
     },
   );
 };
@@ -254,9 +258,14 @@ function updateGroup(id, group) {
   };
 }
 
-function groupCardOnAction(id) {
+export function groupCardOnAction(id) {
+  if (!dataStore.groups) return;
+
   const group = dataStore.groups[id];
+  if (!group) return;
+
   updateGroup(id, { isUpdating: true });
+
   if (group.isMember) {
     removeRoleFromMember(group.roleId, dataStore.discordId)
       .then(() => updateGroup(id, { isMember: false, count: group.count - 1 }))
@@ -326,3 +335,5 @@ function showDeleteModal(groupId) {
 }
 
 onCreate();
+
+export { dataStore };
