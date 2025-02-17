@@ -73,9 +73,47 @@ const extensionRequest = {
   prev: null,
 };
 
+const onboardingExtensionRequest = {
+  message: 'Request fetched successfully',
+  data: [
+    {
+      id: 'Jne4XfI8lm5QTCfcHQyJ',
+      createdAt: 1737140162577,
+      type: 'ONBOARDING',
+      state: 'APPROVED',
+      userId: 'SoaTFu1SnU7HVvWjkR7Z',
+      requestedBy: 'anuj-chhikara-2',
+      oldEndsOn: 1731827984919,
+      requestNumber: 1,
+      reason: 'request reason',
+      lastModifiedBy: 'SoaTFu1SnU7HVvWjkR7Z',
+      newEndsOn: 1740756889491,
+      updatedAt: 1738688705368,
+      message: 'approved',
+    },
+    {
+      id: 'Jne4XfI8lm5QTCfcHQyJ',
+      createdAt: 1737140162577,
+      type: 'ONBOARDING',
+      state: 'PENDING',
+      userId: 'SoaTFu1SnU7HVvWjkR7Z',
+      requestedBy: 'anuj-chhikara-2',
+      oldEndsOn: 1731827984919,
+      requestNumber: 1,
+      reason: 'request reason 2',
+      lastModifiedBy: 'SoaTFu1SnU7HVvWjkR7Z',
+      newEndsOn: 1740756889491,
+      updatedAt: 1738688705368,
+    },
+  ],
+  next: null,
+  prev: null,
+};
+
 module.exports = {
   pendingRequest,
   approvedRequest,
   requestActionResponse,
   extensionRequest,
+  onboardingExtensionRequest,
 };
