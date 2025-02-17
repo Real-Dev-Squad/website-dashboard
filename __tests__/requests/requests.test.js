@@ -163,99 +163,107 @@ describe('Tests the request cards', () => {
     expect(await onboardingTabLink.isVisible()).toBe(false);
   });
 
-  it('should display the onboarding extension tab when dev is true', async () => {
-    await page.goto(`${LOCAL_TEST_PAGE_URL}/requests?dev=true`);
-    await page.waitForNetworkIdle();
-    const onboardingTabLink = await page.$('[data-testid="onboarding-tab"]');
-    expect(await onboardingTabLink.isVisible()).toBe(true);
-  });
-
-  it('should display onboarding extension requests after clicking the onboarding tab', async () => {
-    await page.click('#onboarding_extension_tab_link');
-
-    await page.waitForSelector('[data-testid="onboarding-request-card"]', {
-      state: 'visible',
+  describe('Onboarding Requests UI (Dev Mode Enabled)', () => {
+    beforeAll(async () => {
+      await page.goto(`${LOCAL_TEST_PAGE_URL}/requests?dev=true`);
+      await page.waitForNetworkIdle();
     });
 
-    const onboardingExtensionRequestCards = await page.$$(
-      '[data-testid="onboarding-request-card"]',
-    );
+    it('should display the onboarding extension tab ', async () => {
+      await page.waitForNetworkIdle();
+      const onboardingTabLink = await page.$('[data-testid="onboarding-tab"]');
+      expect(await onboardingTabLink.isVisible()).toBe(true);
+    });
 
-    expect(onboardingExtensionRequestCards.length).toEqual(
-      onboardingExtensionRequest.data.length,
-    );
+    it('should display onboarding extension requests after clicking the onboarding tab', async () => {
+      await page.click('#onboarding_extension_tab_link');
 
-    const statusButtonText = await page.$eval(
-      '[data-testid="request-status"]',
-      (el) => el.textContent,
-    );
-    expect(statusButtonText.toLowerCase()).toBe(
-      onboardingExtensionRequest.data[0].state.toLowerCase(),
-    );
-  });
+      await page.waitForSelector('[data-testid="onboarding-request-card"]', {
+        state: 'visible',
+      });
 
-  it('should show action buttons and input field only for pending requests', async () => {
-    await page.goto(`${LOCAL_TEST_PAGE_URL}/requests?dev=true`);
-    const onboardingTabLink = await page.$('[data-testid="onboarding-tab"]');
-    await onboardingTabLink.click();
-    await page.waitForSelector('[data-testid="onboarding-request-card"]');
+      const onboardingExtensionRequestCards = await page.$$(
+        '[data-testid="onboarding-request-card"]',
+      );
 
-    const requestCards = await page.$$(
-      '[data-testid="onboarding-request-card"]',
-    );
-    expect(requestCards.length).toBeGreaterThan(0);
+      expect(onboardingExtensionRequestCards.length).toEqual(
+        onboardingExtensionRequest.data.length,
+      );
 
-    for (const card of requestCards) {
-      const statusText = await card.$eval(
+      const statusButtonText = await page.$eval(
         '[data-testid="request-status"]',
-        (el) => el.textContent.trim(),
+        (el) => el.textContent,
       );
+      expect(statusButtonText.toLowerCase()).toBe(
+        onboardingExtensionRequest.data[0].state.toLowerCase(),
+      );
+    });
 
-      const actionContainer = await card.$('[data-testid="action-container"]');
-      const approveButton = await card.$('[data-testid="approve-button"]');
-      const rejectButton = await card.$('[data-testid="reject-button"]');
-      const remarkInput = await card.$('[data-testid="request-remark-input"]');
+    it('should show action buttons and input field only for pending requests', async () => {
+      const onboardingTabLink = await page.$('[data-testid="onboarding-tab"]');
+      await onboardingTabLink.click();
+      await page.waitForSelector('[data-testid="onboarding-request-card"]');
 
-      if (statusText === 'Pending') {
-        expect(await actionContainer.isVisible()).toBe(true);
-        expect(await approveButton.isVisible()).toBe(true);
-        expect(await rejectButton.isVisible()).toBe(true);
-        expect(await remarkInput.isVisible()).toBe(true);
-      } else {
-        expect(await actionContainer.isVisible()).toBe(false);
-        expect(await approveButton.isVisible()).toBe(false);
-        expect(await rejectButton.isVisible()).toBe(false);
-        expect(await remarkInput.isVisible()).toBe(false);
+      const requestCards = await page.$$(
+        '[data-testid="onboarding-request-card"]',
+      );
+      expect(requestCards.length).toBeGreaterThan(0);
+
+      for (const card of requestCards) {
+        const statusText = await card.$eval(
+          '[data-testid="request-status"]',
+          (el) => el.textContent.trim(),
+        );
+
+        const actionContainer = await card.$(
+          '[data-testid="action-container"]',
+        );
+        const approveButton = await card.$('[data-testid="approve-button"]');
+        const rejectButton = await card.$('[data-testid="reject-button"]');
+        const remarkInput = await card.$(
+          '[data-testid="request-remark-input"]',
+        );
+
+        if (statusText === 'Pending') {
+          expect(await actionContainer.isVisible()).toBe(true);
+          expect(await approveButton.isVisible()).toBe(true);
+          expect(await rejectButton.isVisible()).toBe(true);
+          expect(await remarkInput.isVisible()).toBe(true);
+        } else {
+          expect(await actionContainer.isVisible()).toBe(false);
+          expect(await approveButton.isVisible()).toBe(false);
+          expect(await rejectButton.isVisible()).toBe(false);
+          expect(await remarkInput.isVisible()).toBe(false);
+        }
       }
-    }
-  });
+    });
 
-  it('should display superuser details only for non-pending requests', async () => {
-    await page.goto(`${LOCAL_TEST_PAGE_URL}/requests?dev=true`);
-    const onboardingTabLink = await page.$('[data-testid="onboarding-tab"]');
-    await onboardingTabLink.click();
-    await page.waitForSelector('[data-testid="onboarding-request-card"]');
+    it('should display superuser details only for non-pending requests', async () => {
+      const onboardingTabLink = await page.$('[data-testid="onboarding-tab"]');
+      await onboardingTabLink.click();
+      await page.waitForSelector('[data-testid="onboarding-request-card"]');
 
-    const requestCards = await page.$$(
-      '[data-testid="onboarding-request-card"]',
-    );
-    expect(requestCards.length).toBeGreaterThan(0);
-
-    for (const card of requestCards) {
-      const statusText = await card.$eval(
-        '[data-testid="request-status"]',
-        (el) => el.textContent.trim(),
+      const requestCards = await page.$$(
+        '[data-testid="onboarding-request-card"]',
       );
+      expect(requestCards.length).toBeGreaterThan(0);
 
-      const superuserSection = await card.$(
-        '[data-testid="admin-info-and-status"]',
-      );
+      for (const card of requestCards) {
+        const statusText = await card.$eval(
+          '[data-testid="request-status"]',
+          (el) => el.textContent.trim(),
+        );
 
-      if (statusText === 'Pending') {
-        expect(await superuserSection.isVisible()).toBe(false);
-      } else {
-        expect(await superuserSection.isVisible()).toBe(true);
+        const superuserSection = await card.$(
+          '[data-testid="admin-info-and-status"]',
+        );
+
+        if (statusText === 'Pending') {
+          expect(await superuserSection.isVisible()).toBe(false);
+        } else {
+          expect(await superuserSection.isVisible()).toBe(true);
+        }
       }
-    }
+    });
   });
 });
