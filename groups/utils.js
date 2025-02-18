@@ -51,7 +51,7 @@ async function getDiscordGroups() {
         'Content-type': 'application/json',
       },
     });
-    
+
     const { groups } = await res.json();
     return groups;
   } catch (err) {
