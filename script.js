@@ -2,6 +2,9 @@ const userManagementLink = document.getElementById(USER_MANAGEMENT_LINK);
 const discordUserLink = document.getElementById('discord-user-link');
 const extensionRequestsLink = document.getElementById(EXTENSION_REQUESTS_LINK);
 const syncUsersStatusButton = document.getElementById(SYNC_USERS_STATUS);
+const photoVerificationRequestsButton = document.getElementById(
+  PHOTO_VERIFICATION_REQUESTS_BUTTON,
+);
 const UpdatedstatusMessage = 'All repos uptodate';
 const syncExternalAccountsButton = document.getElementById(
   SYNC_EXTERNAL_ACCOUNTS,
@@ -95,6 +98,7 @@ showSuperUserOptions(
   extensionRequestsLink,
   discordUserLink,
   taskRequestsLink,
+  photoVerificationRequestsButton,
 );
 
 const createGoalButton = document.getElementById('create-goal');
