@@ -9,6 +9,7 @@
   --color-white: white;
   --color-rds-blue: #1d1283;
   --color-blue-light: #1d1283af;
+  --color-indigo-blue: #4541c6;
   --color-black: #000;
   --color-gray-shade: #aaa;
   --color-red-variant1: #f43030;
@@ -440,42 +441,6 @@ table tr td {
   border-left: solid 1px rgba(0, 0, 0, 0.1);
 }
 
-@media (max-width: 599px) {
-  .taskRequest__title {
-    font-size: 1.5rem;
-    line-height: 1.75rem;
-  }
-  .taskRequest__title__subtitle {
-    font-size: 0.875rem;
-    line-height: 1rem;
-  }
-  .taskRequest__status {
-    font-size: 0.75rem;
-  }
-}
-
-@media (max-width: 904px) {
-  .task {
-    grid-column: 1 / span 12;
-  }
-
-  .requestors {
-    grid-column: 1 / span 12;
-    border: none;
-  }
-
-  .taskRequest__skeleton__title {
-    max-width: 80%;
-    height: 1rem;
-  }
-  .taskRequest__skeleton__subtitle {
-    max-width: 40%;
-  }
-  .request-details {
-    grid-column: auto;
-  }
-}
-
 .requestor_details_modal_content {
   background-color: var(--color-light-gray);
   margin: 10% auto;
@@ -489,6 +454,20 @@ table tr td {
   word-break: break-word;
   height: 50%;
   width: 50%;
+  overflow: auto;
+}
+
+.new_requestor_details_modal_content {
+  background-color: var(--color-light-gray);
+  margin: 10% auto;
+  padding: 2rem;
+  border: 1px solid var(--color-gray-variant2);
+  right: 10%;
+  border-radius: 1rem;
+  text-wrap: wrap;
+  word-break: break-word;
+  height: 50%;
+  width: 30%;
   overflow: auto;
 }
 
@@ -555,6 +534,30 @@ table tr td {
   color: var(--color-rds-blue);
 }
 
+.new_requestor_details_modal_heading {
+  color: var(--color-indigo-blue);
+  text-align: center;
+  font-weight: normal;
+}
+
+.proposed-start-date-div,
+.proposed-end-date-div,
+.proposed-description-div {
+  margin: 2cap 0px;
+}
+
+.proposed-start-date-text,
+.proposed-end-date-text,
+.proposed-description-text {
+  font-weight: 500;
+}
+.proposed-start-date-value,
+.proposed-end-date-value,
+.proposed-description-value {
+  margin-top: -10px;
+  color: var(--color-gray-variant2);
+}
+
 .requestors__container__list__userDetails__avatar,
 .requestors__container__list__userDetails__avatar:hover,
 p:hover {
@@ -569,4 +572,62 @@ p:hover {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   display: none;
+}
+
+@media (max-width: 904px) {
+  .task {
+    grid-column: 1 / span 12;
+  }
+
+  .requestors {
+    grid-column: 1 / span 12;
+    border: none;
+  }
+
+  .taskRequest__skeleton__title {
+    max-width: 80%;
+    height: 1rem;
+  }
+  .taskRequest__skeleton__subtitle {
+    max-width: 40%;
+  }
+  .request-details {
+    grid-column: auto;
+  }
+  .new_requestor_details_modal_content {
+    margin: 25% auto;
+    width: 50%;
+  }
+}
+
+@media (max-width: 599px) {
+  .taskRequest__title {
+    font-size: 1.5rem;
+    line-height: 1.75rem;
+  }
+  .taskRequest__title__subtitle {
+    font-size: 0.875rem;
+    line-height: 1rem;
+  }
+  .taskRequest__status {
+    font-size: 0.75rem;
+  }
+  .new_requestor_details_modal_content {
+    margin: 50% auto;
+    width: 70%;
+  }
+  .new_requestor_details_modal_heading {
+    font-size: 20px;
+  }
+
+  .proposed-start-date-text,
+  .proposed-end-date-text,
+  .proposed-description-text {
+    font-size: 15px;
+  }
+
+  .proposed-start-date-value,
+  .proposed-end-date-value {
+    font-size: 15px;
+  }
 }
