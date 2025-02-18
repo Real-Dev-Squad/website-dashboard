@@ -235,6 +235,7 @@ body {
   display: none;
   border-radius: 0.5rem;
   margin-top: 0.4rem;
+  min-height: 3rem;
 }
 
 .suggestion-item {
@@ -246,6 +247,7 @@ body {
   transition: background-color 0.2s;
   border-radius: 0.5rem;
   height: 2rem;
+  margin-top: 0.2rem;
 }
 
 .suggestion-item:hover {
@@ -267,6 +269,10 @@ body {
   width: 1.8rem;
   height: 1.8rem;
   border-radius: 50%;
+}
+
+.error-message {
+  text-align: center;
 }
 
 @media (max-width: 480px) {
