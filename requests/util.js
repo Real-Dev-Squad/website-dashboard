@@ -43,6 +43,9 @@ function getQueryParamsString(requestType, query) {
   ) {
     queryParam += `&state=${query.state}`;
   }
+  if (query.requestedBy !== undefined && query.requestedBy !== null) {
+    queryParam += `&requestedBy=${query.requestedBy}`;
+  }
   return `?${queryParam}`;
 }
 
@@ -150,4 +153,27 @@ function addRadioButton(labelText, value, groupName) {
   label.classList.add('radio-label');
   label.appendChild(document.createElement('br'));
   group.appendChild(label);
+}
+
+function deselectRadioButtons() {
+  const radioButtons = document.querySelectorAll(`input[name="status-filter"]`);
+  radioButtons.forEach((radioButton) => {
+    radioButton.checked = false;
+  });
+}
+
+async function getUsersByUsername(username) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/users?search=${username}&size=5`, {
+      credentials: 'include',
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+    const data = await res.json();
+    return data.users;
+  } catch (error) {
+    console.log(error);
+  }
 }

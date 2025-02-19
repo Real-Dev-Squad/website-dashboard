@@ -370,5 +370,33 @@ describe('Tests the request cards', () => {
       );
       expect(selectedStatusRadio).toBeNull();
     });
+
+    it('should render the correct requests based on the selected filter state', async () => {
+      const filterToggleButton = await page.$(
+        '[data-testid="filter-toggle-button"]',
+      );
+      await filterToggleButton.click();
+
+      const approvedRadio = await page.$(
+        'input[type="radio"][name="status-filter"][value="APPROVED"]',
+      );
+      await approvedRadio.click();
+
+      const applyFilterButton = await page.$(
+        '[data-testid="apply-filter-button"]',
+      );
+      await applyFilterButton.click();
+
+      const requestCards = await page.$$('[data-testid="ooo-request-card"]');
+
+      for (const card of requestCards) {
+        const statusText = await card.$eval(
+          '[data-testid="request-status"]',
+          (el) => el.textContent,
+        );
+        console.log(statusText);
+        expect(statusText).toContain('Approved');
+      }
+    });
   });
 });

@@ -31,7 +31,7 @@
 
   <body>
     <nav id="tasksNav"></nav>
-    <div class="container">
+    <div class="container" id="request-page-container">
       <div class="container__header">
         <nav>
           <a
@@ -76,11 +76,12 @@
         <div
           class="user__suggestions__container"
           data-testid="user-suggestions-container"
+          id="user-suggestions-container"
         >
           <input
             type="text"
             class="assignee__search"
-            id="assigneeSearch"
+            id="assignee-search-input"
             placeholder="Enter username"
             data-testid="assignee-search"
           />
