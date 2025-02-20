@@ -15,6 +15,9 @@ describe('Tests the navbar and its components on various pages', () => {
 
     const navLinks = await navbarPage.$('.nav-links');
     expect(navLinks).toBeTruthy();
+
+    const chevronIcon = await navbarPage.$('#chevron-down');
+    expect(chevronIcon).toBeTruthy();
   };
 
   beforeAll(async () => {

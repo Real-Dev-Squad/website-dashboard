@@ -41,7 +41,7 @@ const addNavbartoPage = async () => {
               </svg>
             </span>
         </div>
-        <div id="dropdown"></div>
+        <div id="dropdown" data-testid="dropdown-menu"></div>
     `;
 
   const hamburgerDiv = document.querySelector('.hamburger');

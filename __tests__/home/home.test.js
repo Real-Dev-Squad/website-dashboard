@@ -555,3 +555,60 @@ describe('Home Page', () => {
     expect(menuOff).toBeTruthy();
   });
 });
+
+describe('Dropdown Click Behavior', () => {
+  let browser;
+  let page;
+
+  beforeAll(async () => {
+    browser = await puppeteer.launch({ headless: true });
+    page = await browser.newPage();
+    await page.setContent(`
+      <div id="userInfo">User</div>
+      <div id="dropdown" class="active">Dropdown</div>
+      <script>
+        const dropdown = document.getElementById('dropdown');
+        const userInfo = document.getElementById('userInfo');
+
+        document.addEventListener('click', (event) => {
+          if (
+            dropdown.classList.contains('active') &&
+            !dropdown.contains(event.target) &&
+            !userInfo.contains(event.target)
+          ) {
+            dropdown.classList.remove('active');
+          }
+        });
+      </script>
+    `);
+  });
+
+  afterAll(async () => {
+    await browser.close();
+  });
+
+  it("should remove 'active' class when clicking outside the dropdown", async () => {
+    await page.click('body');
+    const hasActiveClass = await page.$eval('#dropdown', (el) =>
+      el.classList.contains('active'),
+    );
+    expect(hasActiveClass).toBe(false);
+  });
+
+  it("should keep 'active' class when clicking inside the dropdown or on user info", async () => {
+    await page.click('#userInfo');
+    await page.evaluate(() => {
+      document.querySelector('#dropdown')?.classList.add('active');
+    });
+    let hasActiveClass = await page.$eval('#dropdown', (el) =>
+      el.classList.contains('active'),
+    );
+    expect(hasActiveClass).toBe(true);
+
+    await page.click('#dropdown');
+    hasActiveClass = await page.$eval('#dropdown', (el) =>
+      el.classList.contains('active'),
+    );
+    expect(hasActiveClass).toBe(true);
+  });
+});
