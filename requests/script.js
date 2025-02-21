@@ -9,6 +9,9 @@ const startLoading = () => loader.classList.remove('hidden');
 const stopLoading = () => loader.classList.add('hidden');
 let oooTabLink = document.getElementById(OOO_TAB_ID);
 let extensionTabLink = document.getElementById(EXTENSION_TAB_ID);
+let onboardingExtensionTabLink = document.getElementById(
+  ONBOARDING_EXTENSION_TAB_ID,
+);
 let currentReqType = OOO_REQUEST_TYPE;
 let selected__tab__class = 'selected__tab';
 let statusValue = null;
@@ -19,6 +22,12 @@ let isDataLoading = false;
 
 function getUserDetails(id) {
   return userDetails.find((user) => user.id === id);
+}
+
+if (isDev) {
+  onboardingExtensionTabLink.classList.remove('hidden');
+  requestContainer.classList.remove('request');
+  requestContainer.classList.add('request_container');
 }
 
 const intersectionObserver = new IntersectionObserver(async (entries) => {
@@ -41,22 +50,39 @@ const removeIntersectionObserver = () => {
   intersectionObserver.unobserve(lastElementContainer);
 };
 
-oooTabLink.addEventListener('click', async function () {
+oooTabLink.addEventListener('click', async function (event) {
+  event.preventDefault();
   if (isDataLoading) return;
   currentReqType = OOO_REQUEST_TYPE;
   nextLink = '';
   oooTabLink.classList.add(selected__tab__class);
   extensionTabLink.classList.remove(selected__tab__class);
+  onboardingExtensionTabLink.classList.remove(selected__tab__class);
   changeFilter();
   updateUrlWithQuery(currentReqType);
   await renderRequestCards({ state: statusValue, sort: sortByValue });
 });
 
-extensionTabLink.addEventListener('click', async function () {
+extensionTabLink.addEventListener('click', async function (event) {
+  event.preventDefault();
   if (isDataLoading) return;
   currentReqType = EXTENSION_REQUEST_TYPE;
   nextLink = '';
   extensionTabLink.classList.add(selected__tab__class);
+  oooTabLink.classList.remove(selected__tab__class);
+  onboardingExtensionTabLink.classList.remove(selected__tab__class);
+  changeFilter();
+  updateUrlWithQuery(currentReqType);
+  await renderRequestCards({ state: statusValue, sort: sortByValue });
+});
+
+onboardingExtensionTabLink.addEventListener('click', async function (event) {
+  event.preventDefault();
+  if (isDataLoading) return;
+  currentReqType = ONBOARDING_EXTENSION_REQUEST_TYPE;
+  nextLink = '';
+  onboardingExtensionTabLink.classList.add(selected__tab__class);
+  extensionTabLink.classList.remove(selected__tab__class);
   oooTabLink.classList.remove(selected__tab__class);
   changeFilter();
   updateUrlWithQuery(currentReqType);
@@ -69,9 +95,10 @@ function updateUrlWithQuery(type) {
   window.history.pushState({ path: url.toString() }, '', url.toString());
 }
 
-async function getOooRequests(query = {}) {
+async function getRequests(requestType, query = {}) {
   let finalUrl =
-    API_BASE_URL + (nextLink || '/requests' + getOooQueryParamsString(query));
+    API_BASE_URL +
+    (nextLink || '/requests' + getQueryParamsString(requestType, query));
 
   try {
     const res = await fetch(finalUrl, {
@@ -91,44 +118,6 @@ async function getOooRequests(query = {}) {
           return;
         case 404:
           showMessage('ERROR', ErrorMessages.OOO_NOT_FOUND);
-          return;
-        case 400:
-          showMessage('ERROR', data.message);
-          showToast(data.message, 'failure');
-          return;
-        default:
-          break;
-      }
-    }
-    showMessage('ERROR', ErrorMessages.SERVER_ERROR);
-  } catch (e) {
-    console.error(e);
-  }
-}
-
-async function getExtensionRequests(query = {}) {
-  let finalUrl =
-    API_BASE_URL +
-    (nextLink || '/requests' + getExtensionQueryParamsString(query));
-
-  try {
-    const res = await fetch(finalUrl, {
-      credentials: 'include',
-    });
-
-    const data = await res.json();
-    if (res.ok) {
-      return data;
-    } else {
-      switch (res.status) {
-        case 401:
-          showMessage('ERROR', ErrorMessages.UNAUTHENTICATED);
-          return;
-        case 403:
-          showMessage('ERROR', ErrorMessages.UNAUTHORIZED);
-          return;
-        case 404:
-          showMessage('ERROR', ErrorMessages.EXTENSION_NOT_FOUND);
           return;
         case 400:
           showMessage('ERROR', data.message);
@@ -168,6 +157,9 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
     state,
     from,
     until,
+    type,
+    newEndsOn,
+    oldEndsOn,
     message,
     createdAt,
     lastModifiedBy,
@@ -195,8 +187,14 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
     createdAt,
     (s) => s + ' ago',
   );
-  const fromDate = convertDateToReadableStringDate(from, DEFAULT_DATE_FORMAT);
-  const toDate = convertDateToReadableStringDate(until, DEFAULT_DATE_FORMAT);
+  const fromDate = convertDateToReadableStringDate(
+    type === 'OOO' ? from : oldEndsOn,
+    DEFAULT_DATE_FORMAT,
+  );
+  const toDate = convertDateToReadableStringDate(
+    type === 'OOO' ? until : newEndsOn,
+    DEFAULT_DATE_FORMAT,
+  );
   let updatedDate = convertDateToReadableStringDate(
     updatedAt,
     DEFAULT_DATE_FORMAT,
@@ -209,7 +207,8 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
 
   const card = createElementFromMap({
     tagName: 'div',
-    class: 'ooo_request__card',
+    class: 'request__card',
+    testId: `${type.toLowerCase()}-request-card`,
     child: [
       generateRequesterInfo(),
       generateRequestContent(),
@@ -231,10 +230,12 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
     return createElementFromMap({
       tagName: 'div',
       class: ['action__container', showActionButtonClass],
+      testId: 'action-container',
       child: [
         createElementFromMap({
           tagName: 'input',
           class: 'request__remark__input',
+          testId: 'request-remark-input',
           id: `remark-text-${id}`,
           type: 'text',
           placeholder: 'Add Remark If Any...',
@@ -246,6 +247,7 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
             createElementFromMap({
               tagName: 'button',
               class: ['request__action__btn', 'accept__btn'],
+              testId: 'approve-button',
               id: `${id}`,
               textContent: 'Accept',
               eventListeners: [
@@ -258,6 +260,7 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
             createElementFromMap({
               tagName: 'button',
               class: ['request__action__btn', 'reject__btn'],
+              testId: 'reject-button',
               id: `${id}`,
               textContent: 'Reject',
               eventListeners: [
@@ -277,6 +280,7 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
     return createElementFromMap({
       tagName: 'div',
       class: ['admin__info__and__status', showSuperuserDetailsClass],
+      testId: 'admin-info-and-status',
       child: [
         createElementFromMap({
           tagName: 'div',
@@ -322,7 +326,7 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
                 }),
                 createElementFromMap({
                   tagName: 'p',
-                  textContent: reason || '',
+                  textContent: type === 'ONBOARDING' ? message : reason || '',
                 }),
               ],
             }),
@@ -339,7 +343,8 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
       child: [
         createElementFromMap({
           tagName: 'p',
-          textContent: message || 'N/A',
+          textContent:
+            'Reason: ' + (type === 'ONBOARDING' ? reason : message || 'N/A'),
         }),
         createElementFromMap({
           tagName: 'div',
@@ -421,6 +426,7 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
         createElementFromMap({
           tagName: 'button',
           class: ['request__status', `request__status--${state.toLowerCase()}`],
+          testId: 'request-status',
           textContent:
             state.charAt(0).toUpperCase() + state.slice(1).toLowerCase() ||
             'N/A',
@@ -439,14 +445,22 @@ async function renderRequestCards(queries = {}) {
     if (userDetails.length === 0) {
       userDetails = await getInDiscordUserList();
     }
-    requestResponse =
-      currentReqType === OOO_REQUEST_TYPE
-        ? await getOooRequests(queries)
-        : await getExtensionRequests(queries);
+    if (currentReqType === OOO_REQUEST_TYPE) {
+      requestResponse = await getRequests(OOO_REQUEST_TYPE, queries);
+    } else if (currentReqType === ONBOARDING_EXTENSION_REQUEST_TYPE) {
+      requestResponse = await getRequests(
+        ONBOARDING_EXTENSION_REQUEST_TYPE,
+        queries,
+      );
+    } else {
+      requestResponse = await getRequests(EXTENSION_REQUEST_TYPE, queries);
+    }
 
     for (const request of requestResponse?.data || []) {
       let superUserDetails;
-      let requesterUserDetails = await getUserDetails(request.requestedBy);
+      let requesterUserDetails = await getUserDetails(
+        request.type === 'OOO' ? request.requestedBy : request.userId,
+      );
       if (request.state !== 'PENDING') {
         superUserDetails = await getUserDetails(request.lastModifiedBy);
       }
@@ -486,7 +500,7 @@ async function acceptRejectRequest(id, reqBody) {
     });
     const data = await res.json();
     if (res.ok) {
-      showToast('Status updated successfully!', 'success');
+      showToast(data.message, 'success');
       return data;
     } else {
       switch (res.status) {
@@ -530,7 +544,7 @@ async function performAcceptRejectAction(isAccepted, e) {
       state: isAccepted ? 'APPROVED' : 'REJECTED',
     });
   }
-  const parentDiv = e.target.closest('.ooo_request__card');
+  const parentDiv = e.target.closest('.request__card');
   parentDiv.classList.add('disabled');
   const removeSpinner = addSpinner(parentDiv);
 
