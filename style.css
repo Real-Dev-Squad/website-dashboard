@@ -239,6 +239,8 @@ footer {
 @media only screen and (max-width: 600px) {
   .buttonSection {
     flex-direction: column;
+    height: auto;
+    margin-top: 3rem;
   }
   .action-button {
     text-align: center;
