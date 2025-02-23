@@ -363,10 +363,11 @@ nav a:hover {
 
 .request__remark__input {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.8rem;
   box-sizing: border-box;
   border: var(--base-light-grey-border);
   border-radius: 0.5rem;
+  margin-bottom: 0.2rem;
 }
 
 .accept__btn,

@@ -212,19 +212,11 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
     child: [
       generateRequesterInfo(),
       generateRequestContent(),
-      addHorizontalBreakLine(),
       generateSuperuserInfo(),
       generateActionButtonsContainer(),
     ],
   });
   return card;
-
-  function addHorizontalBreakLine() {
-    return createElementFromMap({
-      tagName: 'hr',
-      class: 'horizontal__line__separator',
-    });
-  }
 
   function generateActionButtonsContainer() {
     return createElementFromMap({
