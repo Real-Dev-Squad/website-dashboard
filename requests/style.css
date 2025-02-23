@@ -136,7 +136,7 @@ p {
   flex-direction: column;
   max-width: 46rem;
   background-color: var(--white);
-  width: 100%;
+  width: auto;
   border: var(--base-light-grey-border);
   padding: 1rem;
   box-shadow: var(--elevation-1);
