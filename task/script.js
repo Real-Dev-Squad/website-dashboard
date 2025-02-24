@@ -1,9 +1,291 @@
 const API_BASE_URL = window.API_BASE_URL;
+const SKILLS_API = 'https://services.realdevsquad.com/skilltree/v1/skills';
+
 const suggestedUsers = [];
 const allUser = [];
+
+const params = new URLSearchParams(window.location.search);
+const isDev = params.get('dev') === 'true';
+
+// hide fields under isDev feature flag
+const containers = [
+  'featureUrlContainer',
+  'featureGroupContainer',
+  'taskLevelContainer',
+];
+
+function hideElements(isDev, elementIds) {
+  if (isDev) {
+    elementIds.forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.style.display = 'none';
+      }
+    });
+  }
+}
+// hide fields if dev=true
+hideElements(isDev, containers);
+
+//Skills field under dev=true
+const skillsContainer = document.getElementById('skillsContainer');
+
+if (!isDev && skillsContainer) {
+  skillsContainer.style.display = 'none';
+}
+
+async function fetchSkills() {
+  if (!isDev) return [];
+
+  try {
+    const response = await fetch(SKILLS_API, {
+      credentials: 'include',
+    });
+    return await response.json();
+  } catch (error) {
+    alert(`Error fetching skills: ${error}`);
+    return [];
+  }
+}
+
+class MultiSelect {
+  constructor(container) {
+    this.container = container;
+    this.selectedValues = new Set();
+    this.button = container.querySelector('.multi-select-button');
+    this.selectedItemsContainer = container.querySelector('.selected-items');
+    this.placeholder = container.querySelector('.placeholder');
+    this.popover = container.querySelector('.popover');
+    this.searchInput = container.querySelector('.search-input');
+    this.optionsList = container.querySelector('.options-list');
+    this.options = [];
+    this.focusedIndex = -1;
+
+    this.initializeSkills();
+    this.bindEvents();
+  }
+
+  async initializeSkills() {
+    try {
+      const skills = await fetchSkills();
+      this.options = skills.map((skill) => ({
+        value: skill.id.toString(),
+        label: skill.name,
+      }));
+      this.init();
+    } catch (error) {
+      alert(`Error Initializing skills: ${error}`);
+    }
+  }
+
+  getSelectedSkills() {
+    return Array.from(this.selectedValues)
+      .map((value) => {
+        const option = this.options.find((opt) => opt.value === value);
+        return option
+          ? {
+              id: option.value,
+              name: option.label,
+            }
+          : null;
+      })
+      .filter(Boolean);
+  }
+
+  init() {
+    this.options.forEach((option) => {
+      const optionElement = document.createElement('div');
+      optionElement.className = 'option';
+      optionElement.dataset.testid = 'option';
+      optionElement.dataset.value = option.value;
+      optionElement.innerHTML = `
+      <span class="option-label" data-testid="option-label">${option.label}</span>
+      <span class="checkbox" data-testid="option-checkbox"></span>
+      `;
+      this.optionsList.appendChild(optionElement);
+    });
+  }
+  bindEvents() {
+    this.button.addEventListener('click', () => this.togglePopover());
+
+    this.optionsList.addEventListener('click', (e) => {
+      const option = e.target.closest('.option');
+      if (option) {
+        const value = option.dataset.value;
+        if (value === 'select-all') {
+          this.toggleAll();
+        } else {
+          this.toggleOption(value);
+        }
+      }
+    });
+
+    this.searchInput.addEventListener('keydown', (e) => this.handleKeydown(e));
+    this.searchInput.addEventListener('input', (e) => {
+      const searchText = e.target.value.toLowerCase();
+      const options = this.optionsList.querySelectorAll(
+        '.option:not([data-value="select-all"])',
+      );
+      options.forEach((option) => {
+        const text = option.textContent.toLowerCase();
+        option.style.display = text.includes(searchText) ? '' : 'none';
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!this.container.contains(e.target)) {
+        this.closePopover();
+      }
+    });
+  }
+
+  handleKeydown(e) {
+    const visibleOptions = Array.from(
+      this.optionsList.querySelectorAll('.option'),
+    ).filter((option) => option.style.display !== 'none');
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        this.focusedIndex = Math.min(
+          this.focusedIndex + 1,
+          visibleOptions.length - 1,
+        );
+        this.updateFocusedOption(visibleOptions);
+        break;
+
+      case 'ArrowUp':
+        e.preventDefault();
+        this.focusedIndex = Math.max(this.focusedIndex - 1, 0);
+        this.updateFocusedOption(visibleOptions);
+        break;
+
+      case 'Enter':
+        e.preventDefault();
+        if (this.focusedIndex >= 0) {
+          const focusedOption = visibleOptions[this.focusedIndex];
+          const value = focusedOption.dataset.value;
+          if (value === 'select-all') {
+            this.toggleAll();
+          } else {
+            this.toggleOption(value);
+          }
+        }
+        break;
+
+      case 'Escape':
+        this.closePopover();
+        break;
+    }
+  }
+
+  updateFocusedOption(options) {
+    options.forEach((option, index) => {
+      if (index === this.focusedIndex) {
+        option.classList.add('focused');
+        option.scrollIntoView({ block: 'nearest' });
+      } else {
+        option.classList.remove('focused');
+      }
+    });
+  }
+
+  createBadge(option) {
+    const badge = document.createElement('div');
+    badge.className = 'badge';
+    badge.innerHTML = `
+      <span class="text">${option.label}</span>
+      <span class="remove">×</span>
+    `;
+
+    badge.querySelector('.remove').addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.toggleOption(option.value);
+    });
+    return badge;
+  }
+
+  togglePopover() {
+    const isVisible = this.popover.style.display === 'block';
+    this.popover.style.display = isVisible ? 'none' : 'block';
+    if (!isVisible) {
+      this.searchInput.focus();
+      this.searchInput.value = '';
+      this.focusedIndex = -1;
+      const options = this.optionsList.querySelectorAll('.option');
+      options.forEach((option) => {
+        option.style.display = '';
+        option.classList.remove('focused');
+      });
+    }
+  }
+
+  closePopover() {
+    this.popover.style.display = 'none';
+  }
+
+  toggleOption(value) {
+    if (this.selectedValues.has(value)) {
+      this.selectedValues.delete(value);
+    } else {
+      this.selectedValues.add(value);
+    }
+    this.updateUI();
+  }
+
+  toggleAll() {
+    if (this.selectedValues.size === this.options.length) {
+      this.clearSelection();
+    } else {
+      this.options.forEach((option) => this.selectedValues.add(option.value));
+    }
+    this.updateUI();
+  }
+
+  clearSelection() {
+    this.selectedValues.clear();
+    this.updateUI();
+  }
+
+  updateUI() {
+    this.selectedItemsContainer.innerHTML = '';
+    this.placeholder.style.display = this.selectedValues.size ? 'none' : '';
+
+    const selectedOptions = Array.from(this.selectedValues)
+      .map((value) => this.options.find((opt) => opt.value === value))
+      .filter(Boolean);
+
+    selectedOptions.forEach((option) => {
+      this.selectedItemsContainer.appendChild(this.createBadge(option));
+    });
+
+    this.optionsList.querySelectorAll('.option').forEach((option) => {
+      const checkbox = option.querySelector('.checkbox');
+      if (option.dataset.value === 'select-all') {
+        checkbox.classList.toggle(
+          'checked',
+          this.selectedValues.size === this.options.length,
+        );
+      } else {
+        checkbox.classList.toggle(
+          'checked',
+          this.selectedValues.has(option.dataset.value),
+        );
+      }
+    });
+  }
+}
+
+// Initialize the component
+const multiSelect = new MultiSelect(
+  document.querySelector('.multi-select-container'),
+);
+
 const category = document.getElementById('category');
 
 category.addEventListener('change', async () => {
+  if (isDev) return;
+
   try {
     showSubmitLoader();
     const categoryValue = category.value;
@@ -54,7 +336,7 @@ const getDaysInEpoch = (remainingDays) => {
 };
 
 const setDefaultDates = () => {
-  if (document.getElementById('status').value === 'ASSIGNED') {
+  if (document.getElementById('status').value === StatusType.ASSIGNED) {
     const endsOn = document.getElementById('endsOn');
     endsOn.value = getFutureDateString(14);
     endsOn.min = getFutureDateString(1);
@@ -71,7 +353,7 @@ function getObjectOfFormData(formId) {
   const object = {};
   const data = new FormData(formId);
   const isStatusAssigned =
-    document.getElementById('status').value === 'ASSIGNED';
+    document.getElementById('status').value === StatusType.ASSIGNED;
 
   data.forEach((value, key) => {
     if (!Reflect.has(object, key)) {
@@ -155,7 +437,7 @@ taskForm.onsubmit = async (e) => {
     isNoteworthy,
   } = getObjectOfFormData(taskForm);
 
-  if (status === 'ASSIGNED' && !assignee.trim()) {
+  if (status === StatusType.ASSIGNED && !assignee.trim()) {
     alert('Assignee can not be empty');
     showSubmitLoader(false);
     document.getElementById('assignee').focus();
@@ -184,7 +466,7 @@ taskForm.onsubmit = async (e) => {
     isNoteworthy: isNoteworthy == 'on',
   };
 
-  if (status === 'ASSIGNED') {
+  if (status === StatusType.ASSIGNED) {
     dataToBeSent.startedOn = new Date() / 1000;
   }
 
@@ -192,26 +474,33 @@ taskForm.onsubmit = async (e) => {
     delete dataToBeSent.endsOn;
   }
 
-  if (status === 'AVIALABLE') {
+  if (status === StatusType.AVAILABLE) {
     delete dataToBeSent.endsOn;
   }
 
-  if (dataToBeSent.type == 'feature') {
-    dataToBeSent.assignee = assignee.trim() ? assignee : ' ';
-  }
+  if (isDev) {
+    delete dataToBeSent.featureUrl;
+    delete dataToBeSent.type;
+    delete dataToBeSent.participants;
 
-  if (dataToBeSent.type == 'group') {
-    dataToBeSent.participants = participants.trim()
-      ? participants.split(',')
-      : [];
+    dataToBeSent.assignee = assignee.trim() ? assignee : ' ';
+    dataToBeSent.skills = multiSelect.getSelectedSkills();
+  } else {
+    if (dataToBeSent.featureUrl.trim() === '') {
+      delete dataToBeSent.featureUrl;
+    }
+    if (dataToBeSent.type == 'feature') {
+      dataToBeSent.assignee = assignee.trim() ? assignee : ' ';
+    }
+    if (dataToBeSent.type == 'group') {
+      dataToBeSent.participants = participants.trim()
+        ? participants.split(',')
+        : [];
+    }
   }
 
   if (dataToBeSent.purpose.trim() === '') {
     delete dataToBeSent.purpose;
-  }
-
-  if (dataToBeSent.featureUrl.trim() === '') {
-    delete dataToBeSent.featureUrl;
   }
 
   dataToBeSent.links = dataToBeSent.links.filter((link) => link);
@@ -248,19 +537,22 @@ taskForm.onsubmit = async (e) => {
     const result = await response.json();
 
     if (response.ok) {
-      const body = {
-        itemId: result.id,
-        itemType: 'task',
-        tagPayload: [{ tagId: category, levelId: level }],
-      };
-      await fetch(`${API_BASE_URL}/items`, {
-        method: 'POST',
-        credentials: 'include',
-        body: JSON.stringify(body),
-        headers: {
-          'Content-type': 'application/json',
-        },
-      });
+      if (!isDev) {
+        const body = {
+          itemId: result.id,
+          itemType: 'task',
+          tagPayload: [{ tagId: category, levelId: level }],
+        };
+
+        await fetch(`${API_BASE_URL}/items`, {
+          method: 'POST',
+          credentials: 'include',
+          body: JSON.stringify(body),
+          headers: {
+            'Content-type': 'application/json',
+          },
+        });
+      }
       alert(result.message);
       window.location.reload(true);
     }
@@ -289,7 +581,7 @@ let stateHandle = () => {
     ) {
       return true;
     } else if (
-      item.value === 'ASSIGNED' &&
+      item.value === StatusType.ASSIGNED &&
       (wasAssigneeSet === false || assigneeEl.value === '')
     ) {
       return true;
@@ -308,6 +600,8 @@ let stateHandle = () => {
 };
 
 let hideUnusedField = (radio) => {
+  if (isDev) return;
+
   const assigneeInput = document.getElementById('assigneeInput');
   const participantsInput = document.getElementById('participantsInput');
   if (
@@ -364,12 +658,14 @@ const handleDateChange = (event) => {
   previewDate.innerHTML = !!input.value ? getRemainingDays(input.value) : 14;
 };
 
-function handleStatusChange(event = { target: { value: 'AVAILABLE' } }) {
+function handleStatusChange(
+  event = { target: { value: StatusType.AVAILABLE } },
+) {
   const assignee = document.getElementById('assigneeInput');
   const assigneeEl = document.getElementById('assignee');
   const endsOnWrapper = document.getElementById('endsOnWrapper');
   const featureRadio = document.getElementById('feature');
-  if (event.target.value === 'ASSIGNED') {
+  if (event.target.value === StatusType.ASSIGNED) {
     setDefaultDates();
     assignee.classList.add('show-assignee-field');
     assignee.style.display = 'none';
@@ -381,7 +677,7 @@ function handleStatusChange(event = { target: { value: 'AVAILABLE' } }) {
     document.getElementById('endsOn').value = '';
     assigneeEl.value = '';
   }
-  if (event.target.value === 'ASSIGNED' && featureRadio.checked) {
+  if (event.target.value === StatusType.ASSIGNED && featureRadio.checked) {
     assignee.style.display = 'flex';
   }
 }
@@ -404,6 +700,8 @@ function debounce(func, delay) {
 }
 
 async function fetchTags() {
+  if (isDev) return;
+
   const response = await fetch(`${API_BASE_URL}/tags`);
   const data = await response.json();
   const { tags } = data;
@@ -419,6 +717,8 @@ async function fetchTags() {
 }
 
 async function fetchLevel() {
+  if (isDev) return;
+
   const response = await fetch(`${API_BASE_URL}/levels`);
   const data = await response.json();
   const { levels } = data;

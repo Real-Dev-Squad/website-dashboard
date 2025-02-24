@@ -1,6 +1,10 @@
 const puppeteer = require('puppeteer');
 const { allUsersData, filteredUsersData } = require('../../mock-data/users');
 const { tags } = require('../../mock-data/tags');
+const {
+  STAGING_API_URL,
+  LOCAL_TEST_PAGE_URL,
+} = require('../../mock-data/constants');
 
 describe('Tests the User Management User Listing Screen', () => {
   let browser;
@@ -9,9 +13,6 @@ describe('Tests the User Management User Listing Screen', () => {
   let tileViewBtn;
   let tableViewBtn;
   let userSearchElement;
-  let paginationElement;
-  let prevBtn;
-  let nextBtn;
   jest.setTimeout(60000);
 
   beforeAll(async () => {
@@ -27,7 +28,7 @@ describe('Tests the User Management User Listing Screen', () => {
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-      if (url === 'https://api.realdevsquad.com/users?size=100&page=0') {
+      if (url === `${STAGING_API_URL}/users?size=100&page=0`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -38,7 +39,7 @@ describe('Tests the User Management User Listing Screen', () => {
           },
           body: JSON.stringify(allUsersData),
         });
-      } else if (url === 'https://api.realdevsquad.com/users?search=randhir') {
+      } else if (url === `${STAGING_API_URL}/users?search=randhir`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -49,7 +50,7 @@ describe('Tests the User Management User Listing Screen', () => {
           },
           body: JSON.stringify(filteredUsersData),
         });
-      } else if (url === 'https://api.realdevsquad.com/tags') {
+      } else if (url === `${STAGING_API_URL}/tags`) {
         interceptedRequest.respond({
           status: 200,
           contentType: 'application/json',
@@ -64,16 +65,13 @@ describe('Tests the User Management User Listing Screen', () => {
         interceptedRequest.continue();
       }
     });
-    await page.goto('http://localhost:8000/users');
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/users`);
     await page.waitForNetworkIdle();
 
     userListElement = await page.$('#user-list');
     tileViewBtn = await page.$('#tile-view-btn');
     tableViewBtn = await page.$('#table-view-btn');
     userSearchElement = await page.$('#user-search');
-    paginationElement = await page.$('#pagination');
-    prevBtn = await page.$('#prevButton');
-    nextBtn = await page.$('#nextButton');
   });
 
   afterAll(async () => {
@@ -85,9 +83,6 @@ describe('Tests the User Management User Listing Screen', () => {
     expect(tileViewBtn).toBeTruthy();
     expect(tableViewBtn).toBeTruthy();
     expect(userSearchElement).toBeTruthy();
-    expect(paginationElement).toBeTruthy();
-    expect(prevBtn).toBeTruthy();
-    expect(nextBtn).toBeTruthy();
   });
 
   it('Check the UI interactions of tile view and table view button.', async () => {
@@ -108,7 +103,7 @@ describe('Tests the User Management User Listing Screen', () => {
     expect(liList.length).toBeGreaterThan(0);
   });
 
-  it('checks the search functionality to display queried user', async () => {
+  it('Checks the search functionality to display queried user', async () => {
     await page.type('input[id="user-search"]', 'randhir');
     await page.waitForNetworkIdle();
     const userList = await page.$('#user-list');
@@ -116,19 +111,33 @@ describe('Tests the User Management User Listing Screen', () => {
     expect(userCard.length).toBeGreaterThan(0);
   });
 
-  it('checks infinite scroll functionality to load more users', async () => {
-    await page.goto('http://localhost:8000/users');
+  it('Checks for empty string input once the user removes their input', async () => {
+    // Find the user list and the user cards
+    const userList = await page.$('#head_list');
+    let userCard = await userList.$$('li');
+
+    await page.click('input[id="user-search"]');
+    await page.keyboard.down('Control'); // On Mac, use 'Meta' instead of 'Control'
+    await page.keyboard.press('A');
+    await page.keyboard.up('Control');
+    await page.keyboard.press('Backspace');
+
     await page.waitForNetworkIdle();
 
+    userCard = await userList.$$('li');
+
+    expect(userCard.length).toBeGreaterThan(0);
+  });
+
+  it('checks infinite scroll functionality to load more users', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/users`);
+    await page.waitForNetworkIdle();
     const userList = await page.$('#user-list');
     let initialUserCount = await userList.$$eval('li', (items) => items.length);
     expect(initialUserCount).toBeGreaterThan(0);
-
-    // Scroll to the bottom of the page to trigger infinite scroll
     await page.evaluate(() => {
       window.scrollTo(0, document.body.scrollHeight);
     });
-    await page.waitForNetworkIdle();
     const updatedUserCount = await userList.$$eval(
       'li',
       (items) => items.length,

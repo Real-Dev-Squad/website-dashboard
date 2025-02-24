@@ -165,6 +165,39 @@
 .approve-button:hover {
   background-color: var(--green500);
 }
+.skeleton {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  animation: skeleton-loading 1s linear infinite alternate;
+}
+
+.skeleton-text,
+.skeleton-link,
+.skeleton-span {
+  width: 3rem;
+  height: 1rem;
+  background-color: hsl(200, 20%, 70%);
+  animation: skeleton-loading 1s linear infinite alternate;
+}
+
+.skeleton-link,
+.skeleton-span,
+.skeleton-text {
+  width: 8rem;
+  display: inline-flex;
+  border-radius: 0.125rem;
+  line-height: 3rem;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-color: hsl(200, 20%, 70%);
+  }
+  100% {
+    background-color: hsl(200, 20%, 80%);
+  }
+}
 
 .edit-button {
   background: none;
@@ -740,8 +773,43 @@ body {
   align-items: center;
   justify-content: space-between;
   position: relative;
-  height: 1.6rem;
+  height: 2rem;
 }
+
+.title-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.title-input-error,
+.reason-input-error,
+.extension-input-error {
+  font-size: 12px;
+  color: var(--red-color);
+}
+
+.extension-request-update-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 16px 24px;
+  background-color: var(--red-color);
+  color: #fff;
+  font-size: 16px;
+  border-radius: 4px;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  z-index: 1000;
+}
+
+.extension-request-update-toast.fade-out {
+  opacity: 0;
+}
+
+.extension-request-update-toast.toast-success {
+  background-color: var(--green-color);
+}
+
 .disabled {
   opacity: 0.5;
   pointer-events: none;

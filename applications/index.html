@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/applications/style.css" />
+    <link rel="stylesheet" href="../global.css" />
     <script type="module" src="/applications/script.js" defer></script>
     <script src="/helpers/loadENV.js"></script>
     <title>Applications</title>
@@ -49,6 +50,7 @@
           <span class="filter-remove">&#x2715;</span>
         </div>
       </div>
+      <h2 class="total_count hidden"></h2>
       <p class="no_applications_found hidden">No applications Found!</p>
       <div
         class="filter-modal hidden"
@@ -120,5 +122,11 @@
       <div class="loader hidden">Loading...</div>
       <div id="page_bottom_element"></div>
     </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        loadFooter();
+      });
+    </script>
+    <script src="../footer/footerComponent.js"></script>
   </body>
 </html>

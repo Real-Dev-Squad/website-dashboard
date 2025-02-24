@@ -1,4 +1,9 @@
-const createCard = (rawGroup, onClick = () => {}) => {
+const createCard = (
+  rawGroup,
+  onClick = () => {},
+  onDelete = () => {},
+  isSuperUser = false,
+) => {
   const group = {
     ...rawGroup,
     description:
@@ -10,7 +15,17 @@ const createCard = (rawGroup, onClick = () => {}) => {
   cardElement.className = 'card';
   cardElement.id = `group-${group.id}`;
   cardElement.innerHTML = `
-        <h5 class="card__title"></h5>
+        <div class="card__header">
+          <h5 class="card__title"></h5>
+          ${
+            isSuperUser
+              ? `
+            <button class="delete-group">
+              <img class="delete-group__icon" src="assets/delete.svg" alt="Delete" />
+            </button>`
+              : ''
+          }  
+        </div>
         <p class="card__description"></p>
         <div class="card__action">
             <button class="card__btn button"></button>
@@ -35,6 +50,15 @@ const createCard = (rawGroup, onClick = () => {}) => {
   cardElement
     .querySelector('.card__btn')
     .addEventListener('click', () => group.isUpdating || onClick());
+
+  if (isSuperUser) {
+    cardElement
+      .querySelector('.delete-group')
+      .addEventListener('click', (e) => {
+        e.stopPropagation();
+        onDelete(rawGroup.id);
+      });
+  }
 
   return cardElement;
 };
@@ -214,6 +238,44 @@ const createGroupCreationModal = (onClose = () => {}, onSubmit = () => {}) => {
   return backdropElement;
 };
 
+const createDeleteConfirmationModal = (
+  onClose = () => {},
+  onConfirm = () => {},
+) => {
+  const backdropElement = document.createElement('div');
+  backdropElement.className = 'backdrop';
+
+  const modalElement = document.createElement('div');
+  modalElement.className = 'delete-confirmation-modal';
+  modalElement.innerHTML = `
+    <div class="delete-modal__header">
+      <h2 class="delete-modal__title">Confirm Delete</h2>
+      <button type="button" id="close-button" class="delete-modal__close">
+        <img src="assets/close.svg" alt="Close" />
+      </button>
+    </div>
+    <div class="delete-modal__content">
+      <p class="delete-modal__msg"> Are you sure you want to delete this group? </p>
+    </div>
+    
+    <div class="delete-modal__buttons">
+      <button class="delete-modal-button button--secondary" id="cancel-delete">Cancel</button>
+      <button class="delete-modal-button button--danger" id="confirm-delete">Delete</button>
+    </div>
+  `;
+
+  modalElement.querySelector('#close-button').onclick = onClose;
+  modalElement.querySelector('#cancel-delete').onclick = onClose;
+  modalElement.querySelector('#confirm-delete').onclick = onConfirm;
+
+  backdropElement.appendChild(modalElement);
+  backdropElement.onclick = (e) => {
+    if (e.target === backdropElement) onClose();
+  };
+
+  return backdropElement;
+};
+
 export {
   createCard,
   createLoadingCard,
@@ -222,4 +284,5 @@ export {
   createNavbarProfileLoading,
   createNavbarProfileSignin,
   createGroupCreationModal,
+  createDeleteConfirmationModal,
 };

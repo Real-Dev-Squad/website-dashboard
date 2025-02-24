@@ -8,9 +8,12 @@ import {
 } from './utils.js';
 let nextLink;
 let isDataLoading = false;
+let totalApplicationCount = 0;
+let currentApplicationIndex = 0;
 const loader = document.querySelector('.loader');
 const filterModal = document.querySelector('.filter-modal');
 const backDrop = document.querySelector('.backdrop');
+const totalCountElement = document.querySelector('.total_count');
 const backDropBlur = document.querySelector('.backdrop-blur');
 const applicationDetailsModal = document.querySelector('.application-details');
 const mainContainer = document.querySelector('.container');
@@ -37,6 +40,7 @@ const applicationDetailsActionsContainer = document.querySelector(
 );
 const urlParams = new URLSearchParams(window.location.search);
 const isDev = urlParams.get('dev') === 'true';
+let isApplicationPending = urlParams.get('status') === 'pending';
 const filterButton = isDev
   ? document.getElementById('filter-button-new')
   : document.getElementById('filter-button');
@@ -95,8 +99,11 @@ function changeFilter() {
   if (!isDev) {
     filterModal.classList.add('hidden');
     backDrop.style.display = 'none';
+    totalCountElement.classList.add('hidden');
   } else {
+    totalCountElement.classList.add('hidden');
     status = 'all';
+    totalApplicationCount = 0;
   }
   applicationContainer.innerHTML = '';
 }
@@ -294,7 +301,7 @@ function removeQueryParamInUrl(queryParamKey) {
   window.history.replaceState(window.history.state, '', updatedUrl);
 }
 
-function createApplicationCard({ application }) {
+function createApplicationCard({ application, dev, index }) {
   const applicationCard = createElement({
     type: 'div',
     attributes: { class: 'application-card' },
@@ -311,6 +318,29 @@ function createApplicationCard({ application }) {
     innerText: application.biodata.firstName,
   });
 
+  if (dev && isApplicationPending) {
+    const usernameTextAndIndex = createElement({
+      type: 'div',
+      attributes: { class: 'user-text-index' },
+    });
+
+    const userIndex = createElement({
+      type: 'input',
+      attributes: {
+        type: 'number',
+        value: `${index}`,
+        readonly: '',
+        class: 'user-index',
+        'data-testid': 'user-index',
+      },
+    });
+    usernameTextAndIndex.appendChild(usernameText);
+    usernameTextAndIndex.appendChild(userIndex);
+    userInfoContainer.appendChild(usernameTextAndIndex);
+  } else {
+    userInfoContainer.appendChild(usernameText);
+  }
+
   const companyNameText = createElement({
     type: 'p',
     attributes: { class: 'company-name hide-overflow' },
@@ -323,7 +353,6 @@ function createApplicationCard({ application }) {
     innerText: `Skills: ${application.professional.skills}`,
   });
 
-  userInfoContainer.appendChild(usernameText);
   userInfoContainer.appendChild(companyNameText);
   userInfoContainer.appendChild(skillsText);
 
@@ -333,47 +362,80 @@ function createApplicationCard({ application }) {
     innerText: application.intro.introduction.slice(0, 200),
   });
 
-  const viewDetailsButton = createElement({
-    type: 'button',
-    attributes: { class: 'view-details-button' },
-    innerText: 'View Details',
-  });
-
-  viewDetailsButton.addEventListener('click', () => {
-    addQueryParamInUrl('id', application.id);
-    openApplicationDetails(application);
-  });
-
   applicationCard.appendChild(userInfoContainer);
   applicationCard.appendChild(introductionText);
-  applicationCard.appendChild(viewDetailsButton);
+
+  if (dev) {
+    applicationCard.style.cursor = 'pointer';
+    applicationCard.addEventListener('click', () => {
+      addQueryParamInUrl('id', application.id);
+      openApplicationDetails(application);
+    });
+  } else {
+    const viewDetailsButton = createElement({
+      type: 'button',
+      attributes: { class: 'view-details-button' },
+      innerText: 'View Details',
+    });
+
+    viewDetailsButton.addEventListener('click', () => {
+      addQueryParamInUrl('id', application.id);
+      openApplicationDetails(application);
+    });
+    applicationCard.appendChild(viewDetailsButton);
+  }
 
   return applicationCard;
 }
 
-async function renderApplicationCards(next, status, isInitialRender) {
+function updateTotalCount(total, status) {
+  if (total > 0) {
+    totalCountElement.textContent = `Total ${status} applications: ${total}`;
+    totalCountElement.classList.remove('hidden');
+  }
+}
+
+async function renderApplicationCards(next, status, isInitialRender, dev) {
   noApplicationFoundText.classList.add('hidden');
   changeLoaderVisibility({ hide: false });
   isDataLoading = true;
   const data = await getApplications({
     applicationStatus: status,
     next,
+    dev,
   });
   isDataLoading = false;
   changeLoaderVisibility({ hide: true });
   const applications = data.applications;
+  const totalSelectedCount = data.totalCount;
+  if (isInitialRender) {
+    totalApplicationCount = data.totalCount;
+    currentApplicationIndex = totalApplicationCount;
+  }
   nextLink = data.next;
   if (isDev && status != 'all') {
     showAppliedFilter(status);
   }
   if (isInitialRender) filterButton.classList.remove('hidden');
+
+  if (dev) {
+    updateTotalCount(totalSelectedCount, status);
+  }
   if (!applications.length)
     return noApplicationFoundText.classList.remove('hidden');
-  applications.forEach((application) => {
+
+  if (isInitialRender || !next) {
+    applicationContainer.innerHTML = '';
+    currentApplicationIndex = totalSelectedCount;
+  }
+  applications.forEach((application, index) => {
     const applicationCard = createApplicationCard({
       application,
+      dev,
+      index: currentApplicationIndex,
     });
     applicationContainer.appendChild(applicationCard);
+    currentApplicationIndex--;
   });
 }
 
@@ -422,7 +484,14 @@ async function renderApplicationById(id) {
   if (applicationId) {
     await renderApplicationById(applicationId);
   }
-  await renderApplicationCards('', status, true, applicationId);
+  totalApplicationCount = 0;
+  currentApplicationIndex = 0;
+  if (isDev) {
+    await renderApplicationCards('', status, true, isDev);
+  } else {
+    await renderApplicationCards('', status, true, applicationId);
+  }
+
   addIntersectionObserver();
 
   changeLoaderVisibility({ hide: true });
@@ -433,7 +502,12 @@ const intersectionObserver = new IntersectionObserver(async (entries) => {
     return;
   }
   if (entries[0].isIntersecting && !isDataLoading) {
-    await renderApplicationCards(nextLink);
+    const dev = urlParams.get('dev');
+    if (dev) {
+      await renderApplicationCards(nextLink, status, false, dev);
+    } else {
+      await renderApplicationCards(nextLink);
+    }
   }
 });
 
@@ -450,7 +524,7 @@ if (isDev) {
   filterOptions.forEach((option) => {
     option.addEventListener('click', () => {
       const filter = option.getAttribute('data-filter');
-      applyFilter(filter);
+      applyFilter(filter, isDev);
     });
   });
 } else {
@@ -473,7 +547,14 @@ if (isDev) {
     addQueryParamInUrl('status', selectedStatus);
     changeFilter();
     status = selectedStatus;
-    renderApplicationCards(nextLink, status);
+    const urlParams = new URLSearchParams(window.location.search);
+    const dev = urlParams.get('dev');
+
+    if (dev) {
+      renderApplicationCards(nextLink, status, true, dev);
+    } else {
+      renderApplicationCards(nextLink, status);
+    }
   });
 
   clearButton.addEventListener('click', clearFilter);
@@ -487,7 +568,7 @@ function showAppliedFilter(filterApplied) {
   }
 }
 
-function applyFilter(filter) {
+function applyFilter(filter, isDev) {
   if (filter.length > 0) {
     if (!filterLabel.classList.contains('hidden')) {
       filterLabel.classList.add('hidden');
@@ -495,7 +576,7 @@ function applyFilter(filter) {
     addQueryParamInUrl('status', filter);
     changeFilter();
     status = filter;
-    renderApplicationCards(nextLink, status);
+    renderApplicationCards('', status, false, isDev);
     filterDropdown.style.display = 'none';
   }
 }
@@ -505,7 +586,8 @@ filterRemove.addEventListener('click', () => {
   filterText.textContent = '';
   removeQueryParamInUrl('status');
   changeFilter();
-  renderApplicationCards(nextLink, status);
+  const dev = urlParams.get('dev');
+  renderApplicationCards(nextLink, status, true, dev);
 });
 
 backDrop.addEventListener('click', () => {
