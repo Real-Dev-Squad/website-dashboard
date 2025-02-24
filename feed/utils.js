@@ -3,7 +3,20 @@ function generateActivityFeedParams(query) {
     dev: true,
     format: 'feed',
     type: getLogTypesFromCategory(query?.category),
+    username: query.username || undefined,
+    startDate: query.startDate
+      ? Math.floor(new Date(query.startDate).getTime() / 1000)
+      : undefined,
+    endDate: query.endDate
+      ? Math.floor(new Date(query.endDate).getTime() / 1000)
+      : undefined,
   };
+  Object.keys(queryParams).forEach((key) => {
+    if (queryParams[key] === undefined) {
+      delete queryParams[key];
+    }
+  });
+
   const queryString = new URLSearchParams(queryParams).toString();
   return `?${queryString}`;
 }
@@ -40,9 +53,12 @@ function addEmptyPageMessage(container) {
 }
 
 function showMessage(container, errorMsg) {
+  container.innerHTML = '';
+
   if (errorMsg) {
     const errorHeading = createElement({
       type: 'h4',
+      attributes: { class: 'error-message' },
       innerText: errorMsg,
     });
 
@@ -105,4 +121,31 @@ function truncateWithEllipsis(text, maxLength = 120) {
     return text;
   }
   return `${text.slice(0, maxLength)}...`;
+}
+
+function generateQueryParams(params) {
+  return Object.entries(params)
+    .flatMap(([key, value]) =>
+      Array.isArray(value)
+        ? value.map(
+            (v) => `${encodeURIComponent(key)}=${encodeURIComponent(v)}`,
+          )
+        : `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
+    )
+    .join('&');
+}
+
+function refreshFeedWithQuery(query) {
+  changeFilter();
+  populateActivityFeed(query);
+}
+
+function refreshFeed() {
+  const query = {
+    category: currentCategory,
+    ...activeFilters,
+  };
+
+  changeFilter();
+  populateActivityFeed(query);
 }
