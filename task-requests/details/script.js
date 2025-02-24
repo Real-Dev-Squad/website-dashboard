@@ -621,7 +621,6 @@ function populateModalContent(index) {
   }
   const modal = document.getElementById('requestor_details_modal_content');
   if (params.get('dev') == 'true') {
-    console.log(modal);
     modal.className = 'new_requestor_details_modal_content';
   }
 
