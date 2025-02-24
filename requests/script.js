@@ -348,7 +348,7 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
                 createElementFromMap({
                   tagName: 'span',
                   class: 'request__date__pill',
-                  textContent: 'From',
+                  textContent: 'From:',
                 }),
                 ` ${fromDate}` || 'N/A',
               ],
@@ -359,7 +359,7 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
                 createElementFromMap({
                   tagName: 'span',
                   class: 'request__date__pill',
-                  textContent: 'To',
+                  textContent: 'To:',
                 }),
                 ` ${toDate}` || 'N/A',
               ],

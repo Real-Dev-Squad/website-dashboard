@@ -234,10 +234,9 @@ p {
 }
 
 .request__date__pill {
-  background-color: var(--medium-blue-color);
   padding: 0.1rem 0.3rem;
   border-radius: 0.5rem;
-  color: var(--white);
+  color: var(--black-color);
   font-size: 0.8rem;
   font-weight: 600;
   text-align: center;
