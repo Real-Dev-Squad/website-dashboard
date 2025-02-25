@@ -620,7 +620,7 @@ function populateModalContent(index) {
     return;
   }
   const modal = document.getElementById('requestor_details_modal_content');
-  if (params.get('dev') == 'true') {
+  if (isDev) {
     modal.className = 'new_requestor_details_modal_content';
   }
 
@@ -633,7 +633,7 @@ function populateModalContent(index) {
     'data-modal-start-date-text',
     'proposed-start-date-text',
   );
-  if (params.get('dev') == 'true') {
+  if (isDev) {
     proposedStartDateText.innerText = 'Proposed Start Date:';
     proposedStartDateText.className = 'proposed-start-date-text';
   } else {
@@ -645,7 +645,7 @@ function populateModalContent(index) {
     'data-modal-start-date-value',
     'proposed-start-date-value',
   );
-  if (params.get('dev') == 'true') {
+  if (isDev) {
     proposedStartDateValue.className = 'proposed-start-date-value';
   }
   proposedStartDateValue.textContent = getHumanReadableDate(
@@ -657,7 +657,7 @@ function populateModalContent(index) {
     'data-modal-end-date-text',
     'proposed-end-date-text',
   );
-  if (params.get('dev') == 'true') {
+  if (isDev) {
     proposedDeadlineText.innerText = 'Proposed Deadline:';
     proposedDeadlineText.className = 'proposed-end-date-text';
   } else {
@@ -669,7 +669,7 @@ function populateModalContent(index) {
     'data-modal-end-date-value',
     'proposed-end-date-value',
   );
-  if (params.get('dev') == 'true') {
+  if (isDev) {
     proposedDeadlineValue.className = 'proposed-end-date-value';
   }
   proposedDeadlineValue.textContent = getHumanReadableDate(
@@ -681,7 +681,7 @@ function populateModalContent(index) {
     'data-modal-description-text',
     'proposed-description-text',
   );
-  if (params.get('dev') == 'true') {
+  if (isDev) {
     descriptionText.innerText = 'Description:';
     descriptionText.className = 'proposed-description-text';
   } else {
@@ -708,13 +708,11 @@ function populateModalContent(index) {
     descriptionValue.innerHTML = html;
     descriptionValue.className = 'requestor_description_details';
   } else {
-    if (params.get('dev') == 'true') {
-      if (userData.description) {
-        descriptionValue.textContent = userData.description;
-      } else {
-        descriptionValue.textContent = 'N/A';
-        descriptionValue.className = 'proposed-description-value';
-      }
+    if (isDev) {
+      descriptionValue.textContent = userData.hasOwnProperty('description')
+        ? userData.description
+        : 'N/A';
+      descriptionValue.className = 'proposed-description-value';
     } else {
       descriptionValue.textContent = userData.description;
     }
@@ -724,7 +722,7 @@ function populateModalContent(index) {
   header.setAttribute('data-modal-header', 'requestor-details-header');
   header.className = 'requestor_details_modal_heading';
   header.textContent = 'Requestor Details';
-  if (params.get('dev') == 'true') {
+  if (isDev) {
     header.className = 'new_requestor_details_modal_heading';
   }
 
@@ -732,7 +730,7 @@ function populateModalContent(index) {
 
   modalContent.appendChild(header);
 
-  if (params.get('dev') == 'true') {
+  if (isDev) {
     const proposedStartDateDiv = document.createElement('div');
     proposedStartDateDiv.className = 'proposed-start-date-div';
 
