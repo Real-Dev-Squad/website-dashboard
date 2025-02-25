@@ -99,7 +99,10 @@ async function getRequests(requestType, query = {}) {
   let finalUrl =
     API_BASE_URL +
     (nextLink || '/requests' + getQueryParamsString(requestType, query));
-
+  const notFoundErrorMessage =
+    requestType === ONBOARDING_EXTENSION_REQUEST_TYPE
+      ? ErrorMessages.ONBOARDING_EXTENSION_NOT_FOUND
+      : ErrorMessages.OOO_NOT_FOUND;
   try {
     const res = await fetch(finalUrl, {
       credentials: 'include',
@@ -117,7 +120,7 @@ async function getRequests(requestType, query = {}) {
           showMessage('ERROR', ErrorMessages.UNAUTHORIZED);
           return;
         case 404:
-          showMessage('ERROR', ErrorMessages.OOO_NOT_FOUND);
+          showMessage('ERROR', notFoundErrorMessage);
           return;
         case 400:
           showMessage('ERROR', data.message);
@@ -168,6 +171,7 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
   } = request;
   let showSuperuserDetailsClass = 'notHidden';
   let showActionButtonClass = 'notHidden';
+  const isRequestTypeOnboarding = type === ONBOARDING_EXTENSION_REQUEST_TYPE;
   if (
     state === 'PENDING' ||
     lastModifiedBy === undefined ||
@@ -188,11 +192,11 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
     (s) => s + ' ago',
   );
   const fromDate = convertDateToReadableStringDate(
-    type === 'OOO' ? from : oldEndsOn,
+    isRequestTypeOnboarding ? oldEndsOn : from,
     DEFAULT_DATE_FORMAT,
   );
   const toDate = convertDateToReadableStringDate(
-    type === 'OOO' ? until : newEndsOn,
+    isRequestTypeOnboarding ? newEndsOn : until,
     DEFAULT_DATE_FORMAT,
   );
   let updatedDate = convertDateToReadableStringDate(
@@ -437,16 +441,7 @@ async function renderRequestCards(queries = {}) {
     if (userDetails.length === 0) {
       userDetails = await getInDiscordUserList();
     }
-    if (currentReqType === OOO_REQUEST_TYPE) {
-      requestResponse = await getRequests(OOO_REQUEST_TYPE, queries);
-    } else if (currentReqType === ONBOARDING_EXTENSION_REQUEST_TYPE) {
-      requestResponse = await getRequests(
-        ONBOARDING_EXTENSION_REQUEST_TYPE,
-        queries,
-      );
-    } else {
-      requestResponse = await getRequests(EXTENSION_REQUEST_TYPE, queries);
-    }
+    requestResponse = await getRequests(currentReqType, queries);
 
     for (const request of requestResponse?.data || []) {
       let superUserDetails;
