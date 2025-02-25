@@ -709,9 +709,7 @@ function populateModalContent(index) {
     descriptionValue.className = 'requestor_description_details';
   } else {
     if (isDev) {
-      descriptionValue.textContent = userData.hasOwnProperty('description')
-        ? userData.description
-        : 'N/A';
+      descriptionValue.textContent = userData.description ?? 'N/A';
       descriptionValue.className = 'proposed-description-value';
     } else {
       descriptionValue.textContent = userData.description;
