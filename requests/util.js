@@ -24,6 +24,8 @@ function createElementFromMap(domObjectMap) {
       }
     } else if (key === 'child') {
       el.append(...value);
+    } else if (key === 'testId') {
+      el.setAttribute('data-testid', value);
     } else {
       el[key] = value;
     }
@@ -32,20 +34,8 @@ function createElementFromMap(domObjectMap) {
   return el;
 }
 
-function getOooQueryParamsString(query) {
-  let queryParam = 'dev=true&type=OOO&size=12';
-  if (
-    query.state !== undefined &&
-    query.state !== null &&
-    query.state !== 'ALL'
-  ) {
-    queryParam += `&state=${query.state}`;
-  }
-  return `?${queryParam}`;
-}
-
-function getExtensionQueryParamsString(query) {
-  let queryParam = 'dev=true&type=EXTENSION&size=12';
+function getQueryParamsString(requestType, query) {
+  let queryParam = `dev=true&type=${requestType}&size=12`;
   if (
     query.state !== undefined &&
     query.state !== null &&

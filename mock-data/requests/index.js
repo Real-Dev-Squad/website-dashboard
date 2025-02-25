@@ -73,9 +73,46 @@ const extensionRequest = {
   prev: null,
 };
 
+const onboardingExtensionRequest = {
+  message: 'Request fetched successfully',
+  data: [
+    {
+      id: 'Jne4XfI8lm5QTCfcHQyJ',
+      createdAt: 1737140162577,
+      type: 'ONBOARDING',
+      state: 'APPROVED',
+      userId: 'V4rqL1aDecNGoa1IxiCu',
+      requestedBy: 'kotesh',
+      oldEndsOn: 1731827984919,
+      requestNumber: 1,
+      reason: 'request reason',
+      lastModifiedBy: 'V4rqL1aDecNGoa1IxiCu',
+      newEndsOn: 1740756889491,
+      updatedAt: 1738688705368,
+      message: 'approved',
+    },
+    {
+      id: 'Jne4XfI8lm5QTCfcHQyJ',
+      createdAt: 1737140162577,
+      type: 'ONBOARDING',
+      state: 'PENDING',
+      userId: 'V4rqL1aDecNGoa1IxiCu',
+      requestedBy: 'kotesh',
+      oldEndsOn: 1731827984919,
+      requestNumber: 1,
+      reason: 'request reason',
+      newEndsOn: 1740756889491,
+      updatedAt: 1738688705368,
+    },
+  ],
+  next: null,
+  prev: null,
+};
+
 module.exports = {
   pendingRequest,
   approvedRequest,
   requestActionResponse,
   extensionRequest,
+  onboardingExtensionRequest,
 };
