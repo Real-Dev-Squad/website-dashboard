@@ -557,51 +557,35 @@ describe('Home Page', () => {
     expect(menuOff).toBeTruthy();
   });
 
-  describe('Dropdown Click Behavior', () => {
-    beforeEach(async () => {
-      await page.setContent(`
-        <div id="userInfo">User</div>
-        <div id="dropdown" class="active">Dropdown</div>
-        <script>
-          const dropdown = document.getElementById('dropdown');
-          const userInfo = document.getElementById('userInfo');
+  it('should close the dropdown when clicking outside the dropdown', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}`);
 
-          document.addEventListener('click', (event) => {
-            if (
-              dropdown.classList.contains('active') &&
-              !dropdown.contains(event.target) &&
-              !userInfo.contains(event.target)
-            ) {
-              dropdown.classList.remove('active');
-            }
-          });
-        </script>
-      `);
-    });
-
-    it("should remove 'active' class when clicking outside the dropdown", async () => {
-      await page.click('body');
-      const hasActiveClass = await page.$eval('#dropdown', (el) =>
-        el.classList.contains('active'),
-      );
-      expect(hasActiveClass).toBe(false);
-    });
-
-    it("should keep 'active' class when clicking inside the dropdown or on user info", async () => {
-      await page.click('#userInfo');
+    try {
+      await page.waitForSelector('#dropdown', { timeout: 5000 });
       await page.evaluate(() => {
-        document.querySelector('#dropdown')?.classList.add('active');
+        const dropdown = document.getElementById('dropdown');
+        if (dropdown && !dropdown.classList.contains('active')) {
+          dropdown.classList.add('active');
+        }
       });
-      let hasActiveClass = await page.$eval('#dropdown', (el) =>
-        el.classList.contains('active'),
-      );
-      expect(hasActiveClass).toBe(true);
-
-      await page.click('#dropdown');
-      hasActiveClass = await page.$eval('#dropdown', (el) =>
-        el.classList.contains('active'),
-      );
-      expect(hasActiveClass).toBe(true);
-    });
+      const isActive = await page.evaluate(() => {
+        const dropdown = document.getElementById('dropdown');
+        return dropdown && dropdown.classList.contains('active');
+      });
+      if (!isActive) {
+        throw new Error('Failed to activate dropdown');
+      }
+      await page.mouse.click(10, 10);
+      await page.waitForTimeout(500);
+      const isActiveAfterClick = await page.evaluate(() => {
+        const dropdown = document.getElementById('dropdown');
+        return dropdown && dropdown.classList.contains('active');
+      });
+      expect(isActiveAfterClick).toBe(false);
+    } catch (error) {
+      await page.screenshot({ path: 'error-state.png' }).catch(() => {});
+      console.error('Test failed:', error.message);
+      throw error;
+    }
   });
 });
