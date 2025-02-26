@@ -68,6 +68,75 @@
           <div class="progress-bar"></div>
         </div>
       </div>
+      <div
+        class="filter__container hidden"
+        id="filterContainer"
+        data-testid="filter-container"
+      >
+        <div
+          class="user__suggestions__container"
+          data-testid="user-suggestions-container"
+        >
+          <input
+            type="text"
+            class="assignee__search"
+            id="assigneeSearch"
+            placeholder="Enter username"
+            data-testid="assignee-search"
+          />
+          <div
+            id="userSuggestions"
+            class="suggestions__list__container"
+            data-testid="suggestions-list-container"
+          >
+            <div
+              id="userSuggestionsList"
+              class="user__suggestions__list hidden"
+              data-testid="user-suggestions-list"
+            ></div>
+          </div>
+        </div>
+
+        <div
+          class="search__filter__container"
+          data-testid="search-filter-container"
+        >
+          <button
+            id="filterButton"
+            class="filter__toggle__button"
+            data-testid="filter-toggle-button"
+          >
+            <span class="filter__label" data-testid="filter-label"
+              >Filters</span
+            >
+            <img
+              class="filter__icon"
+              src="/images/funnel.svg"
+              alt="Filter icon"
+              data-testid="filter-icon"
+            />
+          </button>
+
+          <div
+            class="filter__modal hidden"
+            id="filterModal"
+            data-testid="filter-modal"
+          >
+            <div
+              class="filter__options__container"
+              id="filterOptionsContainer"
+              data-testid="filter-options-container"
+            ></div>
+            <button
+              id="applyFilterButton"
+              class="apply__filter__button"
+              data-testid="apply-filter-button"
+            >
+              Apply Filter
+            </button>
+          </div>
+        </div>
+      </div>
       <div class="container__body">
         <div
           id="request_container"
