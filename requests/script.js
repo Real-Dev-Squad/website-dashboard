@@ -644,6 +644,7 @@ function populateStatus() {
   const clearButton = document.createElement('button');
   clearButton.className = 'filter__clear__button';
   clearButton.textContent = 'Clear';
+  clearButton.setAttribute('data-testid', 'filter-clear-button');
 
   filterHeader.append(filterTitle);
 
