@@ -546,8 +546,8 @@ table tr td {
   margin: 1rem 0rem;
 }
 
-.proposed_start-date_text,
-.proposed_end-date_text,
+.proposed_start_date_text,
+.proposed_end_date_text,
 .proposed_description_text {
   font-weight: 500;
 }
