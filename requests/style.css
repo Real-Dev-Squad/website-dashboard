@@ -192,6 +192,7 @@ p {
   padding: 1rem;
   margin: 3rem 0;
   position: absolute;
+  z-index: 1;
   background-color: var(--white);
   box-shadow: var(--elevation-3);
   border-radius: 0.5rem;
@@ -684,6 +685,7 @@ nav a:hover {
   }
   .filter__container {
     justify-content: center;
+    margin-left: 2rem;
   }
 }
 
