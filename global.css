@@ -22,7 +22,6 @@ body {
   display: flex;
   margin: 0;
   justify-content: start;
-  width: 100%;
 }
 
 #pageTitle {
