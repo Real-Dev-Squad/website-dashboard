@@ -1,9 +1,9 @@
 :root {
   font-family: 'Inter', sans-serif;
   --color-primary: #1d1283;
-  --color-success: rgba(20, 102, 75, 0.6);
+  --color-success: #0e9f6e;
   --color-error: #da1e28;
-  --color-warn: rgba(199, 129, 18, 0.4);
+  --color-warn: #e3a008;
   --color-gray-light: #eee;
   --color-gray: #666;
   --red-color: red;
@@ -113,17 +113,28 @@ p {
   gap: 1rem;
 }
 
+.request_container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.request_container > * {
+  width: 100% !important;
+}
+
 .request__message {
   font-weight: 600;
   text-align: center;
   width: 90vw;
 }
 
-/* swapnil code  */
-.ooo_request__card {
+.request__card {
   position: relative;
   display: flex;
   flex-direction: column;
+  max-width: 46rem;
   background-color: var(--white);
   width: auto;
   border: var(--base-light-grey-border);
@@ -166,12 +177,11 @@ p {
 .requester__name p {
   margin-top: 1px;
   margin-bottom: 1px;
-  font-size: 0.7rem;
-  font-weight: 300;
+  font-size: 0.8rem;
+  font-weight: 500;
 }
 
 .requester__name h4 {
-  font-size: 0.9rem;
   font-weight: normal;
   margin: 1px 5px 1px 0px;
 }
@@ -219,15 +229,14 @@ p {
 
 .request__timeline p {
   font-size: 0.8rem;
-  font-weight: 300;
+  font-weight: 500;
   margin: 5px 0px;
 }
 
 .request__date__pill {
-  background-color: var(--medium-blue-color);
   padding: 0.1rem 0.3rem;
   border-radius: 0.5rem;
-  color: var(--white);
+  color: var(--black-color);
   font-size: 0.8rem;
   font-weight: 600;
   text-align: center;
@@ -250,7 +259,6 @@ p {
   width: 3rem;
   border: solid 2px white;
   border-radius: 100%;
-  flex: 1;
 }
 .admin__card__footer__requestor__avatar img {
   height: 2rem;
@@ -283,7 +291,7 @@ p {
 .admin__name__and__remark p {
   margin: 1px 0px;
   font-size: 0.7rem;
-  font-weight: 300;
+  font-weight: 500;
 }
 
 .admin__name h4 {
@@ -354,10 +362,11 @@ nav a:hover {
 
 .request__remark__input {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.8rem;
   box-sizing: border-box;
   border: var(--base-light-grey-border);
   border-radius: 0.5rem;
+  margin-bottom: 0.2rem;
 }
 
 .accept__btn,
