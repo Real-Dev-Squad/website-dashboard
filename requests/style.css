@@ -105,7 +105,135 @@ p {
   flex-wrap: wrap;
 }
 
-/* Filter modal end */
+.user__suggestions__container {
+  display: flex;
+  flex-direction: column;
+}
+
+.suggestions__list__container {
+  max-height: 6.25rem;
+  overflow-y: auto;
+  position: absolute;
+  margin-top: 2.5rem;
+}
+
+.user__suggestions__list {
+  border: 1px solid var(--color-gray);
+  border-bottom: none;
+  background-color: var(--white);
+  border-radius: 0.25rem;
+}
+
+.suggestion {
+  padding: 0.5rem;
+  cursor: pointer;
+  width: 8rem;
+  border-bottom: solid 1px var(--color-gray);
+  &:hover {
+    background-color: var(--color-gray-light);
+  }
+}
+
+.filter__options__container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.filter__clear__button {
+  padding: 0.25rem 0.5rem;
+  border: solid 1px var(--color-gray-light);
+  margin-left: 2rem;
+  border-radius: 0.25rem;
+  background-color: transparent;
+  cursor: pointer;
+  &:hover {
+    background-color: var(--color-error);
+    color: var(--white);
+  }
+}
+
+.filter__container {
+  display: flex;
+  justify-content: end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.assignee__search {
+  border: solid 0.125rem var(--color-gray);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  width: 8rem;
+  height: 1rem;
+}
+
+.search__filter__container {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  gap: 0.5rem;
+}
+
+.filter__toggle__button {
+  display: flex;
+  justify-content: space-around;
+  width: 8rem;
+  align-items: center;
+  font-size: 1rem;
+  background-color: var(--color-primary);
+  border-radius: 0.25rem;
+  border: none;
+  cursor: pointer;
+  padding: 0.4rem 1.5rem;
+}
+
+.filter__modal {
+  border: var(--base-light-grey-border);
+  padding: 1rem;
+  margin: 3rem 0;
+  position: absolute;
+  background-color: var(--white);
+  box-shadow: var(--elevation-3);
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  font-size: 0.9rem;
+}
+
+.filter__title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  margin-left: 0.3rem;
+}
+
+.filter__label {
+  font-weight: 500;
+  color: white;
+}
+
+input[type='checkbox'] {
+  accent-color: var(--color-primary);
+}
+
+.filter__checkbox__container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.apply__filter__button {
+  border: none;
+  background-color: var(--color-primary);
+  color: var(--white);
+  padding: 0.5rem 0;
+  border-radius: 0.25rem;
+}
+
+.filter__icon {
+  width: 1.2rem;
+  height: 1.5rem;
+}
 
 .request {
   display: grid;
@@ -552,6 +680,9 @@ nav a:hover {
   }
 
   .container__header {
+    justify-content: center;
+  }
+  .filter__container {
     justify-content: center;
   }
 }

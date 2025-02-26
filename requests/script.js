@@ -1,7 +1,6 @@
 const API_BASE_URL = window.API_BASE_URL;
 const requestContainer = document.getElementById(REQUEST_CONTAINER_ID);
 const lastElementContainer = document.querySelector(LAST_ELEMENT_CONTAINER);
-
 const params = new URLSearchParams(window.location.search);
 const isDev = params.get('dev') === 'true';
 const loader = document.querySelector('.container__body__loader');
@@ -12,6 +11,15 @@ let extensionTabLink = document.getElementById(EXTENSION_TAB_ID);
 let onboardingExtensionTabLink = document.getElementById(
   ONBOARDING_EXTENSION_TAB_ID,
 );
+const filterContainer = document.getElementById('filterContainer');
+const filterButton = document.getElementById('filterButton');
+const filterModal = document.getElementById('filterModal');
+const filterOptionsContainer = document.getElementById(
+  'filterOptionsContainer',
+);
+const applyFilterButton = document.getElementById('applyFilterButton');
+
+const userNameFilterInput = document.getElementById('usernameInput');
 let currentReqType = OOO_REQUEST_TYPE;
 let selected__tab__class = 'selected__tab';
 let statusValue = null;
@@ -28,6 +36,7 @@ if (isDev) {
   onboardingExtensionTabLink.classList.remove('hidden');
   requestContainer.classList.remove('request');
   requestContainer.classList.add('request_container');
+  filterContainer.classList.remove('hidden');
 }
 
 const intersectionObserver = new IntersectionObserver(async (entries) => {
@@ -587,5 +596,65 @@ function showToast(message, type) {
     toast.innerHTML = '';
   }, 5000);
 }
+
+function toggleFilter() {
+  filterModal.classList.toggle('hidden');
+}
+
+document.addEventListener('click', (event) => {
+  if (
+    !filterModal.classList.contains('hidden') &&
+    !filterModal.contains(event.target) &&
+    event.target !== filterButton
+  ) {
+    closeFilter();
+  }
+});
+
+function closeFilter() {
+  filterModal.classList.add('hidden');
+}
+
+filterButton.addEventListener('click', (event) => {
+  event.stopPropagation();
+  toggleFilter();
+});
+
+applyFilterButton.addEventListener('click', closeFilter);
+
+function populateStatus() {
+  const statusList = [
+    { name: 'Approved', id: 'APPROVED' },
+    { name: 'Pending', id: 'PENDING' },
+    { name: 'Rejected', id: 'REJECTED' },
+  ];
+  const filterHeader = document.createElement('div');
+  filterHeader.className = 'filter__header';
+
+  const filterTitle = document.createElement('p');
+  filterTitle.className = 'filter__title';
+  filterTitle.textContent = 'Filter By Status';
+
+  const clearButton = document.createElement('button');
+  clearButton.className = 'filter__clear__button';
+  clearButton.textContent = 'Clear';
+
+  filterHeader.append(filterTitle, clearButton);
+
+  clearButton.addEventListener('click', async function () {
+    filterModal.classList.add('hidden');
+    requestContainer.innerHTML = '';
+    await renderRequestCards({ state: statusValue, sort: sortByValue });
+  });
+
+  filterTitle.appendChild(clearButton);
+  document.querySelector('#filterOptionsContainer').prepend(filterHeader);
+
+  for (const { name, id } of statusList) {
+    addRadioButton(name, id, 'status-filter');
+  }
+}
+
+populateStatus();
 
 renderRequestCards({ state: statusValue, sort: sortByValue });

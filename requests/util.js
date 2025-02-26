@@ -138,3 +138,16 @@ async function getRequestDetailsById(requestId) {
     console.log(error);
   }
 }
+
+function addRadioButton(labelText, value, groupName) {
+  const group = document.getElementById('filterOptionsContainer');
+  const label = document.createElement('label');
+  const radio = document.createElement('input');
+  radio.type = 'radio';
+  radio.name = groupName;
+  radio.value = value;
+  label.innerHTML = radio.outerHTML + '&nbsp;' + labelText;
+  label.classList.add('radio-label');
+  label.appendChild(document.createElement('br'));
+  group.appendChild(label);
+}
