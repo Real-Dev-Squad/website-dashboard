@@ -699,31 +699,23 @@ function populateModalContent(index) {
   modalContent.appendChild(header);
 
   if (isDev) {
-    //Adding new styling to modal
     modal.className = 'new_requestor_details_modal_content';
 
-    // Proposed Start Date: Add new text and classname
     proposedStartDateText.innerText = 'Proposed Start Date:';
     proposedStartDateText.className = 'proposed_start_date_text';
 
-    // Proposed Start Date Value: Adding new class
     proposedStartDateValue.className = 'proposed_start_date_value';
 
-    // Proposed Deadline Text: Add normal text instead of <strong> and classname
     proposedDeadlineText.innerText = 'Proposed Deadline:';
     proposedDeadlineText.className = 'proposed_end_date_text';
 
-    // Proposed Deadline Value: Add new class
     proposedDeadlineValue.className = 'proposed_end_date_value';
 
-    // Description: Add new text and classname
     descriptionText.innerText = 'Description:';
     descriptionText.className = 'proposed_description_text';
 
-    // Add updated class to header
     header.className = 'new_requestor_details_modal_heading';
 
-    // Wrapping each element in specific div
     const proposedStartDateDiv = document.createElement('div');
     proposedStartDateDiv.className = 'proposed_start_date_div';
 
