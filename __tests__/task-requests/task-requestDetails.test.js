@@ -160,6 +160,42 @@ describe('Task request details page', () => {
     expect(approveButton).toBeTruthy();
     expect(rejectButton).toBeTruthy();
   });
+
+  it('Should render new modal if isDev flag is enabled and old modal is rendered if isDev flag is disabled', async function () {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq5&dev=true`,
+    );
+    await page.waitForNetworkIdle();
+    await page.click('.info__more');
+    await page.waitForSelector('#requestor_details_modal_content', {
+      visible: true,
+    });
+
+    expect(await page.$('.new_requestor_details_modal_content')).not.toBeNull();
+    expect(await page.$('.new_requestor_details_modal_heading')).not.toBeNull();
+    expect(
+      await page.$(
+        'p[data-modal-start-date-value="proposed-start-date-value"].proposed_start_date_value',
+      ),
+    ).not.toBeNull();
+
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq5`,
+    );
+    await page.waitForNetworkIdle();
+    await page.click('.info__more');
+    await page.waitForSelector('#requestor_details_modal_content', {
+      visible: true,
+    });
+
+    expect(await page.$('.requestor_details_modal_content')).not.toBeNull();
+    expect(await page.$('.requestor_details_modal_heading')).not.toBeNull();
+    expect(
+      await page.$(
+        'p[data-modal-start-date-value="proposed-start-date-value"].proposed_start_date_value',
+      ),
+    ).toBeNull();
+  });
 });
 
 describe('Task request details page with markdown support in description', () => {

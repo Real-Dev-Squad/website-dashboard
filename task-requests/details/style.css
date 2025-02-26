@@ -540,21 +540,21 @@ table tr td {
   font-weight: normal;
 }
 
-.proposed-start-date-div,
-.proposed-end-date-div,
-.proposed-description-div {
-  margin: 2cap 0px;
+.proposed_start_date_div,
+.proposed_end_date_div,
+.proposed_description_div {
+  margin: 1rem 0rem;
 }
 
-.proposed-start-date-text,
-.proposed-end-date-text,
-.proposed-description-text {
+.proposed_start-date_text,
+.proposed_end-date_text,
+.proposed_description_text {
   font-weight: 500;
 }
-.proposed-start-date-value,
-.proposed-end-date-value,
-.proposed-description-value {
-  margin-top: -10px;
+.proposed_start_date_value,
+.proposed_end_date_value,
+.proposed_description_value {
+  margin-top: -0.5rem;
   color: var(--color-gray-variant2);
 }
 
@@ -617,17 +617,17 @@ p:hover {
     width: 70%;
   }
   .new_requestor_details_modal_heading {
-    font-size: 20px;
+    font-size: 1.2rem;
   }
 
-  .proposed-start-date-text,
-  .proposed-end-date-text,
-  .proposed-description-text {
-    font-size: 15px;
+  .proposed_start_date_text,
+  .proposed_end_date_text,
+  .proposed_description_text {
+    font-size: 1rem;
   }
 
-  .proposed-start-date-value,
-  .proposed-end-date-value {
-    font-size: 15px;
+  .proposed_start_date_value,
+  .proposed_end_date_value {
+    font-size: 1rem;
   }
 }

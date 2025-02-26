@@ -620,9 +620,6 @@ function populateModalContent(index) {
     return;
   }
   const modal = document.getElementById('requestor_details_modal_content');
-  if (isDev) {
-    modal.className = 'new_requestor_details_modal_content';
-  }
 
   const userData = taskRequest.users[index];
 
@@ -633,21 +630,12 @@ function populateModalContent(index) {
     'data-modal-start-date-text',
     'proposed-start-date-text',
   );
-  if (isDev) {
-    proposedStartDateText.innerText = 'Proposed Start Date:';
-    proposedStartDateText.className = 'proposed-start-date-text';
-  } else {
-    proposedStartDateText.innerHTML = '<strong>Proposed Start Date:</strong>';
-  }
 
   const proposedStartDateValue = document.createElement('p');
   proposedStartDateValue.setAttribute(
     'data-modal-start-date-value',
     'proposed-start-date-value',
   );
-  if (isDev) {
-    proposedStartDateValue.className = 'proposed-start-date-value';
-  }
   proposedStartDateValue.textContent = getHumanReadableDate(
     userData.proposedStartDate,
   );
@@ -657,21 +645,12 @@ function populateModalContent(index) {
     'data-modal-end-date-text',
     'proposed-end-date-text',
   );
-  if (isDev) {
-    proposedDeadlineText.innerText = 'Proposed Deadline:';
-    proposedDeadlineText.className = 'proposed-end-date-text';
-  } else {
-    proposedDeadlineText.innerHTML = '<strong>Proposed Deadline:</strong>';
-  }
 
   const proposedDeadlineValue = document.createElement('p');
   proposedDeadlineValue.setAttribute(
     'data-modal-end-date-value',
     'proposed-end-date-value',
   );
-  if (isDev) {
-    proposedDeadlineValue.className = 'proposed-end-date-value';
-  }
   proposedDeadlineValue.textContent = getHumanReadableDate(
     userData.proposedDeadline,
   );
@@ -681,12 +660,6 @@ function populateModalContent(index) {
     'data-modal-description-text',
     'proposed-description-text',
   );
-  if (isDev) {
-    descriptionText.innerText = 'Description:';
-    descriptionText.className = 'proposed-description-text';
-  } else {
-    descriptionText.innerHTML = '<strong>Description:</strong>';
-  }
 
   const descriptionValue = document.createElement('p');
   descriptionValue.setAttribute(
@@ -720,23 +693,45 @@ function populateModalContent(index) {
   header.setAttribute('data-modal-header', 'requestor-details-header');
   header.className = 'requestor_details_modal_heading';
   header.textContent = 'Requestor Details';
-  if (isDev) {
-    header.className = 'new_requestor_details_modal_heading';
-  }
 
   modalContent.innerHTML = '';
 
   modalContent.appendChild(header);
 
   if (isDev) {
+    //Adding new styling to modal
+    modal.className = 'new_requestor_details_modal_content';
+
+    // Proposed Start Date: Add new text and classname
+    proposedStartDateText.innerText = 'Proposed Start Date:';
+    proposedStartDateText.className = 'proposed_start_date_text';
+
+    // Proposed Start Date Value: Adding new class
+    proposedStartDateValue.className = 'proposed_start_date_value';
+
+    // Proposed Deadline Text: Add normal text instead of <strong> and classname
+    proposedDeadlineText.innerText = 'Proposed Deadline:';
+    proposedDeadlineText.className = 'proposed_end_date_text';
+
+    // Proposed Deadline Value: Add new class
+    proposedDeadlineValue.className = 'proposed_end_date_value';
+
+    // Description: Add new text and classname
+    descriptionText.innerText = 'Description:';
+    descriptionText.className = 'proposed_description_text';
+
+    // Add updated class to header
+    header.className = 'new_requestor_details_modal_heading';
+
+    // Wrapping each element in specific div
     const proposedStartDateDiv = document.createElement('div');
-    proposedStartDateDiv.className = 'proposed-start-date-div';
+    proposedStartDateDiv.className = 'proposed_start_date_div';
 
     const proposedDeadlineDiv = document.createElement('div');
-    proposedDeadlineDiv.className = 'proposed-end-date-div';
+    proposedDeadlineDiv.className = 'proposed_end_date_div';
 
     const descriptionDiv = document.createElement('div');
-    descriptionDiv.className = 'proposed-description-div';
+    descriptionDiv.className = 'proposed_description_div';
 
     proposedStartDateDiv.appendChild(proposedStartDateText);
     proposedStartDateDiv.appendChild(proposedStartDateValue);
@@ -750,6 +745,10 @@ function populateModalContent(index) {
     descriptionDiv.appendChild(descriptionValue);
     modalContent.appendChild(descriptionDiv);
   } else {
+    proposedStartDateText.innerHTML = '<strong>Proposed Start Date:</strong>';
+    proposedDeadlineText.innerHTML = '<strong>Proposed Deadline:</strong>';
+    descriptionText.innerHTML = '<strong>Description:</strong>';
+
     modalContent.appendChild(proposedStartDateText);
     modalContent.appendChild(proposedStartDateValue);
 
