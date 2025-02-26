@@ -648,7 +648,7 @@ function populateStatus() {
   clearButton.className = 'filter__clear__button';
   clearButton.textContent = 'Clear';
 
-  filterHeader.append(filterTitle, clearButton);
+  filterHeader.append(filterTitle);
 
   clearButton.addEventListener('click', async function () {
     filterModal.classList.add('hidden');
