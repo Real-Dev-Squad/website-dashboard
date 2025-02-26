@@ -163,6 +163,13 @@ describe('Tests the request cards', () => {
     expect(await onboardingTabLink.isVisible()).toBe(false);
   });
 
+  it('should hide filter container when dev is not true', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/requests`);
+    await page.waitForNetworkIdle();
+    const filterContainer = await page.$('[data-testid="filter-container"]');
+    expect(await filterContainer.isVisible()).toBe(false);
+  });
+
   describe('Onboarding Requests UI (Dev Mode Enabled)', () => {
     beforeAll(async () => {
       await page.goto(`${LOCAL_TEST_PAGE_URL}/requests?dev=true`);
@@ -264,6 +271,104 @@ describe('Tests the request cards', () => {
           expect(await superuserSection.isVisible()).toBe(true);
         }
       }
+    });
+  });
+
+  describe('Filter Functionality (Dev Mode Enabled)', () => {
+    beforeAll(async () => {
+      await page.goto(`${LOCAL_TEST_PAGE_URL}/requests?dev=true`);
+      await page.waitForNetworkIdle();
+    });
+    it('should display filter container and its elements', async () => {
+      const filterContainer = await page.$('[data-testid="filter-container"]');
+      expect(await filterContainer.isVisible()).toBe(true);
+      const usernameInput = await page.$('[data-testid="assignee-search"]');
+      expect(await usernameInput.isVisible()).toBe(true);
+
+      const userSuggestionsContainer = await page.$(
+        '[data-testid="user-suggestions-container"]',
+      );
+      expect(userSuggestionsContainer).not.toBeNull();
+
+      const filterToggleButton = await page.$(
+        '[data-testid="filter-toggle-button"]',
+      );
+      expect(await filterToggleButton.isVisible()).toBe(true);
+
+      const filterModal = await page.$('[data-testid="filter-modal"]');
+      expect(await filterModal.isVisible()).toBe(false);
+    });
+
+    it('should toggle filter modal visibility when the filter toggle button is clicked', async () => {
+      const filterModal = await page.$('[data-testid="filter-modal"]');
+      expect(await filterModal.isVisible()).toBe(false);
+
+      const filterToggleButton = await page.$(
+        '[data-testid="filter-toggle-button"]',
+      );
+      await filterToggleButton.click();
+
+      expect(await filterModal.isVisible()).toBe(true);
+    });
+
+    it('should render filter modal elements', async () => {
+      const filterToggleButton = await page.$(
+        '[data-testid="filter-toggle-button"]',
+      );
+      await filterToggleButton.click();
+
+      const filterHeader = await page.$(
+        '#filterOptionsContainer .filter__header',
+      );
+      expect(filterHeader).not.toBeNull();
+
+      const filterTitle = await filterHeader.$('.filter__title');
+      const titleText = await filterTitle.evaluate((el) => el.textContent);
+      expect(titleText).toContain('Filter By Status');
+
+      const clearButton = await page.$('[data-testid="filter-clear-button"]');
+      const clearButtonText = await clearButton.evaluate(
+        (el) => el.textContent,
+      );
+      expect(clearButtonText).toContain('Clear');
+
+      const radioButtons = await page.$$(
+        'input[type="radio"][name="status-filter"]',
+      );
+      expect(radioButtons.length).toBe(3);
+    });
+
+    it('should close the filter modal when click on clear button', async () => {
+      const filterToggleButton = await page.$(
+        '[data-testid="filter-toggle-button"]',
+      );
+      await filterToggleButton.click();
+
+      const clearButton = await page.$('[data-testid="filter-clear-button"]');
+      await clearButton.click();
+      const filterModal = await page.$('[data-testid="filter-modal"]');
+      expect(await filterModal.isVisible()).toBe(false);
+    });
+
+    it('should close the filter modal when click on apply filter button', async () => {
+      const filterToggleButton = await page.$(
+        '[data-testid="filter-toggle-button"]',
+      );
+      await filterToggleButton.click();
+
+      const applyFilterButton = await page.$(
+        '[data-testid="apply-filter-button"]',
+      );
+      await applyFilterButton.click();
+      const filterModal = await page.$('[data-testid="filter-modal"]');
+      expect(await filterModal.isVisible()).toBe(false);
+    });
+
+    it('should have no filters applied initially', async () => {
+      const selectedStatusRadio = await page.$(
+        'input[type="radio"][name="status-filter"]:checked',
+      );
+      expect(selectedStatusRadio).toBeNull();
     });
   });
 });
