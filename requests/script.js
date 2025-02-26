@@ -612,11 +612,8 @@ document.addEventListener('click', (event) => {
 });
 
 document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape') {
-    const filterModal = document.querySelector('.filter__modal');
-    if (filterModal && !filterModal.classList.contains('hidden')) {
-      closeFilter();
-    }
+  if (event.key === 'Escape' && !filterModal.classList.contains('hidden')) {
+    closeFilter();
   }
 });
 
