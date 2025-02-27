@@ -102,4 +102,49 @@ describe('Tests the navbar and its components on various pages', () => {
     await page.goto(`${LOCAL_TEST_PAGE_URL}/feed/index.html`);
     await testNavbar(page);
   });
+  it('Should close the dropdown by clicking outside the dropdown when dev === true', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}?dev=true`);
+
+    const userInfoHandle = await page.$('.user-info');
+    const dropdownHandle = await page.$('#dropdown');
+
+    expect(userInfoHandle).toBeTruthy();
+    expect(dropdownHandle).toBeTruthy();
+
+    await page.evaluate(() => {
+      const userInfo = document.querySelector('.user-info');
+      if (userInfo) {
+        userInfo.click();
+      }
+    });
+    await page.mouse.click(100, 100);
+    const dropdownIsActive = await dropdownHandle.evaluate((el) =>
+      el.classList.contains('active'),
+    );
+    expect(dropdownIsActive).toBe(false);
+  });
+  it('should keep the dropdown open after clicking outside (manually opening) when dev === false', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}?dev=false`);
+    await page.waitForSelector('#dropdown');
+    await page.evaluate(() => {
+      const dropdown = document.getElementById('dropdown');
+      if (dropdown && !dropdown.classList.contains('active')) {
+        dropdown.classList.add('active');
+      }
+    });
+    let dropdownIsActive = await page.evaluate(() => {
+      const dropdown = document.getElementById('dropdown');
+      return dropdown && dropdown.classList.contains('active');
+    });
+    expect(dropdownIsActive).toBe(true);
+    await page.evaluate(() => {
+      document.body.click();
+    });
+    await page.waitForTimeout(200);
+    const newDropdownHandle = await page.$('#dropdown');
+    const newDropdownIsActive = await newDropdownHandle.evaluate((el) =>
+      el.classList.contains('active'),
+    );
+    expect(newDropdownIsActive).toBe(true);
+  });
 });

@@ -1,3 +1,5 @@
+const urlParams = new URLSearchParams(window.location.search);
+const isDev = urlParams.get('dev') === 'true';
 const DROPDOWN_OPTIONS = [
   {
     name: 'Home',
@@ -89,16 +91,17 @@ async function handleUserSignin() {
           dropdown.classList.add('active');
         }
       });
-      document.addEventListener('click', (event) => {
-        if (
-          dropdown.classList.contains('active') &&
-          !dropdown.contains(event.target) &&
-          !userInfo.contains(event.target)
-        ) {
-          dropdown.classList.remove('active');
-        }
-      });
-
+      if (isDev) {
+        document.addEventListener('click', (event) => {
+          if (
+            dropdown.classList.contains('active') &&
+            !dropdown.contains(event.target) &&
+            !userInfo.contains(event.target)
+          ) {
+            dropdown.classList.remove('active');
+          }
+        });
+      }
       signOutElement.addEventListener('click', () => {
         getSelfUser('/auth/signout');
       });

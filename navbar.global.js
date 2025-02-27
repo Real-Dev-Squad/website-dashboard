@@ -26,7 +26,7 @@ const addNavbartoPage = async () => {
             <img src="/images/github.png" class="user-avatar" />
             </button>
         </div>
-        <div class="user-info">
+        <div class="user-info" data-testid="userInfo">
             <span id="user-name"></span>
             <span>
             <img id="user-img" src="" alt="" />

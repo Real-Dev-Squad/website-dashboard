@@ -556,36 +556,4 @@ describe('Home Page', () => {
     const menuOff = await page.$('.nav-links:not(.active)');
     expect(menuOff).toBeTruthy();
   });
-
-  it('should close the dropdown when clicking outside the dropdown', async () => {
-    await page.goto(`${LOCAL_TEST_PAGE_URL}`);
-
-    try {
-      await page.waitForSelector('#dropdown', { timeout: 5000 });
-      await page.evaluate(() => {
-        const dropdown = document.getElementById('dropdown');
-        if (dropdown && !dropdown.classList.contains('active')) {
-          dropdown.classList.add('active');
-        }
-      });
-      const isActive = await page.evaluate(() => {
-        const dropdown = document.getElementById('dropdown');
-        return dropdown && dropdown.classList.contains('active');
-      });
-      if (!isActive) {
-        throw new Error('Failed to activate dropdown');
-      }
-      await page.mouse.click(10, 10);
-      await page.waitForTimeout(500);
-      const isActiveAfterClick = await page.evaluate(() => {
-        const dropdown = document.getElementById('dropdown');
-        return dropdown && dropdown.classList.contains('active');
-      });
-      expect(isActiveAfterClick).toBe(false);
-    } catch (error) {
-      await page.screenshot({ path: 'error-state.png' }).catch(() => {});
-      console.error('Test failed:', error.message);
-      throw error;
-    }
-  });
 });
