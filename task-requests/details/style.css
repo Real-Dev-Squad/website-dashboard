@@ -538,6 +538,7 @@ table tr td {
   color: var(--color-indigo-blue);
   text-align: center;
   font-weight: normal;
+  margin-top: 0;
 }
 
 .proposed_start_date_div,
@@ -550,11 +551,22 @@ table tr td {
 .proposed_end_date_text,
 .proposed_description_text {
   font-weight: 500;
+  font-size: 1rem;
 }
+
 .proposed_start_date_value,
 .proposed_end_date_value,
 .proposed_description_value {
   margin-top: -0.5rem;
+  color: var(--color-gray-variant2);
+}
+
+.requestor_description_details :where(h1, h2, h3, h4, h5, h6) {
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.requestor_description_details :not(:where(h1, h2, h3)) {
   color: var(--color-gray-variant2);
 }
 
@@ -617,17 +629,19 @@ p:hover {
     width: 70%;
   }
   .new_requestor_details_modal_heading {
-    font-size: 1.2rem;
+    font-size: 0.81rem;
   }
 
   .proposed_start_date_text,
   .proposed_end_date_text,
-  .proposed_description_text {
-    font-size: 1rem;
+  .proposed_description_text,
+  .requestor_description_details :where(h1, h2, h3, h4, h5, h6) {
+    font-size: 0.75rem;
   }
 
   .proposed_start_date_value,
-  .proposed_end_date_value {
-    font-size: 1rem;
+  .proposed_end_date_value,
+  .requestor_description_details :not(:where(h1, h2, h3, h5, h6)) {
+    font-size: 0.7rem;
   }
 }

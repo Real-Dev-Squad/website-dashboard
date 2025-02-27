@@ -683,7 +683,7 @@ function populateModalContent(index) {
   } else {
     if (isDev) {
       descriptionValue.textContent = userData.description ?? 'N/A';
-      descriptionValue.className = 'proposed-description-value';
+      descriptionValue.className = 'proposed_description_value';
     } else {
       descriptionValue.textContent = userData.description;
     }
