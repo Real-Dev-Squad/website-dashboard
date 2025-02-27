@@ -714,6 +714,10 @@ function populateModalContent(index) {
     descriptionText.innerText = 'Description:';
     descriptionText.className = 'proposed_description_text';
 
+    descriptionValue.style.border = 'none';
+    descriptionValue.style.marginTop = '-0.2rem';
+    descriptionValue.style.padding = '-0rem 0.7rem';
+
     header.className = 'new_requestor_details_modal_heading';
 
     const proposedStartDateDiv = document.createElement('div');
