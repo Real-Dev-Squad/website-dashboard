@@ -641,6 +641,7 @@ p:hover {
 
   .proposed_start_date_value,
   .proposed_end_date_value,
+  .proposed_description_value,
   .requestor_description_details :not(:where(h1, h2, h3, h5, h6)) {
     font-size: 0.7rem;
   }
