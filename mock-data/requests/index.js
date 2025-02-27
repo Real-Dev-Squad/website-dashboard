@@ -32,8 +32,6 @@ const approvedRequest = {
     state: 'APPROVED',
     updatedAt: 1711482912686,
   },
-  next: null,
-  prev: null,
 };
 
 const requestActionResponse = {
