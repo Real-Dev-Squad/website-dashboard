@@ -699,7 +699,7 @@ userNameFilterInput.addEventListener('input', function () {
           });
         });
       }
-    }, 300); // Debounce delay
+    }, 300);
   } else {
     suggestionContainer.classList.add('hidden');
     suggestionContainer.innerHTML = '';
