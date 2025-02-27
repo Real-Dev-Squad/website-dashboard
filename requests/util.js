@@ -24,6 +24,8 @@ function createElementFromMap(domObjectMap) {
       }
     } else if (key === 'child') {
       el.append(...value);
+    } else if (key === 'testId') {
+      el.setAttribute('data-testid', value);
     } else {
       el[key] = value;
     }
@@ -32,20 +34,8 @@ function createElementFromMap(domObjectMap) {
   return el;
 }
 
-function getOooQueryParamsString(query) {
-  let queryParam = 'dev=true&type=OOO&size=12';
-  if (
-    query.state !== undefined &&
-    query.state !== null &&
-    query.state !== 'ALL'
-  ) {
-    queryParam += `&state=${query.state}`;
-  }
-  return `?${queryParam}`;
-}
-
-function getExtensionQueryParamsString(query) {
-  let queryParam = 'dev=true&type=EXTENSION&size=12';
+function getQueryParamsString(requestType, query) {
+  let queryParam = `dev=true&type=${requestType}&size=12`;
   if (
     query.state !== undefined &&
     query.state !== null &&
@@ -147,4 +137,17 @@ async function getRequestDetailsById(requestId) {
   } catch (error) {
     console.log(error);
   }
+}
+
+function addRadioButton(labelText, value, groupName) {
+  const group = document.getElementById('filterOptionsContainer');
+  const label = document.createElement('label');
+  const radio = document.createElement('input');
+  radio.type = 'radio';
+  radio.name = groupName;
+  radio.value = value;
+  label.innerHTML = radio.outerHTML + '&nbsp;' + labelText;
+  label.classList.add('radio-label');
+  label.appendChild(document.createElement('br'));
+  group.appendChild(label);
 }
