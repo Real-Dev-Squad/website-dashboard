@@ -43,7 +43,7 @@ function getQueryParamsString(requestType, query) {
   ) {
     queryParam += `&state=${query.state}`;
   }
-  if (query.requestedBy !== undefined && query.requestedBy !== null) {
+  if (query?.requestedBy != null) {
     queryParam += `&requestedBy=${query.requestedBy}`;
   }
   return `?${queryParam}`;
