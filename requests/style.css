@@ -125,9 +125,10 @@ p {
 }
 
 .suggestion {
-  padding: 0.5rem;
+  padding: 0.3rem 0.5rem;
   cursor: pointer;
   width: 8rem;
+  font-size: 0.9rem;
   border-bottom: solid 1px var(--color-gray);
   &:hover {
     background-color: var(--color-gray-light);
