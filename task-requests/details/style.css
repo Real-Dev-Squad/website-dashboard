@@ -9,7 +9,7 @@
   --color-white: white;
   --color-rds-blue: #1d1283;
   --color-blue-light: #1d1283af;
-  --color-indigo-blue: #4541c6;
+  --color-indigo-blue: #5145cd;
   --color-black: #000;
   --color-gray-shade: #aaa;
   --color-red-variant1: #f43030;
@@ -458,16 +458,19 @@ table tr td {
 }
 
 .new_requestor_details_modal_content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background-color: var(--color-light-gray);
-  margin: 10% auto;
-  padding: 2rem;
+  padding: 1.8rem 1rem;
   border: 1px solid var(--color-gray-variant2);
   right: 10%;
   border-radius: 1rem;
   text-wrap: wrap;
   word-break: break-word;
   height: 50%;
-  width: 30%;
+  width: 35%;
   overflow: auto;
 }
 
@@ -520,6 +523,15 @@ table tr td {
   cursor: pointer;
 }
 
+.new_requestor_details_modal_close {
+  color: var(--color-gray-shade);
+  float: right;
+  font-size: 1.75rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: -1.3rem;
+}
+
 .requestor_details_modal_close:hover {
   color: var(--color-black);
 }
@@ -539,6 +551,7 @@ table tr td {
   text-align: center;
   font-weight: normal;
   margin-top: 0;
+  font-weight: 500;
 }
 
 .proposed_start_date_div,
@@ -557,7 +570,7 @@ table tr td {
 .proposed_start_date_value,
 .proposed_end_date_value,
 .proposed_description_value {
-  margin-top: -0.5rem;
+  margin-top: -0.25rem;
   color: var(--color-gray-variant2);
 }
 
@@ -607,8 +620,7 @@ p:hover {
     grid-column: auto;
   }
   .new_requestor_details_modal_content {
-    margin: 25% auto;
-    width: 50%;
+    width: 70%;
   }
 }
 
@@ -624,12 +636,10 @@ p:hover {
   .taskRequest__status {
     font-size: 0.75rem;
   }
-  .new_requestor_details_modal_content {
-    margin: 50% auto;
-    width: 70%;
-  }
+
   .new_requestor_details_modal_heading {
-    font-size: 0.81rem;
+    font-size: 1.05rem;
+    margin-top: -0.6rem;
   }
 
   .proposed_start_date_text,
@@ -643,6 +653,12 @@ p:hover {
   .proposed_end_date_value,
   .proposed_description_value,
   .requestor_description_details :not(:where(h1, h2, h3, h5, h6)) {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
+  }
+  .new_requestor_details_modal_content {
+    height: 40%;
+  }
+  .new_requestor_details_modal_close {
+    font-size: 0.85rem;
   }
 }

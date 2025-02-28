@@ -715,8 +715,14 @@ function populateModalContent(index) {
     descriptionText.className = 'proposed_description_text';
 
     descriptionValue.style.border = 'none';
-    descriptionValue.style.marginTop = '-0.2rem';
+    descriptionValue.style.marginTop = '-0.35rem';
     descriptionValue.style.padding = '-0rem 0.7rem';
+
+    const modalCloseButton = document.getElementById(
+      'requestor_details_modal_close',
+    );
+    console.log(modalCloseButton);
+    modalCloseButton.className = 'new_requestor_details_modal_close';
 
     header.className = 'new_requestor_details_modal_heading';
 
