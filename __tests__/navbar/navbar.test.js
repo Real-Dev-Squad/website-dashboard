@@ -102,7 +102,7 @@ describe('Tests the navbar and its components on various pages', () => {
     await page.goto(`${LOCAL_TEST_PAGE_URL}/feed/index.html`);
     await testNavbar(page);
   });
-  it('Should close the dropdown by clicking outside the dropdown when dev === true', async () => {
+  it('should close the dropdown by clicking outside the dropdown under dev feature flag', async () => {
     await page.goto(`${LOCAL_TEST_PAGE_URL}?dev=true`);
 
     const userInfoHandle = await page.$('.user-info');
@@ -123,7 +123,7 @@ describe('Tests the navbar and its components on various pages', () => {
     );
     expect(dropdownIsActive).toBe(false);
   });
-  it('should keep the dropdown open after clicking outside (manually opening) when dev === false', async () => {
+  it('should keep the dropdown open when clicking outside when feature flag is off', async () => {
     await page.goto(`${LOCAL_TEST_PAGE_URL}?dev=false`);
     await page.waitForSelector('#dropdown');
     await page.evaluate(() => {
@@ -134,7 +134,7 @@ describe('Tests the navbar and its components on various pages', () => {
     });
     let dropdownIsActive = await page.evaluate(() => {
       const dropdown = document.getElementById('dropdown');
-      return dropdown && dropdown.classList.contains('active');
+      return dropdown?.classList.contains('active') ?? false;
     });
     expect(dropdownIsActive).toBe(true);
     await page.evaluate(() => {

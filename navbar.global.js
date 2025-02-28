@@ -28,7 +28,7 @@ const addNavbartoPage = async () => {
             <img src="/images/github.png" class="user-avatar" />
             </button>
         </div>
-        <div class="user-info" data-testid="userInfo">
+        <div class="user-info">
             <span id="user-name"></span>
             <span>
             <img id="user-img" src="" alt="" />
@@ -45,7 +45,7 @@ const addNavbartoPage = async () => {
               )
             }
         </div>
-        <div id="dropdown" data-testid="dropdown-menu"></div>
+        <div id="dropdown"></div>
     `;
 
   const hamburgerDiv = document.querySelector('.hamburger');

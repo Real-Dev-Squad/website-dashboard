@@ -155,12 +155,10 @@ describe('Home Page', () => {
   afterAll(async () => {
     await browser.close();
   });
-
   beforeEach(async () => {
     await page.goto(`${LOCAL_TEST_PAGE_URL}/`);
     await page.waitForNetworkIdle();
   });
-
   it('should display the Sync Users Status button', async () => {
     const syncUsersStatusButton = await page.$('#sync-users-status');
     expect(syncUsersStatusButton).toBeTruthy();
