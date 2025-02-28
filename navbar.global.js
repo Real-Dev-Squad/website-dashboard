@@ -1,3 +1,5 @@
+const urlParams = new URLSearchParams(window.location.search);
+const isDev = urlParams.get('dev') === 'true';
 const addNavbartoPage = async () => {
   const navbar = document?.getElementById('tasksNav');
   const navbarParams = new URLSearchParams(window?.location?.search);
@@ -31,9 +33,17 @@ const addNavbartoPage = async () => {
             <span>
             <img id="user-img" src="" alt="" />
             </span>
-            <span>
-              <img id="chevron-down" src="images/chevron-down.svg" alt="chevron-down icon" />
-            </span>
+            ${
+              isDev && (
+                <span>
+                  <img
+                    id="chevron-down"
+                    src="images/chevron-down.svg"
+                    alt="chevron-down icon"
+                  />
+                </span>
+              )
+            }
         </div>
         <div id="dropdown" data-testid="dropdown-menu"></div>
     `;
