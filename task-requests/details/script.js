@@ -721,7 +721,6 @@ function populateModalContent(index) {
     const modalCloseButton = document.getElementById(
       'requestor_details_modal_close',
     );
-    console.log(modalCloseButton);
     modalCloseButton.className = 'new_requestor_details_modal_close';
 
     header.className = 'new_requestor_details_modal_heading';
