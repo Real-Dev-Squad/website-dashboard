@@ -1,5 +1,9 @@
 const { superUserDetails } = require('../users/mockdata.js');
 
+const longDescription = `This task involves the development and implementation of a Golang-based solution as part of an assignment request. The primary objective is to design, develop, and test a scalable and efficient service that aligns with industry best practices for Go applications. The task requires careful planning, including defining data structures, implementing core functionalities, and ensuring smooth integration with existing systems.
+        Additionally, unit testing and performance optimization will be crucial aspects of this assignment. The developer is expected to write well-documented, maintainable code while adhering to Go conventions and best practices.
+        As part of the deliverables, the solution should include a README file detailing the setup instructions, API documentation (if applicable), and test cases covering key functionalities. The final implementation will be reviewed and tested before approval.
+        The proposed start date for this task is set, and the expected completion deadline should be met to ensure timely delivery. Any issues, blockers, or dependencies should be reported promptly to facilitate smooth progress. Proper communication and version control practices (using Git) should be maintained throughout the development cycle.`;
 const fetchedTaskRequests = [
   {
     id: '123CCXSDF123',
@@ -55,7 +59,7 @@ const individualTaskReqDetail = {
       {
         proposedStartDate: 1698684354000,
         proposedDeadline: 1699142400000,
-        description: 'code change 3 days , testing - 2 days. total - 5 days',
+        description: longDescription,
         userId: 'SooJK37gzjIZfFNH0tlL',
         status: 'PENDING',
       },
@@ -386,6 +390,7 @@ const urlMappings = {
 };
 
 module.exports = {
+  longDescription,
   fetchedTaskRequests,
   defaultMockResponseHeaders,
   urlMappings,
