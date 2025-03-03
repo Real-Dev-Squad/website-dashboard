@@ -1,5 +1,5 @@
-const urlParams = new URLSearchParams(window.location.search);
-const isDev = urlParams.get('dev') === 'true';
+const urlParam = new URLSearchParams(window.location.search);
+const isDevFlag = urlParam.get('dev') === 'true';
 const DROPDOWN_OPTIONS = [
   {
     name: 'Home',
@@ -91,7 +91,7 @@ async function handleUserSignin() {
           dropdown.classList.add('active');
         }
       });
-      if (isDev) {
+      if (isDevFlag) {
         document.addEventListener('click', (event) => {
           if (
             dropdown.classList.contains('active') &&

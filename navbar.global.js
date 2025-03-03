@@ -1,12 +1,15 @@
 const urlParams = new URLSearchParams(window.location.search);
-const isDev = urlParams.get('dev') === 'true';
+const devFlag = urlParams.get('dev') === 'true';
+const chevronIcon = devFlag
+  ? `<img id="chevron-down" src="images/chevron-down.svg" alt="chevron-down icon" />`
+  : '';
 const addNavbartoPage = async () => {
   const navbar = document?.getElementById('tasksNav');
   const navbarParams = new URLSearchParams(window?.location?.search);
   navbar.innerHTML = `
         <div class="logo">
             <a href="/index.html">
-                <img src="/images/Real-Dev-Squad@1x.png" alt="logo" />
+                <img src="/images/Real-Dev-Squad@1x.png" alt="logo"  />
             </a>
         </div>
         <div class="nav-links">
@@ -33,17 +36,9 @@ const addNavbartoPage = async () => {
             <span>
             <img id="user-img" src="" alt="" />
             </span>
-            ${
-              isDev && (
-                <span>
-                  <img
-                    id="chevron-down"
-                    src="images/chevron-down.svg"
-                    alt="chevron-down icon"
-                  />
-                </span>
-              )
-            }
+            <span>
+              ${chevronIcon}
+            </span>
         </div>
         <div id="dropdown"></div>
     `;
