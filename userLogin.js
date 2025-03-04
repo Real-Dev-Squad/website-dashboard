@@ -91,17 +91,17 @@ async function handleUserSignin() {
           dropdown.classList.add('active');
         }
       });
-      if (isDevFlag) {
-        document.addEventListener('click', (event) => {
-          if (
-            dropdown.classList.contains('active') &&
-            !dropdown.contains(event.target) &&
-            !userInfo.contains(event.target)
-          ) {
-            dropdown.classList.remove('active');
-          }
-        });
-      }
+document.addEventListener('click', (event) => {
+  if (
+    isDevFlag &&
+    dropdown.classList.contains('active') &&
+    !dropdown.contains(event.target) &&
+    !userInfo.contains(event.target)
+  ) {
+    dropdown.classList.remove('active');
+  }
+});
+
       signOutElement.addEventListener('click', () => {
         getSelfUser('/auth/signout');
       });
