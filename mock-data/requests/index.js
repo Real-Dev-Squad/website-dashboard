@@ -20,22 +20,18 @@ const pendingRequest = {
 
 const approvedRequest = {
   message: 'Request fetched successfully',
-  data: [
-    {
-      id: 'Wl4TTbpSrQDIjs6KLJwD',
-      createdAt: 1711439903761,
-      requestedBy: 'V4rqL1aDecNGoa1IxiCu',
-      from: 1712275200000,
-      until: 1712448000000,
-      type: 'OOO',
-      message: 'request message',
-      lastModifiedBy: 'V4rqL1aDecNGoa1IxiCu',
-      state: 'APPROVED',
-      updatedAt: 1711482912686,
-    },
-  ],
-  next: null,
-  prev: null,
+  data: {
+    id: 'Wl4TTbpSrQDIjs6KLJwD',
+    createdAt: 1711439903761,
+    requestedBy: 'V4rqL1aDecNGoa1IxiCu',
+    from: 1712275200000,
+    until: 1712448000000,
+    type: 'OOO',
+    message: 'request message',
+    lastModifiedBy: 'V4rqL1aDecNGoa1IxiCu',
+    state: 'APPROVED',
+    updatedAt: 1711482912686,
+  },
 };
 
 const requestActionResponse = {

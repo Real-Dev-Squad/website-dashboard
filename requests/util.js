@@ -35,15 +35,21 @@ function createElementFromMap(domObjectMap) {
 }
 
 function getQueryParamsString(requestType, query) {
-  let queryParam = `dev=true&type=${requestType}&size=12`;
-  if (
-    query.state !== undefined &&
-    query.state !== null &&
-    query.state !== 'ALL'
-  ) {
-    queryParam += `&state=${query.state}`;
+  const params = new URLSearchParams({
+    dev: 'true',
+    type: requestType,
+    size: '12',
+  });
+
+  if (query.state && query.state !== 'ALL') {
+    params.set('state', query.state);
   }
-  return `?${queryParam}`;
+
+  if (query.requestedBy) {
+    params.set('requestedBy', query.requestedBy);
+  }
+
+  return `?${params.toString()}`;
 }
 
 function convertDateToReadableStringDate(date, format) {
@@ -150,4 +156,33 @@ function addRadioButton(labelText, value, groupName) {
   label.classList.add('radio-label');
   label.appendChild(document.createElement('br'));
   group.appendChild(label);
+}
+
+function deselectRadioButtons() {
+  const radioButtons = document.querySelectorAll(`input[name="status-filter"]`);
+  radioButtons.forEach((radioButton) => {
+    radioButton.checked = false;
+  });
+}
+
+async function getUsersByUsername(username) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/users?search=${username}&size=5`, {
+      credentials: 'include',
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`Error ${res.status}: ${res.statusText}`);
+    }
+
+    const data = await res.json();
+    return data.users;
+  } catch (error) {
+    console.error('Failed to fetch users:', error);
+    return [];
+  }
 }
