@@ -409,8 +409,33 @@ describe('Tests the request cards', () => {
       }
     });
 
+    it('should show suggestions only after minimum character threshold', async () => {
+      await page.waitForSelector('#assignee-search-input', { visible: true });
+
+      const partialQuery = 'ra';
+      await page.type('#assignee-search-input', partialQuery, { delay: 100 });
+
+      await page.waitForNetworkIdle();
+
+      let suggestionCount = await page.$$eval(
+        '.suggestion',
+        (elements) => elements.length,
+      );
+
+      expect(suggestionCount).toBe(0);
+
+      await page.type('#assignee-search-input', 'ndhir', { delay: 100 });
+      await page.waitForNetworkIdle();
+      suggestionCount = await page.$$eval(
+        '.suggestion',
+        (elements) => elements.length,
+      );
+
+      expect(suggestionCount).toBeGreaterThan(0);
+    });
     it('should show user suggestions after debounced input', async () => {
       await page.waitForSelector('#assignee-search-input', { visible: true });
+      await page.$eval('#assignee-search-input', (input) => (input.value = ''));
       let username = 'randhir';
       await page.type('#assignee-search-input', username, { delay: 100 });
 
@@ -426,6 +451,39 @@ describe('Tests the request cards', () => {
 
       expect(suggestionCount).toBeGreaterThan(0);
       expect(suggestions).toContain(username);
+    });
+
+    it('should show no suggestions if no matching users exist', async () => {
+      await page.waitForSelector('#assignee-search-input', { visible: true });
+
+      await page.$eval('#assignee-search-input', (input) => (input.value = ''));
+
+      let randomUsername = 'xyzabc';
+      await page.type('#assignee-search-input', randomUsername, { delay: 100 });
+
+      await page.waitForNetworkIdle();
+
+      const suggestionCount = await page.$$eval(
+        '.suggestion',
+        (elements) => elements.length,
+      );
+
+      expect(suggestionCount).toBe(0);
+    });
+
+    it('should handle special characters gracefully', async () => {
+      await page.waitForSelector('#assignee-search-input', { visible: true });
+
+      await page.type('#assignee-search-input', '@#$%', { delay: 100 });
+
+      await page.waitForNetworkIdle();
+
+      const suggestionCount = await page.$$eval(
+        '.suggestion',
+        (elements) => elements.length,
+      );
+
+      expect(suggestionCount).toBe(0);
     });
   });
 });
