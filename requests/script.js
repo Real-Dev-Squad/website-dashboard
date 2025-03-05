@@ -18,8 +18,7 @@ const filterOptionsContainer = document.getElementById(
   'filterOptionsContainer',
 );
 const applyFilterButton = document.getElementById('applyFilterButton');
-
-const userNameFilterInput = document.getElementById('usernameInput');
+const userNameFilterInput = document.getElementById('assignee-search-input');
 let currentReqType = OOO_REQUEST_TYPE;
 let selected__tab__class = 'selected__tab';
 let statusValue = null;
@@ -64,6 +63,8 @@ oooTabLink.addEventListener('click', async function (event) {
   if (isDataLoading) return;
   currentReqType = OOO_REQUEST_TYPE;
   nextLink = '';
+  deselectRadioButtons();
+  userNameFilterInput.value = '';
   oooTabLink.classList.add(selected__tab__class);
   extensionTabLink.classList.remove(selected__tab__class);
   onboardingExtensionTabLink.classList.remove(selected__tab__class);
@@ -77,6 +78,8 @@ extensionTabLink.addEventListener('click', async function (event) {
   if (isDataLoading) return;
   currentReqType = EXTENSION_REQUEST_TYPE;
   nextLink = '';
+  deselectRadioButtons();
+  userNameFilterInput.value = '';
   extensionTabLink.classList.add(selected__tab__class);
   oooTabLink.classList.remove(selected__tab__class);
   onboardingExtensionTabLink.classList.remove(selected__tab__class);
@@ -90,6 +93,8 @@ onboardingExtensionTabLink.addEventListener('click', async function (event) {
   if (isDataLoading) return;
   currentReqType = ONBOARDING_EXTENSION_REQUEST_TYPE;
   nextLink = '';
+  deselectRadioButtons();
+  userNameFilterInput.value = '';
   onboardingExtensionTabLink.classList.add(selected__tab__class);
   extensionTabLink.classList.remove(selected__tab__class);
   oooTabLink.classList.remove(selected__tab__class);
@@ -107,7 +112,12 @@ function updateUrlWithQuery(type) {
 async function getRequests(requestType, query = {}) {
   let finalUrl =
     API_BASE_URL +
-    (nextLink || '/requests' + getQueryParamsString(requestType, query));
+    (nextLink || `/requests${getQueryParamsString(requestType, query)}`);
+
+  if (query?.state?.[0] || query?.requestedBy) {
+    finalUrl =
+      API_BASE_URL + `/requests${getQueryParamsString(requestType, query)}`;
+  }
   const notFoundErrorMessage =
     requestType === ONBOARDING_EXTENSION_REQUEST_TYPE
       ? ErrorMessages.ONBOARDING_EXTENSION_NOT_FOUND
@@ -531,7 +541,7 @@ async function performAcceptRejectAction(isAccepted, e) {
   let remark = document.getElementById(`remark-text-${requestId}`).value;
   let body = JSON.stringify({
     type: currentReqType,
-    reason: remark,
+    message: remark,
     state: isAccepted ? 'APPROVED' : 'REJECTED',
   });
   if (remark === '' || remark === undefined || remark === null) {
@@ -540,6 +550,7 @@ async function performAcceptRejectAction(isAccepted, e) {
       state: isAccepted ? 'APPROVED' : 'REJECTED',
     });
   }
+
   const parentDiv = e.target.closest('.request__card');
   parentDiv.classList.add('disabled');
   const removeSpinner = addSpinner(parentDiv);
@@ -551,12 +562,15 @@ async function performAcceptRejectAction(isAccepted, e) {
   if (response) {
     try {
       const updatedRequestDetails = (await getRequestDetailsById(requestId))
-        .data[0];
+        .data;
+
       const superUserDetails = await getUserDetails(
         updatedRequestDetails.lastModifiedBy,
       );
       const requesterUserDetails = await getUserDetails(
-        updatedRequestDetails.requestedBy,
+        updatedRequestDetails.type === 'OOO'
+          ? updatedRequestDetails.requestedBy
+          : updatedRequestDetails.userId,
       );
 
       const updatedCard = createRequestCard(
@@ -564,6 +578,7 @@ async function performAcceptRejectAction(isAccepted, e) {
         superUserDetails,
         requesterUserDetails,
       );
+
       parentDiv.replaceWith(updatedCard);
     } catch (error) {
       console.log(error);
@@ -626,7 +641,95 @@ filterButton.addEventListener('click', (event) => {
   toggleFilter();
 });
 
-applyFilterButton.addEventListener('click', closeFilter);
+applyFilterButton.addEventListener('click', async (event) => {
+  closeFilter();
+
+  const requestData = {
+    state: getCheckedValues() || statusValue,
+    sort: sortByValue,
+  };
+
+  const username = userNameFilterInput.value.trim();
+  if (username) {
+    requestData.requestedBy = username;
+  }
+
+  requestContainer.innerHTML = '';
+  await renderRequestCards(requestData);
+});
+
+userNameFilterInput.addEventListener(
+  'input',
+  debounce(async function (event) {
+    const username = event.target.value.trim();
+    const suggestionContainer = document.getElementById('userSuggestionsList');
+
+    if (username.length > 2) {
+      const users = await getUsersByUsername(username);
+
+      suggestionContainer.classList.remove('hidden');
+      while (suggestionContainer.firstChild) {
+        suggestionContainer.removeChild(suggestionContainer.firstChild);
+      }
+
+      if (users && users.length > 0) {
+        const fragment = document.createDocumentFragment();
+
+        users.forEach((user) => {
+          const userDiv = document.createElement('div');
+          userDiv.className = 'suggestion';
+          userDiv.textContent = user.username;
+
+          userDiv.addEventListener('click', async () => {
+            userNameFilterInput.value = user.username;
+            suggestionContainer.classList.add('hidden');
+            requestContainer.innerHTML = '';
+
+            const requestData = { requestedBy: user.username };
+            await renderRequestCards(requestData);
+          });
+
+          fragment.appendChild(userDiv);
+        });
+
+        suggestionContainer.appendChild(fragment);
+      }
+    } else {
+      suggestionContainer.classList.add('hidden');
+      while (suggestionContainer.firstChild) {
+        suggestionContainer.removeChild(suggestionContainer.firstChild);
+      }
+    }
+  }, 300),
+);
+
+userNameFilterInput.addEventListener('keydown', async function (evt) {
+  if (evt.key === 'Enter') {
+    const username = this.value.trim();
+    const values = getCheckedValues();
+
+    const requestData = {
+      state: statusValue,
+      sort: sortByValue,
+    };
+
+    if (values.length > 0) {
+      requestData.state = values;
+    }
+
+    if (username) {
+      requestData.requestedBy = username;
+    }
+
+    requestContainer.innerHTML = '';
+    await renderRequestCards(requestData);
+  }
+});
+
+function getCheckedValues() {
+  const checkboxes = document.querySelectorAll(`input:checked`);
+  return Array.from(checkboxes).map((cb) => cb.value);
+}
 
 function populateStatus() {
   const statusList = [
@@ -650,6 +753,7 @@ function populateStatus() {
 
   clearButton.addEventListener('click', async function () {
     filterModal.classList.add('hidden');
+    deselectRadioButtons();
     requestContainer.innerHTML = '';
     await renderRequestCards({ state: statusValue, sort: sortByValue });
   });

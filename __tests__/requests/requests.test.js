@@ -6,7 +6,7 @@ const {
   extensionRequest,
   onboardingExtensionRequest,
 } = require('../../mock-data/requests');
-const { allUsersData } = require('../../mock-data/users');
+const { allUsersData, userRandhir } = require('../../mock-data/users');
 const {
   STAGING_API_URL,
   LOCAL_TEST_PAGE_URL,
@@ -105,6 +105,17 @@ describe('Tests the request cards', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
           body: JSON.stringify(approvedRequest),
+        });
+      } else if (url === `${STAGING_API_URL}/users?search=randhir&size=5`) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(userRandhir),
         });
       } else {
         interceptedRequest.continue();
@@ -369,6 +380,110 @@ describe('Tests the request cards', () => {
         'input[type="radio"][name="status-filter"]:checked',
       );
       expect(selectedStatusRadio).toBeNull();
+    });
+
+    it('should render the correct requests based on the selected filter state', async () => {
+      const filterToggleButton = await page.$(
+        '[data-testid="filter-toggle-button"]',
+      );
+      await filterToggleButton.click();
+
+      const approvedRadio = await page.$(
+        'input[type="radio"][name="status-filter"][value="APPROVED"]',
+      );
+      await approvedRadio.click();
+
+      const applyFilterButton = await page.$(
+        '[data-testid="apply-filter-button"]',
+      );
+      await applyFilterButton.click();
+
+      const requestCards = await page.$$('[data-testid="ooo-request-card"]');
+
+      for (const card of requestCards) {
+        const statusText = await card.$eval(
+          '[data-testid="request-status"]',
+          (el) => el.textContent,
+        );
+        expect(statusText).toContain('Approved');
+      }
+    });
+
+    it('should show suggestions only after minimum character threshold', async () => {
+      await page.waitForSelector('#assignee-search-input', { visible: true });
+
+      const partialQuery = 'ra';
+      await page.type('#assignee-search-input', partialQuery, { delay: 100 });
+
+      await page.waitForNetworkIdle();
+
+      let suggestionCount = await page.$$eval(
+        '.suggestion',
+        (elements) => elements.length,
+      );
+
+      expect(suggestionCount).toBe(0);
+
+      await page.type('#assignee-search-input', 'ndhir', { delay: 100 });
+      await page.waitForNetworkIdle();
+      suggestionCount = await page.$$eval(
+        '.suggestion',
+        (elements) => elements.length,
+      );
+
+      expect(suggestionCount).toBeGreaterThan(0);
+    });
+    it('should show user suggestions after debounced input', async () => {
+      await page.waitForSelector('#assignee-search-input', { visible: true });
+      await page.$eval('#assignee-search-input', (input) => (input.value = ''));
+      let username = 'randhir';
+      await page.type('#assignee-search-input', username, { delay: 100 });
+
+      await page.waitForNetworkIdle();
+
+      const suggestionCount = await page.$$eval(
+        '.suggestion',
+        (elements) => elements.length,
+      );
+      const suggestions = await page.$$eval('.suggestion', (elements) =>
+        elements.map((el) => el.textContent?.trim()),
+      );
+
+      expect(suggestionCount).toBeGreaterThan(0);
+      expect(suggestions).toContain(username);
+    });
+
+    it('should show no suggestions if no matching users exist', async () => {
+      await page.waitForSelector('#assignee-search-input', { visible: true });
+
+      await page.$eval('#assignee-search-input', (input) => (input.value = ''));
+
+      let randomUsername = 'xyzabc';
+      await page.type('#assignee-search-input', randomUsername, { delay: 100 });
+
+      await page.waitForNetworkIdle();
+
+      const suggestionCount = await page.$$eval(
+        '.suggestion',
+        (elements) => elements.length,
+      );
+
+      expect(suggestionCount).toBe(0);
+    });
+
+    it('should handle special characters gracefully', async () => {
+      await page.waitForSelector('#assignee-search-input', { visible: true });
+
+      await page.type('#assignee-search-input', '@#$%', { delay: 100 });
+
+      await page.waitForNetworkIdle();
+
+      const suggestionCount = await page.$$eval(
+        '.suggestion',
+        (elements) => elements.length,
+      );
+
+      expect(suggestionCount).toBe(0);
     });
   });
 });
