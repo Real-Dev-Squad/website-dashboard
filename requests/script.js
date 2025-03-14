@@ -511,8 +511,8 @@ async function acceptRejectRequest(id, reqBody) {
     } else {
       switch (res.status) {
         case 401:
-          showToast(ErrorMessages.UNAUTHENTICATED, 'failure');
-          showMessage('ERROR', ErrorMessages.UNAUTHENTICATED);
+          showToast(ErrorMessages.UNAUTHORIZED_ACTION, 'failure');
+          showMessage('ERROR', ErrorMessages.UNAUTHORIZED_ACTION);
           break;
         case 403:
           showToast(ErrorMessages.UNAUTHENTICATED, 'failure');
@@ -585,6 +585,9 @@ async function performAcceptRejectAction(isAccepted, e) {
       showMessage('ERROR', ErrorMessages.SERVER_ERROR);
     }
   }
+
+  nextLink = '';
+  await renderRequestCards({ state: statusValue, sort: sortByValue });
 }
 
 function showToast(message, type) {
