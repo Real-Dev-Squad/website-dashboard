@@ -5,6 +5,7 @@ const tabsList = document.querySelector('.tabs');
 const lastElementContainer = document.querySelector(LAST_ELEMENT_CONTAINER);
 const usernameInput = document.getElementById('assignee-search');
 const clearUsernameBtn = document.getElementById('clear-username');
+const dateRangeInput = document.getElementById('date-range');
 
 let query = {};
 let newLink = '';
@@ -548,6 +549,22 @@ document.getElementById('assignee-search').addEventListener('keydown', (e) => {
     }
   });
 });
+
+// Add event listener for date range changes
+document.addEventListener('dateRangeChange', (event) => {
+  const { startDate, endDate } = event.detail;
+  query.startDate = startDate.toISOString();
+  query.endDate = endDate.toISOString();
+  refreshFeed();
+});
+
+// Add function to clear date range filter
+function clearDateRangeFilter() {
+  dateRangeInput.value = '';
+  query.startDate = undefined;
+  query.endDate = undefined;
+  refreshFeed();
+}
 
 // main entry
 renderFeed();
