@@ -27,6 +27,7 @@ const ErrorMessages = {
   OOO_NOT_FOUND: 'OOO Requests not found',
   EXTENSION_NOT_FOUND: 'Extension Requests not found',
   ONBOARDING_EXTENSION_NOT_FOUND: 'Onboarding extension Requests not found',
+  UNAUTHORIZED_ACTION: 'You are unauthorized to perform this action',
   SERVER_ERROR: 'Unexpected error occurred',
 };
 

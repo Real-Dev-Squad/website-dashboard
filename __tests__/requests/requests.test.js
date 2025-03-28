@@ -129,7 +129,34 @@ describe('Tests the request cards', () => {
     await browser.close();
   });
 
+  it('should match the request page url with correct request tab link after reloading the page', async () => {
+    await page.click('#extension_tab_link');
+    expect(page.url()).toContain('type=extension');
+
+    await page.reload();
+    expect(page.url()).toContain('type=extension');
+
+    const isExtensionTabLinkSelected = await page.$eval(
+      '[data-testid="extension-tab"]',
+      (e) => e.classList.contains('selected__tab'),
+    );
+    const isOnboardingTabLinkSelected = await page.$eval(
+      '[data-testid="onboarding-tab"]',
+      (e) => e.classList.contains('selected__tab'),
+    );
+    const isOOOTabLinkSelected = await page.$eval(
+      '[data-testid="ooo-tab"]',
+      (e) => e.classList.contains('selected__tab'),
+    );
+
+    expect(isExtensionTabLinkSelected).toBe(true);
+    expect(isOnboardingTabLinkSelected).toBe(false);
+    expect(isOOOTabLinkSelected).toBe(false);
+  });
+
   it('should update the card when the accept or reject button is clicked for OOO requests', async () => {
+    await page.click('#ooo_tab_link');
+
     await page.waitForSelector('.request__status');
     const statusButtonText = await page.$eval(
       '.request__status',

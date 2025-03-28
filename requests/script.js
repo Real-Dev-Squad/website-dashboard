@@ -19,13 +19,29 @@ const filterOptionsContainer = document.getElementById(
 );
 const applyFilterButton = document.getElementById('applyFilterButton');
 const userNameFilterInput = document.getElementById('assignee-search-input');
-let currentReqType = OOO_REQUEST_TYPE;
+let currentReqType = params.get('type') ?? OOO_REQUEST_TYPE;
 let selected__tab__class = 'selected__tab';
 let statusValue = null;
 let sortByValue = null;
 let userDetails = [];
 let nextLink = '';
 let isDataLoading = false;
+
+function updateTabLink(requestType) {
+  if (requestType === OOO_REQUEST_TYPE) {
+    oooTabLink.classList.add(selected__tab__class);
+    onboardingExtensionTabLink.classList.remove(selected__tab__class);
+    extensionTabLink.classList.remove(selected__tab__class);
+  } else if (requestType === ONBOARDING_EXTENSION_REQUEST_TYPE) {
+    onboardingExtensionTabLink.classList.add(selected__tab__class);
+    oooTabLink.classList.remove(selected__tab__class);
+    extensionTabLink.classList.remove(selected__tab__class);
+  } else if (requestType === EXTENSION_REQUEST_TYPE) {
+    extensionTabLink.classList.add(selected__tab__class);
+    oooTabLink.classList.remove(selected__tab__class);
+    onboardingExtensionTabLink.classList.remove(selected__tab__class);
+  }
+}
 
 function getUserDetails(id) {
   return userDetails.find((user) => user.id === id);
@@ -65,9 +81,7 @@ oooTabLink.addEventListener('click', async function (event) {
   nextLink = '';
   deselectRadioButtons();
   userNameFilterInput.value = '';
-  oooTabLink.classList.add(selected__tab__class);
-  extensionTabLink.classList.remove(selected__tab__class);
-  onboardingExtensionTabLink.classList.remove(selected__tab__class);
+  updateTabLink(currentReqType.toUpperCase());
   changeFilter();
   updateUrlWithQuery(currentReqType);
   await renderRequestCards({ state: statusValue, sort: sortByValue });
@@ -80,9 +94,7 @@ extensionTabLink.addEventListener('click', async function (event) {
   nextLink = '';
   deselectRadioButtons();
   userNameFilterInput.value = '';
-  extensionTabLink.classList.add(selected__tab__class);
-  oooTabLink.classList.remove(selected__tab__class);
-  onboardingExtensionTabLink.classList.remove(selected__tab__class);
+  updateTabLink(currentReqType.toUpperCase());
   changeFilter();
   updateUrlWithQuery(currentReqType);
   await renderRequestCards({ state: statusValue, sort: sortByValue });
@@ -95,9 +107,7 @@ onboardingExtensionTabLink.addEventListener('click', async function (event) {
   nextLink = '';
   deselectRadioButtons();
   userNameFilterInput.value = '';
-  onboardingExtensionTabLink.classList.add(selected__tab__class);
-  extensionTabLink.classList.remove(selected__tab__class);
-  oooTabLink.classList.remove(selected__tab__class);
+  updateTabLink(currentReqType.toUpperCase());
   changeFilter();
   updateUrlWithQuery(currentReqType);
   await renderRequestCards({ state: statusValue, sort: sortByValue });
@@ -511,8 +521,8 @@ async function acceptRejectRequest(id, reqBody) {
     } else {
       switch (res.status) {
         case 401:
-          showToast(ErrorMessages.UNAUTHENTICATED, 'failure');
-          showMessage('ERROR', ErrorMessages.UNAUTHENTICATED);
+          showToast(ErrorMessages.UNAUTHORIZED_ACTION, 'failure');
+          showMessage('ERROR', ErrorMessages.UNAUTHORIZED_ACTION);
           break;
         case 403:
           showToast(ErrorMessages.UNAUTHENTICATED, 'failure');
@@ -585,6 +595,9 @@ async function performAcceptRejectAction(isAccepted, e) {
       showMessage('ERROR', ErrorMessages.SERVER_ERROR);
     }
   }
+
+  nextLink = '';
+  await renderRequestCards({ state: statusValue, sort: sortByValue });
 }
 
 function showToast(message, type) {
@@ -765,7 +778,6 @@ function populateStatus() {
     addRadioButton(name, id, 'status-filter');
   }
 }
-
+updateTabLink(currentReqType.toUpperCase());
 populateStatus();
-
 renderRequestCards({ state: statusValue, sort: sortByValue });
