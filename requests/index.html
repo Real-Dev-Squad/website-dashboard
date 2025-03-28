@@ -31,12 +31,29 @@
 
   <body>
     <nav id="tasksNav"></nav>
-    <div class="container">
+    <div class="container" id="request-page-container">
       <div class="container__header">
         <nav>
-          <a href="#" class="selected__tab" id="ooo_tab_link">OOO</a>
-          <a href="#" class="disabled__tab" id="task_tab_link">Task</a>
-          <a href="#" class="disabled__tab" id="extension_tab_link"
+          <a href="#" id="ooo_tab_link" data-testid="ooo-tab">OOO</a>
+          <a
+            href="#"
+            class="disabled__tab hidden"
+            id="onboarding_extension_tab_link"
+            data-testid="onboarding-tab"
+            >Onboarding</a
+          >
+          <a
+            href="#"
+            class="disabled__tab"
+            id="task_tab_link"
+            data-testid="task-tab"
+            >Task</a
+          >
+          <a
+            href="#"
+            class="disabled__tab"
+            id="extension_tab_link"
+            data-testid="extension-tab"
             >Extension</a
           >
         </nav>
@@ -45,8 +62,82 @@
           <div class="progress-bar"></div>
         </div>
       </div>
+      <div
+        class="filter__container hidden"
+        id="filterContainer"
+        data-testid="filter-container"
+      >
+        <div
+          class="user__suggestions__container"
+          data-testid="user-suggestions-container"
+          id="user-suggestions-container"
+        >
+          <input
+            type="text"
+            class="assignee__search"
+            id="assignee-search-input"
+            placeholder="Enter username"
+            data-testid="assignee-search"
+          />
+          <div
+            id="userSuggestions"
+            class="suggestions__list__container"
+            data-testid="suggestions-list-container"
+          >
+            <div
+              id="userSuggestionsList"
+              class="user__suggestions__list hidden"
+              data-testid="user-suggestions-list"
+            ></div>
+          </div>
+        </div>
+
+        <div
+          class="search__filter__container"
+          data-testid="search-filter-container"
+        >
+          <button
+            id="filterButton"
+            class="filter__toggle__button"
+            data-testid="filter-toggle-button"
+          >
+            <span class="filter__label" data-testid="filter-label"
+              >Filters</span
+            >
+            <img
+              class="filter__icon"
+              src="/images/funnel.svg"
+              alt="Filter icon"
+              data-testid="filter-icon"
+            />
+          </button>
+
+          <div
+            class="filter__modal hidden"
+            id="filterModal"
+            data-testid="filter-modal"
+          >
+            <div
+              class="filter__options__container"
+              id="filterOptionsContainer"
+              data-testid="filter-options-container"
+            ></div>
+            <button
+              id="applyFilterButton"
+              class="apply__filter__button"
+              data-testid="apply-filter-button"
+            >
+              Apply Filter
+            </button>
+          </div>
+        </div>
+      </div>
       <div class="container__body">
-        <div id="request_container" class="request"></div>
+        <div
+          id="request_container"
+          data-testid="request-container"
+          class="request"
+        ></div>
         <div class="container__body__loader hidden">Loading...</div>
         <div class="virtual"></div>
       </div>

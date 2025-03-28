@@ -15,6 +15,17 @@ describe('Tests the navbar and its components on various pages', () => {
 
     const navLinks = await navbarPage.$('.nav-links');
     expect(navLinks).toBeTruthy();
+
+    const devFlag = await navbarPage.evaluate(() => {
+      return new URLSearchParams(window.location.search).get('dev') === 'true';
+    });
+
+    const chevronIcon = await navbarPage.$('#chevron-down');
+    if (devFlag) {
+      expect(chevronIcon).toBeTruthy();
+    } else {
+      expect(chevronIcon).toBeFalsy();
+    }
   };
 
   beforeAll(async () => {
@@ -98,5 +109,50 @@ describe('Tests the navbar and its components on various pages', () => {
   it('Renders the navbar correctly on the Activity Feed page', async () => {
     await page.goto(`${LOCAL_TEST_PAGE_URL}/feed/index.html`);
     await testNavbar(page);
+  });
+  it('should close the dropdown by clicking outside the dropdown under dev feature flag', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}?dev=true`);
+
+    const userInfoHandle = await page.$('.user-info');
+    const dropdownHandle = await page.$('#dropdown');
+
+    expect(userInfoHandle).toBeTruthy();
+    expect(dropdownHandle).toBeTruthy();
+
+    await page.evaluate(() => {
+      const userInfo = document.querySelector('.user-info');
+      if (userInfo) {
+        userInfo.click();
+      }
+    });
+    await page.mouse.click(100, 100);
+    const dropdownIsActive = await dropdownHandle.evaluate((el) =>
+      el.classList.contains('active'),
+    );
+    expect(dropdownIsActive).toBe(false);
+  });
+  it('should keep the dropdown open when clicking outside when feature flag is off', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}?dev=false`);
+    await page.waitForSelector('#dropdown');
+    await page.evaluate(() => {
+      const dropdown = document.getElementById('dropdown');
+      if (dropdown && !dropdown.classList.contains('active')) {
+        dropdown.classList.add('active');
+      }
+    });
+    let dropdownIsActive = await page.evaluate(() => {
+      const dropdown = document.getElementById('dropdown');
+      return dropdown?.classList.contains('active') ?? false;
+    });
+    expect(dropdownIsActive).toBe(true);
+    await page.evaluate(() => {
+      document.body.click();
+    });
+    await page.waitForTimeout(200);
+    const newDropdownHandle = await page.$('#dropdown');
+    const newDropdownIsActive = await newDropdownHandle.evaluate((el) =>
+      el.classList.contains('active'),
+    );
+    expect(newDropdownIsActive).toBe(true);
   });
 });

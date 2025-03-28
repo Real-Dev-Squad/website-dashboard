@@ -1,7 +1,6 @@
 const API_BASE_URL = window.API_BASE_URL;
 const requestContainer = document.getElementById(REQUEST_CONTAINER_ID);
 const lastElementContainer = document.querySelector(LAST_ELEMENT_CONTAINER);
-
 const params = new URLSearchParams(window.location.search);
 const isDev = params.get('dev') === 'true';
 const loader = document.querySelector('.container__body__loader');
@@ -9,7 +8,18 @@ const startLoading = () => loader.classList.remove('hidden');
 const stopLoading = () => loader.classList.add('hidden');
 let oooTabLink = document.getElementById(OOO_TAB_ID);
 let extensionTabLink = document.getElementById(EXTENSION_TAB_ID);
-let currentReqType = OOO_REQUEST_TYPE;
+let onboardingExtensionTabLink = document.getElementById(
+  ONBOARDING_EXTENSION_TAB_ID,
+);
+const filterContainer = document.getElementById('filterContainer');
+const filterButton = document.getElementById('filterButton');
+const filterModal = document.getElementById('filterModal');
+const filterOptionsContainer = document.getElementById(
+  'filterOptionsContainer',
+);
+const applyFilterButton = document.getElementById('applyFilterButton');
+const userNameFilterInput = document.getElementById('assignee-search-input');
+let currentReqType = params.get('type') ?? OOO_REQUEST_TYPE;
 let selected__tab__class = 'selected__tab';
 let statusValue = null;
 let sortByValue = null;
@@ -17,8 +27,31 @@ let userDetails = [];
 let nextLink = '';
 let isDataLoading = false;
 
+function updateTabLink(requestType) {
+  if (requestType === OOO_REQUEST_TYPE) {
+    oooTabLink.classList.add(selected__tab__class);
+    onboardingExtensionTabLink.classList.remove(selected__tab__class);
+    extensionTabLink.classList.remove(selected__tab__class);
+  } else if (requestType === ONBOARDING_EXTENSION_REQUEST_TYPE) {
+    onboardingExtensionTabLink.classList.add(selected__tab__class);
+    oooTabLink.classList.remove(selected__tab__class);
+    extensionTabLink.classList.remove(selected__tab__class);
+  } else if (requestType === EXTENSION_REQUEST_TYPE) {
+    extensionTabLink.classList.add(selected__tab__class);
+    oooTabLink.classList.remove(selected__tab__class);
+    onboardingExtensionTabLink.classList.remove(selected__tab__class);
+  }
+}
+
 function getUserDetails(id) {
   return userDetails.find((user) => user.id === id);
+}
+
+if (isDev) {
+  onboardingExtensionTabLink.classList.remove('hidden');
+  requestContainer.classList.remove('request');
+  requestContainer.classList.add('request_container');
+  filterContainer.classList.remove('hidden');
 }
 
 const intersectionObserver = new IntersectionObserver(async (entries) => {
@@ -41,23 +74,40 @@ const removeIntersectionObserver = () => {
   intersectionObserver.unobserve(lastElementContainer);
 };
 
-oooTabLink.addEventListener('click', async function () {
+oooTabLink.addEventListener('click', async function (event) {
+  event.preventDefault();
   if (isDataLoading) return;
   currentReqType = OOO_REQUEST_TYPE;
   nextLink = '';
-  oooTabLink.classList.add(selected__tab__class);
-  extensionTabLink.classList.remove(selected__tab__class);
+  deselectRadioButtons();
+  userNameFilterInput.value = '';
+  updateTabLink(currentReqType.toUpperCase());
   changeFilter();
   updateUrlWithQuery(currentReqType);
   await renderRequestCards({ state: statusValue, sort: sortByValue });
 });
 
-extensionTabLink.addEventListener('click', async function () {
+extensionTabLink.addEventListener('click', async function (event) {
+  event.preventDefault();
   if (isDataLoading) return;
   currentReqType = EXTENSION_REQUEST_TYPE;
   nextLink = '';
-  extensionTabLink.classList.add(selected__tab__class);
-  oooTabLink.classList.remove(selected__tab__class);
+  deselectRadioButtons();
+  userNameFilterInput.value = '';
+  updateTabLink(currentReqType.toUpperCase());
+  changeFilter();
+  updateUrlWithQuery(currentReqType);
+  await renderRequestCards({ state: statusValue, sort: sortByValue });
+});
+
+onboardingExtensionTabLink.addEventListener('click', async function (event) {
+  event.preventDefault();
+  if (isDataLoading) return;
+  currentReqType = ONBOARDING_EXTENSION_REQUEST_TYPE;
+  nextLink = '';
+  deselectRadioButtons();
+  userNameFilterInput.value = '';
+  updateTabLink(currentReqType.toUpperCase());
   changeFilter();
   updateUrlWithQuery(currentReqType);
   await renderRequestCards({ state: statusValue, sort: sortByValue });
@@ -69,48 +119,19 @@ function updateUrlWithQuery(type) {
   window.history.pushState({ path: url.toString() }, '', url.toString());
 }
 
-async function getOooRequests(query = {}) {
-  let finalUrl =
-    API_BASE_URL + (nextLink || '/requests' + getOooQueryParamsString(query));
-
-  try {
-    const res = await fetch(finalUrl, {
-      credentials: 'include',
-    });
-
-    const data = await res.json();
-    if (res.ok) {
-      return data;
-    } else {
-      switch (res.status) {
-        case 401:
-          showMessage('ERROR', ErrorMessages.UNAUTHENTICATED);
-          return;
-        case 403:
-          showMessage('ERROR', ErrorMessages.UNAUTHORIZED);
-          return;
-        case 404:
-          showMessage('ERROR', ErrorMessages.OOO_NOT_FOUND);
-          return;
-        case 400:
-          showMessage('ERROR', data.message);
-          showToast(data.message, 'failure');
-          return;
-        default:
-          break;
-      }
-    }
-    showMessage('ERROR', ErrorMessages.SERVER_ERROR);
-  } catch (e) {
-    console.error(e);
-  }
-}
-
-async function getExtensionRequests(query = {}) {
+async function getRequests(requestType, query = {}) {
   let finalUrl =
     API_BASE_URL +
-    (nextLink || '/requests' + getExtensionQueryParamsString(query));
+    (nextLink || `/requests${getQueryParamsString(requestType, query)}`);
 
+  if (query?.state?.[0] || query?.requestedBy) {
+    finalUrl =
+      API_BASE_URL + `/requests${getQueryParamsString(requestType, query)}`;
+  }
+  const notFoundErrorMessage =
+    requestType === ONBOARDING_EXTENSION_REQUEST_TYPE
+      ? ErrorMessages.ONBOARDING_EXTENSION_NOT_FOUND
+      : ErrorMessages.OOO_NOT_FOUND;
   try {
     const res = await fetch(finalUrl, {
       credentials: 'include',
@@ -128,7 +149,7 @@ async function getExtensionRequests(query = {}) {
           showMessage('ERROR', ErrorMessages.UNAUTHORIZED);
           return;
         case 404:
-          showMessage('ERROR', ErrorMessages.EXTENSION_NOT_FOUND);
+          showMessage('ERROR', notFoundErrorMessage);
           return;
         case 400:
           showMessage('ERROR', data.message);
@@ -168,6 +189,9 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
     state,
     from,
     until,
+    type,
+    newEndsOn,
+    oldEndsOn,
     message,
     createdAt,
     lastModifiedBy,
@@ -176,6 +200,7 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
   } = request;
   let showSuperuserDetailsClass = 'notHidden';
   let showActionButtonClass = 'notHidden';
+  const isRequestTypeOnboarding = type === ONBOARDING_EXTENSION_REQUEST_TYPE;
   if (
     state === 'PENDING' ||
     lastModifiedBy === undefined ||
@@ -195,8 +220,14 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
     createdAt,
     (s) => s + ' ago',
   );
-  const fromDate = convertDateToReadableStringDate(from, DEFAULT_DATE_FORMAT);
-  const toDate = convertDateToReadableStringDate(until, DEFAULT_DATE_FORMAT);
+  const fromDate = convertDateToReadableStringDate(
+    isRequestTypeOnboarding ? oldEndsOn : from,
+    DEFAULT_DATE_FORMAT,
+  );
+  const toDate = convertDateToReadableStringDate(
+    isRequestTypeOnboarding ? newEndsOn : until,
+    DEFAULT_DATE_FORMAT,
+  );
   let updatedDate = convertDateToReadableStringDate(
     updatedAt,
     DEFAULT_DATE_FORMAT,
@@ -209,32 +240,27 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
 
   const card = createElementFromMap({
     tagName: 'div',
-    class: 'ooo_request__card',
+    class: 'request__card',
+    testId: `${type.toLowerCase()}-request-card`,
     child: [
       generateRequesterInfo(),
       generateRequestContent(),
-      addHorizontalBreakLine(),
       generateSuperuserInfo(),
       generateActionButtonsContainer(),
     ],
   });
   return card;
 
-  function addHorizontalBreakLine() {
-    return createElementFromMap({
-      tagName: 'hr',
-      class: 'horizontal__line__separator',
-    });
-  }
-
   function generateActionButtonsContainer() {
     return createElementFromMap({
       tagName: 'div',
       class: ['action__container', showActionButtonClass],
+      testId: 'action-container',
       child: [
         createElementFromMap({
           tagName: 'input',
           class: 'request__remark__input',
+          testId: 'request-remark-input',
           id: `remark-text-${id}`,
           type: 'text',
           placeholder: 'Add Remark If Any...',
@@ -246,6 +272,7 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
             createElementFromMap({
               tagName: 'button',
               class: ['request__action__btn', 'accept__btn'],
+              testId: 'approve-button',
               id: `${id}`,
               textContent: 'Accept',
               eventListeners: [
@@ -258,6 +285,7 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
             createElementFromMap({
               tagName: 'button',
               class: ['request__action__btn', 'reject__btn'],
+              testId: 'reject-button',
               id: `${id}`,
               textContent: 'Reject',
               eventListeners: [
@@ -277,6 +305,7 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
     return createElementFromMap({
       tagName: 'div',
       class: ['admin__info__and__status', showSuperuserDetailsClass],
+      testId: 'admin-info-and-status',
       child: [
         createElementFromMap({
           tagName: 'div',
@@ -322,7 +351,7 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
                 }),
                 createElementFromMap({
                   tagName: 'p',
-                  textContent: reason || '',
+                  textContent: type === 'ONBOARDING' ? message : reason || '',
                 }),
               ],
             }),
@@ -339,7 +368,8 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
       child: [
         createElementFromMap({
           tagName: 'p',
-          textContent: message || 'N/A',
+          textContent:
+            'Reason: ' + (type === 'ONBOARDING' ? reason : message || 'N/A'),
         }),
         createElementFromMap({
           tagName: 'div',
@@ -351,7 +381,7 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
                 createElementFromMap({
                   tagName: 'span',
                   class: 'request__date__pill',
-                  textContent: 'From',
+                  textContent: 'From:',
                 }),
                 ` ${fromDate}` || 'N/A',
               ],
@@ -362,7 +392,7 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
                 createElementFromMap({
                   tagName: 'span',
                   class: 'request__date__pill',
-                  textContent: 'To',
+                  textContent: 'To:',
                 }),
                 ` ${toDate}` || 'N/A',
               ],
@@ -421,6 +451,7 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
         createElementFromMap({
           tagName: 'button',
           class: ['request__status', `request__status--${state.toLowerCase()}`],
+          testId: 'request-status',
           textContent:
             state.charAt(0).toUpperCase() + state.slice(1).toLowerCase() ||
             'N/A',
@@ -439,14 +470,13 @@ async function renderRequestCards(queries = {}) {
     if (userDetails.length === 0) {
       userDetails = await getInDiscordUserList();
     }
-    requestResponse =
-      currentReqType === OOO_REQUEST_TYPE
-        ? await getOooRequests(queries)
-        : await getExtensionRequests(queries);
+    requestResponse = await getRequests(currentReqType, queries);
 
     for (const request of requestResponse?.data || []) {
       let superUserDetails;
-      let requesterUserDetails = await getUserDetails(request.requestedBy);
+      let requesterUserDetails = await getUserDetails(
+        request.type === 'OOO' ? request.requestedBy : request.userId,
+      );
       if (request.state !== 'PENDING') {
         superUserDetails = await getUserDetails(request.lastModifiedBy);
       }
@@ -486,13 +516,13 @@ async function acceptRejectRequest(id, reqBody) {
     });
     const data = await res.json();
     if (res.ok) {
-      showToast('Status updated successfully!', 'success');
+      showToast(data.message, 'success');
       return data;
     } else {
       switch (res.status) {
         case 401:
-          showToast(ErrorMessages.UNAUTHENTICATED, 'failure');
-          showMessage('ERROR', ErrorMessages.UNAUTHENTICATED);
+          showToast(ErrorMessages.UNAUTHORIZED_ACTION, 'failure');
+          showMessage('ERROR', ErrorMessages.UNAUTHORIZED_ACTION);
           break;
         case 403:
           showToast(ErrorMessages.UNAUTHENTICATED, 'failure');
@@ -521,7 +551,7 @@ async function performAcceptRejectAction(isAccepted, e) {
   let remark = document.getElementById(`remark-text-${requestId}`).value;
   let body = JSON.stringify({
     type: currentReqType,
-    reason: remark,
+    message: remark,
     state: isAccepted ? 'APPROVED' : 'REJECTED',
   });
   if (remark === '' || remark === undefined || remark === null) {
@@ -530,7 +560,8 @@ async function performAcceptRejectAction(isAccepted, e) {
       state: isAccepted ? 'APPROVED' : 'REJECTED',
     });
   }
-  const parentDiv = e.target.closest('.ooo_request__card');
+
+  const parentDiv = e.target.closest('.request__card');
   parentDiv.classList.add('disabled');
   const removeSpinner = addSpinner(parentDiv);
 
@@ -541,12 +572,15 @@ async function performAcceptRejectAction(isAccepted, e) {
   if (response) {
     try {
       const updatedRequestDetails = (await getRequestDetailsById(requestId))
-        .data[0];
+        .data;
+
       const superUserDetails = await getUserDetails(
         updatedRequestDetails.lastModifiedBy,
       );
       const requesterUserDetails = await getUserDetails(
-        updatedRequestDetails.requestedBy,
+        updatedRequestDetails.type === 'OOO'
+          ? updatedRequestDetails.requestedBy
+          : updatedRequestDetails.userId,
       );
 
       const updatedCard = createRequestCard(
@@ -554,12 +588,16 @@ async function performAcceptRejectAction(isAccepted, e) {
         superUserDetails,
         requesterUserDetails,
       );
+
       parentDiv.replaceWith(updatedCard);
     } catch (error) {
       console.log(error);
       showMessage('ERROR', ErrorMessages.SERVER_ERROR);
     }
   }
+
+  nextLink = '';
+  await renderRequestCards({ state: statusValue, sort: sortByValue });
 }
 
 function showToast(message, type) {
@@ -587,4 +625,159 @@ function showToast(message, type) {
   }, 5000);
 }
 
+function toggleFilter() {
+  filterModal.classList.toggle('hidden');
+}
+
+document.addEventListener('click', (event) => {
+  if (
+    !filterModal.classList.contains('hidden') &&
+    !filterModal.contains(event.target) &&
+    event.target !== filterButton
+  ) {
+    closeFilter();
+  }
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && !filterModal.classList.contains('hidden')) {
+    closeFilter();
+  }
+});
+
+function closeFilter() {
+  filterModal.classList.add('hidden');
+}
+
+filterButton.addEventListener('click', (event) => {
+  event.stopPropagation();
+  toggleFilter();
+});
+
+applyFilterButton.addEventListener('click', async (event) => {
+  closeFilter();
+
+  const requestData = {
+    state: getCheckedValues() || statusValue,
+    sort: sortByValue,
+  };
+
+  const username = userNameFilterInput.value.trim();
+  if (username) {
+    requestData.requestedBy = username;
+  }
+
+  requestContainer.innerHTML = '';
+  await renderRequestCards(requestData);
+});
+
+userNameFilterInput.addEventListener(
+  'input',
+  debounce(async function (event) {
+    const username = event.target.value.trim();
+    const suggestionContainer = document.getElementById('userSuggestionsList');
+
+    if (username.length > 2) {
+      const users = await getUsersByUsername(username);
+
+      suggestionContainer.classList.remove('hidden');
+      while (suggestionContainer.firstChild) {
+        suggestionContainer.removeChild(suggestionContainer.firstChild);
+      }
+
+      if (users && users.length > 0) {
+        const fragment = document.createDocumentFragment();
+
+        users.forEach((user) => {
+          const userDiv = document.createElement('div');
+          userDiv.className = 'suggestion';
+          userDiv.textContent = user.username;
+
+          userDiv.addEventListener('click', async () => {
+            userNameFilterInput.value = user.username;
+            suggestionContainer.classList.add('hidden');
+            requestContainer.innerHTML = '';
+
+            const requestData = { requestedBy: user.username };
+            await renderRequestCards(requestData);
+          });
+
+          fragment.appendChild(userDiv);
+        });
+
+        suggestionContainer.appendChild(fragment);
+      }
+    } else {
+      suggestionContainer.classList.add('hidden');
+      while (suggestionContainer.firstChild) {
+        suggestionContainer.removeChild(suggestionContainer.firstChild);
+      }
+    }
+  }, 300),
+);
+
+userNameFilterInput.addEventListener('keydown', async function (evt) {
+  if (evt.key === 'Enter') {
+    const username = this.value.trim();
+    const values = getCheckedValues();
+
+    const requestData = {
+      state: statusValue,
+      sort: sortByValue,
+    };
+
+    if (values.length > 0) {
+      requestData.state = values;
+    }
+
+    if (username) {
+      requestData.requestedBy = username;
+    }
+
+    requestContainer.innerHTML = '';
+    await renderRequestCards(requestData);
+  }
+});
+
+function getCheckedValues() {
+  const checkboxes = document.querySelectorAll(`input:checked`);
+  return Array.from(checkboxes).map((cb) => cb.value);
+}
+
+function populateStatus() {
+  const statusList = [
+    { name: 'Approved', id: 'APPROVED' },
+    { name: 'Pending', id: 'PENDING' },
+    { name: 'Rejected', id: 'REJECTED' },
+  ];
+  const filterHeader = document.createElement('div');
+  filterHeader.className = 'filter__header';
+
+  const filterTitle = document.createElement('p');
+  filterTitle.className = 'filter__title';
+  filterTitle.textContent = 'Filter By Status';
+
+  const clearButton = document.createElement('button');
+  clearButton.className = 'filter__clear__button';
+  clearButton.textContent = 'Clear';
+  clearButton.setAttribute('data-testid', 'filter-clear-button');
+
+  filterHeader.append(filterTitle);
+
+  clearButton.addEventListener('click', async function () {
+    filterModal.classList.add('hidden');
+    deselectRadioButtons();
+    requestContainer.innerHTML = '';
+    await renderRequestCards({ state: statusValue, sort: sortByValue });
+  });
+
+  filterTitle.appendChild(clearButton);
+  document.querySelector('#filterOptionsContainer').prepend(filterHeader);
+
+  for (const { name, id } of statusList) {
+    addRadioButton(name, id, 'status-filter');
+  }
+}
+updateTabLink(currentReqType.toUpperCase());
+populateStatus();
 renderRequestCards({ state: statusValue, sort: sortByValue });
