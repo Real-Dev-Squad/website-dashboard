@@ -5,6 +5,7 @@ const tabsList = document.querySelector('.tabs');
 const lastElementContainer = document.querySelector(LAST_ELEMENT_CONTAINER);
 const usernameInput = document.getElementById('assignee-search');
 const clearUsernameBtn = document.getElementById('clear-username');
+const dateRangeInput = document.getElementById('date-range');
 
 let query = {};
 let newLink = '';
@@ -398,8 +399,6 @@ let activeFilters = {
   endDate: null,
 };
 
-document.getElementById('start-date').addEventListener('change', applyFilter);
-document.getElementById('end-date').addEventListener('change', applyFilter);
 clearUsernameBtn.addEventListener('click', clearUsernameFilter);
 
 clearUsernameBtn.style.display = 'none';
@@ -414,21 +413,10 @@ usernameInput.addEventListener('input', function () {
 
 function applyFilter() {
   const username = document.getElementById('assignee-search').value.trim();
-  const startDate = document.getElementById('start-date').value;
-  const endDate = document.getElementById('end-date').value;
-
-  if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
-    alert('Start Date cannot be later than End Date!');
-    return;
-  }
 
   activeFilters.username = username || null;
-  activeFilters.startDate = startDate
-    ? new Date(startDate).toISOString()
-    : null;
-  activeFilters.endDate = endDate ? new Date(endDate).toISOString() : null;
 
-  populateActivityFeed({ category: currentCategory, ...activeFilters });
+  refreshFeed();
 }
 
 function clearUsernameFilter() {
@@ -549,5 +537,30 @@ document.getElementById('assignee-search').addEventListener('keydown', (e) => {
   });
 });
 
+document.addEventListener('dateRangeChange', (event) => {
+  const { startDate, endDate } = event.detail;
+  activeFilters.startDate = startDate.toISOString();
+  activeFilters.endDate = endDate.toISOString();
+  refreshFeed();
+});
+
+function clearDateRangeFilter() {
+  dateRangeInput.value = '';
+  activeFilters.startDate = null;
+  activeFilters.endDate = null;
+  refreshFeed();
+}
+
+function refreshFeed() {
+  const query = {
+    category: currentCategory,
+    ...activeFilters,
+  };
+  changeFilter();
+  populateActivityFeed(query);
+}
+
 // main entry
-renderFeed();
+document.addEventListener('DOMContentLoaded', () => {
+  renderFeed();
+});
