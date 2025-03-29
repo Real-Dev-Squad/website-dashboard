@@ -225,40 +225,40 @@ body {
 }
 
 .calendar {
-  width: 300px;
+  width: 18.75rem;
   font-family: Arial, sans-serif;
   background: var(--white-color);
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 1.25rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.1);
   position: absolute;
   top: 100%;
   left: 0;
   z-index: 100;
-  margin-top: 5px;
+  margin-top: 0.3125rem;
 }
 
 .calendar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
+  padding: 0.625rem;
   background: var(--light-gray-color);
-  border-radius: 4px;
-  margin-bottom: 10px;
+  border-radius: 0.25rem;
+  margin-bottom: 0.625rem;
 }
 
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .calendar-day {
-  padding: 10px;
+  padding: 0.625rem;
   text-align: center;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 0.25rem;
 }
 
 .calendar-day:hover {
@@ -280,8 +280,8 @@ body {
 
 .calendar-navigation {
   cursor: pointer;
-  padding: 5px 10px;
-  border-radius: 4px;
+  padding: 0.3125rem 0.625rem;
+  border-radius: 0.25rem;
 }
 
 .calendar-navigation:hover {

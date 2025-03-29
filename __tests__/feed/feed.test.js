@@ -4,25 +4,7 @@ const {
   LOCAL_TEST_PAGE_URL,
 } = require('../../mock-data/constants');
 const { userRandhir } = require('../../mock-data/users');
-
-const mockFeedLogs = {
-  message: 'All Logs fetched successfully',
-  data: [
-    {
-      user: 'test-1',
-      taskId: 'MxMSgBgaU3fZqZpx18Z2',
-      taskTitle: 'test title',
-      type: 'task',
-      userId: '4Ij9wAlEZzEjvFX67OrN',
-      username: 'test',
-      subType: 'update',
-      status: 'IN_PROGRESS',
-      timestamp: 1743149176,
-    },
-  ],
-  next: null,
-  prev: null,
-};
+const { mockFeedLogs } = require('../../mock-data/logs');
 
 describe('Feed page Date Range Picker', () => {
   let browser;
