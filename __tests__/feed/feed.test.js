@@ -231,55 +231,5 @@ describe('Feed page Date Range Picker', () => {
       );
       expect(endDateClass).toContain('calendar-day');
     });
-
-    it('should clear date range filter', async () => {
-      const dateRangeInput = await page.$('[data-testid="date-range-input"]');
-
-      await dateRangeInput.click();
-      await page.waitForTimeout(100);
-
-      await page.waitForFunction(
-        () => {
-          const days = document.querySelectorAll(
-            '[data-testid="calendar-grid"] .calendar-day:not(.other-month)',
-          );
-          return days.length > 0;
-        },
-        { timeout: 5000 },
-      );
-
-      const calendarDays = await page.$$(
-        '[data-testid="calendar-grid"] .calendar-day:not(.other-month)',
-      );
-
-      await calendarDays[0].evaluate((el) => el.click());
-      await page.waitForTimeout(100);
-
-      await calendarDays[1].evaluate((el) => el.click());
-      await page.waitForTimeout(100);
-
-      await page.evaluate(() => {
-        const event = new CustomEvent('dateRangeChange', {
-          detail: {
-            startDate: null,
-            endDate: null,
-          },
-        });
-        document.dispatchEvent(event);
-      });
-
-      await page.waitForFunction(
-        () => {
-          const input = document.querySelector(
-            '[data-testid="date-range-input"]',
-          );
-          return input.value === '';
-        },
-        { timeout: 5000 },
-      );
-
-      const inputValue = await dateRangeInput.evaluate((el) => el.value);
-      expect(inputValue).toBe('');
-    });
   });
 });

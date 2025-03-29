@@ -227,7 +227,6 @@ function initializeDateRangePicker() {
       document.dispatchEvent(event);
       activeFilters.startDate = state.startDate.toISOString();
       activeFilters.endDate = state.endDate.toISOString();
-      refreshFeed();
     } else if (state.startDate) {
       input.value = state.startDate.toLocaleDateString();
     }
