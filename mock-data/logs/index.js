@@ -69,7 +69,27 @@ const extensionRequestLogsInSentence = {
     'JoyTest has created this extension request on Sun, 15/10/2023, 10:05:31.',
   ],
 };
+
+const mockFeedLogs = {
+  message: 'All Logs fetched successfully',
+  data: [
+    {
+      user: 'test-1',
+      taskId: 'MxMSgBgaU3fZqZpx18Z2',
+      taskTitle: 'test title',
+      type: 'task',
+      userId: '4Ij9wAlEZzEjvFX67OrN',
+      username: 'test',
+      subType: 'update',
+      status: 'IN_PROGRESS',
+      timestamp: 1743149176,
+    },
+  ],
+  next: null,
+  prev: null,
+};
 module.exports = {
   extensionRequestLogs,
   extensionRequestLogsInSentence,
+  mockFeedLogs,
 };
