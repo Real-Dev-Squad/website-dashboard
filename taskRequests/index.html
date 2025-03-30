@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/images/index.ico" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <title>Task Requests | Real Dev Squad</title>
+    <link rel="stylesheet" href="/taskRequests/style.css" />
+    <script src="/helpers/loadENV.js"></script>
+    <script src="/taskRequests/constants.js"></script>
+    <script src="/taskRequests/util.js"></script>
+    <script src="/utils.js"></script>
+    <script src="/taskRequests/script.js" defer></script>
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="header__contents">
+        <img
+          src="/taskRequests/assets/RDSLogo.png"
+          alt="RDS logo"
+          height="48"
+          width="48"
+        />
+        <a href="/index.html" class="header__contents__navlink">Home</a>
+      </div>
+    </div>
+    <div class="container">
+      <div class="sort-filters">
+        <button class="sort-button">
+          <img
+            id="asc-sort-icon"
+            src="/taskRequests/assets/sort-menu.svg"
+            alt="sort-icon"
+          />
+        </button>
+        <div class="backdrop"></div>
+        <div
+          class="sort-modal hidden"
+          role="dialog"
+          aria-labelledby="sort-dialog-label"
+        >
+          <div class="sort-head">
+            <h3 id="sort-dialog-label">Sort By</h3>
+          </div>
+          <div class="sorts-container">
+            <form class="modal-form" id="sort_by-filter"></form>
+          </div>
+        </div>
+        <button id="filter-button" class="filter-button">
+          <span class="filter-text">Filters</span>
+
+          <img
+            class="funnel-icon"
+            src="/taskRequests/assets/funnel.svg"
+            alt="funnel icon"
+          />
+        </button>
+        <div
+          class="filter-modal hidden"
+          role="dialog"
+          aria-labelledby="filter-dialog-label"
+        >
+          <div class="filter-head">
+            <h3 id="filter-dialog-label">Filters</h3>
+            <button id="clear-button" class="clear-btn">Clear</button>
+          </div>
+          <div class="filters-container">
+            <h2>Status</h2>
+            <form class="modal-form" id="status-filter"></form>
+            <h2>Request type</h2>
+            <form class="modal-form" id="request-type-filter"></form>
+          </div>
+          <button id="apply-filter-button" class="apply-filter-button">
+            Apply Filter
+          </button>
+        </div>
+      </div>
+      <div class="container__body">
+        <div id="task-request-container" class="taskRequest"></div>
+        <div class="container__body__loader hidden">Loading...</div>
+
+        <div class="virtual"></div>
+      </div>
+    </div>
+  </body>
+</html>
