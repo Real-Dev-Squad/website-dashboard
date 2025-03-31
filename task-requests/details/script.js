@@ -694,7 +694,6 @@ function populateModalContent(index) {
 
   modalContent.appendChild(header);
 
-  
   modal.className = 'requestor_details_modal_content';
 
   proposedStartDateText.innerText = 'Proposed Start Date:';
