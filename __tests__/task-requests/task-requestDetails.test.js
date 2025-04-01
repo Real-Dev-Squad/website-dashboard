@@ -161,7 +161,7 @@ describe('Task request details page', () => {
 
   it('should properly handle long descriptions in the modal', async function () {
     await page.goto(
-      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq5&dev=true`,
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq5`,
     );
     await page.waitForNetworkIdle();
     await page.click('.info__more');
@@ -181,6 +181,23 @@ describe('Task request details page', () => {
     });
 
     expect(isScrollable).toBe(true);
+  });
+
+  it('should render N/A for description if descriptions is not present', async function () {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq7`,
+    );
+    await page.waitForNetworkIdle();
+    await page.click('.info__more');
+    await page.waitForSelector('#requestor_details_modal_content', {
+      visible: true,
+    });
+
+    const descriptionHtmlValue = await page.$eval(
+      '[data-modal-description-value="proposed-description-value"]',
+      (element) => element.innerHTML,
+    );
+    expect(descriptionHtmlValue).toContain('N/A');
   });
 });
 
