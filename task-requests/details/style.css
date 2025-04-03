@@ -442,22 +442,6 @@ table tr td {
 }
 
 .requestor_details_modal_content {
-  background-color: var(--color-light-gray);
-  margin: 10% auto;
-  padding: 2rem;
-  border: 1px solid var(--color-gray-variant2);
-  width: 25%;
-  text-align: center;
-  right: 10%;
-  border-radius: 1rem;
-  text-wrap: wrap;
-  word-break: break-word;
-  height: 50%;
-  width: 50%;
-  overflow: auto;
-}
-
-.new_requestor_details_modal_content {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -518,14 +502,6 @@ table tr td {
 .requestor_details_modal_close {
   color: var(--color-gray-shade);
   float: right;
-  font-size: 28px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.new_requestor_details_modal_close {
-  color: var(--color-gray-shade);
-  float: right;
   font-size: 1.75rem;
   font-weight: bold;
   cursor: pointer;
@@ -543,10 +519,6 @@ table tr td {
 }
 
 .requestor_details_modal_heading {
-  color: var(--color-rds-blue);
-}
-
-.new_requestor_details_modal_heading {
   color: var(--color-indigo-blue);
   text-align: center;
   font-weight: normal;
@@ -619,7 +591,7 @@ p:hover {
   .request-details {
     grid-column: auto;
   }
-  .new_requestor_details_modal_content {
+  .requestor_details_modal_content {
     width: 70%;
   }
 }
@@ -637,7 +609,7 @@ p:hover {
     font-size: 0.75rem;
   }
 
-  .new_requestor_details_modal_heading {
+  .requestor_details_modal_heading {
     font-size: 1.05rem;
     margin-top: -0.6rem;
   }
@@ -655,10 +627,10 @@ p:hover {
   .requestor_description_details :not(:where(h1, h2, h3, h5, h6)) {
     font-size: 0.75rem;
   }
-  .new_requestor_details_modal_content {
+  .requestor_details_modal_content {
     height: 40%;
   }
-  .new_requestor_details_modal_close {
+  .requestor_details_modal_close {
     font-size: 0.85rem;
   }
 }
