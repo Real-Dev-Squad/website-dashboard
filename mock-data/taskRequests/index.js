@@ -70,6 +70,32 @@ const individualTaskReqDetail = {
   },
 };
 
+const individualTaskDetailWithNoDescription = {
+  message: 'Task request returned successfully',
+  data: {
+    createdAt: 1698837978463,
+    lastModifiedAt: 1698837978463,
+    requestType: 'ASSIGNMENT',
+    createdBy: 'randhir',
+    lastModifiedBy: 'randhir',
+    taskTitle: 'sample golang task s402',
+    externalIssueUrl:
+      'https://api.github.com/repos/Real-Dev-Squad/website-backend/issues/1310',
+    taskId: '44SwDPe1r6AgoOtWq8EN',
+    users: [
+      {
+        proposedStartDate: 1698684354000,
+        proposedDeadline: 1699142400000,
+        userId: 'SooJK37gzjIZfFNH0tlL',
+        status: 'PENDING',
+      },
+    ],
+    status: 'PENDING',
+    id: 'dM5wwD9QsiTzi7eG7Oq5',
+    url: 'http://localhost:3000/taskRequests/dM5wwD9QsiTzi7eG7Oq7',
+  },
+};
+
 const individualTaskReqDetailWithMarkDownInDescription = {
   message: 'Task request returned successfully',
   data: {
@@ -114,7 +140,6 @@ const taskDetailCreation = {
       {
         proposedStartDate: 1698089500541,
         proposedDeadline: 1698089500541,
-        description: ' ',
         userId: 'eChYAP0kUwLo4wQ1gqMV',
         status: 'PENDING',
       },
@@ -365,6 +390,8 @@ const urlMappings = {
     individualTaskReqDetail,
   'https://staging-api.realdevsquad.com/taskRequests/dM5wwD9QsiTzi7eG7Oq6':
     individualTaskReqDetailWithMarkDownInDescription,
+  'https://staging-api.realdevsquad.com/taskRequests/dM5wwD9QsiTzi7eG7Oq7':
+    individualTaskDetailWithNoDescription,
   'https://api.realdevsquad.com/tasks/44SwDPe1r6AgoOtWq8EN/details':
     individualTaskDetail,
   'https://staging-api.realdevsquad.com/tasks/44SwDPe1r6AgoOtWq8EN/details':

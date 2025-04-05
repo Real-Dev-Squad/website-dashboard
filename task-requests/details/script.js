@@ -681,12 +681,8 @@ function populateModalContent(index) {
     descriptionValue.innerHTML = html;
     descriptionValue.className = 'requestor_description_details';
   } else {
-    if (isDev) {
-      descriptionValue.textContent = userData.description ?? 'N/A';
-      descriptionValue.className = 'proposed_description_value';
-    } else {
-      descriptionValue.textContent = userData.description;
-    }
+    descriptionValue.textContent = userData.description ?? 'N/A';
+    descriptionValue.className = 'proposed_description_value';
   }
 
   const header = document.createElement('h2');
@@ -698,67 +694,52 @@ function populateModalContent(index) {
 
   modalContent.appendChild(header);
 
-  if (isDev) {
-    modal.className = 'new_requestor_details_modal_content';
+  modal.className = 'requestor_details_modal_content';
 
-    proposedStartDateText.innerText = 'Proposed Start Date:';
-    proposedStartDateText.className = 'proposed_start_date_text';
+  proposedStartDateText.innerText = 'Proposed Start Date:';
+  proposedStartDateText.className = 'proposed_start_date_text';
 
-    proposedStartDateValue.className = 'proposed_start_date_value';
+  proposedStartDateValue.className = 'proposed_start_date_value';
 
-    proposedDeadlineText.innerText = 'Proposed Deadline:';
-    proposedDeadlineText.className = 'proposed_end_date_text';
+  proposedDeadlineText.innerText = 'Proposed Deadline:';
+  proposedDeadlineText.className = 'proposed_end_date_text';
 
-    proposedDeadlineValue.className = 'proposed_end_date_value';
+  proposedDeadlineValue.className = 'proposed_end_date_value';
 
-    descriptionText.innerText = 'Description:';
-    descriptionText.className = 'proposed_description_text';
+  descriptionText.innerText = 'Description:';
+  descriptionText.className = 'proposed_description_text';
 
-    descriptionValue.style.border = 'none';
-    descriptionValue.style.marginTop = '-0.35rem';
-    descriptionValue.style.padding = '-0rem 0.7rem';
+  descriptionValue.style.border = 'none';
+  descriptionValue.style.marginTop = '-0.35rem';
+  descriptionValue.style.padding = '-0rem 0.7rem';
 
-    const modalCloseButton = document.getElementById(
-      'requestor_details_modal_close',
-    );
-    modalCloseButton.className = 'new_requestor_details_modal_close';
+  const modalCloseButton = document.getElementById(
+    'requestor_details_modal_close',
+  );
+  modalCloseButton.className = 'requestor_details_modal_close';
 
-    header.className = 'new_requestor_details_modal_heading';
+  header.className = 'requestor_details_modal_heading';
 
-    const proposedStartDateDiv = document.createElement('div');
-    proposedStartDateDiv.className = 'proposed_start_date_div';
+  const proposedStartDateDiv = document.createElement('div');
+  proposedStartDateDiv.className = 'proposed_start_date_div';
 
-    const proposedDeadlineDiv = document.createElement('div');
-    proposedDeadlineDiv.className = 'proposed_end_date_div';
+  const proposedDeadlineDiv = document.createElement('div');
+  proposedDeadlineDiv.className = 'proposed_end_date_div';
 
-    const descriptionDiv = document.createElement('div');
-    descriptionDiv.className = 'proposed_description_div';
+  const descriptionDiv = document.createElement('div');
+  descriptionDiv.className = 'proposed_description_div';
 
-    proposedStartDateDiv.appendChild(proposedStartDateText);
-    proposedStartDateDiv.appendChild(proposedStartDateValue);
-    modalContent.appendChild(proposedStartDateDiv);
+  proposedStartDateDiv.appendChild(proposedStartDateText);
+  proposedStartDateDiv.appendChild(proposedStartDateValue);
+  modalContent.appendChild(proposedStartDateDiv);
 
-    proposedDeadlineDiv.appendChild(proposedDeadlineText);
-    proposedDeadlineDiv.appendChild(proposedDeadlineValue);
-    modalContent.appendChild(proposedDeadlineDiv);
+  proposedDeadlineDiv.appendChild(proposedDeadlineText);
+  proposedDeadlineDiv.appendChild(proposedDeadlineValue);
+  modalContent.appendChild(proposedDeadlineDiv);
 
-    descriptionDiv.appendChild(descriptionText);
-    descriptionDiv.appendChild(descriptionValue);
-    modalContent.appendChild(descriptionDiv);
-  } else {
-    proposedStartDateText.innerHTML = '<strong>Proposed Start Date:</strong>';
-    proposedDeadlineText.innerHTML = '<strong>Proposed Deadline:</strong>';
-    descriptionText.innerHTML = '<strong>Description:</strong>';
-
-    modalContent.appendChild(proposedStartDateText);
-    modalContent.appendChild(proposedStartDateValue);
-
-    modalContent.appendChild(proposedDeadlineText);
-    modalContent.appendChild(proposedDeadlineValue);
-
-    modalContent.appendChild(descriptionText);
-    modalContent.appendChild(descriptionValue);
-  }
+  descriptionDiv.appendChild(descriptionText);
+  descriptionDiv.appendChild(descriptionValue);
+  modalContent.appendChild(descriptionDiv);
 
   modalOverlay.style.display = 'block';
 }
