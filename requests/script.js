@@ -19,7 +19,7 @@ const filterOptionsContainer = document.getElementById(
 );
 const applyFilterButton = document.getElementById('applyFilterButton');
 const userNameFilterInput = document.getElementById('assignee-search-input');
-let currentReqType = params.get('type') ?? OOO_REQUEST_TYPE;
+let currentReqType = params.get('type')?.toUpperCase() ?? OOO_REQUEST_TYPE;
 let selected__tab__class = 'selected__tab';
 let statusValue = null;
 let sortByValue = null;
@@ -81,7 +81,7 @@ oooTabLink.addEventListener('click', async function (event) {
   nextLink = '';
   deselectRadioButtons();
   userNameFilterInput.value = '';
-  updateTabLink(currentReqType.toUpperCase());
+  updateTabLink(currentReqType);
   changeFilter();
   updateUrlWithQuery(currentReqType);
   await renderRequestCards({ state: statusValue, sort: sortByValue });
@@ -94,7 +94,7 @@ extensionTabLink.addEventListener('click', async function (event) {
   nextLink = '';
   deselectRadioButtons();
   userNameFilterInput.value = '';
-  updateTabLink(currentReqType.toUpperCase());
+  updateTabLink(currentReqType);
   changeFilter();
   updateUrlWithQuery(currentReqType);
   await renderRequestCards({ state: statusValue, sort: sortByValue });
@@ -107,7 +107,7 @@ onboardingExtensionTabLink.addEventListener('click', async function (event) {
   nextLink = '';
   deselectRadioButtons();
   userNameFilterInput.value = '';
-  updateTabLink(currentReqType.toUpperCase());
+  updateTabLink(currentReqType);
   changeFilter();
   updateUrlWithQuery(currentReqType);
   await renderRequestCards({ state: statusValue, sort: sortByValue });
@@ -778,6 +778,6 @@ function populateStatus() {
     addRadioButton(name, id, 'status-filter');
   }
 }
-updateTabLink(currentReqType.toUpperCase());
+updateTabLink(currentReqType);
 populateStatus();
 renderRequestCards({ state: statusValue, sort: sortByValue });

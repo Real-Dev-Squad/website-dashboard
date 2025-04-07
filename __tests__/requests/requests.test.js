@@ -129,6 +129,18 @@ describe('Tests the request cards', () => {
     await browser.close();
   });
 
+  it('should not show the error toast ui after reloading a page', async () => {
+    await page.click('#extension_tab_link');
+    expect(page.url()).toContain('type=extension');
+    await page.reload();
+    expect(page.url()).toContain('type=extension');
+    const isErrorToastHidden = await page.$eval(
+      '[data-testid="toast"]',
+      (e) => e.classList.contains('hidden') && e.classList.length == 1,
+    );
+    expect(isErrorToastHidden).toBe(true);
+  });
+
   it('should match the request page url with correct request tab link after reloading the page', async () => {
     await page.click('#extension_tab_link');
     expect(page.url()).toContain('type=extension');
