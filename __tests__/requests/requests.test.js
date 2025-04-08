@@ -167,7 +167,11 @@ describe('Tests the request cards', () => {
   });
 
   it('should update the card when the accept or reject button is clicked for OOO requests', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/requests`);
+    await page.waitForNetworkIdle();
+
     await page.click('#ooo_tab_link');
+    expect(page.url()).toContain('type=ooo');
 
     await page.waitForSelector('.request__status');
     const statusButtonText = await page.$eval(
