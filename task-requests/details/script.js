@@ -558,12 +558,14 @@ const renderTaskRequest = async () => {
 
 const showErrorMessage = (error) => {
   let errorMessageDiv = document.querySelector('[data-testid="error-message"]');
-
+  const errorMessage = {
+    NOT_FOUND: 'Task not found!',
+  };
   if (!errorMessageDiv) {
     errorMessageDiv = document.createElement('p');
     errorMessageDiv.classList.add('error-message');
     errorMessageDiv.setAttribute('data-testid', 'error-message');
-    errorMessageDiv.textContent = 'Task not found';
+    errorMessageDiv.textContent = errorMessage.NOT_FOUND;
     const container = document.querySelector('.container') || document.body;
     container.appendChild(errorMessageDiv);
   }
