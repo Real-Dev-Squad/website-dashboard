@@ -224,6 +224,37 @@ describe('Tests the request cards', () => {
     expect(await filterContainer.isVisible()).toBe(false);
   });
 
+  it('should show requests cards after reloading the page', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/requests`);
+    await page.waitForNetworkIdle();
+
+    await page.click('#extension_tab_link');
+    expect(page.url()).toContain('type=extension');
+
+    await page.reload();
+    expect(page.url()).toContain('type=extension');
+
+    await page.waitForSelector('[data-testid="extension-request-card"]', {
+      state: 'visible',
+    });
+    const extensionCards = await page.$$(
+      '[data-testid="extension-request-card"]',
+    );
+    expect(extensionCards.length).toBe(1);
+
+    await page.click('#ooo_tab_link');
+    expect(page.url()).toContain('type=ooo');
+
+    await page.reload();
+    expect(page.url()).toContain('type=ooo');
+
+    await page.waitForSelector('[data-testid="ooo-request-card"]', {
+      state: 'visible',
+    });
+    const oooCards = await page.$$('[data-testid="ooo-request-card"]');
+    expect(oooCards.length).toBe(1);
+  });
+
   describe('Onboarding Requests UI (Dev Mode Enabled)', () => {
     beforeAll(async () => {
       await page.goto(`${LOCAL_TEST_PAGE_URL}/requests?dev=true`);
