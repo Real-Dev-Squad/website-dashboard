@@ -147,7 +147,7 @@ describe('Task request details page', () => {
     );
     expect(descriptionTextValue).toBe(longDescription);
   });
-  it('Displays "Task not found" when the task ID is invalid and dev mode is enabled', async function () {
+  it('Displays "Task not found" When the task ID is invalid and dev mode is enabled', async function () {
     await page.goto(
       `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwDdsfd9QsiTzi7eG7Oq5&dev=true`,
     );
