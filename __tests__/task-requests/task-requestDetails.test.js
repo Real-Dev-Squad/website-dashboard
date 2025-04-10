@@ -8,7 +8,7 @@ const {
   STAGING_API_URL,
   LOCAL_TEST_PAGE_URL,
 } = require('../../mock-data/constants');
-
+const { longDescription } = require('../../mock-data/taskRequests/index.js');
 describe('Request container for non-super users', () => {
   let browser;
   let page;
@@ -25,7 +25,7 @@ describe('Request container for non-super users', () => {
     await page.setRequestInterception(true);
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-      if (url == `${STAGING_API_URL}/users/self`) {
+      if (url == `${STAGING_API_URL}/users?profile=true`) {
         interceptedRequest.respond({
           ...defaultMockResponseHeaders,
           body: JSON.stringify(user),
@@ -145,9 +145,7 @@ describe('Task request details page', () => {
       '[data-modal-description-value="proposed-description-value"]',
       (element) => element.textContent,
     );
-    expect(descriptionTextValue).toBe(
-      'code change 3 days , testing - 2 days. total - 5 days',
-    );
+    expect(descriptionTextValue).toBe(longDescription);
   });
   it('Should render task not found when task does not exist in dev flag enabled', async function () {
     await page.goto(
@@ -184,6 +182,47 @@ describe('Task request details page', () => {
     const rejectButton = await page.$('[data-testid="task-reject-button"]');
     expect(approveButton).toBeTruthy();
     expect(rejectButton).toBeTruthy();
+  });
+
+  it('should properly handle long descriptions in the modal', async function () {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq5`,
+    );
+    await page.waitForNetworkIdle();
+    await page.click('.info__more');
+    await page.waitForSelector('#requestor_details_modal_content', {
+      visible: true,
+    });
+
+    const descriptionText = await page.$eval(
+      '[data-modal-description-value="proposed-description-value"]',
+      (el) => el.textContent.trim(),
+    );
+    expect(descriptionText.length).toBeGreaterThan(1000);
+
+    const isScrollable = await page.evaluate(() => {
+      const modal = document.querySelector('#requestor_details_modal_content');
+      return modal.scrollHeight > modal.clientHeight;
+    });
+
+    expect(isScrollable).toBe(true);
+  });
+
+  it('should render N/A for description if descriptions is not present', async function () {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq7`,
+    );
+    await page.waitForNetworkIdle();
+    await page.click('.info__more');
+    await page.waitForSelector('#requestor_details_modal_content', {
+      visible: true,
+    });
+
+    const descriptionHtmlValue = await page.$eval(
+      '[data-modal-description-value="proposed-description-value"]',
+      (element) => element.innerHTML,
+    );
+    expect(descriptionHtmlValue).toContain('N/A');
   });
 });
 

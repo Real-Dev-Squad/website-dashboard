@@ -24,6 +24,8 @@ function createElementFromMap(domObjectMap) {
       }
     } else if (key === 'child') {
       el.append(...value);
+    } else if (key === 'testId') {
+      el.setAttribute('data-testid', value);
     } else {
       el[key] = value;
     }
@@ -32,28 +34,22 @@ function createElementFromMap(domObjectMap) {
   return el;
 }
 
-function getOooQueryParamsString(query) {
-  let queryParam = 'dev=true&type=OOO&size=12';
-  if (
-    query.state !== undefined &&
-    query.state !== null &&
-    query.state !== 'ALL'
-  ) {
-    queryParam += `&state=${query.state}`;
-  }
-  return `?${queryParam}`;
-}
+function getQueryParamsString(requestType, query) {
+  const params = new URLSearchParams({
+    dev: 'true',
+    type: requestType,
+    size: '12',
+  });
 
-function getExtensionQueryParamsString(query) {
-  let queryParam = 'dev=true&type=EXTENSION&size=12';
-  if (
-    query.state !== undefined &&
-    query.state !== null &&
-    query.state !== 'ALL'
-  ) {
-    queryParam += `&state=${query.state}`;
+  if (query.state && query.state !== 'ALL') {
+    params.set('state', query.state);
   }
-  return `?${queryParam}`;
+
+  if (query.requestedBy) {
+    params.set('requestedBy', query.requestedBy);
+  }
+
+  return `?${params.toString()}`;
 }
 
 function convertDateToReadableStringDate(date, format) {
@@ -146,5 +142,47 @@ async function getRequestDetailsById(requestId) {
     return data;
   } catch (error) {
     console.log(error);
+  }
+}
+
+function addRadioButton(labelText, value, groupName) {
+  const group = document.getElementById('filterOptionsContainer');
+  const label = document.createElement('label');
+  const radio = document.createElement('input');
+  radio.type = 'radio';
+  radio.name = groupName;
+  radio.value = value;
+  label.innerHTML = radio.outerHTML + '&nbsp;' + labelText;
+  label.classList.add('radio-label');
+  label.appendChild(document.createElement('br'));
+  group.appendChild(label);
+}
+
+function deselectRadioButtons() {
+  const radioButtons = document.querySelectorAll(`input[name="status-filter"]`);
+  radioButtons.forEach((radioButton) => {
+    radioButton.checked = false;
+  });
+}
+
+async function getUsersByUsername(username) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/users?search=${username}&size=5`, {
+      credentials: 'include',
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`Error ${res.status}: ${res.statusText}`);
+    }
+
+    const data = await res.json();
+    return data.users;
+  } catch (error) {
+    console.error('Failed to fetch users:', error);
+    return [];
   }
 }

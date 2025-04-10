@@ -45,7 +45,7 @@ describe('Tasks On User Management Page', () => {
           body: JSON.stringify(userDetails),
         });
       } else if (
-        url === `${STAGING_API_URL}/users/self` ||
+        url === `${STAGING_API_URL}/users?profile=true` ||
         url === `${STAGING_API_URL}/users/ankush`
       ) {
         interceptedRequest.respond({

@@ -3,6 +3,9 @@ const activityFeedContainer = document.getElementById(ACITIVITY_FEED_CONTAINER);
 const activityList = document.querySelector('.activity-list');
 const tabsList = document.querySelector('.tabs');
 const lastElementContainer = document.querySelector(LAST_ELEMENT_CONTAINER);
+const usernameInput = document.getElementById('assignee-search');
+const clearUsernameBtn = document.getElementById('clear-username');
+const dateRangeInput = document.getElementById('date-range');
 
 let query = {};
 let newLink = '';
@@ -10,6 +13,8 @@ let activityFeedPage = 0;
 let nextLink = '';
 let isDataLoading = false;
 let category = CATEGORY.ALL;
+let activeIndex = -1;
+let debounceTimeout = null;
 
 const tabsData = [
   { name: 'All', 'data-type': CATEGORY.ALL, class: 'active' },
@@ -21,7 +26,7 @@ const tabsData = [
 
 async function renderFeed() {
   changeFilter();
-  await populateActivityFeed({ category });
+  await populateActivityFeed({ category: currentCategory, ...activeFilters });
   addIntersectionObserver();
 }
 
@@ -38,9 +43,9 @@ function createTabListItem(tab) {
 function handleTabClick(tab) {
   tabs.forEach((t) => t.classList.remove('active'));
   tab.classList.add('active');
-  const category = tab.dataset.type;
-  changeFilter();
-  populateActivityFeed({ category });
+  currentCategory = tab.dataset.type;
+
+  refreshFeed();
 }
 
 tabsData.forEach((tab) => {
@@ -300,25 +305,40 @@ function formatTaskRequestsLog(data) {
 async function populateActivityFeed(query = {}, newLink) {
   activityFeedPage++;
   const currentVersion = activityFeedPage;
+
+  const combinedQuery = { ...query, ...activeFilters };
+
   try {
     isDataLoading = true;
-    addLoader(container);
-    const activityFeedData = await getActivityFeedData(query, newLink);
-    if (activityFeedData) {
-      nextLink = activityFeedData.next;
-      const allActivityFeedData = activityFeedData.data;
-      if (currentVersion !== activityFeedPage) {
-        return;
-      }
-      for (const data of allActivityFeedData) {
-        const renderedItem = renderActivityItem(data);
-        activityFeedContainer.appendChild(renderedItem);
-      }
+    addLoader(activityFeedContainer);
+
+    const activityFeedData = await getActivityFeedData(combinedQuery, newLink);
+
+    if (!activityFeedData) return;
+
+    activityFeedContainer.innerHTML = '';
+
+    nextLink = activityFeedData.next;
+    const allActivityFeedData = activityFeedData.data;
+
+    if (currentVersion !== activityFeedPage) {
+      return;
+    }
+
+    if (allActivityFeedData.length === 0) {
+      addEmptyPageMessage(activityFeedContainer);
+      return;
+    }
+
+    for (const data of allActivityFeedData) {
+      const renderedItem = renderActivityItem(data);
+      activityFeedContainer.appendChild(renderedItem);
     }
   } catch (error) {
     showMessage(activityFeedContainer, error);
   } finally {
     if (currentVersion !== activityFeedPage) return;
+
     removeLoader('loader');
     isDataLoading = false;
   }
@@ -328,39 +348,32 @@ async function getActivityFeedData(query = {}, nextLink) {
   validateQuery(query);
   let finalUrl =
     API_BASE_URL + (nextLink || '/logs' + generateActivityFeedParams(query));
-  const res = await fetch(finalUrl, {
-    credentials: 'include',
-    method: 'GET',
-    headers: {
-      'Content-type': 'application/json',
-    },
-  });
 
   try {
     const res = await fetch(finalUrl, {
       credentials: 'include',
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+      },
     });
-
     const data = await res.json();
     if (res.ok) {
       return data;
     } else {
       switch (res.status) {
         case 401:
-          return showMessage(
-            activityFeedContainer,
-            ERROR_MESSAGE.UNAUTHENTICATED,
-          );
+          showMessage(activityFeedContainer, ERROR_MESSAGE.UNAUTHENTICATED);
+          return null;
         case 403:
-          return showMessage(activityFeedContainer, ERROR_MESSAGE.UNAUTHORIZED);
+          showMessage(activityFeedContainer, ERROR_MESSAGE.UNAUTHORIZED);
+          return null;
         case 404:
-          return showMessage(
-            activityFeedContainer,
-            ERROR_MESSAGE.LOGS_NOT_FOUND,
-          );
+          showMessage(activityFeedContainer, ERROR_MESSAGE.LOGS_NOT_FOUND);
+          return null;
         case 400:
           showMessage(activityFeedContainer, data.message);
-          return;
+          return null;
         default:
           break;
       }
@@ -370,5 +383,184 @@ async function getActivityFeedData(query = {}, nextLink) {
   }
 }
 
+let currentCategory = CATEGORY.ALL;
+
+function handleTabClick(tab) {
+  tabs.forEach((t) => t.classList.remove('active'));
+  tab.classList.add('active');
+  currentCategory = tab.dataset.type;
+  changeFilter();
+  populateActivityFeed({ category: currentCategory });
+}
+
+let activeFilters = {
+  username: null,
+  startDate: null,
+  endDate: null,
+};
+
+clearUsernameBtn.addEventListener('click', clearUsernameFilter);
+
+clearUsernameBtn.style.display = 'none';
+
+usernameInput.addEventListener('input', function () {
+  if (usernameInput.value.trim() !== '') {
+    clearUsernameBtn.style.display = 'inline';
+  } else {
+    clearUsernameBtn.style.display = 'none';
+  }
+});
+
+function applyFilter() {
+  const username = document.getElementById('assignee-search').value.trim();
+
+  activeFilters.username = username || null;
+
+  refreshFeed();
+}
+
+function clearUsernameFilter() {
+  const usernameInput = document.getElementById('assignee-search');
+  const suggestionBox = document.getElementById('suggestion-box');
+  const clearUsernameBtn = document.getElementById('clear-username');
+
+  usernameInput.value = '';
+  suggestionBox.style.display = 'none';
+  clearUsernameBtn.style.display = 'none';
+
+  activeFilters.username = null;
+  populateActivityFeed({ category: currentCategory, ...activeFilters });
+}
+
+async function fetchSuggestions() {
+  const input = document.getElementById('assignee-search');
+  const query = input.value.trim();
+  const suggestionBox = document.getElementById('suggestion-box');
+
+  if (query === '') {
+    suggestionBox.style.display = 'none';
+    return;
+  }
+
+  if (/^\d/.test(query)) {
+    suggestionBox.innerHTML =
+      '<div class="suggestion-item">Please enter a valid username</div>';
+    suggestionBox.style.display = 'block';
+    return;
+  }
+
+  clearTimeout(debounceTimeout);
+
+  debounceTimeout = setTimeout(async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/users?search=${query}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const users = data.users || [];
+
+        if (users.length > 0) {
+          renderSuggestions(users);
+          suggestionBox.style.display = 'block';
+        } else {
+          suggestionBox.innerHTML =
+            '<div class="suggestion-item">No users found</div>';
+          suggestionBox.style.display = 'block';
+        }
+      } else {
+        console.error('Error fetching suggestions:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }, 1500);
+}
+
+function renderSuggestions(users) {
+  const suggestionBox = document.getElementById('suggestion-box');
+  suggestionBox.innerHTML = users
+    .map((user, index) => {
+      const userIcon = `<img src="/feed/assets/user.svg" alt="User Icon" class="user-icon" />`;
+      return `<div 
+                class="suggestion-item ${
+                  index === activeIndex ? 'active' : ''
+                }" 
+                onclick="selectAssignee('${user.username}')">
+                <div class="suggestion-content">
+                  ${userIcon}
+                  <span>${user.username}</span>
+                </div>
+              </div>`;
+    })
+    .join('');
+}
+
+function selectAssignee(username) {
+  const input = document.getElementById('assignee-search');
+  input.value = username;
+  const suggestionBox = document.getElementById('suggestion-box');
+  suggestionBox.style.display = 'none';
+  applyFilter();
+}
+
+document.getElementById('assignee-search').addEventListener('keydown', (e) => {
+  const suggestionBox = document.getElementById('suggestion-box');
+  const items = suggestionBox.querySelectorAll('.suggestion-item');
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    activeIndex = (activeIndex + 1) % items.length;
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    activeIndex = (activeIndex - 1 + items.length) % items.length;
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (activeIndex >= 0 && activeIndex < items.length) {
+      items[activeIndex].click();
+    }
+  } else if (e.key === 'Escape') {
+    suggestionBox.style.display = 'none';
+  }
+
+  items.forEach((item, index) => {
+    if (index === activeIndex) {
+      item.classList.add('active');
+    } else {
+      item.classList.remove('active');
+    }
+  });
+});
+
+document.addEventListener('dateRangeChange', (event) => {
+  const { startDate, endDate } = event.detail;
+  activeFilters.startDate = startDate.toISOString();
+  activeFilters.endDate = endDate.toISOString();
+  refreshFeed();
+});
+
+function clearDateRangeFilter() {
+  dateRangeInput.value = '';
+  activeFilters.startDate = null;
+  activeFilters.endDate = null;
+  refreshFeed();
+}
+
+function refreshFeed() {
+  const query = {
+    category: currentCategory,
+    ...activeFilters,
+  };
+  changeFilter();
+  populateActivityFeed(query);
+}
+
 // main entry
-renderFeed();
+document.addEventListener('DOMContentLoaded', () => {
+  renderFeed();
+});

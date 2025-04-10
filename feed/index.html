@@ -19,15 +19,72 @@
   </head>
   <body>
     <nav id="tasksNav"></nav>
-    <h1 id="pageTitle">Activity Feed</h1>
-    <nav class="tabs-container">
-      <ul class="tabs"></ul>
+    <h1 id="pageTitle" data-testid="page-title">Activity Feed</h1>
+    <div class="filters">
+      <div class="filter-row">
+        <div class="input-wrapper">
+          <label for="assignee-search">Username</label>
+          <input
+            type="text"
+            id="assignee-search"
+            data-testid="username-input"
+            placeholder="Enter Username"
+            oninput="fetchSuggestions()"
+          />
+          <span
+            id="clear-username"
+            class="clear-icon"
+            data-testid="clear-username"
+            onclick="clearUsernameFilter()"
+            >×</span
+          >
+          <div
+            id="suggestion-box"
+            class="suggestion-box"
+            data-testid="suggestion-box"
+          ></div>
+        </div>
+
+        <div class="date-filters">
+          <div class="date-inputs">
+            <label for="date-range">Date Range</label>
+            <input
+              type="text"
+              id="date-range"
+              class="date-input"
+              data-testid="date-range-input"
+              readonly
+              placeholder="Select date range"
+            />
+            <div class="calendar hidden" data-testid="calendar">
+              <div class="calendar-header" data-testid="calendar-header">
+                <span
+                  class="calendar-navigation prev-month"
+                  data-testid="prev-month"
+                  >←</span
+                >
+                <span class="current-month" data-testid="current-month"></span>
+                <span
+                  class="calendar-navigation next-month"
+                  data-testid="next-month"
+                  >→</span
+                >
+              </div>
+              <div class="calendar-grid" data-testid="calendar-grid"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="tabs-container">
+      <ul class="tabs" data-testid="tabs"></ul>
       <div class="container">
-        <div id="activity_feed_container">
-          <ul class="activity-list"></ul>
+        <div id="activity_feed_container" data-testid="activity-feed-container">
+          <ul class="activity-list" data-testid="activity-list"></ul>
         </div>
         <div class="virtual"></div>
       </div>
-    </nav>
+    </section>
   </body>
 </html>
