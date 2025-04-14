@@ -540,7 +540,7 @@ const renderTaskRequest = async () => {
     isSuperUser = await getIsSuperUser();
     taskRequestSkeleton.classList.add('hidden');
     if (!taskRequest) {
-      throw new Error('Task not found');
+      throw new Error(ErrorMessages.NOT_FOUND);
     }
     renderRejectButton(taskRequest);
     renderTaskRequestDetails(taskRequest);
