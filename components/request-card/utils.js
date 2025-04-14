@@ -1,18 +1,3 @@
-const DEFAULT_USER_AVATAR = '/images/avatar.png';
-const ICON_EDIT = '/images/edit-icon.svg';
-const ICON_CANCEL = '/images/x-icon.svg';
-const ICON_CANCEL_WHITE = '/images/x-icon-white.svg';
-const ICON_CHECK = '/images/check-icon.svg';
-const ICON_CHECK_WHITE = '/images/check-icon-white.svg';
-const ICON_ARROW_DOWN = '/images/chevron-down-black.svg';
-
-const RequestStatus = {
-  APPROVED: 'APPROVED',
-  PENDING: 'PENDING',
-  DENIED: 'DENIED',
-  REJECTED: 'REJECTED',
-};
-
 function normalizeToMilliseconds(time, type) {
   return type ? time * 1000 : time;
 }
