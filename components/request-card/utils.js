@@ -1,5 +1,5 @@
-function normalizeToMilliseconds(time, type) {
-  return type ? time * 1000 : time;
+function normalizeToMilliseconds(time, isExtensionRequest) {
+  return isExtensionRequest ? time * 1000 : time;
 }
 const getRequestColor = (deadline, createdTime) => {
   const wasDeadlineBreached = createdTime > deadline;
@@ -28,7 +28,7 @@ const formatToFullDate = (timestamp) => {
 const getTwoDigitDate = (timestamp, isInSeconds = false) => {
   const normalizedTime = normalizeToMilliseconds(timestamp, isInSeconds);
 
-  return new Intl.DateTimeFormat('en-GB', {
+  return new Intl.DateTimeFormat('en-US', {
     day: '2-digit',
     month: 'long',
     year: 'numeric',
@@ -84,8 +84,9 @@ const toggleAccordionPanel = (panel) => {
   }
 };
 const expandAccordionPanel = (panel) => {
-  panel.style.maxHeight = panel.scrollHeight + 'px';
+  panel.style.maxHeight = `${panel.scrollHeight}px`;
 };
+
 function showSuccessHighlight(element) {
   element.classList.add('green-card');
   setTimeout(() => element.classList.remove('green-card'), 1000);
@@ -94,10 +95,10 @@ function showErrorHighlight(element) {
   element.classList.add('red-card');
   setTimeout(() => element.classList.remove('red-card'), 1000);
 }
-async function updateRequestStatus({ id, body, type }) {
+async function updateRequestStatus({ id, body, isExtensionRequest }) {
   let url;
   let method;
-  if (type) {
+  if (isExtensionRequest) {
     url = `${API_BASE_URL}/extension-requests/${id}/status`;
     method = 'PATCH';
   } else {
@@ -162,7 +163,7 @@ async function removeCard(element, elementClass, parentContainer) {
     });
 }
 function createSummarySection({
-  type,
+  isExtensionRequest,
   isDeadLineCrossed,
   deadlineDays,
   data,
@@ -192,10 +193,6 @@ function createSummarySection({
     attributes: { class: 'task-title' },
     innerText: 'Task: ',
   });
-  taskTitle.appendChild(statusSiteLink);
-  if (type) {
-    taskDetailsContainer.appendChild(taskTitle);
-  }
 
   const deadlineContainer = createElement({
     type: 'div',
@@ -205,7 +202,10 @@ function createSummarySection({
     type: 'div',
     attributes: { id: 'requestType-container' },
   });
-  if (type) {
+  taskTitle.appendChild(statusSiteLink);
+
+  if (isExtensionRequest) {
+    taskDetailsContainer.appendChild(taskTitle);
     taskDetailsContainer.appendChild(deadlineContainer);
   } else {
     taskDetailsContainer.appendChild(requestTypeContainer);
@@ -247,7 +247,7 @@ function createSummarySection({
     type: 'span',
     attributes: { class: 'tooltip' },
     innerText: `${formatToFullDate(
-      normalizeToMilliseconds(oldEndsOnValue, type),
+      normalizeToMilliseconds(oldEndsOnValue, isExtensionRequest),
     )}`,
   });
   deadlineValue.appendChild(deadlineTooltip);
@@ -255,19 +255,19 @@ function createSummarySection({
   return { summaryContainer, taskDetailsContainer, statusSiteLink };
 }
 
-function createTextBlockContainer(data, isForReason) {
+function createTextBlockContainer(data, isForReasonComponent) {
   const container = createElement({ type: 'div' });
 
   const title = createElement({
     type: 'span',
     attributes: { class: 'panel-title' },
-    innerText: isForReason ? 'Reason' : 'Comment',
+    innerText: isForReasonComponent ? 'Reason' : 'Comment',
   });
 
   const paragraph = createElement({
     type: 'p',
     attributes: { class: 'text-block-content' },
-    innerText: isForReason ? data.reason : data.message,
+    innerText: isForReasonComponent ? data.reason : data.message,
   });
 
   const textAreaInput = createElement({
@@ -295,7 +295,7 @@ function createTextBlockContainer(data, isForReason) {
     attributes: { class: 'details-line' },
   });
 
-  if (isForReason) {
+  if (isForReasonComponent) {
     container.appendChild(title);
     container.appendChild(detailsLine);
     container.appendChild(textAreaInput);
@@ -315,7 +315,7 @@ function createTextBlockContainer(data, isForReason) {
   };
 }
 function createDateContainer(
-  type,
+  isExtensionRequest,
   newDeadlineDays,
   isNewDeadLineCrossed,
   newEndsOnValue,
@@ -334,7 +334,7 @@ function createDateContainer(
   const requestDetailsHeading = createElement({
     type: 'span',
     attributes: { class: 'details-heading' },
-    innerText: type ? 'Extension Details' : 'Request Details',
+    innerText: isExtensionRequest ? 'Extension Details' : 'Request Details',
   });
 
   const requestDetailsLine = createElement({
@@ -351,7 +351,9 @@ function createDateContainer(
     type: 'span',
     attributes: { class: 'card-row-text' },
     innerText: `${
-      type ? `New deadline${isNewDeadLineCrossed ? ' ' : ' in '}` : 'Until'
+      isExtensionRequest
+        ? `New deadline${isNewDeadLineCrossed ? ' ' : ' in '}`
+        : 'Until'
     }`,
   });
 
@@ -369,7 +371,9 @@ function createDateContainer(
       name: 'newEndsOn',
       id: 'newEndsOn',
       oninput: 'this.blur()',
-      value: formatToDateOnly(normalizeToMilliseconds(newEndsOnValue, type)),
+      value: formatToDateOnly(
+        normalizeToMilliseconds(newEndsOnValue, isExtensionRequest),
+      ),
       'data-testid': 'request-input',
     },
   });
@@ -418,7 +422,9 @@ function createDateContainer(
   const fromDateValueToolTip = createElement({
     type: 'span',
     attributes: { class: 'tooltip' },
-    innerText: formatToFullDate(normalizeToMilliseconds(oldEndsOnValue, type)),
+    innerText: formatToFullDate(
+      normalizeToMilliseconds(oldEndsOnValue, isExtensionRequest),
+    ),
   });
 
   datesDetailsContainer.appendChild(requestDetailsHeading);
@@ -439,7 +445,7 @@ function createDateContainer(
 
   datesContainer.appendChild(datesDetailsContainer);
 
-  if (type) {
+  if (isExtensionRequest) {
     datesContainer.appendChild(newDeadlineContainer);
     datesContainer.appendChild(requestForContainer);
   } else {
