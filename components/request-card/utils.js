@@ -80,7 +80,7 @@ const toggleAccordionPanel = (panel) => {
     });
 
     accordion.classList.add('active');
-    panel.style.maxHeight = panel.scrollHeight + 'px';
+    panel.style.maxHeight = `${panel.scrollHeight}px`;
   }
 };
 const expandAccordionPanel = (panel) => {
@@ -102,7 +102,7 @@ async function updateRequestStatus({ id, body, isExtensionRequest }) {
     url = `${API_BASE_URL}/extension-requests/${id}/status`;
     method = 'PATCH';
   } else {
-    url = `${API_BASE_URL}/requests/${id}?dev=true`;
+    url = `${API_BASE_URL}/requests/${id}`;
     method = 'PUT';
   }
 
