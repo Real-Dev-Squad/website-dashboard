@@ -19,7 +19,7 @@ const filterOptionsContainer = document.getElementById(
 );
 const applyFilterButton = document.getElementById('applyFilterButton');
 const userNameFilterInput = document.getElementById('assignee-search-input');
-let currentReqType = params.get('type') ?? OOO_REQUEST_TYPE;
+let currentReqType = params.get('type')?.toUpperCase() ?? OOO_REQUEST_TYPE;
 let selected__tab__class = 'selected__tab';
 let statusValue = null;
 let sortByValue = null;
@@ -63,6 +63,7 @@ const intersectionObserver = new IntersectionObserver(async (entries) => {
       state: statusValue,
       sort: sortByValue,
       next: nextLink,
+      requestType: currentReqType,
     });
   }
 });
@@ -81,10 +82,14 @@ oooTabLink.addEventListener('click', async function (event) {
   nextLink = '';
   deselectRadioButtons();
   userNameFilterInput.value = '';
-  updateTabLink(currentReqType.toUpperCase());
+  updateTabLink(currentReqType);
   changeFilter();
   updateUrlWithQuery(currentReqType);
-  await renderRequestCards({ state: statusValue, sort: sortByValue });
+  await renderRequestCards({
+    state: statusValue,
+    sort: sortByValue,
+    requestType: currentReqType,
+  });
 });
 
 extensionTabLink.addEventListener('click', async function (event) {
@@ -94,10 +99,14 @@ extensionTabLink.addEventListener('click', async function (event) {
   nextLink = '';
   deselectRadioButtons();
   userNameFilterInput.value = '';
-  updateTabLink(currentReqType.toUpperCase());
+  updateTabLink(currentReqType);
   changeFilter();
   updateUrlWithQuery(currentReqType);
-  await renderRequestCards({ state: statusValue, sort: sortByValue });
+  await renderRequestCards({
+    state: statusValue,
+    sort: sortByValue,
+    requestType: currentReqType,
+  });
 });
 
 onboardingExtensionTabLink.addEventListener('click', async function (event) {
@@ -107,10 +116,14 @@ onboardingExtensionTabLink.addEventListener('click', async function (event) {
   nextLink = '';
   deselectRadioButtons();
   userNameFilterInput.value = '';
-  updateTabLink(currentReqType.toUpperCase());
+  updateTabLink(currentReqType);
   changeFilter();
   updateUrlWithQuery(currentReqType);
-  await renderRequestCards({ state: statusValue, sort: sortByValue });
+  await renderRequestCards({
+    state: statusValue,
+    sort: sortByValue,
+    requestType: currentReqType,
+  });
 });
 
 function updateUrlWithQuery(type) {
@@ -470,7 +483,7 @@ async function renderRequestCards(queries = {}) {
     if (userDetails.length === 0) {
       userDetails = await getInDiscordUserList();
     }
-    requestResponse = await getRequests(currentReqType, queries);
+    requestResponse = await getRequests(queries?.requestType, queries);
 
     for (const request of requestResponse?.data || []) {
       let superUserDetails;
@@ -597,7 +610,11 @@ async function performAcceptRejectAction(isAccepted, e) {
   }
 
   nextLink = '';
-  await renderRequestCards({ state: statusValue, sort: sortByValue });
+  await renderRequestCards({
+    state: statusValue,
+    sort: sortByValue,
+    requestType: currentReqType,
+  });
 }
 
 function showToast(message, type) {
@@ -660,6 +677,7 @@ applyFilterButton.addEventListener('click', async (event) => {
   const requestData = {
     state: getCheckedValues() || statusValue,
     sort: sortByValue,
+    requestType: currentReqType,
   };
 
   const username = userNameFilterInput.value.trim();
@@ -698,7 +716,10 @@ userNameFilterInput.addEventListener(
             suggestionContainer.classList.add('hidden');
             requestContainer.innerHTML = '';
 
-            const requestData = { requestedBy: user.username };
+            const requestData = {
+              requestedBy: user?.username,
+              requestType: currentReqType,
+            };
             await renderRequestCards(requestData);
           });
 
@@ -724,6 +745,7 @@ userNameFilterInput.addEventListener('keydown', async function (evt) {
     const requestData = {
       state: statusValue,
       sort: sortByValue,
+      requestType: currentReqType,
     };
 
     if (values.length > 0) {
@@ -768,7 +790,11 @@ function populateStatus() {
     filterModal.classList.add('hidden');
     deselectRadioButtons();
     requestContainer.innerHTML = '';
-    await renderRequestCards({ state: statusValue, sort: sortByValue });
+    await renderRequestCards({
+      state: statusValue,
+      sort: sortByValue,
+      requestType: currentReqType,
+    });
   });
 
   filterTitle.appendChild(clearButton);
@@ -778,6 +804,10 @@ function populateStatus() {
     addRadioButton(name, id, 'status-filter');
   }
 }
-updateTabLink(currentReqType.toUpperCase());
+updateTabLink(currentReqType);
 populateStatus();
-renderRequestCards({ state: statusValue, sort: sortByValue });
+renderRequestCards({
+  state: statusValue,
+  sort: sortByValue,
+  requestType: currentReqType,
+});
