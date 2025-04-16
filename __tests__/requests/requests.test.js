@@ -129,6 +129,18 @@ describe('Tests the request cards', () => {
     await browser.close();
   });
 
+  it('should not show the error toast ui after reloading a page', async () => {
+    await page.click('#extension_tab_link');
+    expect(page.url()).toContain('type=extension');
+    await page.reload();
+    expect(page.url()).toContain('type=extension');
+    const isErrorToastHidden = await page.$eval(
+      '[data-testid="toast"]',
+      (e) => e.classList.contains('hidden') && e.classList.length == 1,
+    );
+    expect(isErrorToastHidden).toBe(true);
+  });
+
   it('should match the request page url with correct request tab link after reloading the page', async () => {
     await page.click('#extension_tab_link');
     expect(page.url()).toContain('type=extension');
@@ -155,7 +167,11 @@ describe('Tests the request cards', () => {
   });
 
   it('should update the card when the accept or reject button is clicked for OOO requests', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/requests`);
+    await page.waitForNetworkIdle();
+
     await page.click('#ooo_tab_link');
+    expect(page.url()).toContain('type=ooo');
 
     await page.waitForSelector('.request__status');
     const statusButtonText = await page.$eval(
@@ -206,6 +222,37 @@ describe('Tests the request cards', () => {
     await page.waitForNetworkIdle();
     const filterContainer = await page.$('[data-testid="filter-container"]');
     expect(await filterContainer.isVisible()).toBe(false);
+  });
+
+  it('should show requests cards after reloading the page', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/requests`);
+    await page.waitForNetworkIdle();
+
+    await page.click('#extension_tab_link');
+    expect(page.url()).toContain('type=extension');
+
+    await page.reload();
+    expect(page.url()).toContain('type=extension');
+
+    await page.waitForSelector('[data-testid="extension-request-card"]', {
+      state: 'visible',
+    });
+    const extensionCards = await page.$$(
+      '[data-testid="extension-request-card"]',
+    );
+    expect(extensionCards.length).toBe(1);
+
+    await page.click('#ooo_tab_link');
+    expect(page.url()).toContain('type=ooo');
+
+    await page.reload();
+    expect(page.url()).toContain('type=ooo');
+
+    await page.waitForSelector('[data-testid="ooo-request-card"]', {
+      state: 'visible',
+    });
+    const oooCards = await page.$$('[data-testid="ooo-request-card"]');
+    expect(oooCards.length).toBe(1);
   });
 
   describe('Onboarding Requests UI (Dev Mode Enabled)', () => {
