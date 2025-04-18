@@ -158,7 +158,7 @@ describe('Task request details page', () => {
       '[data-testid="error-message"]',
       (el) => el.textContent,
     );
-    expect(errorText).toBe('Task not found');
+    expect(errorText).toBe('Task Requests not found');
   });
 
   it('Does not show "Task not found" message when dev mode is disabled', async function () {
