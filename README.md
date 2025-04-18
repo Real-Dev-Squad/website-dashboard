@@ -19,28 +19,28 @@ You can run the dashboard locally in just a few steps:
 
 ### Running the Dashboard Locally
 
-1. **Clone this repository** to your local machine.
-2. **Open the project folder** in VS Code.
-3. **Install npm dependencies** by running the following command in your project directory:
+1.  **Clone this repository** to your local machine.
+2.  **Open the project folder** in VS Code.
+3.  **Install npm dependencies** by running the following command in your project directory:
 
-   ```bash
-   npm install
-   ```
+    ```bash
+    npm install
+    ```
 
-   This will install all required packages for the proxy server and other tooling.
+    This will install all required packages for the proxy server and other tooling.
 
-4. **Start the proxy server** by running:
+4.  **Start the proxy server** by running:
 
-   ```bash
-   npm run dev
-   ```
+    ```bash
+    npm run dev
+    ```
 
-   This command starts the proxy server, which is necessary for API calls from the frontend to the backend (see the "Proxying API Requests" section below for more details).
+    This command starts the proxy server, which is necessary for API calls from the frontend to the backend (see the "Proxying API Requests" section below for more details).
 
-5. **Install the Live Server extension** (if you haven’t already).
-6. **Click the "Go Live" button** in the bottom-right corner of VS Code to start the frontend server. This will serve the dashboard locally and auto-reload on changes.
-   - If you do not see the "Go Live" button, make sure the Live Server extension is installed and enabled.
-7. Your browser will open the dashboard. **Ensure both the proxy server (`npm run dev`) and Live Server are running** for full functionality, especially if you need to make API calls to the backend.
+5.  **Start the frontend server:** Click the **"Go Live" button** in the bottom-right corner of VS Code.
+    - This will open the dashboard in your browser and automatically reload when you make changes.
+    - If you don't see the "Go Live" button, ensure the Live Server extension is installed and enabled.
+    - **Important:** For full functionality, especially API calls, make sure both the proxy server (`npm run dev` started in step 4) and the Live Server are running concurrently.
 
 > **Note:** If you only start Live Server without the proxy server, API requests from the frontend may fail due to CORS issues. Always run both servers for a complete local development experience.
 
@@ -51,11 +51,6 @@ You can run the dashboard locally in just a few steps:
 We welcome contributions! Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ---
-
-## ⚡ Advanced: Backend/API Integration
-
-- By default, the dashboard runs as a static frontend.
-- To connect to backend APIs (e.g., for real data), set up the website-backend -> [website-backend](https://github.com/Real-Dev-Squad/website-backend).
 
 ### Proxying API Requests (Handling CORS Issues)
 
