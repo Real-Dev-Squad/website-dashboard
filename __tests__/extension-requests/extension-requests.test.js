@@ -12,6 +12,7 @@ const {
   extensionRequestLogs,
   extensionRequestLogsInSentence,
 } = require('../../mock-data/logs');
+const { expectToastVisibility } = require('../utils');
 const {
   userSunny,
   userRandhir,
@@ -161,6 +162,20 @@ describe('Tests the Extension Requests Screen', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
           body: JSON.stringify(extensionRequestResponse),
+        });
+      } else if (
+        url ===
+        `${STAGING_API_URL}/extension-requests/QISvF7kAmnD9vXHwwIsG?dev=true`
+      ) {
+        interceptedRequest.respond({
+          status: 204,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify({}),
         });
       } else if (
         url ===
@@ -348,7 +363,9 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        `${STAGING_API_URL}/extension-requests?order=desc&size=1&q=status%3APENDING`
+          `${STAGING_API_URL}/extension-requests?order=desc&size=1&q=status%3APENDING` ||
+        url ===
+          `${STAGING_API_URL}/extension-requests?order=desc&dev=true&size=1&q=status%3APENDING`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -1153,5 +1170,51 @@ describe('Tests the Extension Requests Screen', () => {
     expect(extensionRequestContainerText).toBe(
       'No extension requests to show!',
     );
+  });
+
+  describe('Toast Functionality (Dev Mode Enabled)', () => {
+    beforeEach(async () => {
+      await page.goto(
+        `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&dev=true&size=1&q=status%3APENDING`,
+      );
+      await page.waitForNetworkIdle();
+
+      await page.click('.edit-button');
+
+      const newDate = new Date(Date.now() + 86400000)
+        .toISOString()
+        .split('T')[0];
+
+      await page.evaluate((newDate) => {
+        document.querySelector('.date-input').value = newDate;
+      }, newDate);
+
+      await page.click('.update-button');
+      await page.waitForSelector('[data-testid="toast-component"].show');
+    });
+
+    it('should show success toast after we update the extension request', async function () {
+      const toastComponent = await page.$('[data-testid="toast-component"]');
+      await expectToastVisibility(true, toastComponent);
+      const toastMessage = await page.$('[data-testid="toast-message"]');
+      expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
+        'Extension request successfully updated.',
+      );
+    });
+
+    it('should hide the toast automatically after 3 seconds', async function () {
+      const toastComponent = await page.$('[data-testid="toast-component"]');
+      await page.waitForTimeout(3500);
+
+      await expectToastVisibility(false, toastComponent);
+    });
+
+    it('should hide the toast when close button is clicked', async function () {
+      const toastComponent = await page.$('[data-testid="toast-component"]');
+      const closeButton = await page.$('[data-testid="toast-close-button"]');
+      await closeButton.click();
+
+      await expectToastVisibility(false, toastComponent);
+    });
   });
 });

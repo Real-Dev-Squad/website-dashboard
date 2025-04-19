@@ -5,7 +5,7 @@ const {
   STAGING_API_URL,
   LOCAL_TEST_PAGE_URL,
 } = require('../../mock-data/constants');
-
+const { expectToastVisibility } = require('../utils');
 function setSuperUserPermission() {
   allUsersData.users[0] = superUserData;
 }
@@ -73,17 +73,6 @@ describe('Discord Groups Page', () => {
             },
             body: JSON.stringify(discordGroups),
           });
-        } else if (url === `${STAGING_API_URL}/discord-actions/groups`) {
-          interceptedRequest.respond({
-            status: 200,
-            contentType: 'application/json',
-            headers: {
-              'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-              'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-            },
-            body: JSON.stringify(discordGroups),
-          });
         } else if (url === `${STAGING_API_URL}/discord-actions/roles`) {
           interceptedRequest.respond({
             status: 200,
@@ -138,6 +127,22 @@ describe('Discord Groups Page', () => {
               'Access-Control-Allow-Headers': 'Content-Type, Authorization',
             },
             body: JSON.stringify({ message: 'Role deleted successfully' }),
+          });
+        } else if (
+          url ===
+          `${STAGING_API_URL}/discord-actions/groups/CqnEhbwtCqdcZdlrixLn`
+        ) {
+          interceptedRequest.respond({
+            status: 200,
+            contentType: 'application/json',
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+              'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            },
+            body: JSON.stringify({
+              message: 'Group role deleted successfully',
+            }),
           });
         } else {
           interceptedRequest.continue();
@@ -379,9 +384,48 @@ describe('Discord Groups Page', () => {
     const loader = await page.waitForSelector('.loader');
     expect(loader).toBeTruthy();
 
-    await page.waitForTimeout(1000);
+    await page.waitForNetworkIdle();
 
     const loaderAfter = await page.$('.loader');
     expect(loaderAfter).toBeFalsy();
+  });
+
+  describe('Toast Functionality (Dev Mode Enabled)', () => {
+    beforeEach(async () => {
+      setSuperUserPermission();
+      await page.goto(`${LOCAL_TEST_PAGE_URL}/groups?dev=true`);
+      await page.waitForNetworkIdle();
+      const deleteButton = await page.$('.delete-group');
+      await deleteButton.click();
+
+      const confirmButton = await page.waitForSelector('#confirm-delete');
+      confirmButton.click();
+
+      await page.waitForSelector('[data-testid="toast-component"].show');
+    });
+
+    it('should show success toast when trying to delete a group', async function () {
+      const toastComponent = await page.$('[data-testid="toast-component"]');
+      await expectToastVisibility(true, toastComponent);
+      const toastMessage = await page.$('[data-testid="toast-message"]');
+      expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
+        'Group deleted successfully',
+      );
+    });
+
+    it('should hide the toast automatically after 3 seconds', async function () {
+      const toastComponent = await page.$('[data-testid="toast-component"]');
+      await page.waitForTimeout(3500);
+
+      await expectToastVisibility(false, toastComponent);
+    });
+
+    it('should hide the toast when close button is clicked', async function () {
+      const toastComponent = await page.$('[data-testid="toast-component"]');
+      const closeButton = await page.$('[data-testid="toast-close-button"]');
+      await closeButton.click();
+
+      await expectToastVisibility(false, toastComponent);
+    });
   });
 });
