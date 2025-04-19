@@ -1295,7 +1295,7 @@ async function createExtensionCard(data, dev) {
         if (dev) {
           const successMessage = 'Extension request successfully updated.';
           showToastMessage({
-            dev,
+            isDev: dev,
             oldToastFunction: showToast,
             type: 'success',
             message: successMessage,
@@ -1312,7 +1312,7 @@ async function createExtensionCard(data, dev) {
             error?.message ||
             'An error occurred. Please try again.';
           showToastMessage({
-            dev,
+            isDev: dev,
             oldToastFunction: showToast,
             type: 'error',
             message: errorMessage,
