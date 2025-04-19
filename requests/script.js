@@ -166,7 +166,13 @@ async function getRequests(requestType, query = {}) {
           return;
         case 400:
           showMessage('ERROR', data.message);
-          showToast(data.message, 'failure');
+          showToastMessage({
+            isDev,
+            oldToastFunction: showToast,
+            type: 'failure',
+            message: data.message,
+          });
+
           return;
         default:
           break;
@@ -529,24 +535,48 @@ async function acceptRejectRequest(id, reqBody) {
     });
     const data = await res.json();
     if (res.ok) {
-      showToast(data.message, 'success');
+      showToastMessage({
+        isDev,
+        oldToastFunction: showToast,
+        type: 'success',
+        message: data.message,
+      });
+
       return data;
     } else {
       switch (res.status) {
         case 401:
-          showToast(ErrorMessages.UNAUTHORIZED_ACTION, 'failure');
+          showToastMessage({
+            isDev,
+            oldToastFunction: showToast,
+            type: 'failure',
+            message: ErrorMessages.UNAUTHORIZED_ACTION,
+          });
           showMessage('ERROR', ErrorMessages.UNAUTHORIZED_ACTION);
           break;
         case 403:
-          showToast(ErrorMessages.UNAUTHENTICATED, 'failure');
-          showMessage('ERROR', ErrorMessages.UNAUTHORIZED);
+          showToastMessage({
+            isDev,
+            oldToastFunction: showToast,
+            type: 'failure',
+            message: ErrorMessages.UNAUTHENTICATED,
+          });
           break;
         case 404:
-          showToast(ErrorMessages.OOO_NOT_FOUND, 'failure');
-          showMessage('ERROR', ErrorMessages.OOO_NOT_FOUND);
+          showToastMessage({
+            isDev,
+            oldToastFunction: showToast,
+            type: 'failure',
+            message: ErrorMessages.OOO_NOT_FOUND,
+          });
           break;
         case 400:
-          showToast(data.message, 'failure');
+          showToastMessage({
+            isDev,
+            oldToastFunction: showToast,
+            type: 'failure',
+            message: data.message,
+          });
           showMessage('ERROR', data.message);
           break;
         default:
