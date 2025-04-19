@@ -147,6 +147,31 @@ describe('Task request details page', () => {
     );
     expect(descriptionTextValue).toBe(longDescription);
   });
+  it('Displays "Task Requests not refound" When the task ID is invalid and dev mode is enabled', async function () {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwDdsfd9QsiTzi7eG7Oq5&dev=true`,
+    );
+
+    await page.waitForNetworkIdle();
+
+    const errorText = await page.$eval(
+      '[data-testid="error-message"]',
+      (el) => el.textContent,
+    );
+    expect(errorText).toBe('Task Requests not found');
+  });
+
+  it('Does not show "Task Requests not found" message when dev mode is disabled', async function () {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwDdsfd9QsiTzi7eG7Oq5`,
+    );
+
+    await page.waitForNetworkIdle();
+
+    const errorElement = await page.$('[data-testid="error-message"]');
+
+    expect(errorElement).toBeNull();
+  });
 
   it('Should render Approve and Reject buttons for super users', async function () {
     await page.goto(
