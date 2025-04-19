@@ -4,9 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/applications/style.css" />
+    <link rel="stylesheet" href="/components/toast/style.css" />
     <link rel="stylesheet" href="../global.css" />
     <script type="module" src="/applications/script.js" defer></script>
     <script src="/helpers/loadENV.js"></script>
+    <script src="/components/toast/script.js" defer></script>
     <title>Applications</title>
   </head>
 
@@ -15,6 +17,14 @@
       <h1>RDS Join Applications</h1>
     </header>
     <div id="toast" class="hidden"></div>
+    <div
+      id="toastComponent"
+      data-testid="toast-component"
+      class="toast__component toast__hidden"
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
+    ></div>
     <div class="container">
       <div class="backdrop"></div>
       <button id="filter-button" class="filter-button hidden">

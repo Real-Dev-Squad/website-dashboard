@@ -8,9 +8,11 @@
     <title>Discord Groups | Real Dev Squad</title>
     <link rel="stylesheet" href="../global.css" />
     <link rel="stylesheet" href="/groups/style.css" />
+    <link rel="stylesheet" href="/components/toast/style.css" />
     <script src="/helpers/loadENV.js"></script>
     <script src="/constants.js"></script>
     <script src="../utils.js" defer></script>
+    <script src="/components/toast/script.js" defer></script>
     <script type="module" src="/groups/script.js" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -55,4 +57,12 @@
   <div class="toast">
     <div class="toast__message"></div>
   </div>
+  <div
+    id="toastComponent"
+    data-testid="toast-component"
+    class="toast__component toast__hidden"
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true"
+  ></div>
 </html>

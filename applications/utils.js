@@ -40,7 +40,12 @@ async function getApplications({
   } catch (error) {
     console.error(error);
     const errorMessage = error?.message || 'Something went wrong!';
-    showToast({ message: errorMessage, type: 'error' });
+    showToastMessage({
+      isDev: dev,
+      oldToastFunction: showToast,
+      type: 'error',
+      message: errorMessage,
+    });
   }
 }
 
@@ -66,7 +71,7 @@ async function getApplicationById(applicationId) {
   }
 }
 
-async function getIsSuperUser() {
+async function getIsSuperUser(isDev) {
   try {
     const res = await fetch(`${BASE_URL}/users?profile=true`, {
       method: 'GET',
@@ -80,7 +85,12 @@ async function getIsSuperUser() {
   } catch (error) {
     console.error(error);
     const errorMessage = error?.message || 'Something went wrong!';
-    showToast({ message: errorMessage, type: 'error' });
+    showToastMessage({
+      isDev,
+      oldToastFunction: showToast,
+      type: 'error',
+      message: errorMessage,
+    });
   }
 }
 

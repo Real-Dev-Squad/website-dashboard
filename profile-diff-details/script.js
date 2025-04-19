@@ -2,7 +2,8 @@ const CONTAINER = document.querySelector('.container');
 let expanded = false;
 let profileDetailsContainer;
 let reasonHeading;
-
+const urlParams = new URLSearchParams(window.location.search);
+const isDev = urlParams.get('dev') === 'true';
 const toast = document.getElementById('toast');
 
 function showToast({ message, type }) {
@@ -225,21 +226,35 @@ async function setUser(profileDiff) {
       });
 
       if (response.ok) {
-        showToast({
+        showToastMessage({
+          isDev,
+          oldToastFunction: showToast,
           type: 'success',
           message: 'The Profile changes are Approved!',
         });
+
         setTimeout(() => {
           window.location.href = '/profile-diffs';
         }, 3000);
       } else {
-        showToast({ type: 'error', message: 'Something went wrong!' });
+        showToastMessage({
+          isDev,
+          oldToastFunction: showToast,
+          type: 'error',
+          message: 'Something went wrong!',
+        });
+
         approvalButton.innerHTML = 'Approve';
         approvalButton.disabled = false;
         rejectButton.disabled = false;
       }
     } catch (error) {
-      showToast({ type: 'error', message: 'Something went wrong!' });
+      showToastMessage({
+        isDev,
+        oldToastFunction: showToast,
+        type: 'error',
+        message: 'Something went wrong!',
+      });
       approvalButton.innerHTML = 'Approve';
       approvalButton.disabled = false;
       rejectButton.disabled = false;
@@ -264,7 +279,9 @@ async function setUser(profileDiff) {
       });
 
       if (response.ok) {
-        showToast({
+        showToastMessage({
+          isDev,
+          oldToastFunction: showToast,
           type: 'success',
           message: 'The Profile changes are Rejected!',
         });
@@ -272,13 +289,24 @@ async function setUser(profileDiff) {
           window.location.href = '/profile-diffs';
         }, 3000);
       } else {
-        showToast({ type: 'error', message: 'Something went wrong!' });
+        showToastMessage({
+          isDev,
+          oldToastFunction: showToast,
+          type: 'error',
+          message: 'Something went wrong!',
+        });
         rejectButton.innerHTML = 'Reject';
         approvalButton.disabled = false;
         rejectButton.disabled = false;
       }
     } catch (error) {
-      showToast({ type: 'error', message: 'Something went wrong!' });
+      showToastMessage({
+        isDev,
+        oldToastFunction: showToast,
+        type: 'error',
+        message: 'Something went wrong!',
+      });
+
       rejectButton.innerHTML = 'Reject';
       approvalButton.disabled = false;
       rejectButton.disabled = false;

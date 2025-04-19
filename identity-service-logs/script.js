@@ -5,9 +5,9 @@ import {
   getUserCount,
   addIntersectionObserver,
 } from './utils.js';
-
-const { isSuperUser } = await getIsSuperUser();
 const params = new URLSearchParams(window.location.search);
+const isDev = params.get('dev') === 'true';
+const { isSuperUser } = await getIsSuperUser(isDev);
 
 if (isSuperUser && params.has('dev') && params.get('dev') === 'true') {
   const {
