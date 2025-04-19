@@ -3,7 +3,9 @@ const puppeteer = require('puppeteer');
 const {
   fetchedApplications,
   acceptedApplications,
+  pendingApplications,
 } = require('../../mock-data/applications');
+const { expectToastVisibility } = require('../utils');
 const { superUserForAudiLogs } = require('../../mock-data/users');
 const {
   STAGING_API_URL,
@@ -72,7 +74,7 @@ describe('Applications page', () => {
           body: JSON.stringify(superUserForAudiLogs),
         });
       } else if (
-        url === `${STAGING_API_URL}/applications/lavEduxsb2C6Bl4s289P`
+        url === `${STAGING_API_URL}/applications/lavEduxsb2C5Bl4s289P`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -110,8 +112,8 @@ describe('Applications page', () => {
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({
-            applications: acceptedApplications,
-            totalCount: acceptedApplications.length,
+            applications: pendingApplications,
+            totalCount: pendingApplications.length,
           }),
           headers: {
             'Access-Control-Allow-Origin': '*',
@@ -326,5 +328,42 @@ describe('Applications page', () => {
 
     const repoLinkStyle = await page.evaluate((el) => el.style, repoLink);
     expect(repoLinkStyle).toBeTruthy();
+  });
+
+  describe('Toast Functionality (Dev Mode Enabled)', () => {
+    beforeEach(async () => {
+      await page.goto(
+        `${LOCAL_TEST_PAGE_URL}/applications?dev=true&status=pending`,
+      );
+      await page.waitForSelector('.application-card');
+      await page.click('.application-card');
+
+      await page.click('.application-details-accept');
+      await page.waitForSelector('[data-testid="toast-component"].show');
+    });
+
+    it('should show success toast after accepting an application', async function () {
+      const toastComponent = await page.$('[data-testid="toast-component"]');
+      await expectToastVisibility(true, toastComponent);
+      const toastMessage = await page.$('[data-testid="toast-message"]');
+      expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
+        'application updated successfully!',
+      );
+    });
+
+    it('should hide the toast automatically after 3 seconds', async function () {
+      const toastComponent = await page.$('[data-testid="toast-component"]');
+      await page.waitForTimeout(3500);
+
+      await expectToastVisibility(false, toastComponent);
+    });
+
+    it('should hide the toast when close button is clicked', async function () {
+      const toastComponent = await page.$('[data-testid="toast-component"]');
+      const closeButton = await page.$('[data-testid="toast-close-button"]');
+      await closeButton.click();
+
+      await expectToastVisibility(false, toastComponent);
+    });
   });
 });
