@@ -147,7 +147,7 @@ describe('Task request details page', () => {
     );
     expect(descriptionTextValue).toBe(longDescription);
   });
-  it('Displays "Task Requests not refound" When the task ID is invalid and dev mode is enabled', async function () {
+  it('should show "Task Requests not found" When the task ID is invalid and dev mode is enabled', async function () {
     await page.goto(
       `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwDdsfd9QsiTzi7eG7Oq5&dev=true`,
     );
@@ -161,7 +161,7 @@ describe('Task request details page', () => {
     expect(errorText).toBe('Task Requests not found');
   });
 
-  it('Does not show "Task Requests not found" message when dev mode is disabled', async function () {
+  it('should not show "Task Requests not found" message when dev mode is disabled', async function () {
     await page.goto(
       `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwDdsfd9QsiTzi7eG7Oq5`,
     );
