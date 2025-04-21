@@ -556,7 +556,7 @@ const renderTaskRequest = async () => {
   }
 };
 
-const showErrorMessage = (error) => {
+const showErrorMessage = () => {
   let errorMessageDiv = document.querySelector('[data-testid="error-message"]');
 
   if (!errorMessageDiv) {
