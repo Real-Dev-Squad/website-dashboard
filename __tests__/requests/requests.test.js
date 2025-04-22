@@ -55,7 +55,7 @@ describe('Tests the request cards', () => {
           body: JSON.stringify(pendingRequest),
         });
       } else if (
-        url === `${STAGING_API_URL}/requests?dev=true&type=extension&size=12`
+        url === `${STAGING_API_URL}/requests?dev=true&type=EXTENSION&size=12`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -212,18 +212,6 @@ describe('Tests the request cards', () => {
     expect(statusButtonText).toBe('Approved');
   });
 
-  it('should hide the onboarding extension tab when dev is not true', async () => {
-    const onboardingTabLink = await page.$('[data-testid="onboarding-tab"]');
-    expect(await onboardingTabLink.isVisible()).toBe(false);
-  });
-
-  it('should hide filter container when dev is not true', async () => {
-    await page.goto(`${LOCAL_TEST_PAGE_URL}/requests`);
-    await page.waitForNetworkIdle();
-    const filterContainer = await page.$('[data-testid="filter-container"]');
-    expect(await filterContainer.isVisible()).toBe(false);
-  });
-
   it('should show requests cards after reloading the page', async () => {
     await page.goto(`${LOCAL_TEST_PAGE_URL}/requests`);
     await page.waitForNetworkIdle();
@@ -255,9 +243,9 @@ describe('Tests the request cards', () => {
     expect(oooCards.length).toBe(1);
   });
 
-  describe('Onboarding Requests UI (Dev Mode Enabled)', () => {
+  describe('Onboarding Requests UI', () => {
     beforeAll(async () => {
-      await page.goto(`${LOCAL_TEST_PAGE_URL}/requests?dev=true`);
+      await page.goto(`${LOCAL_TEST_PAGE_URL}/requests`);
       await page.waitForNetworkIdle();
     });
 
@@ -359,9 +347,9 @@ describe('Tests the request cards', () => {
     });
   });
 
-  describe('Filter Functionality (Dev Mode Enabled)', () => {
+  describe('Filter Functionality', () => {
     beforeAll(async () => {
-      await page.goto(`${LOCAL_TEST_PAGE_URL}/requests?dev=true`);
+      await page.goto(`${LOCAL_TEST_PAGE_URL}/requests`);
       await page.waitForNetworkIdle();
     });
     it('should display filter container and its elements', async () => {
