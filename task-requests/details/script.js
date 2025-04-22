@@ -556,14 +556,16 @@ const renderTaskRequest = async () => {
   }
 };
 
-const showErrorMessage = () => {
+const showErrorMessage = (error) => {
   let errorMessageDiv = document.querySelector('[data-testid="error-message"]');
 
   if (!errorMessageDiv) {
     errorMessageDiv = document.createElement('p');
     errorMessageDiv.classList.add('error-message');
     errorMessageDiv.setAttribute('data-testid', 'error-message');
-    errorMessageDiv.textContent = ErrorMessages.NOT_FOUND;
+    if (error === 404) {
+      errorMessageDiv.textContent = ErrorMessages.NOT_FOUND;
+    }
     const container = document.querySelector('.container') || document.body;
     container.appendChild(errorMessageDiv);
   }
