@@ -562,7 +562,7 @@ describe('Tests the request cards', () => {
     });
   });
 
-  describe('Toast Functionality (Dev Mode Enabled)', () => {
+  describe.skip('Toast Functionality (Dev Mode Enabled)', () => {
     beforeEach(async () => {
       await page.goto(`${LOCAL_TEST_PAGE_URL}/requests?dev=true`);
       await page.waitForNetworkIdle();

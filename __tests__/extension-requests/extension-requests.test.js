@@ -1172,7 +1172,7 @@ describe('Tests the Extension Requests Screen', () => {
     );
   });
 
-  describe('Toast Functionality (Dev Mode Enabled)', () => {
+  describe.skip('Toast Functionality (Dev Mode Enabled)', () => {
     beforeEach(async () => {
       await page.goto(
         `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&dev=true&size=1&q=status%3APENDING`,

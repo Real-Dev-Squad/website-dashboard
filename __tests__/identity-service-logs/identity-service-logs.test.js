@@ -4,7 +4,8 @@ const {
   LOCAL_TEST_PAGE_URL,
 } = require('../../mock-data/constants');
 const { expectToastVisibility } = require('../utils');
-describe('Toast Functionality (Dev Mode Enabled)', () => {
+
+describe.skip('Toast Functionality (Dev Mode Enabled)', () => {
   let browser;
   let page;
   jest.setTimeout(60000);

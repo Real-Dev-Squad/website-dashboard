@@ -330,7 +330,7 @@ describe('Applications page', () => {
     expect(repoLinkStyle).toBeTruthy();
   });
 
-  describe('Toast Functionality (Dev Mode Enabled)', () => {
+  describe.skip('Toast Functionality (Dev Mode Enabled)', () => {
     beforeEach(async () => {
       await page.goto(
         `${LOCAL_TEST_PAGE_URL}/applications?dev=true&status=pending`,

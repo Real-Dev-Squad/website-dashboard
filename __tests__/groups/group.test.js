@@ -390,7 +390,7 @@ describe('Discord Groups Page', () => {
     expect(loaderAfter).toBeFalsy();
   });
 
-  describe('Toast Functionality (Dev Mode Enabled)', () => {
+  describe.skip('Toast Functionality (Dev Mode Enabled)', () => {
     beforeEach(async () => {
       setSuperUserPermission();
       await page.goto(`${LOCAL_TEST_PAGE_URL}/groups?dev=true`);

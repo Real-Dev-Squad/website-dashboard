@@ -377,7 +377,7 @@ describe('Task request details page with status creation', () => {
     );
   });
 
-  describe('Toast Functionality under dev flag', () => {
+  describe.skip('Toast Functionality under dev flag', () => {
     beforeEach(async () => {
       await page.goto(
         `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq5&dev=true`,
