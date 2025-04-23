@@ -1,6 +1,8 @@
 const API_BASE_URL = window.API_BASE_URL;
 const taskRequestContainer = document.getElementById('task-request-container');
 const containerBody = document.querySelector('.container__body');
+const filterComponent = document.getElementById('filterComponent');
+const activeFilterTags = document.getElementById('active-filter-tags');
 const filtersHeader = document.querySelector(FILTERS_HEADER);
 const filterModal = document.getElementsByClassName(FILTER_MODAL)[0];
 const applyFilterButton = document.getElementById(APPLY_FILTER_BUTTON);
@@ -32,6 +34,20 @@ const filterStates = {
   order: CREATED_TIME,
   size: DEFAULT_PAGE_SIZE,
 };
+
+if (isDev) {
+  filterButton.style.display = 'none';
+  activeFilterTags.classList.remove('hidden');
+  document.addEventListener('DOMContentLoaded', () => {
+    renderFilterComponent({
+      filterComponent,
+      page: 'task-requests',
+      parentContainer: taskRequestContainer,
+      renderFunction: renderTaskRequestCards,
+      otherFilters: filterStates,
+    });
+  });
+}
 
 const updateFilterStates = (key, value) => {
   filterStates[key] = value;
@@ -432,7 +448,9 @@ function populateStatus() {
   );
 }
 
-populateStatus();
+if (!isDev) {
+  populateStatus();
+}
 sortModalButtons();
 
 function updateSortIcon() {

@@ -20,6 +20,8 @@ const mainContainer = document.querySelector('.container');
 const applicationCloseButton = document.querySelector(
   '.application-close-button',
 );
+const filterComponent = document.getElementById('filterComponent');
+const activeFilterTags = document.getElementById('active-filter-tags');
 const noApplicationFoundText = document.querySelector('.no_applications_found');
 const applicationDetailsMain = document.querySelector(
   '.application-details-main',
@@ -44,10 +46,18 @@ let isApplicationPending = urlParams.get('status') === 'pending';
 const filterButton = isDev
   ? document.getElementById('filter-button-new')
   : document.getElementById('filter-button');
-if (isDev)
-  document
-    .getElementsByClassName('filter-container')[0]
-    .classList.remove('hidden');
+if (isDev) {
+  activeFilterTags.classList.remove('hidden');
+  filterComponent.classList.remove('hidden');
+  document.addEventListener('DOMContentLoaded', () => {
+    renderFilterComponent({
+      filterComponent,
+      page: 'applications',
+      parentContainer: applicationContainer,
+      renderFunction: renderApplicationCards,
+    });
+  });
+}
 
 const filterDropdown = document.querySelector('.filter-dropdown');
 const filterOptions = document.querySelectorAll(

@@ -14,11 +14,13 @@
 
     <title>Task Requests | Real Dev Squad</title>
     <link rel="stylesheet" href="/global.css" />
+    <link rel="stylesheet" href="/components/filter-component/style.css" />
     <link rel="stylesheet" href="/task-requests/style.css" />
     <script src="/helpers/loadENV.js"></script>
     <script src="/task-requests/constants.js"></script>
     <script src="/task-requests/util.js"></script>
     <script src="/utils.js"></script>
+    <script src="/components/filter-component/script.js" defer></script>
     <script src="/task-requests/script.js" defer></script>
     <script src="/navbar.global.js" defer></script>
     <script src="/userLogin.js" defer></script>
@@ -65,6 +67,12 @@
               <form class="modal-form" id="sort_by-filter"></form>
             </div>
           </div>
+          <div
+            class="filter__component"
+            id="filterComponent"
+            data-testid="filter-component"
+          ></div>
+
           <button id="filter-button" class="filter-button">
             <span class="filter-text">Filters</span>
 
@@ -95,6 +103,11 @@
           </div>
         </div>
       </div>
+      <div
+        id="active-filter-tags"
+        class="filter__component__active__tags hidden"
+        data-testid="active-filter-tags"
+      ></div>
       <div class="container__body">
         <div id="task-request-container" class="taskRequest"></div>
         <div class="container__body__loader hidden">Loading...</div>

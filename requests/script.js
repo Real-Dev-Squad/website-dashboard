@@ -12,6 +12,8 @@ let onboardingExtensionTabLink = document.getElementById(
   ONBOARDING_EXTENSION_TAB_ID,
 );
 const filterContainer = document.getElementById('filterContainer');
+const filterComponent = document.getElementById('filterComponent');
+const activeFilterTags = document.getElementById('active-filter-tags');
 const filterButton = document.getElementById('filterButton');
 const filterModal = document.getElementById('filterModal');
 const filterOptionsContainer = document.getElementById(
@@ -20,6 +22,7 @@ const filterOptionsContainer = document.getElementById(
 const applyFilterButton = document.getElementById('applyFilterButton');
 const userNameFilterInput = document.getElementById('assignee-search-input');
 let currentReqType = params.get('type')?.toUpperCase() ?? OOO_REQUEST_TYPE;
+let requestState = params.get('status')?.toUpperCase() ?? null;
 let selected__tab__class = 'selected__tab';
 let statusValue = null;
 let sortByValue = null;
@@ -51,6 +54,8 @@ if (isDev) {
   onboardingExtensionTabLink.classList.remove('hidden');
   requestContainer.classList.remove('request');
   requestContainer.classList.add('request_container');
+  activeFilterTags.classList.remove('hidden');
+  filterComponent.classList.remove('hidden');
   filterContainer.classList.remove('hidden');
 }
 
@@ -805,9 +810,29 @@ function populateStatus() {
   }
 }
 updateTabLink(currentReqType);
-populateStatus();
-renderRequestCards({
-  state: statusValue,
-  sort: sortByValue,
-  requestType: currentReqType,
-});
+
+if (isDev) {
+  document.addEventListener('DOMContentLoaded', () => {
+    renderFilterComponent({
+      filterComponent,
+      page: 'requests',
+      parentContainer: requestContainer,
+      renderFunction: renderRequestCards,
+      otherFilters: {
+        sortByValue,
+      },
+    });
+  });
+  renderRequestCards({
+    state: requestState ?? statusValue,
+    sort: sortByValue,
+    requestType: currentReqType,
+  });
+} else {
+  populateStatus();
+  renderRequestCards({
+    state: statusValue,
+    sort: sortByValue,
+    requestType: currentReqType,
+  });
+}

@@ -2,6 +2,8 @@ const container = document.querySelector('.container');
 const extensionRequestsContainer = document.querySelector(
   '.extension-requests',
 );
+const filterComponent = document.getElementById('filterComponent');
+const activeFilterTags = document.getElementById('active-filter-tags');
 const filterModal = document.getElementsByClassName(FILTER_MODAL)[0];
 const filterButton = document.getElementById(FILTER_BUTTON);
 const applyFilterButton = document.getElementById(APPLY_FILTER_BUTTON);
@@ -25,6 +27,13 @@ let currentUserDetails;
 const filterStates = {};
 let assigneeUsernamesList = [];
 const isDev = params.get('dev') === 'true';
+
+if (isDev) {
+  activeFilterTags.classList.remove('hidden');
+  filterComponent.classList.remove('hidden');
+} else {
+  filterButton.classList.remove('hidden');
+}
 
 getSelfUser().then((response) => {
   currentUserDetails = response;
@@ -110,16 +119,18 @@ const updateUIBasedOnFilterStates = () => {
     descIcon.style.display = 'block';
   }
 
-  if (
-    states.status &&
-    Array.isArray(states.status) &&
-    states.status.length > 0
-  ) {
-    states.status.forEach((state) => {
-      toggleStatusCheckbox(state);
-    });
-  } else {
-    toggleStatusCheckbox(states.status);
+  if (!isDev) {
+    if (
+      states.status &&
+      Array.isArray(states.status) &&
+      states.status.length > 0
+    ) {
+      states.status.forEach((state) => {
+        toggleStatusCheckbox(state);
+      });
+    } else {
+      toggleStatusCheckbox(states.status);
+    }
   }
 };
 
@@ -1481,6 +1492,18 @@ function showToast(message, type) {
       toast.remove();
     });
   }, UPDATE_TOAST_TIMING);
+}
+
+if (isDev) {
+  document.addEventListener('DOMContentLoaded', () => {
+    renderFilterComponent({
+      filterComponent,
+      page: 'extension-requests',
+      parentContainer: extensionRequestsContainer,
+      renderFunction: populateExtensionRequests,
+      otherFilters: filterStates,
+    });
+  });
 }
 
 function generateSentence(response, parentClassName, id) {
