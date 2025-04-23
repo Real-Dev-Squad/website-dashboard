@@ -51,12 +51,9 @@ function getUserDetails(id) {
 }
 
 if (isDev) {
-  onboardingExtensionTabLink.classList.remove('hidden');
-  requestContainer.classList.remove('request');
-  requestContainer.classList.add('request_container');
   activeFilterTags.classList.remove('hidden');
   filterComponent.classList.remove('hidden');
-  filterContainer.classList.remove('hidden');
+  filterButton.classList.add('hidden');
 }
 
 const intersectionObserver = new IntersectionObserver(async (entries) => {
