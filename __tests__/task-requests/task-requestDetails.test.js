@@ -8,7 +8,9 @@ const {
   STAGING_API_URL,
   LOCAL_TEST_PAGE_URL,
 } = require('../../mock-data/constants');
-const { expectToastVisibility } = require('../utils');
+const {
+  expectToastVisibility,
+} = require('../../mock-data/utils/test.helper.js');
 const { longDescription } = require('../../mock-data/taskRequests/index.js');
 describe('Request container for non-super users', () => {
   let browser;

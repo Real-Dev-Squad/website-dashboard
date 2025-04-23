@@ -3,7 +3,9 @@ const {
   STAGING_API_URL,
   LOCAL_TEST_PAGE_URL,
 } = require('../../mock-data/constants');
-const { expectToastVisibility } = require('../utils');
+const {
+  expectToastVisibility,
+} = require('../../mock-data/utils/test.helper.js');
 
 describe.skip('Toast Functionality (Dev Mode Enabled)', () => {
   let browser;

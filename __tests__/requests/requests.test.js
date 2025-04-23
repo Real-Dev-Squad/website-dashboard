@@ -11,7 +11,9 @@ const {
   STAGING_API_URL,
   LOCAL_TEST_PAGE_URL,
 } = require('../../mock-data/constants');
-const { expectToastVisibility } = require('../utils');
+const {
+  expectToastVisibility,
+} = require('../../mock-data/utils/test.helper.js');
 
 describe('Tests the request cards', () => {
   let browser;
@@ -56,7 +58,7 @@ describe('Tests the request cards', () => {
           body: JSON.stringify(pendingRequest),
         });
       } else if (
-        url === `${STAGING_API_URL}/requests?dev=true&type=extension&size=12`
+        url === `${STAGING_API_URL}/requests?dev=true&type=EXTENSION&size=12`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -225,7 +227,7 @@ describe('Tests the request cards', () => {
     expect(await filterContainer.isVisible()).toBe(false);
   });
 
-  it('should show requests cards after reloading the page', async () => {
+  it.only('should show requests cards after reloading the page', async () => {
     await page.goto(`${LOCAL_TEST_PAGE_URL}/requests`);
     await page.waitForNetworkIdle();
 

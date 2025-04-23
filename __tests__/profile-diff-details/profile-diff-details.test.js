@@ -5,7 +5,9 @@ const {
 } = require('../../mock-data/constants');
 const { pendingProfileDiff } = require('../../mock-data/profile-diff-details');
 const { superUserData, userRandhir } = require('../../mock-data/users');
-const { expectToastVisibility } = require('../utils');
+const {
+  expectToastVisibility,
+} = require('../../mock-data/utils/test.helper.js');
 
 describe.skip('Toast Functionality (Dev Mode Enabled)', () => {
   let browser;

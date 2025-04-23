@@ -5,7 +5,9 @@ const {
   acceptedApplications,
   pendingApplications,
 } = require('../../mock-data/applications');
-const { expectToastVisibility } = require('../utils');
+const {
+  expectToastVisibility,
+} = require('../../mock-data/utils/test.helper.js');
 const { superUserForAudiLogs } = require('../../mock-data/users');
 const {
   STAGING_API_URL,

@@ -12,7 +12,9 @@ const {
   extensionRequestLogs,
   extensionRequestLogsInSentence,
 } = require('../../mock-data/logs');
-const { expectToastVisibility } = require('../utils');
+const {
+  expectToastVisibility,
+} = require('../../mock-data/utils/test.helper.js');
 const {
   userSunny,
   userRandhir,
