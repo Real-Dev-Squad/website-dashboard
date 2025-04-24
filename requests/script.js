@@ -2,7 +2,6 @@ const API_BASE_URL = window.API_BASE_URL;
 const requestContainer = document.getElementById(REQUEST_CONTAINER_ID);
 const lastElementContainer = document.querySelector(LAST_ELEMENT_CONTAINER);
 const params = new URLSearchParams(window.location.search);
-const isDev = params.get('dev') === 'true';
 const loader = document.querySelector('.container__body__loader');
 const startLoading = () => loader.classList.remove('hidden');
 const stopLoading = () => loader.classList.add('hidden');
@@ -45,13 +44,6 @@ function updateTabLink(requestType) {
 
 function getUserDetails(id) {
   return userDetails.find((user) => user.id === id);
-}
-
-if (isDev) {
-  onboardingExtensionTabLink.classList.remove('hidden');
-  requestContainer.classList.remove('request');
-  requestContainer.classList.add('request_container');
-  filterContainer.classList.remove('hidden');
 }
 
 const intersectionObserver = new IntersectionObserver(async (entries) => {
