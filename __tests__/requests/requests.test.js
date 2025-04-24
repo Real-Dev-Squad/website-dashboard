@@ -548,4 +548,28 @@ describe('Tests the request cards', () => {
       expect(suggestionCount).toBe(0);
     });
   });
+
+  it.only('should show only "APPROVED" requests after selecting "APPROVED" filter when dev=true', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/requests?dev=true`);
+    await page.waitForNetworkIdle();
+    await page.click('[data-testid="filter-component-toggle-button"]');
+    const applyFilterButton = '[data-testid="apply-filter-component-button"]';
+    await page.waitForSelector(applyFilterButton, { visible: true });
+
+    await page.click(`input[type="checkbox"][id="APPROVED"]`);
+
+    await page.click(applyFilterButton);
+
+    await page.waitForNetworkIdle();
+
+    const requestCards = await page.$$('[data-testid="ooo-request-card"]');
+
+    for (const card of requestCards) {
+      const statusText = await card.$eval(
+        '[data-testid="request-status"]',
+        (el) => el.textContent,
+      );
+      expect(statusText).toContain('Approved');
+    }
+  });
 });

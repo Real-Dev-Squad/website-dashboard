@@ -1154,4 +1154,25 @@ describe('Tests the Extension Requests Screen', () => {
       'No extension requests to show!',
     );
   });
+  it('should show only "APPROVED" and "DENIED" extension requests after selecting those filters when dev=true', async () => {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/extension-requests?dev=true&order=desc`,
+    );
+    await page.waitForNetworkIdle();
+    await page.click('[data-testid="filter-component-toggle-button"]');
+    const applyFilterButton = '[data-testid="apply-filter-component-button"]';
+    await page.waitForSelector(applyFilterButton, { visible: true });
+
+    await page.click(`input[type="checkbox"][id="APPROVED"]`);
+    await page.click(`input[type="checkbox"][id="DENIED"]`);
+
+    await page.click(applyFilterButton);
+
+    await page.waitForNetworkIdle();
+
+    const extensionRequestCards = await page.$$('.extension-card');
+    expect(extensionRequestCards.length).toBe(
+      extensionRequestListForAuditLogs.allExtensionRequests.length,
+    );
+  });
 });
