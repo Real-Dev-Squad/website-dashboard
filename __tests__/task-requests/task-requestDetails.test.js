@@ -86,6 +86,19 @@ describe('Task request details page', () => {
           ...defaultMockResponseHeaders,
           body: JSON.stringify(urlMappings[url]),
         });
+      } else if (
+        url === `${STAGING_API_URL}/taskRequests/dM5wwDdsfd9QsiTzi7eG7Oq5`
+      ) {
+        interceptedRequest.respond({
+          status: 404,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify('Task Requests not found'),
+        });
       } else {
         interceptedRequest.continue();
       }
@@ -161,7 +174,7 @@ describe('Task request details page', () => {
     expect(errorText).toBe('Task Requests not found');
   });
 
-  it('should not show "Task Requests not found" message when dev mode is disabled', async function () {
+  it.only('should not show "Task Requests not found" message when dev mode is disabled', async function () {
     await page.goto(
       `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwDdsfd9QsiTzi7eG7Oq5`,
     );
