@@ -65,7 +65,7 @@ function renderFilterComponent({
       { name: 'Rejected', id: 'REJECTED' },
     ];
 
-    if (page === 'extension-requests') {
+    if (page === 'extension-requests' || page === 'task-requests') {
       statusList = statusList.map((status) =>
         status.id === 'REJECTED'
           ? { ...status, name: 'Denied', id: 'DENIED' }
@@ -376,8 +376,8 @@ async function renderFunctionFinal({
     await renderFunction('', filterStatus[0]?.toLowerCase());
   } else if (page === 'task-requests') {
     parentContainer.innerHTML = '';
-    const filterStatus = filterStatus.map((status) => status.toLowerCase());
-    otherFilters.status = filterStatus?.length > 0 ? filterStatus : '';
+    const filterValues = filterStatus.map((status) => status.toLowerCase());
+    otherFilters.status = filterValues?.length > 0 ? filterValues : '';
     await renderFunction(otherFilters);
   }
 }
