@@ -564,45 +564,25 @@ describe('Tests the request cards', () => {
     });
   });
 
-  describe.skip('Toast Functionality (Dev Mode Enabled)', () => {
-    beforeEach(async () => {
-      await page.goto(`${LOCAL_TEST_PAGE_URL}/requests?dev=true`);
-      await page.waitForNetworkIdle();
-      await page.click('#ooo_tab_link');
-      await page.waitForSelector('.request__status');
+  it.skip('should show success toast after approving any request', async function () {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/requests?dev=true`);
+    await page.waitForNetworkIdle();
+    await page.click('#ooo_tab_link');
+    await page.waitForSelector('.request__status');
 
-      const statusButtonText = await page.$eval(
-        '.request__status',
-        (el) => el.textContent,
-      );
-      expect(statusButtonText).toBe('Pending');
+    const statusButtonText = await page.$eval(
+      '.request__status',
+      (el) => el.textContent,
+    );
+    expect(statusButtonText).toBe('Pending');
 
-      await page.click('.request__action__btn.accept__btn');
-      await page.waitForSelector('[data-testid="toast-component"].show');
-    });
-
-    it('should show success toast after approving any request', async function () {
-      const toastComponent = await page.$('[data-testid="toast-component"]');
-      await expectToastVisibility(true, toastComponent);
-      const toastMessage = await page.$('[data-testid="toast-message"]');
-      expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
-        'Request approved successfully',
-      );
-    });
-
-    it('should hide the toast automatically after 3 seconds', async function () {
-      const toastComponent = await page.$('[data-testid="toast-component"]');
-      await page.waitForTimeout(3500);
-
-      await expectToastVisibility(false, toastComponent);
-    });
-
-    it('should hide the toast when close button is clicked', async function () {
-      const toastComponent = await page.$('[data-testid="toast-component"]');
-      const closeButton = await page.$('[data-testid="toast-close-button"]');
-      await closeButton.click();
-
-      await expectToastVisibility(false, toastComponent);
-    });
+    await page.click('.request__action__btn.accept__btn');
+    await page.waitForSelector('[data-testid="toast-component"].show');
+    const toastComponent = await page.$('[data-testid="toast-component"]');
+    await expectToastVisibility(true, toastComponent);
+    const toastMessage = await page.$('[data-testid="toast-message"]');
+    expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
+      'Request approved successfully',
+    );
   });
 });

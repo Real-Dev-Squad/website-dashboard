@@ -1174,49 +1174,27 @@ describe('Tests the Extension Requests Screen', () => {
     );
   });
 
-  describe.skip('Toast Functionality (Dev Mode Enabled)', () => {
-    beforeEach(async () => {
-      await page.goto(
-        `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&dev=true&size=1&q=status%3APENDING`,
-      );
-      await page.waitForNetworkIdle();
+  it.skip('should show success toast after we update the extension request', async function () {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&dev=true&size=1&q=status%3APENDING`,
+    );
+    await page.waitForNetworkIdle();
 
-      await page.click('.edit-button');
+    await page.click('.edit-button');
 
-      const newDate = new Date(Date.now() + 86400000)
-        .toISOString()
-        .split('T')[0];
+    const newDate = new Date(Date.now() + 86400000).toISOString().split('T')[0];
 
-      await page.evaluate((newDate) => {
-        document.querySelector('.date-input').value = newDate;
-      }, newDate);
+    await page.evaluate((newDate) => {
+      document.querySelector('.date-input').value = newDate;
+    }, newDate);
 
-      await page.click('.update-button');
-      await page.waitForSelector('[data-testid="toast-component"].show');
-    });
-
-    it('should show success toast after we update the extension request', async function () {
-      const toastComponent = await page.$('[data-testid="toast-component"]');
-      await expectToastVisibility(true, toastComponent);
-      const toastMessage = await page.$('[data-testid="toast-message"]');
-      expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
-        'Extension request successfully updated.',
-      );
-    });
-
-    it('should hide the toast automatically after 3 seconds', async function () {
-      const toastComponent = await page.$('[data-testid="toast-component"]');
-      await page.waitForTimeout(3500);
-
-      await expectToastVisibility(false, toastComponent);
-    });
-
-    it('should hide the toast when close button is clicked', async function () {
-      const toastComponent = await page.$('[data-testid="toast-component"]');
-      const closeButton = await page.$('[data-testid="toast-close-button"]');
-      await closeButton.click();
-
-      await expectToastVisibility(false, toastComponent);
-    });
+    await page.click('.update-button');
+    await page.waitForSelector('[data-testid="toast-component"].show');
+    const toastComponent = await page.$('[data-testid="toast-component"]');
+    await expectToastVisibility(true, toastComponent);
+    const toastMessage = await page.$('[data-testid="toast-message"]');
+    expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
+      'Extension request successfully updated.',
+    );
   });
 });

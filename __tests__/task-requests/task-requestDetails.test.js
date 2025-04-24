@@ -379,40 +379,20 @@ describe('Task request details page with status creation', () => {
     );
   });
 
-  describe.skip('Toast Functionality under dev flag', () => {
-    beforeEach(async () => {
-      await page.goto(
-        `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq5&dev=true`,
-      );
-      await page.waitForNetworkIdle();
+  it.skip('should show success toast after approving the task  request', async function () {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq5&dev=true`,
+    );
+    await page.waitForNetworkIdle();
 
-      const approveButton = await page.$('[data-testid="task-approve-button"]');
+    const approveButton = await page.$('[data-testid="task-approve-button"]');
 
-      await approveButton.click();
-    });
-
-    it('should show success toast after approving the task  request', async function () {
-      const toastComponent = await page.$('[data-testid="toast-component"]');
-      await expectToastVisibility(true, toastComponent);
-      const toastMessage = await page.$('[data-testid="toast-message"]');
-      expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
-        'Task updated Successfully',
-      );
-    });
-
-    it('should hide the toast automatically after 3 seconds', async function () {
-      const toastComponent = await page.$('[data-testid="toast-component"]');
-      await page.waitForTimeout(3500);
-
-      await expectToastVisibility(false, toastComponent);
-    });
-
-    it('should hide the toast when close button is clicked', async function () {
-      const toastComponent = await page.$('[data-testid="toast-component"]');
-      const closeButton = await page.$('[data-testid="toast-close-button"]');
-      await closeButton.click();
-
-      await expectToastVisibility(false, toastComponent);
-    });
+    await approveButton.click();
+    const toastComponent = await page.$('[data-testid="toast-component"]');
+    await expectToastVisibility(true, toastComponent);
+    const toastMessage = await page.$('[data-testid="toast-message"]');
+    expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
+      'Task updated Successfully',
+    );
   });
 });

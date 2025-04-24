@@ -58,11 +58,4 @@ describe.skip('Toast Functionality (Dev Mode Enabled)', () => {
       'You are not logged-in. Please login!',
     );
   });
-  it('should hide the toast when close button is clicked', async function () {
-    const toastComponent = await page.$('[data-testid="toast-component"]');
-    const closeButton = await page.$('[data-testid="toast-close-button"]');
-    await closeButton.click();
-
-    await expectToastVisibility(false, toastComponent);
-  });
 });

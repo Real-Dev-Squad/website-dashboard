@@ -89,37 +89,19 @@ describe.skip('Toast Functionality (Dev Mode Enabled)', () => {
     await page.waitForNetworkIdle();
   });
 
-  beforeEach(async () => {
-    const approveButton = await page.$('.button__approve');
-    approveButton.click();
-    await page.waitForNetworkIdle();
-  });
-
   afterAll(async () => {
     await browser.close();
   });
 
   it('should show error toast when failed to approve', async function () {
+    const approveButton = await page.$('.button__approve');
+    approveButton.click();
+    await page.waitForNetworkIdle();
     const toastComponent = await page.$('[data-testid="toast-component"]');
     await expectToastVisibility(true, toastComponent);
     const toastMessage = await page.$('[data-testid="toast-message"]');
     expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
       'Something went wrong!',
     );
-  });
-
-  it('should hide the toast automatically after 3 seconds', async function () {
-    const toastComponent = await page.$('[data-testid="toast-component"]');
-    await page.waitForTimeout(3500);
-
-    await expectToastVisibility(false, toastComponent);
-  });
-
-  it('should hide the toast when close button is clicked', async function () {
-    const toastComponent = await page.$('[data-testid="toast-component"]');
-    const closeButton = await page.$('[data-testid="toast-close-button"]');
-    await closeButton.click();
-
-    await expectToastVisibility(false, toastComponent);
   });
 });
