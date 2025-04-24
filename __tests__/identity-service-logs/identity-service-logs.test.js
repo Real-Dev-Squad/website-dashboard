@@ -3,10 +3,6 @@ const {
   STAGING_API_URL,
   LOCAL_TEST_PAGE_URL,
 } = require('../../mock-data/constants');
-const {
-  expectToastVisibility,
-} = require('../../mock-data/utils/test.helper.js');
-
 describe.skip('Toast Functionality (Dev Mode Enabled)', () => {
   let browser;
   let page;
@@ -52,7 +48,12 @@ describe.skip('Toast Functionality (Dev Mode Enabled)', () => {
 
   it('should show error toast when user is not logged in ', async function () {
     const toastComponent = await page.$('[data-testid="toast-component"]');
-    await expectToastVisibility(true, toastComponent);
+    expect(
+      await toastComponent.evaluate((el) => el.classList.contains('show')),
+    ).toBe(true);
+    expect(
+      await toastComponent.evaluate((el) => el.classList.contains('hide')),
+    ).toBe(false);
     const toastMessage = await page.$('[data-testid="toast-message"]');
     expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
       'You are not logged-in. Please login!',

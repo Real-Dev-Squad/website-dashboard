@@ -4,17 +4,14 @@ const {
   fetchedApplications,
   acceptedApplications,
   pendingApplications,
-} = require('../../../mock-data/applications');
-const {
-  expectToastVisibility,
-} = require('../../../mock-data/utils/test.helper.js');
-const { superUserForAudiLogs } = require('../../../mock-data/users');
+} = require('../../mock-data/applications');
+const { superUserForAudiLogs } = require('../../mock-data/users');
 const {
   STAGING_API_URL,
   LOCAL_TEST_PAGE_URL,
-} = require('../../../mock-data/constants');
+} = require('../../mock-data/constants');
 
-describe('Applications page', () => {
+describe('Toast Functionality', () => {
   let browser;
   let page;
 
@@ -155,7 +152,12 @@ describe('Applications page', () => {
       const toastComponent = await page.$('[data-testid="toast-component"]');
       await page.waitForTimeout(3500);
 
-      await expectToastVisibility(false, toastComponent);
+      expect(
+        await toastComponent.evaluate((el) => el.classList.contains('show')),
+      ).toBe(false);
+      expect(
+        await toastComponent.evaluate((el) => el.classList.contains('hide')),
+      ).toBe(true);
     });
 
     it('should hide the toast when close button is clicked', async function () {
@@ -163,7 +165,12 @@ describe('Applications page', () => {
       const closeButton = await page.$('[data-testid="toast-close-button"]');
       await closeButton.click();
 
-      await expectToastVisibility(false, toastComponent);
+      expect(
+        await toastComponent.evaluate((el) => el.classList.contains('show')),
+      ).toBe(false);
+      expect(
+        await toastComponent.evaluate((el) => el.classList.contains('hide')),
+      ).toBe(true);
     });
   });
 });

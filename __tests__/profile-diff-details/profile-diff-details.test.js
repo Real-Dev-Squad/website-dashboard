@@ -5,9 +5,6 @@ const {
 } = require('../../mock-data/constants');
 const { pendingProfileDiff } = require('../../mock-data/profile-diff-details');
 const { superUserData, userRandhir } = require('../../mock-data/users');
-const {
-  expectToastVisibility,
-} = require('../../mock-data/utils/test.helper.js');
 
 describe.skip('Toast Functionality (Dev Mode Enabled)', () => {
   let browser;
@@ -98,7 +95,12 @@ describe.skip('Toast Functionality (Dev Mode Enabled)', () => {
     approveButton.click();
     await page.waitForNetworkIdle();
     const toastComponent = await page.$('[data-testid="toast-component"]');
-    await expectToastVisibility(true, toastComponent);
+    expect(
+      await toastComponent.evaluate((el) => el.classList.contains('show')),
+    ).toBe(true);
+    expect(
+      await toastComponent.evaluate((el) => el.classList.contains('hide')),
+    ).toBe(false);
     const toastMessage = await page.$('[data-testid="toast-message"]');
     expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
       'Something went wrong!',

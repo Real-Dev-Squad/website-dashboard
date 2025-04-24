@@ -5,9 +5,6 @@ const {
   acceptedApplications,
   pendingApplications,
 } = require('../../mock-data/applications');
-const {
-  expectToastVisibility,
-} = require('../../mock-data/utils/test.helper.js');
 const { superUserForAudiLogs } = require('../../mock-data/users');
 const {
   STAGING_API_URL,
@@ -342,7 +339,12 @@ describe('Applications page', () => {
     await page.click('.application-details-accept');
     await page.waitForSelector('[data-testid="toast-component"].show');
     const toastComponent = await page.$('[data-testid="toast-component"]');
-    await expectToastVisibility(true, toastComponent);
+    expect(
+      await toastComponent.evaluate((el) => el.classList.contains('show')),
+    ).toBe(true);
+    expect(
+      await toastComponent.evaluate((el) => el.classList.contains('hide')),
+    ).toBe(false);
     const toastMessage = await page.$('[data-testid="toast-message"]');
     expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
       'application updated successfully!',

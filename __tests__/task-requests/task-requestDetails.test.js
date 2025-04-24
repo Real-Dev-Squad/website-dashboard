@@ -8,9 +8,6 @@ const {
   STAGING_API_URL,
   LOCAL_TEST_PAGE_URL,
 } = require('../../mock-data/constants');
-const {
-  expectToastVisibility,
-} = require('../../mock-data/utils/test.helper.js');
 const { longDescription } = require('../../mock-data/taskRequests/index.js');
 describe('Request container for non-super users', () => {
   let browser;
@@ -389,7 +386,12 @@ describe('Task request details page with status creation', () => {
 
     await approveButton.click();
     const toastComponent = await page.$('[data-testid="toast-component"]');
-    await expectToastVisibility(true, toastComponent);
+    expect(
+      await toastComponent.evaluate((el) => el.classList.contains('show')),
+    ).toBe(true);
+    expect(
+      await toastComponent.evaluate((el) => el.classList.contains('hide')),
+    ).toBe(false);
     const toastMessage = await page.$('[data-testid="toast-message"]');
     expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
       'Task updated Successfully',
