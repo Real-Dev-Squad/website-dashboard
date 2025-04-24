@@ -215,7 +215,6 @@ describe('Tests the request cards', () => {
     expect(statusButtonText).toBe('Approved');
   });
 
-
   it('should show requests cards after reloading the page', async () => {
     await page.goto(`${LOCAL_TEST_PAGE_URL}/requests`);
     await page.waitForNetworkIdle();
