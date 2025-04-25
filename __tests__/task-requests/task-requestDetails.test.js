@@ -174,7 +174,7 @@ describe('Task request details page', () => {
     expect(errorText).toBe('Task Requests not found');
   });
 
-  it.only('should not show "Task Requests not found" message when dev mode is disabled', async function () {
+  it('should not show "Task Requests not found" message when dev mode is disabled', async function () {
     await page.goto(
       `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwDdsfd9QsiTzi7eG7Oq5`,
     );
