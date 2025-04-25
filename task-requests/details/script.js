@@ -557,21 +557,17 @@ const renderTaskRequest = async () => {
 };
 
 const showErrorMessage = (error) => {
-  let errorMessageDiv = document.querySelector('[data-testid="error-message"]');
+  let errorMessageDiv;
   const message =
     error === 404 ? ErrorMessages.NOT_FOUND : ErrorMessages.SERVER_ERROR;
-
-  if (!errorMessageDiv) {
+  if (error === 404 || error === 500) {
     errorMessageDiv = document.createElement('p');
     errorMessageDiv.classList.add('error-message');
     errorMessageDiv.setAttribute('data-testid', 'error-message');
-    if (error === 404) {
-      errorMessageDiv.textContent = ErrorMessages.NOT_FOUND;
-    }
+    errorMessageDiv.textContent = message;
     const container = document.querySelector('.container') || document.body;
     container.appendChild(errorMessageDiv);
   }
-  errorMessageDiv.textContent = message;
   taskRequestSkeleton?.classList.add('hidden');
   taskContainer?.classList.add('hidden');
   const requestors = document.querySelector('.requestors');
