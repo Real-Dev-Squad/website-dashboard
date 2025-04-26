@@ -571,6 +571,16 @@ p:hover {
   display: none;
 }
 
+.error-message {
+  display: grid;
+  place-items: center;
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  text-align: center;
+}
 @media (max-width: 904px) {
   .task {
     grid-column: 1 / span 12;
