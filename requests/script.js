@@ -19,6 +19,7 @@ const filterOptionsContainer = document.getElementById(
 const applyFilterButton = document.getElementById('applyFilterButton');
 const userNameFilterInput = document.getElementById('assignee-search-input');
 let currentReqType = params.get('type')?.toUpperCase() ?? OOO_REQUEST_TYPE;
+const isDev = params.get('dev') === 'true';
 let selected__tab__class = 'selected__tab';
 let statusValue = null;
 let sortByValue = null;
