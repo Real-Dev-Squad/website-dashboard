@@ -413,4 +413,36 @@ describe('Task request details page with status creation', () => {
       'https://github.com/Real-Dev-Squad/members-site/issues/92',
     );
   });
+
+  it.skip('should show success toast after approving the task  request', async function () {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq5&dev=true`,
+    );
+    await page.waitForNetworkIdle();
+
+    const approveButton = await page.$('[data-testid="task-approve-button"]');
+
+    await approveButton.click();
+    const toastComponent = await page.$('[data-testid="toast-component"]');
+    expect(
+      await toastComponent.evaluate((el) => el.classList.contains('show')),
+    ).toBe(true);
+    expect(
+      await toastComponent.evaluate((el) => el.classList.contains('hide')),
+    ).toBe(false);
+    expect(
+      await toastComponent.evaluate((el) =>
+        el.classList.contains('success__toast'),
+      ),
+    ).toBe(true);
+    expect(
+      await toastComponent.evaluate((el) =>
+        el.classList.contains('error__toast'),
+      ),
+    ).toBe(false);
+    const toastMessage = await page.$('[data-testid="toast-message"]');
+    expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
+      'Task updated Successfully',
+    );
+  });
 });

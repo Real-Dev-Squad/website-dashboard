@@ -548,4 +548,41 @@ describe('Tests the request cards', () => {
       expect(suggestionCount).toBe(0);
     });
   });
+
+  it.skip('should show success toast after approving any request', async function () {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/requests?dev=true`);
+    await page.waitForNetworkIdle();
+    await page.click('#ooo_tab_link');
+    await page.waitForSelector('.request__status');
+
+    const statusButtonText = await page.$eval(
+      '.request__status',
+      (el) => el.textContent,
+    );
+    expect(statusButtonText).toBe('Pending');
+
+    await page.click('.request__action__btn.accept__btn');
+    await page.waitForSelector('[data-testid="toast-component"].show');
+    const toastComponent = await page.$('[data-testid="toast-component"]');
+    expect(
+      await toastComponent.evaluate((el) => el.classList.contains('show')),
+    ).toBe(true);
+    expect(
+      await toastComponent.evaluate((el) => el.classList.contains('hide')),
+    ).toBe(false);
+    expect(
+      await toastComponent.evaluate((el) =>
+        el.classList.contains('success__toast'),
+      ),
+    ).toBe(true);
+    expect(
+      await toastComponent.evaluate((el) =>
+        el.classList.contains('error__toast'),
+      ),
+    ).toBe(false);
+    const toastMessage = await page.$('[data-testid="toast-message"]');
+    expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
+      'Request approved successfully',
+    );
+  });
 });
