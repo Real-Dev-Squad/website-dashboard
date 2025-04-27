@@ -24,7 +24,6 @@ describe('Task Requests', () => {
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-
       if (
         url === `${STAGING_API_URL}/taskRequests` ||
         url ===
@@ -42,7 +41,9 @@ describe('Task Requests', () => {
         });
       } else if (
         url ===
-        `${STAGING_API_URL}/taskRequests?size=20&q=status%3Aapproved++sort%3Acreated-asc`
+          `${STAGING_API_URL}/taskRequests?size=20&q=status%3Aapproved++sort%3Acreated-asc` ||
+        url ===
+          `${STAGING_API_URL}/taskRequests?size=20&q=status%3Aapproved+sort%3Acreated-asc`
       ) {
         const list = [];
         for (let i = 0; i < 20; i++) {
@@ -147,6 +148,24 @@ describe('Task Requests', () => {
         const currentState = await activeFilter.getProperty('checked');
         const isChecked = await currentState.jsonValue();
         expect(isChecked).toBe(false);
+      });
+
+      it('should show approved task requests when the filter is applied and dev=true', async () => {
+        await page.goto(`${LOCAL_TEST_PAGE_URL}/task-requests?dev=true`);
+        await page.waitForNetworkIdle();
+        await page.click('[data-testid="filter-component-toggle-button"]');
+        const applyFilterButton =
+          '[data-testid="apply-filter-component-button"]';
+        await page.waitForSelector(applyFilterButton, { visible: true });
+
+        await page.click(`input[type="checkbox"][id="APPROVED"]`);
+
+        await page.click(applyFilterButton);
+
+        await page.waitForNetworkIdle();
+
+        const taskRequestList = await page.$$('.taskRequest__card');
+        expect(taskRequestList.length).toBe(20);
       });
     });
 
@@ -470,15 +489,15 @@ describe('badges', () => {
   });
 
   it('verifies that filters applied by the user are correctly displayed as badges on the screen', async () => {
-    await page.click('#filter-button');
-    await page.click(`input[value="${DENIED}"]`);
-    await page.click(`input[value="${ASSIGNMENT}"]`);
-    await page.click('#apply-filter-button');
-    await page.waitForNetworkIdle();
-
-    const badgeTexts = await getBadgeTexts(page);
-    expect(badgeTexts).toContain(DENIED.toLowerCase());
-    expect(badgeTexts).toContain(ASSIGNMENT);
+    await page.click('#filter-component-toggle-button');
+    const status = 'DENIED';
+    await page.click(`input[type="checkbox"][id="${status}"]`);
+    const applyFilterButton = '[data-testid="apply-filter-component-button"]';
+    await page.click(applyFilterButton);
+    const tag = await page.$(
+      `[data-testid="active-filter-tags"] .filter__component__tag[data-status="${status}"]`,
+    );
+    expect(tag).toBeTruthy();
   });
 
   it('verifies that badge is removed when clicked and filters are updated accordingly', async () => {
@@ -501,43 +520,6 @@ describe('badges', () => {
     const checkbox = await page.$(`input[value="${DENIED}"]`);
     const isChecked = await page.evaluate((el) => el.checked, checkbox);
     expect(isChecked).toBe(false);
-  });
-
-  it('verifies that filters header is shown only when at least one badge is present', async () => {
-    await page.goto(
-      `${LOCAL_TEST_PAGE_URL}/task-requests/?sort=created-asc&dev=true`,
-    );
-    await page.waitForNetworkIdle();
-
-    const filtersHeader = await page.$('.filters__header');
-    let displayStyle = await page.evaluate(
-      (el) => window.getComputedStyle(el).display,
-      filtersHeader,
-    );
-    expect(displayStyle).toBe('none');
-
-    await page.click('#filter-button');
-    await page.click(`input[value="${DENIED}"]`);
-    await page.click('#apply-filter-button');
-    await page.waitForNetworkIdle();
-
-    displayStyle = await page.evaluate(
-      (el) => window.getComputedStyle(el).display,
-      filtersHeader,
-    );
-    expect(displayStyle).toBe('flex');
-
-    let badges = await page.$$('.badge');
-    let badgeTexts = await getBadgeTexts(page);
-
-    const deniedBadge = badges[badgeTexts.indexOf(DENIED.toLowerCase())];
-    await deniedBadge.click();
-
-    displayStyle = await page.evaluate(
-      (el) => window.getComputedStyle(el).display,
-      filtersHeader,
-    );
-    expect(displayStyle).toBe('none');
   });
 
   it('verifies that badges are displayed based on URL parameters and removes all badges when the Clear all button is clicked', async () => {

@@ -448,9 +448,8 @@ function populateStatus() {
   );
 }
 
-if (!isDev) {
-  populateStatus();
-}
+populateStatus();
+
 sortModalButtons();
 
 function updateSortIcon() {
