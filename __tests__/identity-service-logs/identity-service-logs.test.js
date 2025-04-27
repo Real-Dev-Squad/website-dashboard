@@ -54,6 +54,16 @@ describe.skip('Toast Functionality (Dev Mode Enabled)', () => {
     expect(
       await toastComponent.evaluate((el) => el.classList.contains('hide')),
     ).toBe(false);
+    expect(
+      await toastComponent.evaluate((el) =>
+        el.classList.contains('success__toast'),
+      ),
+    ).toBe(false);
+    expect(
+      await toastComponent.evaluate((el) =>
+        el.classList.contains('error__toast'),
+      ),
+    ).toBe(true);
     const toastMessage = await page.$('[data-testid="toast-message"]');
     expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
       'You are not logged-in. Please login!',

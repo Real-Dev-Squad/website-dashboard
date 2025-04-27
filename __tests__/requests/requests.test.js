@@ -566,10 +566,20 @@ describe('Tests the request cards', () => {
     const toastComponent = await page.$('[data-testid="toast-component"]');
     expect(
       await toastComponent.evaluate((el) => el.classList.contains('show')),
-    ).toBe(false);
+    ).toBe(true);
     expect(
       await toastComponent.evaluate((el) => el.classList.contains('hide')),
+    ).toBe(false);
+    expect(
+      await toastComponent.evaluate((el) =>
+        el.classList.contains('success__toast'),
+      ),
     ).toBe(true);
+    expect(
+      await toastComponent.evaluate((el) =>
+        el.classList.contains('error__toast'),
+      ),
+    ).toBe(false);
     const toastMessage = await page.$('[data-testid="toast-message"]');
     expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
       'Request approved successfully',
