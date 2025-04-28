@@ -3,7 +3,7 @@ function renderFilterComponent({
   page,
   parentContainer,
   renderFunction,
-  otherFilters = null,
+  otherFilters = {},
 }) {
   const filterContainer = document.createElement('div');
   filterContainer.className = 'filter__component__container';
@@ -50,13 +50,17 @@ function renderFilterComponent({
 
   filterComponent.appendChild(filterContainer);
 
-  const filterButton = document.getElementById(
-    'filter-component-toggle-button',
+  const filterButton = filterContainer.querySelector(
+    '#filter-component-toggle-button',
   );
-  const filterModal = document.getElementById('filter-component-modal');
-  const applyFilterButton = document.getElementById(
-    'apply-filter-component-button',
+  const filterModal = filterContainer.querySelector('#filter-component-modal');
+  const applyFilterButton = filterContainer.querySelector(
+    '#apply-filter-component-button',
   );
+  const filterOptionsContainer = filterContainer.querySelector(
+    '#filter-component-options-container',
+  );
+  const tagContainer = document.querySelector('#active-filter-tags');
 
   function populateStatusFilters(page) {
     let statusList = [
@@ -65,19 +69,31 @@ function renderFilterComponent({
       { name: 'Rejected', id: 'REJECTED' },
     ];
 
-    if (page === 'extension-requests' || page === 'task-requests') {
+    if (page === 'extension-requests') {
       statusList = statusList.map((status) =>
         status.id === 'REJECTED'
           ? { ...status, name: 'Denied', id: 'DENIED' }
-          : status,
+          : { ...status },
       );
     } else if (page === 'applications') {
       statusList = statusList.map((status) =>
         status.id === 'APPROVED'
           ? { ...status, name: 'Accepted', id: 'ACCEPTED' }
-          : status,
+          : { ...status },
       );
+    } else if (page === 'task-requests') {
+      statusList = statusList.map((status) =>
+        status.id === 'REJECTED'
+          ? { ...status, name: 'Denied', id: 'DENIED' }
+          : { ...status },
+      );
+      statusList = [
+        ...statusList,
+        { name: 'Assignment', id: 'ASSIGNMENT' },
+        { name: 'Creation', id: 'CREATION' },
+      ];
     }
+
     const filterHeader = document.createElement('div');
     filterHeader.className = 'filter__component__header';
 
@@ -95,7 +111,7 @@ function renderFilterComponent({
       'filter-component-clear-button',
     );
 
-    filterHeader.append(filterTitle);
+    filterHeader.append(filterTitle, clearFilterButton);
 
     clearFilterButton.addEventListener('click', async function () {
       filterModal.classList.add('hidden');
@@ -105,7 +121,7 @@ function renderFilterComponent({
 
       updateQueryParamInUrl(null, page);
       clearFilterButton.disabled = true;
-      await renderFunctionFinal({
+      await updateDataBasedOnFilters({
         renderFunction,
         filterStatus: null,
         page,
@@ -114,14 +130,15 @@ function renderFilterComponent({
       });
     });
 
-    filterTitle.appendChild(clearFilterButton);
     document
       .querySelector('#filter-component-options-container')
       .prepend(filterHeader);
 
     for (const { name, id } of statusList) {
-      addFilterCheckbox(name, id);
+      addFilterCheckbox(name, id, filterOptionsContainer);
     }
+
+    checkQueryStatus();
   }
 
   function toggleFilter() {
@@ -158,9 +175,9 @@ function renderFilterComponent({
 
     const selectedStatuses = getSelectedStatuses();
     updateQueryParamInUrl(selectedStatuses, page);
-    renderSelectedTags(selectedStatuses);
+    renderSelectedTags(selectedStatuses, tagContainer);
 
-    await renderFunctionFinal({
+    await updateDataBasedOnFilters({
       renderFunction,
       filterStatus: selectedStatuses,
       page,
@@ -171,19 +188,31 @@ function renderFilterComponent({
 
   populateStatusFilters(page);
 
-  const clearFilterButton = document.getElementById(
-    'filter-component-clear-button',
+  const filterHeader = filterContainer.querySelector(
+    '.filter__component__header',
+  );
+
+  const clearFilterButton = filterHeader.querySelector(
+    '#filter-component-clear-button',
   );
 
   function checkQueryStatus() {
-    const clearFilterButton = document.getElementById(
-      'filter-component-clear-button',
+    const clearFilterButton = filterContainer.querySelector(
+      '#filter-component-clear-button',
     );
-
     const urlParams = new URLSearchParams(window.location.search);
-    let qParam = urlParams.get('q');
-    let statusParam = urlParams.get('status');
+    const qParam = urlParams.get('q');
+    const statusParam = urlParams.get('status');
+    const statusParams = urlParams.getAll('status');
+    const requestTypeParams = urlParams.getAll('request-type');
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+    if (!qParam && !statusParam && requestTypeParams.length === 0) {
+      return;
+    }
+
     let statusValues = [];
+    let requestTypeValues = [];
 
     if (qParam) {
       const statusMatch = qParam.match(/status:([^&]+)/);
@@ -191,28 +220,35 @@ function renderFilterComponent({
         statusValues = statusMatch[1].split('+');
       }
     } else if (statusParam) {
-      statusValues = statusParam.includes('+')
-        ? statusParam.split('+')
-        : statusParam.includes(',')
-        ? statusParam.split(',')
-        : [statusParam];
+      statusValues = statusParam.split(/[\+,]/);
     }
 
-    if (page === 'applications') {
+    if (page === 'task-requests') {
+      if (statusParams.length > 0) {
+        statusValues = statusParams.map((value) => value.toUpperCase());
+      }
+      if (requestTypeParams.length > 0) {
+        requestTypeValues = requestTypeParams.map((value) =>
+          value.toUpperCase(),
+        );
+      }
+    }
+
+    if (page !== 'extension-requests') {
       statusValues = statusValues.map((status) => status.toUpperCase());
     }
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+    const allValuesToCheck = [...requestTypeValues, ...statusValues];
+
     checkboxes.forEach((checkbox) => {
-      checkbox.checked = statusValues.includes(checkbox.id);
+      checkbox.checked = allValuesToCheck.includes(checkbox.id);
     });
-    if (statusValues.length > 0) {
-      clearFilterButton.disabled = false;
-    }
-    renderSelectedTags(statusValues);
+
+    clearFilterButton.disabled = allValuesToCheck.length === 0;
+    renderSelectedTags(allValuesToCheck, tagContainer);
   }
 
-  function addFilterCheckbox(labelText, value) {
-    const group = document.getElementById('filter-component-options-container');
+  function addFilterCheckbox(labelText, value, group) {
     const label = document.createElement('label');
     const checkbox = document.createElement('input');
 
@@ -238,12 +274,19 @@ function renderFilterComponent({
     label.appendChild(document.createElement('br'));
     label.classList.add('filter__component__status__filter');
 
+    if (page === 'task-requests' && value === 'ASSIGNMENT') {
+      const requestTypeLabel = document.createElement('p');
+      requestTypeLabel.textContent = 'Request Type';
+      group.appendChild(requestTypeLabel);
+      requestTypeLabel.classList.add('filter__component__request-type-label');
+      requestTypeLabel.setAttribute('data-testid', 'request-type-label');
+    }
+
     group.appendChild(label);
-    checkQueryStatus();
   }
 
-  function renderSelectedTags(statuses) {
-    const tagContainer = document.getElementById('active-filter-tags');
+  function renderSelectedTags(statuses, tagContainer) {
+    if (!tagContainer) return;
     if (page === 'extension-requests') {
       tagContainer.classList.add('extension-page-padding');
     }
@@ -252,7 +295,7 @@ function renderFilterComponent({
       oldTag.remove();
     });
 
-    const validCheckboxIds = getAllValidCheckboxIds();
+    const validCheckboxIds = getAllValidCheckboxIds(filterOptionsContainer);
     const validStatuses = statuses.filter((status) =>
       validCheckboxIds.includes(status),
     );
@@ -260,7 +303,7 @@ function renderFilterComponent({
     validStatuses.forEach((status) => {
       const tag = document.createElement('div');
       tag.className = 'filter__component__tag';
-      tag.id = '';
+      tag.id = 'filter-component-tag';
       tag.setAttribute('data-status', status);
       tag.textContent = status.charAt(0) + status.slice(1).toLowerCase();
 
@@ -283,7 +326,7 @@ function renderFilterComponent({
 
         updateQueryParamInUrl(updatedStatuses, page);
 
-        await renderFunctionFinal({
+        await updateDataBasedOnFilters({
           renderFunction,
           filterStatus: updatedStatuses,
           page,
@@ -319,6 +362,7 @@ function updateQueryParamInUrl(queryParamVal, page) {
   const currentUrlParams = new URLSearchParams(window.location.search);
   currentUrlParams.delete('status');
   currentUrlParams.delete('q');
+  currentUrlParams.delete('request-type');
 
   if (queryParamVal && queryParamVal.length > 0) {
     if (page === 'extension-requests') {
@@ -326,6 +370,26 @@ function updateQueryParamInUrl(queryParamVal, page) {
         ? queryParamVal.join('+')
         : queryParamVal;
       currentUrlParams.set('q', `status:${formattedValue}`);
+    } else if (page === 'task-requests') {
+      const requestTypes = [];
+      const statuses = [];
+
+      queryParamVal.forEach((val) => {
+        if (val === 'CREATION' || val === 'ASSIGNMENT') {
+          requestTypes.push(val);
+        } else {
+          statuses.push(val);
+        }
+      });
+
+      requestTypes.forEach((type) => {
+        currentUrlParams.append('request-type', type);
+      });
+
+      if (statuses.length > 0) {
+        const formattedStatus = statuses.join(',');
+        currentUrlParams.set('status', formattedStatus);
+      }
     } else {
       const formattedValue = Array.isArray(queryParamVal)
         ? queryParamVal.join(',')
@@ -333,6 +397,7 @@ function updateQueryParamInUrl(queryParamVal, page) {
       currentUrlParams.set('status', formattedValue);
     }
   }
+
   let updatedUrl;
   if (page !== 'extension-requests') {
     updatedUrl = `/${page}?${currentUrlParams.toString().toLowerCase()}`;
@@ -343,14 +408,13 @@ function updateQueryParamInUrl(queryParamVal, page) {
   window.history.replaceState(window.history.state, '', updatedUrl);
 }
 
-function getAllValidCheckboxIds() {
-  const group = document.getElementById('filter-component-options-container');
-  return Array.from(group.querySelectorAll('input[type="checkbox"]')).map(
+function getAllValidCheckboxIds(container) {
+  return Array.from(container.querySelectorAll('input[type="checkbox"]')).map(
     (cb) => cb.id,
   );
 }
 
-async function renderFunctionFinal({
+async function updateDataBasedOnFilters({
   renderFunction,
   filterStatus,
   page,
@@ -360,7 +424,7 @@ async function renderFunctionFinal({
   if (page === 'requests') {
     parentContainer.innerHTML = '';
     const params = new URLSearchParams(window.location.search);
-    let currentReqType = params.get('type')?.toUpperCase() ?? 'OOO';
+    const currentReqType = params.get('type')?.toUpperCase() ?? 'OOO';
     await renderFunction({
       state: filterStatus?.length > 0 ? filterStatus : null,
       sort: otherFilters?.sort,
@@ -368,16 +432,26 @@ async function renderFunctionFinal({
     });
   } else if (page === 'extension-requests') {
     parentContainer.innerHTML = '';
-    otherFilters.status = filterStatus?.length > 0 ? filterStatus : '';
-    await renderFunction(otherFilters);
+    const targetFilters = otherFilters ?? {};
+    targetFilters.status =
+      Array.isArray(filterStatus) && filterStatus.length > 0
+        ? filterStatus
+        : '';
+    await renderFunction(targetFilters);
   } else if (page === 'applications') {
     parentContainer.innerHTML = '';
-
-    await renderFunction('', filterStatus[0]?.toLowerCase());
+    const status =
+      +Array.isArray(filterStatus) && filterStatus.length > 0
+        ? filterStatus[0].toLowerCase()
+        : '';
+    await renderFunction('', status);
   } else if (page === 'task-requests') {
     parentContainer.innerHTML = '';
-    const filterValues = filterStatus.map((status) => status.toLowerCase());
-    otherFilters.status = filterValues?.length > 0 ? filterValues : '';
-    await renderFunction(otherFilters);
+    const filterValues = Array.isArray(filterStatus)
+      ? filterStatus.map((s) => s.toLowerCase())
+      : [];
+    const targetFilters = otherFilters ?? {};
+    targetFilters.status = filterValues.length > 0 ? filterValues : '';
+    await renderFunction(targetFilters);
   }
 }

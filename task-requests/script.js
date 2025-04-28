@@ -52,7 +52,9 @@ if (isDev) {
 const updateFilterStates = (key, value) => {
   filterStates[key] = value;
   const constructedQueryString = formURLQueryString(filterStates, isDev);
+
   manipulateURLQueryParams(constructedQueryString);
+
   if (key === 'order' && isDev) {
     updateSortIcon();
   }
@@ -414,12 +416,13 @@ function populateStatus() {
     { name: 'Creation', id: 'creation' },
   ];
 
-  statusList.map(({ name, id }) => addCheckbox(name, id, 'status-filter'));
+  if (!isDev) {
+    statusList.map(({ name, id }) => addCheckbox(name, id, 'status-filter'));
 
-  requestList.map(({ name, id }) =>
-    addCheckbox(name, id, 'request-type-filter'),
-  );
-
+    requestList.map(({ name, id }) =>
+      addCheckbox(name, id, 'request-type-filter'),
+    );
+  }
   const sortByList = [
     {
       name: 'Least Requested',
@@ -448,9 +451,7 @@ function populateStatus() {
   );
 }
 
-if (!isDev) {
-  populateStatus();
-}
+populateStatus();
 sortModalButtons();
 
 function updateSortIcon() {
@@ -609,9 +610,11 @@ async function render() {
   if (!params.get('sort')) {
     toggleStatusCheckbox(Status.PENDING.toUpperCase());
     const constructedQueryString = formURLQueryString(filterStates, isDev);
+
     manipulateURLQueryParams(constructedQueryString);
+
+    updateSortIcon();
     if (isDev) {
-      updateSortIcon();
       showBadges();
     }
     await renderTaskRequestCards(filterStates);
