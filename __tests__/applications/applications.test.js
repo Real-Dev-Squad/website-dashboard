@@ -361,4 +361,20 @@ describe('Applications page', () => {
       'application updated successfully!',
     );
   });
+
+  it('should display only accepted applications after applying the "ACCEPTED" filter when dev=true', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/applications?dev=true`);
+    await page.waitForNetworkIdle();
+    await page.click('[data-testid="filter-component-toggle-button"]');
+    const applyFilterButton = '[data-testid="apply-filter-component-button"]';
+    await page.waitForSelector(applyFilterButton, { visible: true });
+
+    await page.click(`input[type="checkbox"][id="ACCEPTED"]`);
+
+    await page.click(applyFilterButton);
+
+    await page.waitForNetworkIdle();
+    const applicationCardElements = await page.$$('.application-card');
+    expect(applicationCardElements.length).toBe(acceptedApplications.length);
+  });
 });
