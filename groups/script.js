@@ -35,6 +35,8 @@ const QUERY_PARAM_KEY = {
   GROUP_SEARCH: 'name',
 };
 
+const isDev = getParamValueFromURL(QUERY_PARAM_KEY.DEV_FEATURE_FLAG) === 'true';
+
 const handler = {
   set: (obj, prop, value) => {
     switch (prop) {
@@ -93,7 +95,13 @@ const handler = {
                 rolename: title,
                 ...(description && { description }),
               }).then(() => {
-                showToaster('Group created successfully');
+                showToastMessage({
+                  isDev,
+                  oldToastFunction: showToaster,
+                  type: 'success',
+                  message: 'Group created successfully',
+                });
+
                 dataStore.isGroupCreationModalOpen = false;
 
                 // Future improvement: Use a more robust way to refresh the data
@@ -155,7 +163,12 @@ const onCreate = () => {
     })
     .catch((err) => {
       if (err.message) {
-        showToaster(err.message);
+        showToastMessage({
+          isDev,
+          oldToastFunction: showToaster,
+          type: 'failure',
+          message: err.message,
+        });
       }
 
       console.error(err);
@@ -260,7 +273,14 @@ function groupCardOnAction(id) {
   if (group.isMember) {
     removeRoleFromMember(group.roleId, dataStore.discordId)
       .then(() => updateGroup(id, { isMember: false, count: group.count - 1 }))
-      .catch((err) => showToaster(err.message))
+      .catch((err) =>
+        showToastMessage({
+          isDev,
+          oldToastFunction: showToaster,
+          type: 'failure',
+          message: err.message,
+        }),
+      )
       .finally(() => updateGroup(id, { isUpdating: false }));
   } else {
     addGroupRoleToMember({
@@ -268,7 +288,14 @@ function groupCardOnAction(id) {
       userid: dataStore.discordId,
     })
       .then(() => updateGroup(id, { isMember: true, count: group.count + 1 }))
-      .catch((err) => showToaster(err.message))
+      .catch((err) =>
+        showToastMessage({
+          isDev,
+          oldToastFunction: showToaster,
+          type: 'failure',
+          message: err.message,
+        }),
+      )
       .finally(() => updateGroup(id, { isUpdating: false }));
   }
 }
@@ -305,7 +332,12 @@ function showDeleteModal(groupId) {
       renderLoader();
       try {
         await deleteDiscordGroupRole(groupId);
-        showToaster('Group deleted successfully');
+        showToastMessage({
+          isDev,
+          oldToastFunction: showToaster,
+          type: 'success',
+          message: 'Group deleted successfully',
+        });
 
         updateGroup(groupId, { isDeleted: true });
 
@@ -316,7 +348,12 @@ function showDeleteModal(groupId) {
           cardOnClick: groupCardOnAction,
         });
       } catch (error) {
-        showToaster(error.message || 'Failed to delete group');
+        showToastMessage({
+          isDev,
+          oldToastFunction: showToaster,
+          type: 'failure',
+          message: error.message || 'Failed to delete group',
+        });
       } finally {
         removeDeleteConfirmationModal();
         removeLoader();

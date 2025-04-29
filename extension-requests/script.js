@@ -234,7 +234,12 @@ const currentUserDetailsPromise = getSelfUser()
   .catch((error) => {
     currentUserDetails = null;
     if (isDev) {
-      showToast(error?.message || "Couldn't fetch user details.", 'error');
+      showToastMessage({
+        isDev,
+        oldToastFunction: showToast,
+        type: 'error',
+        message: error?.message || "Couldn't fetch user details.",
+      });
     }
   });
 
@@ -1289,7 +1294,12 @@ async function createExtensionCard(data, dev) {
         handleSuccess(rootElement);
         if (dev) {
           const successMessage = 'Extension request successfully updated.';
-          showToast(successMessage, 'success');
+          showToastMessage({
+            isDev: dev,
+            oldToastFunction: showToast,
+            type: 'success',
+            message: successMessage,
+          });
         }
         appendLogs(payloadForLog, data.id);
       })
@@ -1301,7 +1311,12 @@ async function createExtensionCard(data, dev) {
             error?.response?.data?.message ||
             error?.message ||
             'An error occurred. Please try again.';
-          showToast(errorMessage, 'error');
+          showToastMessage({
+            isDev: dev,
+            oldToastFunction: showToast,
+            type: 'error',
+            message: errorMessage,
+          });
         }
       })
       .finally(() => {

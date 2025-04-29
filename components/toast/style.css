@@ -1,0 +1,93 @@
+:root {
+  font-family: 'Inter', sans-serif;
+  --red-color: #f05252;
+  --red-color-variant1: #f8b4b4;
+  --green-color: #0e9f6e;
+  --green-color-variant1: #84e1bc;
+  --white: #ffffff;
+}
+
+.toast__component {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  background: var(--white);
+  padding: 1rem;
+  width: min(20rem, 90%);
+  position: fixed;
+  right: 2%;
+  z-index: 1;
+  bottom: 2rem;
+  border-radius: 0.5rem;
+  border: solid 2px;
+}
+
+.toast__component p {
+  flex: 0 0 80%;
+  word-break: break-word;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.toast__close__button {
+  flex: 0 0 20%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.toast__component img {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+.success__toast {
+  border-color: var(--green-color-variant1);
+  color: var(--green-color);
+}
+
+.error__toast {
+  border-color: var(--red-color-variant1);
+  color: var(--red-color);
+}
+
+.toast__component button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: inherit;
+}
+
+.toast__hidden {
+  display: none;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toastOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+}
+
+.toast__component.show {
+  animation: toastIn 300ms ease-out forwards;
+  pointer-events: auto;
+}
+
+.toast__component.hide {
+  animation: toastOut 300ms ease-in forwards;
+  pointer-events: none;
+}
