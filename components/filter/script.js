@@ -203,6 +203,7 @@ function renderFilterComponent({
     const urlParams = new URLSearchParams(window.location.search);
     const qParam = urlParams.get('q');
     const statusParam = urlParams.get('status');
+    const statusParams = urlParams.getAll('status');
     const requestTypeParams = urlParams.getAll('request-type');
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
 
@@ -222,8 +223,15 @@ function renderFilterComponent({
       statusValues = statusParam.split(/[\+,]/);
     }
 
-    if (requestTypeParams.length > 0 && page === 'task-requests') {
-      requestTypeValues = requestTypeParams.map((value) => value.toUpperCase());
+    if (page === 'task-requests') {
+      if (statusParams.length > 0) {
+        statusValues = statusParams.map((value) => value.toUpperCase());
+      }
+      if (requestTypeParams.length > 0) {
+        requestTypeValues = requestTypeParams.map((value) =>
+          value.toUpperCase(),
+        );
+      }
     }
 
     if (page !== 'extension-requests') {

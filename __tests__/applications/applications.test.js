@@ -244,7 +244,8 @@ describe('Applications page', () => {
         el.classList.contains('hidden'),
       ),
     ).toBe(true);
-    await page.click('.application-details');
+    await page.click('.application-card');
+    await page.waitForSelector('.application-details:not(.hidden)');
     expect(
       await applicationDetailsModal.evaluate((el) =>
         el.classList.contains('hidden'),

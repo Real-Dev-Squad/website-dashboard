@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/applications/style.css" />
     <link rel="stylesheet" href="../global.css" />
+    <link rel="stylesheet" href="/components/filter/style.css" />
+    <script src="/components/filter/script.js" defer></script>
     <script type="module" src="/applications/script.js" defer></script>
     <script src="/helpers/loadENV.js"></script>
     <title>Applications</title>
@@ -26,6 +28,16 @@
           alt="funnel icon"
         />
       </button>
+      <div
+        class="filter__component hidden"
+        id="filterComponent"
+        data-testid="filter-component"
+      ></div>
+      <div
+        id="active-filter-tags"
+        class="filter__component__active__tags hidden"
+        data-testid="active-filter-tags"
+      ></div>
       <div class="filter-container hidden">
         <div class="filter-menu">
           <button id="filter-button-new" class="filter-button hidden">

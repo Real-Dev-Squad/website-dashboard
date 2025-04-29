@@ -1,6 +1,8 @@
 const API_BASE_URL = window.API_BASE_URL;
 const taskRequestContainer = document.getElementById('task-request-container');
 const containerBody = document.querySelector('.container__body');
+const filterComponent = document.getElementById('filterComponent');
+const activeFilterTags = document.getElementById('active-filter-tags');
 const filtersHeader = document.querySelector(FILTERS_HEADER);
 const filterModal = document.getElementsByClassName(FILTER_MODAL)[0];
 const applyFilterButton = document.getElementById(APPLY_FILTER_BUTTON);
@@ -33,10 +35,27 @@ const filterStates = {
   size: DEFAULT_PAGE_SIZE,
 };
 
+if (isDev) {
+  filterButton.style.display = 'none';
+  badgesContainer.style.display = 'none';
+  activeFilterTags.classList.remove('hidden');
+  document.addEventListener('DOMContentLoaded', () => {
+    renderFilterComponent({
+      filterComponent,
+      page: 'task-requests',
+      parentContainer: taskRequestContainer,
+      renderFunction: renderTaskRequestCards,
+      otherFilters: filterStates,
+    });
+  });
+}
+
 const updateFilterStates = (key, value) => {
   filterStates[key] = value;
   const constructedQueryString = formURLQueryString(filterStates, isDev);
-  manipulateURLQueryParams(constructedQueryString);
+  if (!isDev) {
+    manipulateURLQueryParams(constructedQueryString);
+  }
   if (key === 'order' && isDev) {
     updateSortIcon();
   }
@@ -168,7 +187,9 @@ function showBadges() {
     (filterStates?.status && filterStates.status.length > 0) ||
     (filterStates?.requestType && filterStates.requestType.length > 0)
   ) {
-    filtersHeader.style.display = 'flex';
+    if (!isDev) {
+      filtersHeader.style.display = 'flex';
+    }
   } else {
     filtersHeader.style.display = 'none';
   }
@@ -233,11 +254,14 @@ function uncheckCheckbox(value) {
   }
 }
 function toggleStatusCheckbox(statusValue) {
-  const element = document.querySelector(
-    `#status-filter input[value=${statusValue}]`,
-  );
-  element.checked = !element.checked;
+  if (!isDev) {
+    const element = document.querySelector(
+      `#status-filter input[value=${statusValue}]`,
+    );
+    element.checked = !element.checked;
+  }
 }
+
 function clearCheckboxes(groupName) {
   const checkboxes = document.querySelectorAll(`input[name="${groupName}"]`);
   checkboxes.forEach((cb) => {
@@ -398,12 +422,13 @@ function populateStatus() {
     { name: 'Creation', id: 'creation' },
   ];
 
-  statusList.map(({ name, id }) => addCheckbox(name, id, 'status-filter'));
+  if (!isDev) {
+    statusList.map(({ name, id }) => addCheckbox(name, id, 'status-filter'));
 
-  requestList.map(({ name, id }) =>
-    addCheckbox(name, id, 'request-type-filter'),
-  );
-
+    requestList.map(({ name, id }) =>
+      addCheckbox(name, id, 'request-type-filter'),
+    );
+  }
   const sortByList = [
     {
       name: 'Least Requested',
@@ -591,7 +616,10 @@ async function render() {
   if (!params.get('sort')) {
     toggleStatusCheckbox(Status.PENDING.toUpperCase());
     const constructedQueryString = formURLQueryString(filterStates, isDev);
-    manipulateURLQueryParams(constructedQueryString);
+    if (!isDev) {
+      manipulateURLQueryParams(constructedQueryString);
+    }
+
     if (isDev) {
       updateSortIcon();
       showBadges();
