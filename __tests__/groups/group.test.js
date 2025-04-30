@@ -389,7 +389,7 @@ describe('Discord Groups Page', () => {
     expect(loaderAfter).toBeFalsy();
   });
 
-  it.skip('should show success toast when trying to delete a group', async function () {
+  it('should show success toast when trying to delete a group', async function () {
     setSuperUserPermission();
     await page.goto(`${LOCAL_TEST_PAGE_URL}/groups?dev=true`);
     await page.waitForNetworkIdle();
