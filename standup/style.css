@@ -153,8 +153,10 @@ tr:nth-child(even) {
 }
 
 tr:hover {
-  background-color: var(--dark-gray-color);
   cursor: pointer;
+}
+td:hover {
+  background-color: var(--dark-gray-color);
 }
 
 .table-container {
