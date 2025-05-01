@@ -1,55 +1,60 @@
-function renderFilterComponent({
-  filterComponent,
-  page,
-  parentContainer,
-  renderFunction,
-  otherFilters = {},
-}) {
-  const filterContainer = document.createElement('div');
-  filterContainer.className = 'filter__component__container';
-  filterContainer.setAttribute('data-testid', 'filter-component-container');
+function renderFilterComponent(componentData) {
+  const filterComponentDOM = createFilterComponentDOM();
+  componentData.filterComponent.appendChild(filterComponentDOM);
+  populateStatusFilters(componentData);
+  setupFilterEventListeners(componentData);
+}
 
-  const shouldAllowMultipleSelection =
-    page !== 'requests' && page !== 'applications';
-  filterContainer.innerHTML = `
-      <button
-        id="filter-component-toggle-button"
-        class="filter__component__toggle__button"
-        data-testid="filter-component-toggle-button"
-      >
-        <span class="filter__component__label" data-testid="filter-component-label">
-          Filters
-        </span>
-        <img
-          class="filter__component__icon"
-          src="/images/filter-icon.svg"
-          alt="Filter icon"
-          data-testid="filter-component-icon"
-        />
-      </button>
-  
-      <div
-        class="filter__component__modal hidden"
-        id="filter-component-modal"
-        data-testid="filter-component-modal"
-      >
-        <div
-          class="filter__component__options__container"
-          id="filter-component-options-container"
-          data-testid="filter-component-options-container"
-        ></div>
+function createFilterComponentDOM() {
+  const fragment = document.createDocumentFragment();
+
+  const container = document.createElement('div');
+  container.className = 'filter__component__container';
+  container.setAttribute('data-testid', 'filter-component-container');
+
+  container.innerHTML = `
         <button
-          id="apply-filter-component-button"
-          class="apply__filter__component__button"
-          data-testid="apply-filter-component-button"
+          id="filter-component-toggle-button"
+          class="filter__component__toggle__button"
+          data-testid="filter-component-toggle-button"
         >
-          Apply Filter
+          <span class="filter__component__label" data-testid="filter-component-label">
+            Filters
+          </span>
+          <img
+            class="filter__component__icon"
+            src="/images/filter-icon.svg"
+            alt="Filter icon"
+            data-testid="filter-component-icon"
+          />
         </button>
-      </div>
-    `;
+    
+        <div
+          class="filter__component__modal hidden"
+          id="filter-component-modal"
+          data-testid="filter-component-modal"
+        >
+          <div
+            class="filter__component__options__container"
+            id="filter-component-options-container"
+            data-testid="filter-component-options-container"
+          ></div>
+          <button
+            id="apply-filter-component-button"
+            class="apply__filter__component__button"
+            data-testid="apply-filter-component-button"
+          >
+            Apply Filter
+          </button>
+        </div>
+      `;
 
-  filterComponent.appendChild(filterContainer);
+  fragment.appendChild(container);
+  return fragment;
+}
 
+function setupFilterEventListeners(componentData) {
+  const filterContainer = componentData.filterComponent;
   const filterButton = filterContainer.querySelector(
     '#filter-component-toggle-button',
   );
@@ -57,92 +62,14 @@ function renderFilterComponent({
   const applyFilterButton = filterContainer.querySelector(
     '#apply-filter-component-button',
   );
-  const filterOptionsContainer = filterContainer.querySelector(
-    '#filter-component-options-container',
-  );
   const tagContainer = document.querySelector('#active-filter-tags');
-
-  function populateStatusFilters(page) {
-    let statusList = [
-      { name: 'Approved', id: 'APPROVED' },
-      { name: 'Pending', id: 'PENDING' },
-      { name: 'Rejected', id: 'REJECTED' },
-    ];
-
-    if (page === 'extension-requests') {
-      statusList = statusList.map((status) =>
-        status.id === 'REJECTED'
-          ? { ...status, name: 'Denied', id: 'DENIED' }
-          : { ...status },
-      );
-    } else if (page === 'applications') {
-      statusList = statusList.map((status) =>
-        status.id === 'APPROVED'
-          ? { ...status, name: 'Accepted', id: 'ACCEPTED' }
-          : { ...status },
-      );
-    } else if (page === 'task-requests') {
-      statusList = statusList.map((status) =>
-        status.id === 'REJECTED'
-          ? { ...status, name: 'Denied', id: 'DENIED' }
-          : { ...status },
-      );
-      statusList = [
-        ...statusList,
-        { name: 'Assignment', id: 'ASSIGNMENT' },
-        { name: 'Creation', id: 'CREATION' },
-      ];
-    }
-
-    const filterHeader = document.createElement('div');
-    filterHeader.className = 'filter__component__header';
-
-    const filterTitle = document.createElement('p');
-    filterTitle.className = 'filter__component__title';
-    filterTitle.textContent = 'Filter By Status';
-
-    const clearFilterButton = document.createElement('button');
-    clearFilterButton.className = 'filter__component__clear__button';
-    clearFilterButton.id = 'filter-component-clear-button';
-    clearFilterButton.textContent = 'Clear';
-    clearFilterButton.disabled = true;
-    clearFilterButton.setAttribute(
-      'data-testid',
-      'filter-component-clear-button',
-    );
-
-    filterHeader.append(filterTitle, clearFilterButton);
-
-    clearFilterButton.addEventListener('click', async function () {
-      filterModal.classList.add('hidden');
-      deselectAllCheckboxes();
-      const tagContainer = document.getElementById('active-filter-tags');
-      tagContainer.innerHTML = '';
-
-      updateQueryParamInUrl(null, page);
-      clearFilterButton.disabled = true;
-      await updateDataBasedOnFilters({
-        renderFunction,
-        filterStatus: null,
-        page,
-        parentContainer,
-        otherFilters,
-      });
-    });
-
-    document
-      .querySelector('#filter-component-options-container')
-      .prepend(filterHeader);
-
-    for (const { name, id } of statusList) {
-      addFilterCheckbox(name, id, filterOptionsContainer);
-    }
-
-    checkQueryStatus();
-  }
 
   function toggleFilter() {
     filterModal.classList.toggle('hidden');
+  }
+
+  function closeFilter() {
+    filterModal.classList.add('hidden');
   }
 
   document.addEventListener('click', (event) => {
@@ -161,10 +88,6 @@ function renderFilterComponent({
     }
   });
 
-  function closeFilter() {
-    filterModal.classList.add('hidden');
-  }
-
   filterButton.addEventListener('click', (event) => {
     event.stopPropagation();
     toggleFilter();
@@ -174,163 +97,226 @@ function renderFilterComponent({
     closeFilter();
 
     const selectedStatuses = getSelectedStatuses();
-    updateQueryParamInUrl(selectedStatuses, page);
-    renderSelectedTags(selectedStatuses, tagContainer);
+    updateQueryParamInUrl(selectedStatuses, componentData.page);
+    renderFilterTags(selectedStatuses, tagContainer, componentData);
 
     await updateDataBasedOnFilters({
-      renderFunction,
+      renderFunction: componentData.renderFunction,
       filterStatus: selectedStatuses,
-      page,
-      parentContainer,
-      otherFilters,
+      page: componentData.page,
+      parentContainer: componentData.parentContainer,
+      otherFilters: componentData.otherFilters,
+    });
+  });
+}
+
+function populateStatusFilters(componentData) {
+  const filterHeader = document.createElement('div');
+  filterHeader.className = 'filter__component__header';
+  const filterOptionsContainer = document.querySelector(
+    '#filter-component-options-container',
+  );
+  const filterModal = document.querySelector('#filter-component-modal');
+
+  const filterTitle = document.createElement('p');
+  filterTitle.className = 'filter__component__title';
+  filterTitle.textContent = 'Filter By Status';
+
+  const clearFilterButton = document.createElement('button');
+  clearFilterButton.className = 'filter__component__clear__button';
+  clearFilterButton.id = 'filter-component-clear-button';
+  clearFilterButton.textContent = 'Clear';
+  clearFilterButton.disabled = true;
+  clearFilterButton.setAttribute(
+    'data-testid',
+    'filter-component-clear-button',
+  );
+
+  filterHeader.append(filterTitle, clearFilterButton);
+
+  clearFilterButton.addEventListener('click', async function () {
+    filterModal.classList.add('hidden');
+    deselectAllCheckboxes();
+    const tagContainer = document.getElementById('active-filter-tags');
+    tagContainer.innerHTML = '';
+
+    updateQueryParamInUrl(null, componentData.page);
+    clearFilterButton.disabled = true;
+    await updateDataBasedOnFilters({
+      renderFunction: componentData.renderFunction,
+      filterStatus: null,
+      page: componentData.page,
+      parentContainer: componentData.parentContainer,
+      otherFilters: componentData.otherFilters,
     });
   });
 
-  populateStatusFilters(page);
+  document
+    .querySelector('#filter-component-options-container')
+    .prepend(filterHeader);
 
-  const filterHeader = filterContainer.querySelector(
+  for (const { name, id } of componentData.statusList) {
+    addFilterCheckbox(name, id, filterOptionsContainer, componentData);
+  }
+
+  syncCheckboxesWithURL(componentData);
+}
+
+function syncCheckboxesWithURL(componentData) {
+  const clearFilterButton = document.querySelector(
+    '#filter-component-clear-button',
+  );
+  const tagContainer = document.getElementById('active-filter-tags');
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const qParam = urlParams.get('q');
+  const statusParam = urlParams.get('status');
+  const statusParams = urlParams.getAll('status');
+  const requestTypeParams = urlParams.getAll('request-type');
+  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+  if (!qParam && !statusParam && requestTypeParams.length === 0) {
+    return;
+  }
+
+  let statusValues = [];
+  let requestTypeValues = [];
+
+  if (qParam) {
+    const statusMatch = qParam.match(/status:([^&]+)/);
+    if (statusMatch) {
+      statusValues = statusMatch[1].split('+');
+    }
+  } else if (statusParam) {
+    statusValues = statusParam.split(/[\+,]/);
+  }
+
+  if (componentData.page === 'task-requests') {
+    if (statusParams.length > 0) {
+      statusValues = statusParams.map((value) => value.toUpperCase());
+    }
+    if (requestTypeParams.length > 0) {
+      requestTypeValues = requestTypeParams.map((value) => value.toUpperCase());
+    }
+  }
+
+  if (componentData.page !== 'extension-requests') {
+    statusValues = statusValues.map((status) => status.toUpperCase());
+  }
+
+  const allValuesToCheck = [...requestTypeValues, ...statusValues];
+
+  checkboxes.forEach((checkbox) => {
+    checkbox.checked = allValuesToCheck.includes(checkbox.id);
+  });
+
+  clearFilterButton.disabled = allValuesToCheck.length === 0;
+  renderFilterTags(allValuesToCheck, tagContainer, componentData);
+}
+
+function addFilterCheckbox(labelText, value, group, componentData) {
+  const label = document.createElement('label');
+  const checkbox = document.createElement('input');
+  const clearFilterButton = document.querySelector(
+    '#filter-component-clear-button',
+  );
+
+  checkbox.type = 'checkbox';
+  checkbox.value = value;
+  checkbox.id = value;
+
+  checkbox.addEventListener('change', () => {
+    if (!componentData.shouldAllowMultipleSelection && checkbox.checked) {
+      const checkboxes = group.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach((cb) => {
+        if (cb !== checkbox) cb.checked = false;
+      });
+    }
+    const anyChecked =
+      group.querySelectorAll('input[type="checkbox"]:checked').length > 0;
+    clearFilterButton.disabled = !anyChecked;
+  });
+
+  label.setAttribute('for', value);
+  label.textContent = labelText;
+  label.prepend(checkbox);
+  label.appendChild(document.createElement('br'));
+  label.classList.add('filter__component__status__filter');
+
+  if (componentData.page === 'task-requests' && value === 'ASSIGNMENT') {
+    const requestTypeLabel = document.createElement('p');
+    requestTypeLabel.textContent = 'Request Type';
+    group.appendChild(requestTypeLabel);
+    requestTypeLabel.classList.add('filter__component__request-type-label');
+    requestTypeLabel.setAttribute('data-testid', 'request-type-label');
+  }
+
+  group.appendChild(label);
+}
+
+function renderFilterTags(statuses, tagContainer, componentData) {
+  if (!tagContainer) return;
+  if (componentData.page === 'extension-requests') {
+    tagContainer.classList.add('extension-page-padding');
+  }
+  const filterOptionsContainer = document.querySelector(
+    '#filter-component-options-container',
+  );
+  const filterHeader = componentData.filterComponent.querySelector(
     '.filter__component__header',
   );
 
   const clearFilterButton = filterHeader.querySelector(
     '#filter-component-clear-button',
   );
+  const oldTags = tagContainer.querySelectorAll('.filter__component__tag');
+  oldTags.forEach((oldTag) => {
+    oldTag.remove();
+  });
 
-  function checkQueryStatus() {
-    const clearFilterButton = filterContainer.querySelector(
-      '#filter-component-clear-button',
-    );
-    const urlParams = new URLSearchParams(window.location.search);
-    const qParam = urlParams.get('q');
-    const statusParam = urlParams.get('status');
-    const requestTypeParams = urlParams.getAll('request-type');
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  const validCheckboxIds = getAllValidCheckboxIds(filterOptionsContainer);
+  const validStatuses = statuses.filter((status) =>
+    validCheckboxIds.includes(status),
+  );
 
-    if (!qParam && !statusParam && requestTypeParams.length === 0) {
-      return;
-    }
+  validStatuses.forEach((status) => {
+    const tag = document.createElement('div');
+    tag.className = 'filter__component__tag';
+    tag.id = 'filter-component-tag';
+    tag.setAttribute('data-status', status);
+    tag.textContent = status.charAt(0) + status.slice(1).toLowerCase();
 
-    let statusValues = [];
-    let requestTypeValues = [];
+    const removeTag = document.createElement('img');
+    removeTag.className = 'filter__component__tag__close';
+    removeTag.src = '/images/x-icon-purple.svg';
+    removeTag.style.cursor = 'pointer';
 
-    if (qParam) {
-      const statusMatch = qParam.match(/status:([^&]+)/);
-      if (statusMatch) {
-        statusValues = statusMatch[1].split('+');
+    removeTag.addEventListener('click', async () => {
+      const checkbox = document.getElementById(status);
+      if (checkbox) {
+        checkbox.checked = false;
+        checkbox.dispatchEvent(new Event('change'));
       }
-    } else if (statusParam) {
-      statusValues = statusParam.split(/[\+,]/);
-    }
 
-    if (requestTypeParams.length > 0 && page === 'task-requests') {
-      requestTypeValues = requestTypeParams.map((value) => value.toUpperCase());
-    }
+      tag.remove();
 
-    if (page !== 'extension-requests') {
-      statusValues = statusValues.map((status) => status.toUpperCase());
-    }
+      const updatedStatuses = getSelectedStatuses();
+      clearFilterButton.disabled = updatedStatuses.length === 0;
 
-    const allValuesToCheck = [...requestTypeValues, ...statusValues];
+      updateQueryParamInUrl(updatedStatuses, componentData.page);
 
-    checkboxes.forEach((checkbox) => {
-      checkbox.checked = allValuesToCheck.includes(checkbox.id);
-    });
-
-    clearFilterButton.disabled = allValuesToCheck.length === 0;
-    renderSelectedTags(allValuesToCheck, tagContainer);
-  }
-
-  function addFilterCheckbox(labelText, value, group) {
-    const label = document.createElement('label');
-    const checkbox = document.createElement('input');
-
-    checkbox.type = 'checkbox';
-    checkbox.value = value;
-    checkbox.id = value;
-
-    checkbox.addEventListener('change', () => {
-      if (!shouldAllowMultipleSelection && checkbox.checked) {
-        const checkboxes = group.querySelectorAll('input[type="checkbox"]');
-        checkboxes.forEach((cb) => {
-          if (cb !== checkbox) cb.checked = false;
-        });
-      }
-      const anyChecked =
-        group.querySelectorAll('input[type="checkbox"]:checked').length > 0;
-      clearFilterButton.disabled = !anyChecked;
-    });
-
-    label.setAttribute('for', value);
-    label.textContent = labelText;
-    label.prepend(checkbox);
-    label.appendChild(document.createElement('br'));
-    label.classList.add('filter__component__status__filter');
-
-    if (page === 'task-requests' && value === 'ASSIGNMENT') {
-      const requestTypeLabel = document.createElement('p');
-      requestTypeLabel.textContent = 'Request Type';
-      group.appendChild(requestTypeLabel);
-      requestTypeLabel.classList.add('filter__component__request-type-label');
-      requestTypeLabel.setAttribute('data-testid', 'request-type-label');
-    }
-
-    group.appendChild(label);
-  }
-
-  function renderSelectedTags(statuses, tagContainer) {
-    if (!tagContainer) return;
-    if (page === 'extension-requests') {
-      tagContainer.classList.add('extension-page-padding');
-    }
-    const oldTags = tagContainer.querySelectorAll('.filter__component__tag');
-    oldTags.forEach((oldTag) => {
-      oldTag.remove();
-    });
-
-    const validCheckboxIds = getAllValidCheckboxIds(filterOptionsContainer);
-    const validStatuses = statuses.filter((status) =>
-      validCheckboxIds.includes(status),
-    );
-
-    validStatuses.forEach((status) => {
-      const tag = document.createElement('div');
-      tag.className = 'filter__component__tag';
-      tag.id = 'filter-component-tag';
-      tag.setAttribute('data-status', status);
-      tag.textContent = status.charAt(0) + status.slice(1).toLowerCase();
-
-      const removeTag = document.createElement('img');
-      removeTag.className = 'filter__component__tag__close';
-      removeTag.src = '/images/x-icon-purple.svg';
-      removeTag.style.cursor = 'pointer';
-
-      removeTag.addEventListener('click', async () => {
-        const checkbox = document.getElementById(status);
-        if (checkbox) {
-          checkbox.checked = false;
-          checkbox.dispatchEvent(new Event('change'));
-        }
-
-        tag.remove();
-
-        const updatedStatuses = getSelectedStatuses();
-        clearFilterButton.disabled = updatedStatuses.length === 0;
-
-        updateQueryParamInUrl(updatedStatuses, page);
-
-        await updateDataBasedOnFilters({
-          renderFunction,
-          filterStatus: updatedStatuses,
-          page,
-          parentContainer,
-          otherFilters,
-        });
+      await updateDataBasedOnFilters({
+        renderFunction: componentData.renderFunction,
+        filterStatus: updatedStatuses,
+        page: componentData.page,
+        parentContainer: componentData.parentContainer,
+        otherFilters: componentData.otherFilters,
       });
-
-      tag.appendChild(removeTag);
-      tagContainer.appendChild(tag);
     });
-  }
+
+    tag.appendChild(removeTag);
+    tagContainer.appendChild(tag);
+  });
 }
 
 function deselectAllCheckboxes() {
@@ -433,9 +419,9 @@ async function updateDataBasedOnFilters({
   } else if (page === 'applications') {
     parentContainer.innerHTML = '';
     const status =
-      +Array.isArray(filterStatus) && filterStatus.length > 0
+      Array.isArray(filterStatus) && filterStatus.length > 0
         ? filterStatus[0].toLowerCase()
-        : '';
+        : 'all';
     await renderFunction('', status);
   } else if (page === 'task-requests') {
     parentContainer.innerHTML = '';
