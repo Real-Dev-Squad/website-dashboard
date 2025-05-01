@@ -130,9 +130,6 @@ describe('Applications page', () => {
 
   afterEach(async () => {
     await page.close();
-  });
-
-  afterAll(async () => {
     await browser.close();
   });
 
@@ -368,11 +365,8 @@ describe('Applications page', () => {
     await page.click('[data-testid="filter-component-toggle-button"]');
     const applyFilterButton = '[data-testid="apply-filter-component-button"]';
     await page.waitForSelector(applyFilterButton, { visible: true });
-
     await page.click(`input[type="checkbox"][id="ACCEPTED"]`);
-
     await page.click(applyFilterButton);
-
     await page.waitForNetworkIdle();
     const applicationCardElements = await page.$$('.application-card');
     expect(applicationCardElements.length).toBe(acceptedApplications.length);

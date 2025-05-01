@@ -4,6 +4,7 @@ const {
   requestActionResponse,
   approvedRequest,
   extensionRequest,
+  approvedRequestsData,
   onboardingExtensionRequest,
 } = require('../../mock-data/requests');
 const { allUsersData, userRandhir } = require('../../mock-data/users');
@@ -116,6 +117,20 @@ describe('Tests the request cards', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
           body: JSON.stringify(userRandhir),
+        });
+      } else if (
+        url ===
+        `${STAGING_API_URL}/requests?dev=true&type=OOO&size=12&state=APPROVED`
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(approvedRequestsData),
         });
       } else {
         interceptedRequest.continue();
@@ -586,27 +601,23 @@ describe('Tests the request cards', () => {
     );
   });
 
-  it('should show only "APPROVED" requests after selecting "APPROVED" filter when dev=true', async () => {
+  it('should show only "APPROVED" requests after approved filter is applied when dev=true', async () => {
     await page.goto(`${LOCAL_TEST_PAGE_URL}/requests?dev=true`);
     await page.waitForNetworkIdle();
     await page.click('[data-testid="filter-component-toggle-button"]');
     const applyFilterButton = '[data-testid="apply-filter-component-button"]';
     await page.waitForSelector(applyFilterButton, { visible: true });
-
     await page.click(`input[type="checkbox"][id="APPROVED"]`);
-
     await page.click(applyFilterButton);
-
     await page.waitForNetworkIdle();
 
     const requestCards = await page.$$('[data-testid="ooo-request-card"]');
+    expect(requestCards.length).toBe(approvedRequestsData.data.length);
 
-    for (const card of requestCards) {
-      const statusText = await card.$eval(
-        '[data-testid="request-status"]',
-        (el) => el.textContent,
-      );
-      expect(statusText).toContain('Approved');
-    }
+    const statusText = await requestCards[0].$eval(
+      '[data-testid="request-status"]',
+      (el) => el.textContent,
+    );
+    expect(statusText).toContain('Approved');
   });
 });

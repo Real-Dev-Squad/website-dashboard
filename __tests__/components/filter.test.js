@@ -60,8 +60,6 @@ describe('Filter Component Core Functionality', () => {
 
   afterEach(async () => {
     await page.close();
-  });
-  afterAll(async () => {
     await browser.close();
   });
 
@@ -88,8 +86,18 @@ describe('Filter Component Core Functionality', () => {
     expect(applyButton).toBeTruthy();
     const clearButton = await page.$(clearFilterButtonSelector);
     expect(clearButton).toBeTruthy();
-    const checkbox = await page.$(`input[type="checkbox"][id="ACCEPTED"]`);
-    expect(checkbox).toBeTruthy();
+    const acceptedCheckbox = await page.$(
+      `input[type="checkbox"][id="ACCEPTED"]`,
+    );
+    expect(acceptedCheckbox).toBeTruthy();
+    const pendingCheckbox = await page.$(
+      `input[type="checkbox"][id="PENDING"]`,
+    );
+    expect(pendingCheckbox).toBeTruthy();
+    const rejectedCheckbox = await page.$(
+      `input[type="checkbox"][id="REJECTED"]`,
+    );
+    expect(rejectedCheckbox).toBeTruthy();
   });
 
   it('should toggle the clear button state based on checkbox selection', async () => {
@@ -126,7 +134,7 @@ describe('Filter Component Core Functionality', () => {
     await page.click(`input[type="checkbox"][id="${statusToApply}"]`);
 
     await page.click(applyFilterButtonSelector);
-    await page.waitForSelector(filterModalSelector + '.hidden');
+    await page.waitForSelector(`${filterModalSelector}.hidden`);
     await page.waitForNetworkIdle();
 
     expect(page.url()).toContain(`status=${statusToApply.toLowerCase()}`);
@@ -148,7 +156,7 @@ describe('Filter Component Core Functionality', () => {
     await page.waitForSelector(`${filterModalSelector}:not(.hidden)`);
     await page.click(`input[type="checkbox"][id="${statusToApply}"]`);
     await page.click(applyFilterButtonSelector);
-    await page.waitForSelector(filterModalSelector + '.hidden');
+    await page.waitForSelector(`${filterModalSelector}.hidden`);
     await page.waitForNetworkIdle();
     expect(page.url()).toContain(`status=${statusToApply.toLowerCase()}`);
 
@@ -213,33 +221,33 @@ describe('Filter Component Core Functionality', () => {
     expect(isClearButtonDisabled).toBe(true);
   });
 
-  it('should sync checkbox state and tag with URL status param on load', async () => {
+  it('should apply the appropriate filter and tag based on the page URL', async () => {
     await page.goto(
       `${LOCAL_TEST_PAGE_URL}/applications?status=accepted&dev=true`,
     );
     await page.waitForNetworkIdle();
 
-    const status = 'ACCEPTED';
+    const acceptedStatus = 'ACCEPTED';
     const tag = await page.$(
-      `${activeFilterTagsSelector} .filter__component__tag[data-status="${status}"]`,
+      `${activeFilterTagsSelector} .filter__component__tag[data-status="${acceptedStatus}"]`,
     );
     expect(tag).toBeTruthy();
 
     await page.click(filterButtonSelector);
     await page.waitForSelector(`${filterModalSelector}:not(.hidden)`);
     const isCheckboxChecked = await page.$eval(
-      `input[type="checkbox"][id="${status}"]`,
+      `input[type="checkbox"][id="${acceptedStatus}"]`,
       (el) => el.checked,
     );
     expect(isCheckboxChecked).toBe(true);
-    const isClearButtonDisabled = await page.$eval(
+    const isClearButtonEnable = await page.$eval(
       clearFilterButtonSelector,
-      (el) => el.disabled,
+      (el) => !el.disabled,
     );
-    expect(isClearButtonDisabled).toBe(false);
+    expect(isClearButtonEnable).toBe(true);
   });
 
-  it('should allow only single selection on application page', async () => {
+  it('should apply only one filter on application page', async () => {
     await page.click(filterButtonSelector);
     await page.waitForSelector(`${filterModalSelector}:not(.hidden)`);
 
@@ -251,16 +259,17 @@ describe('Filter Component Core Functionality', () => {
     expect(isPendingChecked).toBe(true);
 
     await page.click(`input[type="checkbox"][id="ACCEPTED"]`);
-    isPendingChecked = await page.$eval(
-      `input[type="checkbox"][id="PENDING"]`,
-      (el) => el.checked,
-    );
+
     let isAcceptedChecked = await page.$eval(
       `input[type="checkbox"][id="ACCEPTED"]`,
       (el) => el.checked,
     );
-
-    expect(isPendingChecked).toBe(false);
     expect(isAcceptedChecked).toBe(true);
+
+    isPendingChecked = await page.$eval(
+      `input[type="checkbox"][id="PENDING"]`,
+      (el) => el.checked,
+    );
+    expect(isPendingChecked).toBe(false);
   });
 });

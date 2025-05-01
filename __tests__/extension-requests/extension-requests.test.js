@@ -1218,14 +1218,10 @@ describe('Tests the Extension Requests Screen', () => {
     await page.click('[data-testid="filter-component-toggle-button"]');
     const applyFilterButton = '[data-testid="apply-filter-component-button"]';
     await page.waitForSelector(applyFilterButton, { visible: true });
-
     await page.click(`input[type="checkbox"][id="APPROVED"]`);
     await page.click(`input[type="checkbox"][id="DENIED"]`);
-
     await page.click(applyFilterButton);
-
     await page.waitForNetworkIdle();
-
     const extensionRequestCards = await page.$$('.extension-card');
     expect(extensionRequestCards.length).toBe(
       extensionRequestListForAuditLogs.allExtensionRequests.length,
