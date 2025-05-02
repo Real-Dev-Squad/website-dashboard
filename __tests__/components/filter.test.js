@@ -174,11 +174,11 @@ describe('Filter Component Core Functionality', () => {
 
     await page.click(filterButtonSelector);
     await page.waitForSelector(`${filterModalSelector}:not(.hidden)`);
-    const isCheckboxChecked = await page.$eval(
+    const isPendingChecked = await page.$eval(
       `input[type="checkbox"][id="${statusToApply}"]`,
       (el) => el.checked,
     );
-    expect(isCheckboxChecked).toBe(false);
+    expect(isPendingChecked).toBe(false);
     const isClearButtonDisabled = await page.$eval(
       clearFilterButtonSelector,
       (el) => el.disabled,
@@ -209,11 +209,11 @@ describe('Filter Component Core Functionality', () => {
 
     await page.click(filterButtonSelector);
     await page.waitForSelector(`${filterModalSelector}:not(.hidden)`);
-    const isCheckboxChecked = await page.$eval(
+    const isAcceptedChecked = await page.$eval(
       `input[type="checkbox"][id="${statusToApply}"]`,
       (el) => el.checked,
     );
-    expect(isCheckboxChecked).toBe(false);
+    expect(isAcceptedChecked).toBe(false);
     const isClearButtonDisabled = await page.$eval(
       clearFilterButtonSelector,
       (el) => el.disabled,
@@ -235,16 +235,16 @@ describe('Filter Component Core Functionality', () => {
 
     await page.click(filterButtonSelector);
     await page.waitForSelector(`${filterModalSelector}:not(.hidden)`);
-    const isCheckboxChecked = await page.$eval(
+    const isAcceptedChecked = await page.$eval(
       `input[type="checkbox"][id="${acceptedStatus}"]`,
       (el) => el.checked,
     );
-    expect(isCheckboxChecked).toBe(true);
-    const isClearButtonEnable = await page.$eval(
+    expect(isAcceptedChecked).toBe(true);
+    const isClearButtonEnabled = await page.$eval(
       clearFilterButtonSelector,
       (el) => !el.disabled,
     );
-    expect(isClearButtonEnable).toBe(true);
+    expect(isClearButtonEnabled).toBe(true);
   });
 
   it('should apply only one filter on application page', async () => {
