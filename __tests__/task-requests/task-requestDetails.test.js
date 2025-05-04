@@ -414,7 +414,7 @@ describe('Task request details page with status creation', () => {
     );
   });
 
-  it.skip('should show success toast after approving the task  request', async function () {
+  it('should show success toast after approving the task  request', async function () {
     await page.goto(
       `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq5&dev=true`,
     );

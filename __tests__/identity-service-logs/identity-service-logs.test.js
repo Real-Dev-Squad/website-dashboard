@@ -3,7 +3,7 @@ const {
   STAGING_API_URL,
   LOCAL_TEST_PAGE_URL,
 } = require('../../mock-data/constants');
-describe.skip('Toast Functionality (Dev Mode Enabled)', () => {
+describe('Toast Functionality (Dev Mode Enabled)', () => {
   let browser;
   let page;
   jest.setTimeout(60000);
@@ -21,7 +21,6 @@ describe.skip('Toast Functionality (Dev Mode Enabled)', () => {
 
     page.on('request', (interceptedRequest) => {
       const url = interceptedRequest.url();
-      console.log(url);
 
       if (url === `${STAGING_API_URL}/users?profile=true`) {
         interceptedRequest.respond({

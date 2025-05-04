@@ -180,7 +180,12 @@ async function updateTaskRequest(action, userId) {
     });
 
     if (res.ok) {
-      showToast('Task updated Successfully', 'success');
+      showToastMessage({
+        isDev,
+        oldToastFunction: showToast,
+        type: 'success',
+        message: 'Task updated Successfully',
+      });
       taskRequest = await fetchTaskRequest();
       requestorsContainer.innerHTML = '';
       updateStatus(taskRequest.status);
@@ -188,10 +193,20 @@ async function updateTaskRequest(action, userId) {
       renderRejectButton(taskRequest);
       return res;
     } else {
-      showToast(errorMessage, 'failure');
+      showToastMessage({
+        isDev,
+        oldToastFunction: showToast,
+        type: 'failure',
+        message: errorMessage,
+      });
     }
   } catch (e) {
-    showToast(errorMessage, 'failure');
+    showToastMessage({
+      isDev,
+      oldToastFunction: showToast,
+      type: 'failure',
+      message: errorMessage,
+    });
     console.error(e);
   } finally {
     removeSpinner();
@@ -647,7 +662,12 @@ function populateModalContent(index) {
     index < 0 ||
     index >= taskRequest.users.length
   ) {
-    showToast('No Data Available for this requestor', 'failure');
+    showToastMessage({
+      isDev,
+      oldToastFunction: showToast,
+      type: 'failure',
+      message: 'No Data Available for this requestor',
+    });
     return;
   }
   const modal = document.getElementById('requestor_details_modal_content');

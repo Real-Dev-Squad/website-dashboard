@@ -329,7 +329,7 @@ describe('Applications page', () => {
     expect(repoLinkStyle).toBeTruthy();
   });
 
-  it.skip('should show success toast after accepting an application', async function () {
+  it('should show success toast after accepting an application', async function () {
     await page.goto(
       `${LOCAL_TEST_PAGE_URL}/applications?dev=true&status=pending`,
     );
