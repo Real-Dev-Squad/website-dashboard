@@ -7,7 +7,6 @@ export const UserDetailsSection = ({
   return createElement(
     'section',
     {
-      class: 'user_details_section',
       'data-testid': 'user-details-section',
     },
     [
