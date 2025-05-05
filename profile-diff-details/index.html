@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/profile-diff-details/style.css" />
+    <link rel="stylesheet" href="/components/toast/style.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
@@ -19,11 +20,19 @@
       Request Details
     </header>
     <div id="toast" class="hidden"></div>
+    <div
+      id="toastComponent"
+      data-testid="toast-component"
+      class="toast__component toast__hidden"
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
+    ></div>
     <div class="container"></div>
 
     <script src="/helpers/loadENV.js"></script>
     <script src="/utils.js"></script>
-
+    <script src="/components/toast/script.js" defer></script>
     <script src="/profile-diff-details/constants.js"></script>
     <script src="/profile-diff-details/profileDiffDetails.utils.js"></script>
     <script src="/profile-diff-details/profileDiffDetails.apiCalls.js"></script>

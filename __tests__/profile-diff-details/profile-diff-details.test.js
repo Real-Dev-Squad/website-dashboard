@@ -6,7 +6,7 @@ const {
 const { pendingProfileDiff } = require('../../mock-data/profile-diff-details');
 const { superUserData, userRandhir } = require('../../mock-data/users');
 
-describe.skip('Toast Functionality (Dev Mode Enabled)', () => {
+describe('Toast Functionality (Dev Mode Enabled)', () => {
   let browser;
   let page;
   jest.setTimeout(60000);
