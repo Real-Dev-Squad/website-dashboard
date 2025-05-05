@@ -49,10 +49,17 @@ const filterButton = isDev
 if (isDev) {
   activeFilterTags.classList.remove('hidden');
   filterComponent.classList.remove('hidden');
+  const statusList = [
+    { name: 'Accepted', id: 'ACCEPTED' },
+    { name: 'Pending', id: 'PENDING' },
+    { name: 'Rejected', id: 'REJECTED' },
+  ];
   document.addEventListener('DOMContentLoaded', () => {
     renderFilterComponent({
       filterComponent,
       page: 'applications',
+      statusList,
+      shouldAllowMultipleSelection: false,
       parentContainer: applicationContainer,
       renderFunction: renderApplicationCards,
     });

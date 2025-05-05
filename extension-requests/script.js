@@ -1494,10 +1494,17 @@ function showToast(message, type) {
 }
 
 if (isDev) {
+  const statusList = [
+    { name: 'Approved', id: 'APPROVED' },
+    { name: 'Pending', id: 'PENDING' },
+    { name: 'Denied', id: 'DENIED' },
+  ];
   document.addEventListener('DOMContentLoaded', () => {
     renderFilterComponent({
       filterComponent,
       page: 'extension-requests',
+      statusList,
+      shouldAllowMultipleSelection: true,
       parentContainer: extensionRequestsContainer,
       renderFunction: populateExtensionRequests,
       otherFilters: filterStates,

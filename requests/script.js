@@ -808,11 +808,18 @@ function populateStatus() {
 }
 updateTabLink(currentReqType);
 if (isDev) {
+  const statusList = [
+    { name: 'Approved', id: 'APPROVED' },
+    { name: 'Pending', id: 'PENDING' },
+    { name: 'Rejected', id: 'REJECTED' },
+  ];
   document.addEventListener('DOMContentLoaded', () => {
     renderFilterComponent({
       filterComponent,
       page: 'requests',
+      statusList,
       parentContainer: requestContainer,
+      shouldAllowMultipleSelection: false,
       renderFunction: renderRequestCards,
       otherFilters: {
         sortByValue,
