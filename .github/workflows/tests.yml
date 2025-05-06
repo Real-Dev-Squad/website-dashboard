@@ -27,7 +27,7 @@ jobs:
         script: |
           const prNumber = context.payload.pull_request.number;
           const workflowName = "CI"; // Name of your CI workflow
-          const runs = await github.actions.listWorkflowRunsForRepo({
+          const runs = await github.rest.actions.listWorkflowRunsForRepo({
             owner: context.repo.owner,
             repo: context.repo.repo,
             workflow_id: workflowName,
