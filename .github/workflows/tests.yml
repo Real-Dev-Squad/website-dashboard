@@ -5,12 +5,12 @@ on:
   push:
     branches: [main, develop]
   workflow_run:
-    workflows: ["CodeQL"]      # Name of your CI workflow
+    workflows: ["CodeQL"]      # Name of your CodeQL workflow
     types:
       - completed
     branches:
       - '**'
-    # Only run if CI succeeded
+    # Only run if CodeQL succeeded
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
 jobs:

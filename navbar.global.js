@@ -66,3 +66,7 @@ const addNavbartoPage = async () => {
     });
   }
 };
+function vulnerableXSS(userInput) {
+  // Dangerous: directly inserting user input into innerHTML
+  document.getElementById('output').innerHTML = userInput;
+}
