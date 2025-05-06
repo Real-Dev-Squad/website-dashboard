@@ -58,6 +58,33 @@ async function getDiscordGroups() {
     return err;
   }
 }
+
+async function getDiscordGroupsPaginated(page = null, size = 10) {
+  try {
+    const url =
+      page === null
+        ? `${BASE_URL}/discord-actions/groups?dev=true`
+        : `${BASE_URL}/discord-actions/groups?page=${page}&size=${size}&dev=true`;
+
+    const res = await fetch(url, {
+      method: 'GET',
+      credentials: 'include',
+      headers: { 'Content-type': 'application/json' },
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.message || 'Failed to fetch groups');
+    }
+
+    const { groups, links } = await res.json();
+    return { groups, nextPageUrl: links?.next || null };
+  } catch (err) {
+    console.error('Error fetching paginated groups:', err);
+    throw err;
+  }
+}
+
 async function createDiscordGroupRole(groupRoleBody) {
   try {
     const res = await fetch(`${BASE_URL}/discord-actions/groups`, {
@@ -183,6 +210,7 @@ export {
   getMembers,
   getUserSelf,
   getDiscordGroups,
+  getDiscordGroupsPaginated,
   createDiscordGroupRole,
   addGroupRoleToMember,
   removeRoleFromMember,
