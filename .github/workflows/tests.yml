@@ -18,6 +18,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    
+      - name: Check if CI workflow succeeded
+        uses: actions/github-script@v6
+        id: check_ci
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const workflowName = "CI"; // Name of your CI workflow
+            const runs = await github.actions.listWorkflowRunsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: workflowName,
+              branch: context.payload.pull_request.head.ref,
+              event: "pull_request",
+              per_page: 5,
+            });
+
+            // Find the latest run for this PR
+            const runsForPR = runs.data.workflow_runs.filter(run => run.pull_requests.some(pr => pr.number === prNumber));
+            if (runsForPR.length === 0) {
+              core.setFailed("No CI workflow run found for this PR.");
+              return;
+            }
+            const latestRun = runsForPR[0];
+
+            if (latestRun.conclusion !== "success") {
+              core.setFailed(`CI workflow failed or did not succeed (status: ${latestRun.conclusion}). Stopping Tests.`);
+            }
 
     - name: Install system dependencies
       run: |
