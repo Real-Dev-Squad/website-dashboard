@@ -21,14 +21,16 @@ on:
     - cron: '35 9 * * 6'
   workflow_run:
     workflows: ["CI"]      # Name of your CI workflow
-    types: [completed]
-    # branches:
-    #   - '**'
+    types: 
+      - completed
+    branches:
+      - ['develop', main]
     # Only run if CI succeeded
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
 jobs:
   analyze:
+    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Analyze
     runs-on: ubuntu-latest
     permissions:
