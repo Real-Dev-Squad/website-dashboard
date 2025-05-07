@@ -26,11 +26,11 @@ on:
     branches:
       - '**'
     # Only run if CI succeeded
-    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
 jobs:
   analyze:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Analyze
     runs-on: ubuntu-latest
     permissions:
