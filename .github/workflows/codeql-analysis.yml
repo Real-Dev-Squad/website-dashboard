@@ -27,9 +27,8 @@ on:
     # if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
 jobs:
-  on-success:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     analyze:
+      if: ${{ github.event.workflow_run.conclusion == 'success' }}
       name: Analyze
       runs-on: ubuntu-latest
       permissions:
@@ -77,7 +76,3 @@ jobs:
 
         - name: Perform CodeQL Analysis
           uses: github/codeql-action/analyze@v2
-  on-failure:
-    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
-    steps:
-      - run: echo 'The triggering workflow failed'
