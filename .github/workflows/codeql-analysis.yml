@@ -12,15 +12,15 @@
 name: 'CodeQL'
 
 on:
-  push:
-    branches: ['develop', main]
-  pull_request:
-    # The branches below must be a subset of the branches above
-    branches: ['develop']
+  # push:
+  #   branches: ['develop', main]
+  # pull_request:
+  #   # The branches below must be a subset of the branches above
+  #   branches: ['develop']
   schedule:
     - cron: '35 9 * * 6'
   workflow_run:
-    workflows: [CI]      # Name of your CI workflow
+    workflows: ["CI"]      # Name of your CI workflow
     types: 
       - completed
     # Only run if CI succeeded
