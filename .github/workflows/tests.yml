@@ -5,8 +5,7 @@ on:
     workflows: ["CI"]      # Must exactly match your CI workflow name
     types:
       - completed
-    branches:
-      - '**'               # Adjust branches as needed
+    branches: [develop, main]              # Adjust branches as needed
 
 jobs:
   test:
