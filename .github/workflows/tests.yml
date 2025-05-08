@@ -53,7 +53,7 @@ jobs:
           const latestRun = completedRuns[0];
 
           if (latestRun.conclusion !== "success") {
-            core.setFailed(`CI workflow failed or did not succeed (status: ${latestRun.conclusion}). Stopping Tests.`);
+            core.setFailed(`CI workflow failed or did not succeed (status: ${latestRun.conclusion, runsForPR}). Stopping Tests.`);
           }
     - name: Install system dependencies
       run: |
