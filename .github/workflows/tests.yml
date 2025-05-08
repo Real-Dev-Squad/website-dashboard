@@ -19,6 +19,14 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Wait for CI to complete
+      uses: lewagon/wait-on-check-action@v1.3.4
+      with:
+        ref: ${{ github.ref }}
+        check-name: 'CI / build (14.x)'  # Exact name of your CI check
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        wait-interval: 30
+
     - name: Check if CI workflow succeeded
       uses: actions/github-script@v6
       id: check_ci
