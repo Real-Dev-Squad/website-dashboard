@@ -12,7 +12,7 @@ on:
 
 jobs:
   test:
-    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -33,6 +33,7 @@ jobs:
             event: "pull_request",
             per_page: 5,
           });
+
           // Find the latest run for this PR
           const runsForPR = runs.data.workflow_runs.filter(run => run.pull_requests.some(pr => pr.number === prNumber));
           if (runsForPR.length === 0) {
@@ -40,6 +41,7 @@ jobs:
             return;
           }
           const latestRun = runsForPR[0];
+
           if (latestRun.conclusion !== "success") {
             core.setFailed(`CI workflow failed or did not succeed (status: ${latestRun.conclusion}). Stopping Tests.`);
           }
