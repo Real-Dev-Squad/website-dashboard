@@ -55,7 +55,7 @@ describe('Tests the request cards', () => {
           body: JSON.stringify(pendingRequest),
         });
       } else if (
-        url === `${STAGING_API_URL}/requests?dev=true&type=extension&size=12`
+        url === `${STAGING_API_URL}/requests?dev=true&type=EXTENSION&size=12`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -129,6 +129,18 @@ describe('Tests the request cards', () => {
     await browser.close();
   });
 
+  it('should not show the error toast ui after reloading a page', async () => {
+    await page.click('#extension_tab_link');
+    expect(page.url()).toContain('type=extension');
+    await page.reload();
+    expect(page.url()).toContain('type=extension');
+    const isErrorToastHidden = await page.$eval(
+      '[data-testid="toast"]',
+      (e) => e.classList.contains('hidden') && e.classList.length == 1,
+    );
+    expect(isErrorToastHidden).toBe(true);
+  });
+
   it('should match the request page url with correct request tab link after reloading the page', async () => {
     await page.click('#extension_tab_link');
     expect(page.url()).toContain('type=extension');
@@ -155,7 +167,11 @@ describe('Tests the request cards', () => {
   });
 
   it('should update the card when the accept or reject button is clicked for OOO requests', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/requests`);
+    await page.waitForNetworkIdle();
+
     await page.click('#ooo_tab_link');
+    expect(page.url()).toContain('type=ooo');
 
     await page.waitForSelector('.request__status');
     const statusButtonText = await page.$eval(
@@ -196,21 +212,40 @@ describe('Tests the request cards', () => {
     expect(statusButtonText).toBe('Approved');
   });
 
-  it('should hide the onboarding extension tab when dev is not true', async () => {
-    const onboardingTabLink = await page.$('[data-testid="onboarding-tab"]');
-    expect(await onboardingTabLink.isVisible()).toBe(false);
-  });
-
-  it('should hide filter container when dev is not true', async () => {
+  it('should show requests cards after reloading the page', async () => {
     await page.goto(`${LOCAL_TEST_PAGE_URL}/requests`);
     await page.waitForNetworkIdle();
-    const filterContainer = await page.$('[data-testid="filter-container"]');
-    expect(await filterContainer.isVisible()).toBe(false);
+
+    await page.click('#extension_tab_link');
+    expect(page.url()).toContain('type=extension');
+
+    await page.reload();
+    expect(page.url()).toContain('type=extension');
+
+    await page.waitForSelector('[data-testid="extension-request-card"]', {
+      state: 'visible',
+    });
+    const extensionCards = await page.$$(
+      '[data-testid="extension-request-card"]',
+    );
+    expect(extensionCards.length).toBe(1);
+
+    await page.click('#ooo_tab_link');
+    expect(page.url()).toContain('type=ooo');
+
+    await page.reload();
+    expect(page.url()).toContain('type=ooo');
+
+    await page.waitForSelector('[data-testid="ooo-request-card"]', {
+      state: 'visible',
+    });
+    const oooCards = await page.$$('[data-testid="ooo-request-card"]');
+    expect(oooCards.length).toBe(1);
   });
 
-  describe('Onboarding Requests UI (Dev Mode Enabled)', () => {
+  describe('Onboarding Requests UI', () => {
     beforeAll(async () => {
-      await page.goto(`${LOCAL_TEST_PAGE_URL}/requests?dev=true`);
+      await page.goto(`${LOCAL_TEST_PAGE_URL}/requests`);
       await page.waitForNetworkIdle();
     });
 
@@ -312,9 +347,9 @@ describe('Tests the request cards', () => {
     });
   });
 
-  describe('Filter Functionality (Dev Mode Enabled)', () => {
+  describe('Filter Functionality', () => {
     beforeAll(async () => {
-      await page.goto(`${LOCAL_TEST_PAGE_URL}/requests?dev=true`);
+      await page.goto(`${LOCAL_TEST_PAGE_URL}/requests`);
       await page.waitForNetworkIdle();
     });
     it('should display filter container and its elements', async () => {
@@ -512,5 +547,42 @@ describe('Tests the request cards', () => {
 
       expect(suggestionCount).toBe(0);
     });
+  });
+
+  it('should show success toast after approving any request', async function () {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/requests?dev=true`);
+    await page.waitForNetworkIdle();
+    await page.click('#ooo_tab_link');
+    await page.waitForSelector('.request__status');
+
+    const statusButtonText = await page.$eval(
+      '.request__status',
+      (el) => el.textContent,
+    );
+    expect(statusButtonText).toBe('Pending');
+
+    await page.click('.request__action__btn.accept__btn');
+    await page.waitForSelector('[data-testid="toast-component"].show');
+    const toastComponent = await page.$('[data-testid="toast-component"]');
+    expect(
+      await toastComponent.evaluate((el) => el.classList.contains('show')),
+    ).toBe(true);
+    expect(
+      await toastComponent.evaluate((el) => el.classList.contains('hide')),
+    ).toBe(false);
+    expect(
+      await toastComponent.evaluate((el) =>
+        el.classList.contains('success__toast'),
+      ),
+    ).toBe(true);
+    expect(
+      await toastComponent.evaluate((el) =>
+        el.classList.contains('error__toast'),
+      ),
+    ).toBe(false);
+    const toastMessage = await page.$('[data-testid="toast-message"]');
+    expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
+      'Request approved successfully',
+    );
   });
 });

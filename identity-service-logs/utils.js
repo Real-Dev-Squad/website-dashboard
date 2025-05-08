@@ -214,7 +214,7 @@ function showToaster(message) {
   }, 3000);
 }
 
-async function getIsSuperUser() {
+async function getIsSuperUser(isDev) {
   try {
     const res = await fetch(`${API_BASE_URL}/users?profile=true`, {
       method: 'GET',
@@ -225,7 +225,13 @@ async function getIsSuperUser() {
     });
 
     if (res.status === 500) {
-      showToaster('Something went wrong. Internal Server Error!');
+      showToastMessage({
+        isDev,
+        oldToastFunction: showToaster,
+        type: 'failure',
+        message: 'Something went wrong. Internal Server Error!',
+      });
+
       setTimeout(() => {
         window.location.href = '/index.html';
       }, 3000);
@@ -233,7 +239,13 @@ async function getIsSuperUser() {
     }
 
     if (res.status === 401) {
-      showToaster('You are not logged-in. Please login!');
+      showToastMessage({
+        isDev,
+        oldToastFunction: showToaster,
+        type: 'failure',
+        message: 'You are not logged-in. Please login!',
+      });
+
       setTimeout(() => {
         window.location.href = '/index.html';
       }, 3000);

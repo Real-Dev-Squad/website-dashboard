@@ -86,6 +86,19 @@ describe('Task request details page', () => {
           ...defaultMockResponseHeaders,
           body: JSON.stringify(urlMappings[url]),
         });
+      } else if (
+        url === `${STAGING_API_URL}/taskRequests/dM5wwDdsfd9QsiTzi7eG7Oq5`
+      ) {
+        interceptedRequest.respond({
+          status: 404,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify('Task Requests not found'),
+        });
       } else {
         interceptedRequest.continue();
       }
@@ -146,6 +159,31 @@ describe('Task request details page', () => {
       (element) => element.textContent,
     );
     expect(descriptionTextValue).toBe(longDescription);
+  });
+  it('should show "Task Requests not found" When the task ID is invalid and dev mode is enabled', async function () {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwDdsfd9QsiTzi7eG7Oq5&dev=true`,
+    );
+
+    await page.waitForNetworkIdle();
+
+    const errorText = await page.$eval(
+      '[data-testid="error-message"]',
+      (el) => el.textContent,
+    );
+    expect(errorText).toBe('Task Requests not found');
+  });
+
+  it('should not show "Task Requests not found" message when dev mode is disabled', async function () {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwDdsfd9QsiTzi7eG7Oq5`,
+    );
+
+    await page.waitForNetworkIdle();
+
+    const errorElement = await page.$('[data-testid="error-message"]');
+
+    expect(errorElement).toBeNull();
   });
 
   it('Should render Approve and Reject buttons for super users', async function () {
@@ -373,6 +411,38 @@ describe('Task request details page with status creation', () => {
 
     expect(link).toContain(
       'https://github.com/Real-Dev-Squad/members-site/issues/92',
+    );
+  });
+
+  it('should show success toast after approving the task  request', async function () {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq5&dev=true`,
+    );
+    await page.waitForNetworkIdle();
+
+    const approveButton = await page.$('[data-testid="task-approve-button"]');
+
+    await approveButton.click();
+    const toastComponent = await page.$('[data-testid="toast-component"]');
+    expect(
+      await toastComponent.evaluate((el) => el.classList.contains('show')),
+    ).toBe(true);
+    expect(
+      await toastComponent.evaluate((el) => el.classList.contains('hide')),
+    ).toBe(false);
+    expect(
+      await toastComponent.evaluate((el) =>
+        el.classList.contains('success__toast'),
+      ),
+    ).toBe(true);
+    expect(
+      await toastComponent.evaluate((el) =>
+        el.classList.contains('error__toast'),
+      ),
+    ).toBe(false);
+    const toastMessage = await page.$('[data-testid="toast-message"]');
+    expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
+      'Task updated Successfully',
     );
   });
 });

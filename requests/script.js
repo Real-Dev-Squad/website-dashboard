@@ -2,7 +2,6 @@ const API_BASE_URL = window.API_BASE_URL;
 const requestContainer = document.getElementById(REQUEST_CONTAINER_ID);
 const lastElementContainer = document.querySelector(LAST_ELEMENT_CONTAINER);
 const params = new URLSearchParams(window.location.search);
-const isDev = params.get('dev') === 'true';
 const loader = document.querySelector('.container__body__loader');
 const startLoading = () => loader.classList.remove('hidden');
 const stopLoading = () => loader.classList.add('hidden');
@@ -19,7 +18,8 @@ const filterOptionsContainer = document.getElementById(
 );
 const applyFilterButton = document.getElementById('applyFilterButton');
 const userNameFilterInput = document.getElementById('assignee-search-input');
-let currentReqType = params.get('type') ?? OOO_REQUEST_TYPE;
+let currentReqType = params.get('type')?.toUpperCase() ?? OOO_REQUEST_TYPE;
+const isDev = params.get('dev') === 'true';
 let selected__tab__class = 'selected__tab';
 let statusValue = null;
 let sortByValue = null;
@@ -47,13 +47,6 @@ function getUserDetails(id) {
   return userDetails.find((user) => user.id === id);
 }
 
-if (isDev) {
-  onboardingExtensionTabLink.classList.remove('hidden');
-  requestContainer.classList.remove('request');
-  requestContainer.classList.add('request_container');
-  filterContainer.classList.remove('hidden');
-}
-
 const intersectionObserver = new IntersectionObserver(async (entries) => {
   if (!nextLink) {
     return;
@@ -63,6 +56,7 @@ const intersectionObserver = new IntersectionObserver(async (entries) => {
       state: statusValue,
       sort: sortByValue,
       next: nextLink,
+      requestType: currentReqType,
     });
   }
 });
@@ -81,10 +75,14 @@ oooTabLink.addEventListener('click', async function (event) {
   nextLink = '';
   deselectRadioButtons();
   userNameFilterInput.value = '';
-  updateTabLink(currentReqType.toUpperCase());
+  updateTabLink(currentReqType);
   changeFilter();
   updateUrlWithQuery(currentReqType);
-  await renderRequestCards({ state: statusValue, sort: sortByValue });
+  await renderRequestCards({
+    state: statusValue,
+    sort: sortByValue,
+    requestType: currentReqType,
+  });
 });
 
 extensionTabLink.addEventListener('click', async function (event) {
@@ -94,10 +92,14 @@ extensionTabLink.addEventListener('click', async function (event) {
   nextLink = '';
   deselectRadioButtons();
   userNameFilterInput.value = '';
-  updateTabLink(currentReqType.toUpperCase());
+  updateTabLink(currentReqType);
   changeFilter();
   updateUrlWithQuery(currentReqType);
-  await renderRequestCards({ state: statusValue, sort: sortByValue });
+  await renderRequestCards({
+    state: statusValue,
+    sort: sortByValue,
+    requestType: currentReqType,
+  });
 });
 
 onboardingExtensionTabLink.addEventListener('click', async function (event) {
@@ -107,10 +109,14 @@ onboardingExtensionTabLink.addEventListener('click', async function (event) {
   nextLink = '';
   deselectRadioButtons();
   userNameFilterInput.value = '';
-  updateTabLink(currentReqType.toUpperCase());
+  updateTabLink(currentReqType);
   changeFilter();
   updateUrlWithQuery(currentReqType);
-  await renderRequestCards({ state: statusValue, sort: sortByValue });
+  await renderRequestCards({
+    state: statusValue,
+    sort: sortByValue,
+    requestType: currentReqType,
+  });
 });
 
 function updateUrlWithQuery(type) {
@@ -153,7 +159,13 @@ async function getRequests(requestType, query = {}) {
           return;
         case 400:
           showMessage('ERROR', data.message);
-          showToast(data.message, 'failure');
+          showToastMessage({
+            isDev,
+            oldToastFunction: showToast,
+            type: 'failure',
+            message: data.message,
+          });
+
           return;
         default:
           break;
@@ -470,7 +482,7 @@ async function renderRequestCards(queries = {}) {
     if (userDetails.length === 0) {
       userDetails = await getInDiscordUserList();
     }
-    requestResponse = await getRequests(currentReqType, queries);
+    requestResponse = await getRequests(queries?.requestType, queries);
 
     for (const request of requestResponse?.data || []) {
       let superUserDetails;
@@ -516,24 +528,48 @@ async function acceptRejectRequest(id, reqBody) {
     });
     const data = await res.json();
     if (res.ok) {
-      showToast(data.message, 'success');
+      showToastMessage({
+        isDev,
+        oldToastFunction: showToast,
+        type: 'success',
+        message: data.message,
+      });
+
       return data;
     } else {
       switch (res.status) {
         case 401:
-          showToast(ErrorMessages.UNAUTHORIZED_ACTION, 'failure');
+          showToastMessage({
+            isDev,
+            oldToastFunction: showToast,
+            type: 'failure',
+            message: ErrorMessages.UNAUTHORIZED_ACTION,
+          });
           showMessage('ERROR', ErrorMessages.UNAUTHORIZED_ACTION);
           break;
         case 403:
-          showToast(ErrorMessages.UNAUTHENTICATED, 'failure');
-          showMessage('ERROR', ErrorMessages.UNAUTHORIZED);
+          showToastMessage({
+            isDev,
+            oldToastFunction: showToast,
+            type: 'failure',
+            message: ErrorMessages.UNAUTHENTICATED,
+          });
           break;
         case 404:
-          showToast(ErrorMessages.OOO_NOT_FOUND, 'failure');
-          showMessage('ERROR', ErrorMessages.OOO_NOT_FOUND);
+          showToastMessage({
+            isDev,
+            oldToastFunction: showToast,
+            type: 'failure',
+            message: ErrorMessages.OOO_NOT_FOUND,
+          });
           break;
         case 400:
-          showToast(data.message, 'failure');
+          showToastMessage({
+            isDev,
+            oldToastFunction: showToast,
+            type: 'failure',
+            message: data.message,
+          });
           showMessage('ERROR', data.message);
           break;
         default:
@@ -597,7 +633,11 @@ async function performAcceptRejectAction(isAccepted, e) {
   }
 
   nextLink = '';
-  await renderRequestCards({ state: statusValue, sort: sortByValue });
+  await renderRequestCards({
+    state: statusValue,
+    sort: sortByValue,
+    requestType: currentReqType,
+  });
 }
 
 function showToast(message, type) {
@@ -660,6 +700,7 @@ applyFilterButton.addEventListener('click', async (event) => {
   const requestData = {
     state: getCheckedValues() || statusValue,
     sort: sortByValue,
+    requestType: currentReqType,
   };
 
   const username = userNameFilterInput.value.trim();
@@ -698,7 +739,10 @@ userNameFilterInput.addEventListener(
             suggestionContainer.classList.add('hidden');
             requestContainer.innerHTML = '';
 
-            const requestData = { requestedBy: user.username };
+            const requestData = {
+              requestedBy: user?.username,
+              requestType: currentReqType,
+            };
             await renderRequestCards(requestData);
           });
 
@@ -724,6 +768,7 @@ userNameFilterInput.addEventListener('keydown', async function (evt) {
     const requestData = {
       state: statusValue,
       sort: sortByValue,
+      requestType: currentReqType,
     };
 
     if (values.length > 0) {
@@ -768,7 +813,11 @@ function populateStatus() {
     filterModal.classList.add('hidden');
     deselectRadioButtons();
     requestContainer.innerHTML = '';
-    await renderRequestCards({ state: statusValue, sort: sortByValue });
+    await renderRequestCards({
+      state: statusValue,
+      sort: sortByValue,
+      requestType: currentReqType,
+    });
   });
 
   filterTitle.appendChild(clearButton);
@@ -778,6 +827,10 @@ function populateStatus() {
     addRadioButton(name, id, 'status-filter');
   }
 }
-updateTabLink(currentReqType.toUpperCase());
+updateTabLink(currentReqType);
 populateStatus();
-renderRequestCards({ state: statusValue, sort: sortByValue });
+renderRequestCards({
+  state: statusValue,
+  sort: sortByValue,
+  requestType: currentReqType,
+});

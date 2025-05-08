@@ -164,6 +164,20 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
+        `${STAGING_API_URL}/extension-requests/QISvF7kAmnD9vXHwwIsG?dev=true`
+      ) {
+        interceptedRequest.respond({
+          status: 204,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify({}),
+        });
+      } else if (
+        url ===
         `${STAGING_API_URL}m/extension-requests/lGQ3AjUlgNB6Jd8jXaEC/status`
       ) {
         interceptedRequest.respond({
@@ -348,7 +362,9 @@ describe('Tests the Extension Requests Screen', () => {
         });
       } else if (
         url ===
-        `${STAGING_API_URL}/extension-requests?order=desc&size=1&q=status%3APENDING`
+          `${STAGING_API_URL}/extension-requests?order=desc&size=1&q=status%3APENDING` ||
+        url ===
+          `${STAGING_API_URL}/extension-requests?order=desc&dev=true&size=1&q=status%3APENDING`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -1152,6 +1168,45 @@ describe('Tests the Extension Requests Screen', () => {
     expect(extensionCardsList.length).toBe(0);
     expect(extensionRequestContainerText).toBe(
       'No extension requests to show!',
+    );
+  });
+
+  it('should show success toast after we update the extension request', async function () {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&dev=true&size=1&q=status%3APENDING`,
+    );
+    await page.waitForNetworkIdle();
+
+    await page.click('.edit-button');
+
+    const newDate = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+
+    await page.evaluate((newDate) => {
+      document.querySelector('.date-input').value = newDate;
+    }, newDate);
+
+    await page.click('.update-button');
+    await page.waitForSelector('[data-testid="toast-component"].show');
+    const toastComponent = await page.$('[data-testid="toast-component"]');
+    expect(
+      await toastComponent.evaluate((el) => el.classList.contains('show')),
+    ).toBe(true);
+    expect(
+      await toastComponent.evaluate((el) => el.classList.contains('hide')),
+    ).toBe(false);
+    expect(
+      await toastComponent.evaluate((el) =>
+        el.classList.contains('success__toast'),
+      ),
+    ).toBe(true);
+    expect(
+      await toastComponent.evaluate((el) =>
+        el.classList.contains('error__toast'),
+      ),
+    ).toBe(false);
+    const toastMessage = await page.$('[data-testid="toast-message"]');
+    expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
+      'Extension request successfully updated.',
     );
   });
 });

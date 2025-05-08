@@ -180,7 +180,12 @@ async function updateTaskRequest(action, userId) {
     });
 
     if (res.ok) {
-      showToast('Task updated Successfully', 'success');
+      showToastMessage({
+        isDev,
+        oldToastFunction: showToast,
+        type: 'success',
+        message: 'Task updated Successfully',
+      });
       taskRequest = await fetchTaskRequest();
       requestorsContainer.innerHTML = '';
       updateStatus(taskRequest.status);
@@ -188,10 +193,20 @@ async function updateTaskRequest(action, userId) {
       renderRejectButton(taskRequest);
       return res;
     } else {
-      showToast(errorMessage, 'failure');
+      showToastMessage({
+        isDev,
+        oldToastFunction: showToast,
+        type: 'failure',
+        message: errorMessage,
+      });
     }
   } catch (e) {
-    showToast(errorMessage, 'failure');
+    showToastMessage({
+      isDev,
+      oldToastFunction: showToast,
+      type: 'failure',
+      message: errorMessage,
+    });
     console.error(e);
   } finally {
     removeSpinner();
@@ -334,16 +349,26 @@ async function renderRequestors(taskRequest) {
 }
 
 async function fetchTaskRequest() {
-  const res = await fetch(`${API_BASE_URL}/taskRequests/${taskRequestId}`, {
-    credentials: 'include',
-  });
+  try {
+    const res = await fetch(`${API_BASE_URL}/taskRequests/${taskRequestId}`, {
+      credentials: 'include',
+    });
 
-  const { data } = await res.json();
-  const approvedTo = data.users
-    .filter((user) => user.status === 'APPROVED')
-    ?.map((user) => user.userId)?.[0];
-  data.approvedTo = approvedTo;
-  return data;
+    if (res.ok) {
+      const { data } = await res.json();
+      const approvedTo = data.users
+        .filter((user) => user.status === 'APPROVED')
+        ?.map((user) => user.userId)?.[0];
+      data.approvedTo = approvedTo;
+      return data;
+    } else {
+      if (isDev) {
+        showErrorMessage(res.status);
+      }
+    }
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 const renderGithubIssue = async () => {
@@ -529,6 +554,9 @@ const renderTaskRequest = async () => {
     taskRequest = await fetchTaskRequest();
     isSuperUser = await getIsSuperUser();
     taskRequestSkeleton.classList.add('hidden');
+    if (!taskRequest) {
+      return;
+    }
     renderRejectButton(taskRequest);
     renderTaskRequestDetails(taskRequest);
 
@@ -541,6 +569,24 @@ const renderTaskRequest = async () => {
   } catch (e) {
     console.error(e);
   }
+};
+
+const showErrorMessage = (error) => {
+  let errorMessageDiv;
+  const message =
+    error === 404 ? ErrorMessages.NOT_FOUND : ErrorMessages.SERVER_ERROR;
+  if (error === 404 || error === 500) {
+    errorMessageDiv = document.createElement('p');
+    errorMessageDiv.classList.add('error-message');
+    errorMessageDiv.setAttribute('data-testid', 'error-message');
+    errorMessageDiv.textContent = message;
+    const container = document.querySelector('.container') || document.body;
+    container.appendChild(errorMessageDiv);
+  }
+  taskRequestSkeleton?.classList.add('hidden');
+  taskContainer?.classList.add('hidden');
+  const requestors = document.querySelector('.requestors');
+  if (requestors) requestors.style.display = 'none';
 };
 
 function showToast(message, type) {
@@ -616,7 +662,12 @@ function populateModalContent(index) {
     index < 0 ||
     index >= taskRequest.users.length
   ) {
-    showToast('No Data Available for this requestor', 'failure');
+    showToastMessage({
+      isDev,
+      oldToastFunction: showToast,
+      type: 'failure',
+      message: 'No Data Available for this requestor',
+    });
     return;
   }
   const modal = document.getElementById('requestor_details_modal_content');
