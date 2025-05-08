@@ -25,6 +25,7 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
+          const core = require('@actions/core');
           const prNumber = context.payload.pull_request.number;
           const workflowName = "CI"; // Name of your CI workflow
           const runs = await github.rest.actions.listWorkflowRunsForRepo({
@@ -33,16 +34,23 @@ jobs:
             workflow_id: workflowName,
             branch: context.payload.pull_request.head.ref,
             event: "pull_request",
-            per_page: 5,
+            per_page: 10,
           });
 
-          // Find the latest run for this PR
-          const runsForPR = runs.data.workflow_runs.filter(run => run.pull_requests.some(pr => pr.number === prNumber));
-          if (runsForPR.length === 0) {
-            core.setFailed("No CI workflow run found for this PR.");
+          // Filter runs for this PR
+          const runsForPR = runs.data.workflow_runs.filter(run =>
+            run.pull_requests.some(pr => pr.number === prNumber)
+          );
+
+          // Filter only completed runs
+          const completedRuns = runsForPR.filter(run => run.status === "completed");
+
+          if (completedRuns.length === 0) {
+            core.setFailed("No completed CI workflow run found for this PR. Please wait for CI to finish.");
             return;
           }
-          const latestRun = runsForPR[0];
+
+          const latestRun = completedRuns[0];
 
           if (latestRun.conclusion !== "success") {
             core.setFailed(`CI workflow failed or did not succeed (status: ${latestRun.conclusion}). Stopping Tests.`);
