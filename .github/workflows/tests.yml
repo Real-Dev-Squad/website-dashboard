@@ -1,15 +1,14 @@
 name: Tests
 on:
-  pull_request:
-    branches: [main, develop]
-  push:
-    branches: [main, develop]
-  # workflow_run:
-  #   workflows: [ "CI" ]       # Must exactly match your CI workflow's name
-  #   types:
-  #     - completed
-  #   branches:
-  #     - '**'   
+  # pull_request:
+  #   branches: [main, develop]
+  # push:
+  #   branches: [main, develop]
+  workflow_run:
+    workflows: [ "CI" ]       # Must exactly match your CI workflow's name
+    types:
+      - completed
+    branches: [main, develop] 
 
 jobs:
   test:
