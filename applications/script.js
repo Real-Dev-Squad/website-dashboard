@@ -49,10 +49,17 @@ const filterButton = isDev
 if (isDev) {
   activeFilterTags.classList.remove('hidden');
   filterComponent.classList.remove('hidden');
+  const statusList = [
+    { name: 'Accepted', id: 'ACCEPTED' },
+    { name: 'Pending', id: 'PENDING' },
+    { name: 'Rejected', id: 'REJECTED' },
+  ];
   document.addEventListener('DOMContentLoaded', () => {
     renderFilterComponent({
       filterComponent,
       page: 'applications',
+      statusList,
+      shouldAllowMultipleSelection: false,
       parentContainer: applicationContainer,
       renderFunction: renderApplicationCards,
     });
@@ -95,12 +102,21 @@ function updateUserApplication({ isAccepted }) {
     .then((res) => {
       const updatedFeedback = payload.feedback || '';
       applicationTextarea.value = updatedFeedback;
-
-      showToast({ type: 'success', message: res.message });
+      showToastMessage({
+        isDev,
+        oldToastFunction: showToast,
+        type: 'success',
+        message: res.message,
+      });
       setTimeout(() => closeApplicationDetails(), 1000);
     })
     .catch((error) => {
-      showToast({ type: 'error', message: error.message });
+      showToastMessage({
+        isDev,
+        oldToastFunction: showToast,
+        type: 'error',
+        message: error.message,
+      });
     });
 }
 
@@ -473,7 +489,7 @@ async function renderApplicationById(id) {
 (async function renderCardsInitial() {
   changeLoaderVisibility({ hide: false });
 
-  const isSuperUser = await getIsSuperUser();
+  const isSuperUser = await getIsSuperUser(isDev);
   if (!isSuperUser) {
     const unAuthorizedText = createElement({
       type: 'h1',

@@ -39,10 +39,19 @@ if (isDev) {
   filterButton.style.display = 'none';
   badgesContainer.style.display = 'none';
   activeFilterTags.classList.remove('hidden');
+  const statusList = [
+    { name: 'Approved', id: 'APPROVED' },
+    { name: 'Pending', id: 'PENDING' },
+    { name: 'Denied', id: 'DENIED' },
+    { name: 'Assignment', id: 'ASSIGNMENT' },
+    { name: 'Creation', id: 'CREATION' },
+  ];
   document.addEventListener('DOMContentLoaded', () => {
     renderFilterComponent({
       filterComponent,
       page: 'task-requests',
+      statusList,
+      shouldAllowMultipleSelection: true,
       parentContainer: taskRequestContainer,
       renderFunction: renderTaskRequestCards,
       otherFilters: filterStates,

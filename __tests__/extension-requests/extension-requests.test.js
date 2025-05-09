@@ -1171,7 +1171,7 @@ describe('Tests the Extension Requests Screen', () => {
     );
   });
 
-  it.skip('should show success toast after we update the extension request', async function () {
+  it('should show success toast after we update the extension request', async function () {
     await page.goto(
       `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&dev=true&size=1&q=status%3APENDING`,
     );

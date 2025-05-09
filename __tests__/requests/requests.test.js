@@ -564,7 +564,7 @@ describe('Tests the request cards', () => {
     });
   });
 
-  it.skip('should show success toast after approving any request', async function () {
+  it('should show success toast after approving any request', async function () {
     await page.goto(`${LOCAL_TEST_PAGE_URL}/requests?dev=true`);
     await page.waitForNetworkIdle();
     await page.click('#ooo_tab_link');
