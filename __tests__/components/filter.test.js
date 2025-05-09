@@ -1,10 +1,6 @@
 const puppeteer = require('puppeteer');
 
-const {
-  fetchedApplications,
-  acceptedApplications,
-} = require('../../mock-data/applications');
-const { superUserForAudiLogs } = require('../../mock-data/users');
+const { acceptedApplications } = require('../../mock-data/applications');
 const {
   STAGING_API_URL,
   LOCAL_TEST_PAGE_URL,
@@ -225,14 +221,12 @@ describe('Filter Component Core Functionality', () => {
     await page.goto(
       `${LOCAL_TEST_PAGE_URL}/applications?status=accepted&dev=true`,
     );
-    await page.waitForNetworkIdle();
 
     const acceptedStatus = 'ACCEPTED';
     const tag = await page.$(
       `${activeFilterTagsSelector} .filter__component__tag[data-status="${acceptedStatus}"]`,
     );
     expect(tag).toBeTruthy();
-
     await page.click(filterButtonSelector);
     await page.waitForSelector(`${filterModalSelector}:not(.hidden)`);
     const isAcceptedChecked = await page.$eval(
