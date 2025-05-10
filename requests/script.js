@@ -12,14 +12,17 @@ let onboardingExtensionTabLink = document.getElementById(
 );
 const filterContainer = document.getElementById('filterContainer');
 const filterButton = document.getElementById('filterButton');
+const filterComponent = document.getElementById('filterComponent');
+const activeFilterTags = document.getElementById('active-filter-tags');
 const filterModal = document.getElementById('filterModal');
 const filterOptionsContainer = document.getElementById(
   'filterOptionsContainer',
 );
+const isDev = params.get('dev') === 'true';
 const applyFilterButton = document.getElementById('applyFilterButton');
 const userNameFilterInput = document.getElementById('assignee-search-input');
 let currentReqType = params.get('type')?.toUpperCase() ?? OOO_REQUEST_TYPE;
-const isDev = params.get('dev') === 'true';
+let requestState = params.get('status')?.toUpperCase() ?? null;
 let selected__tab__class = 'selected__tab';
 let statusValue = null;
 let sortByValue = null;
@@ -41,6 +44,12 @@ function updateTabLink(requestType) {
     oooTabLink.classList.remove(selected__tab__class);
     onboardingExtensionTabLink.classList.remove(selected__tab__class);
   }
+}
+
+if (isDev) {
+  activeFilterTags.classList.remove('hidden');
+  filterComponent.classList.remove('hidden');
+  filterButton.classList.add('hidden');
 }
 
 function getUserDetails(id) {
@@ -828,9 +837,35 @@ function populateStatus() {
   }
 }
 updateTabLink(currentReqType);
-populateStatus();
-renderRequestCards({
-  state: statusValue,
-  sort: sortByValue,
-  requestType: currentReqType,
-});
+if (isDev) {
+  const statusList = [
+    { name: 'Approved', id: 'APPROVED' },
+    { name: 'Pending', id: 'PENDING' },
+    { name: 'Rejected', id: 'REJECTED' },
+  ];
+  document.addEventListener('DOMContentLoaded', () => {
+    renderFilterComponent({
+      filterComponent,
+      page: 'requests',
+      statusList,
+      parentContainer: requestContainer,
+      shouldAllowMultipleSelection: false,
+      renderFunction: renderRequestCards,
+      otherFilters: {
+        sortByValue,
+      },
+    });
+  });
+  renderRequestCards({
+    state: requestState ?? statusValue,
+    sort: sortByValue,
+    requestType: currentReqType,
+  });
+} else {
+  populateStatus();
+  renderRequestCards({
+    state: statusValue,
+    sort: sortByValue,
+    requestType: currentReqType,
+  });
+}
