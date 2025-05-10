@@ -1,4 +1,4 @@
-name: CI
+name: Workflow
 
 on:
   pull_request:
@@ -21,3 +21,16 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm install
       - run: npm run check
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install system dependencies
+      run: |
+        echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
+    - name: Install project dependencies
+      run: yarn install
+
+    - name: Run tests
+      run: yarn test
