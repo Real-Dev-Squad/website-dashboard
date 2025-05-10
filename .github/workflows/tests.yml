@@ -23,7 +23,7 @@ jobs:
       uses: lewagon/wait-on-check-action@v1.3.4
       with:
         ref: ${{ github.ref }}
-        check-name: 'CI / build (14.x)'  # Exact name of your CI check
+        check-name: 'CI'  # Exact name of your CI check
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         wait-interval: 30
 
