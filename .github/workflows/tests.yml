@@ -2,8 +2,8 @@ name: Tests
 on:
   # pull_request:
   #   branches: [main, develop]
-  # push:
-  #   branches: [main, develop]
+  push:
+    branches: [main, develop]
   workflow_run:
     workflows: ["CI"]      # Name of your CI workflow
     types:
