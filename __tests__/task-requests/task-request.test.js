@@ -42,7 +42,9 @@ describe('Task Requests', () => {
         });
       } else if (
         url ===
-        `${STAGING_API_URL}/taskRequests?size=20&q=status%3Aapproved++sort%3Acreated-asc`
+          `${STAGING_API_URL}/taskRequests?size=20&q=status%3Aapproved++sort%3Acreated-asc` ||
+        url ===
+          `${STAGING_API_URL}/taskRequests?size=20&q=status%3Aapproved+sort%3Acreated-asc`
       ) {
         const list = [];
         for (let i = 0; i < 20; i++) {
@@ -147,6 +149,20 @@ describe('Task Requests', () => {
         const currentState = await activeFilter.getProperty('checked');
         const isChecked = await currentState.jsonValue();
         expect(isChecked).toBe(false);
+      });
+
+      it('should show approved task requests when the approved filter is applied and dev=true', async () => {
+        await page.goto(`${LOCAL_TEST_PAGE_URL}/task-requests?dev=true`);
+        await page.waitForNetworkIdle();
+        await page.click('[data-testid="filter-component-toggle-button"]');
+        const applyFilterButton =
+          '[data-testid="apply-filter-component-button"]';
+        await page.waitForSelector(applyFilterButton, { visible: true });
+        await page.click(`input[type="checkbox"][id="APPROVED"]`);
+        await page.click(applyFilterButton);
+        await page.waitForNetworkIdle();
+        const taskRequestList = await page.$$('.taskRequest__card');
+        expect(taskRequestList.length).toBe(20);
       });
     });
 
