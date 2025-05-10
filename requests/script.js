@@ -27,7 +27,7 @@ const intersectionObserver = new IntersectionObserver(async (entries) => {
   }
   if (entries[0].isIntersecting && !isDataLoading) {
     await renderRequestCards({
-      state: statusValue,
+      [isDev ? 'status' : 'state']: statusValue,
       sort: sortByValue,
       next: nextLink,
     });
@@ -49,7 +49,10 @@ oooTabLink.addEventListener('click', async function () {
   extensionTabLink.classList.remove(selected__tab__class);
   changeFilter();
   updateUrlWithQuery(currentReqType);
-  await renderRequestCards({ state: statusValue, sort: sortByValue });
+  await renderRequestCards({
+    [isDev ? 'status' : 'state']: statusValue,
+    sort: sortByValue,
+  });
 });
 
 extensionTabLink.addEventListener('click', async function () {
@@ -60,7 +63,10 @@ extensionTabLink.addEventListener('click', async function () {
   oooTabLink.classList.remove(selected__tab__class);
   changeFilter();
   updateUrlWithQuery(currentReqType);
-  await renderRequestCards({ state: statusValue, sort: sortByValue });
+  await renderRequestCards({
+    [isDev ? 'status' : 'state']: statusValue,
+    sort: sortByValue,
+  });
 });
 
 function updateUrlWithQuery(type) {
@@ -165,6 +171,7 @@ const changeFilter = () => {
 function createRequestCard(request, superUserDetails, requesterUserDetails) {
   let {
     id,
+    status,
     state,
     from,
     until,
@@ -174,16 +181,17 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
     reason,
     updatedAt,
   } = request;
+  const requestStatus = isDev ? status : state;
   let showSuperuserDetailsClass = 'notHidden';
   let showActionButtonClass = 'notHidden';
   if (
-    state === 'PENDING' ||
+    requestStatus === 'PENDING' ||
     lastModifiedBy === undefined ||
     lastModifiedBy === null
   ) {
     showSuperuserDetailsClass = 'hidden';
   }
-  if (state !== 'PENDING') {
+  if (requestStatus !== 'PENDING') {
     showActionButtonClass = 'hidden';
   }
   const createdDate = convertDateToReadableStringDate(
@@ -420,9 +428,9 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
         }),
         createElementFromMap({
           tagName: 'button',
-          class: ['request__status', `request__status--${state.toLowerCase()}`],
+          class: ['request__status', `request__status--${requestStatus.toLowerCase()}`],
           textContent:
-            state.charAt(0).toUpperCase() + state.slice(1).toLowerCase() ||
+            requestStatus.charAt(0).toUpperCase() + requestStatus.slice(1).toLowerCase() ||
             'N/A',
         }),
       ],
@@ -447,7 +455,7 @@ async function renderRequestCards(queries = {}) {
     for (const request of requestResponse?.data || []) {
       let superUserDetails;
       let requesterUserDetails = await getUserDetails(request.requestedBy);
-      if (request.state !== 'PENDING') {
+      if (isDev && request.status: request.state !== 'PENDING') {
         superUserDetails = await getUserDetails(request.lastModifiedBy);
       }
       requestContainer.appendChild(
@@ -522,12 +530,12 @@ async function performAcceptRejectAction(isAccepted, e) {
   let body = JSON.stringify({
     type: currentReqType,
     reason: remark,
-    state: isAccepted ? 'APPROVED' : 'REJECTED',
+   [isDev ? 'status' : 'state']: isAccepted ? 'APPROVED' : 'REJECTED',
   });
   if (remark === '' || remark === undefined || remark === null) {
     body = JSON.stringify({
       type: currentReqType,
-      state: isAccepted ? 'APPROVED' : 'REJECTED',
+      [isDev ? 'status' : 'state']: isAccepted ? 'APPROVED' : 'REJECTED',
     });
   }
   const parentDiv = e.target.closest('.ooo_request__card');
