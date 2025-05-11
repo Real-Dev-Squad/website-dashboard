@@ -6,11 +6,13 @@ on:
   pull_request:
     branches:
       - '**'
+  schedule:
+    - cron: '35 9 * * 6'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    if: github.event_name != 'schedule'
     strategy:
       matrix:
         node-version: [14.x]
@@ -25,6 +27,7 @@ jobs:
       - run: npm run check
   test:
     runs-on: ubuntu-latest
+    if: github.event_name != 'schedule'
     needs: build
     steps:
       - uses: actions/checkout@v2
