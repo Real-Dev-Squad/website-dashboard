@@ -15,7 +15,7 @@ jobs:
     if: github.event_name != 'schedule'
     strategy:
       matrix:
-        node-version: [22.x]
+        node-version: [18.x]
 
     steps:
       - uses: actions/checkout@v2
