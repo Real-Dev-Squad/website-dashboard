@@ -15,7 +15,7 @@ jobs:
     if: github.event_name != 'schedule'
     strategy:
       matrix:
-        node-version: [14.x]
+        node-version: [22.x]
 
     steps:
       - uses: actions/checkout@v2
@@ -43,6 +43,10 @@ jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
+    if: |
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop') ||
+      (github.event_name == 'pull_request' && (github.base_ref == 'main' || github.base_ref == 'develop')) ||
+      github.event_name == 'schedule'
     needs: [build, test]
     permissions:
       actions: read
