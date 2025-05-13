@@ -2,6 +2,8 @@ const container = document.querySelector('.container');
 const extensionRequestsContainer = document.querySelector(
   '.extension-requests',
 );
+const filterComponent = document.getElementById('filterComponent');
+const activeFilterTags = document.getElementById('active-filter-tags');
 const filterModal = document.getElementsByClassName(FILTER_MODAL)[0];
 const filterButton = document.getElementById(FILTER_BUTTON);
 const applyFilterButton = document.getElementById(APPLY_FILTER_BUTTON);
@@ -26,6 +28,12 @@ const filterStates = {};
 let assigneeUsernamesList = [];
 const isDev = params.get('dev') === 'true';
 
+if (isDev) {
+  activeFilterTags.classList.remove('hidden');
+  filterComponent.classList.remove('hidden');
+} else {
+  filterButton.classList.remove('hidden');
+}
 getSelfUser().then((response) => {
   currentUserDetails = response;
 });
@@ -110,16 +118,18 @@ const updateUIBasedOnFilterStates = () => {
     descIcon.style.display = 'block';
   }
 
-  if (
-    states.status &&
-    Array.isArray(states.status) &&
-    states.status.length > 0
-  ) {
-    states.status.forEach((state) => {
-      toggleStatusCheckbox(state);
-    });
-  } else {
-    toggleStatusCheckbox(states.status);
+  if (!isDev) {
+    if (
+      states.status &&
+      Array.isArray(states.status) &&
+      states.status.length > 0
+    ) {
+      states.status.forEach((state) => {
+        toggleStatusCheckbox(state);
+      });
+    } else {
+      toggleStatusCheckbox(states.status);
+    }
   }
 };
 
@@ -234,7 +244,12 @@ const currentUserDetailsPromise = getSelfUser()
   .catch((error) => {
     currentUserDetails = null;
     if (isDev) {
-      showToast(error?.message || "Couldn't fetch user details.", 'error');
+      showToastMessage({
+        isDev,
+        oldToastFunction: showToast,
+        type: 'error',
+        message: error?.message || "Couldn't fetch user details.",
+      });
     }
   });
 
@@ -1289,7 +1304,12 @@ async function createExtensionCard(data, dev) {
         handleSuccess(rootElement);
         if (dev) {
           const successMessage = 'Extension request successfully updated.';
-          showToast(successMessage, 'success');
+          showToastMessage({
+            isDev: dev,
+            oldToastFunction: showToast,
+            type: 'success',
+            message: successMessage,
+          });
         }
         appendLogs(payloadForLog, data.id);
       })
@@ -1301,7 +1321,12 @@ async function createExtensionCard(data, dev) {
             error?.response?.data?.message ||
             error?.message ||
             'An error occurred. Please try again.';
-          showToast(errorMessage, 'error');
+          showToastMessage({
+            isDev: dev,
+            oldToastFunction: showToast,
+            type: 'error',
+            message: errorMessage,
+          });
         }
       })
       .finally(() => {
@@ -1481,6 +1506,25 @@ function showToast(message, type) {
       toast.remove();
     });
   }, UPDATE_TOAST_TIMING);
+}
+
+if (isDev) {
+  const statusList = [
+    { name: 'Approved', id: 'APPROVED' },
+    { name: 'Pending', id: 'PENDING' },
+    { name: 'Denied', id: 'DENIED' },
+  ];
+  document.addEventListener('DOMContentLoaded', () => {
+    renderFilterComponent({
+      filterComponent,
+      page: 'extension-requests',
+      statusList,
+      shouldAllowMultipleSelection: true,
+      parentContainer: extensionRequestsContainer,
+      renderFunction: populateExtensionRequests,
+      otherFilters: filterStates,
+    });
+  });
 }
 
 function generateSentence(response, parentClassName, id) {

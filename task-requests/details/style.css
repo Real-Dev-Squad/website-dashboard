@@ -9,6 +9,7 @@
   --color-white: white;
   --color-rds-blue: #1d1283;
   --color-blue-light: #1d1283af;
+  --color-indigo-blue: #5145cd;
   --color-black: #000;
   --color-gray-shade: #aaa;
   --color-red-variant1: #f43030;
@@ -440,55 +441,20 @@ table tr td {
   border-left: solid 1px rgba(0, 0, 0, 0.1);
 }
 
-@media (max-width: 599px) {
-  .taskRequest__title {
-    font-size: 1.5rem;
-    line-height: 1.75rem;
-  }
-  .taskRequest__title__subtitle {
-    font-size: 0.875rem;
-    line-height: 1rem;
-  }
-  .taskRequest__status {
-    font-size: 0.75rem;
-  }
-}
-
-@media (max-width: 904px) {
-  .task {
-    grid-column: 1 / span 12;
-  }
-
-  .requestors {
-    grid-column: 1 / span 12;
-    border: none;
-  }
-
-  .taskRequest__skeleton__title {
-    max-width: 80%;
-    height: 1rem;
-  }
-  .taskRequest__skeleton__subtitle {
-    max-width: 40%;
-  }
-  .request-details {
-    grid-column: auto;
-  }
-}
-
 .requestor_details_modal_content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background-color: var(--color-light-gray);
-  margin: 10% auto;
-  padding: 2rem;
+  padding: 1.8rem 1rem;
   border: 1px solid var(--color-gray-variant2);
-  width: 25%;
-  text-align: center;
   right: 10%;
   border-radius: 1rem;
   text-wrap: wrap;
   word-break: break-word;
   height: 50%;
-  width: 50%;
+  width: 35%;
   overflow: auto;
 }
 
@@ -536,9 +502,10 @@ table tr td {
 .requestor_details_modal_close {
   color: var(--color-gray-shade);
   float: right;
-  font-size: 28px;
+  font-size: 1.75rem;
   font-weight: bold;
   cursor: pointer;
+  margin-top: -1.3rem;
 }
 
 .requestor_details_modal_close:hover {
@@ -552,7 +519,40 @@ table tr td {
 }
 
 .requestor_details_modal_heading {
-  color: var(--color-rds-blue);
+  color: var(--color-indigo-blue);
+  text-align: center;
+  font-weight: normal;
+  margin-top: 0;
+  font-weight: 500;
+}
+
+.proposed_start_date_div,
+.proposed_end_date_div,
+.proposed_description_div {
+  margin: 1rem 0rem;
+}
+
+.proposed_start_date_text,
+.proposed_end_date_text,
+.proposed_description_text {
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.proposed_start_date_value,
+.proposed_end_date_value,
+.proposed_description_value {
+  margin-top: -0.25rem;
+  color: var(--color-gray-variant2);
+}
+
+.requestor_description_details :where(h1, h2, h3, h4, h5, h6) {
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.requestor_description_details :not(:where(h1, h2, h3)) {
+  color: var(--color-gray-variant2);
 }
 
 .requestors__container__list__userDetails__avatar,
@@ -569,4 +569,78 @@ p:hover {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   display: none;
+}
+
+.error-message {
+  display: grid;
+  place-items: center;
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  text-align: center;
+}
+@media (max-width: 904px) {
+  .task {
+    grid-column: 1 / span 12;
+  }
+
+  .requestors {
+    grid-column: 1 / span 12;
+    border: none;
+  }
+
+  .taskRequest__skeleton__title {
+    max-width: 80%;
+    height: 1rem;
+  }
+  .taskRequest__skeleton__subtitle {
+    max-width: 40%;
+  }
+  .request-details {
+    grid-column: auto;
+  }
+  .requestor_details_modal_content {
+    width: 70%;
+  }
+}
+
+@media (max-width: 599px) {
+  .taskRequest__title {
+    font-size: 1.5rem;
+    line-height: 1.75rem;
+  }
+  .taskRequest__title__subtitle {
+    font-size: 0.875rem;
+    line-height: 1rem;
+  }
+  .taskRequest__status {
+    font-size: 0.75rem;
+  }
+
+  .requestor_details_modal_heading {
+    font-size: 1.05rem;
+    margin-top: -0.6rem;
+  }
+
+  .proposed_start_date_text,
+  .proposed_end_date_text,
+  .proposed_description_text,
+  .requestor_description_details :where(h1, h2, h3, h4, h5, h6) {
+    font-size: 0.75rem;
+  }
+
+  .proposed_start_date_value,
+  .proposed_end_date_value,
+  .proposed_description_value,
+  .requestor_description_details :not(:where(h1, h2, h3, h5, h6)) {
+    font-size: 0.75rem;
+  }
+  .requestor_details_modal_content {
+    height: 40%;
+  }
+  .requestor_details_modal_close {
+    font-size: 0.85rem;
+  }
 }

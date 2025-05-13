@@ -3,6 +3,7 @@ const puppeteer = require('puppeteer');
 const {
   fetchedApplications,
   acceptedApplications,
+  pendingApplications,
 } = require('../../mock-data/applications');
 const { superUserForAudiLogs } = require('../../mock-data/users');
 const {
@@ -72,7 +73,7 @@ describe('Applications page', () => {
           body: JSON.stringify(superUserForAudiLogs),
         });
       } else if (
-        url === `${STAGING_API_URL}/applications/lavEduxsb2C6Bl4s289P`
+        url === `${STAGING_API_URL}/applications/lavEduxsb2C5Bl4s289P`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -110,8 +111,8 @@ describe('Applications page', () => {
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({
-            applications: acceptedApplications,
-            totalCount: acceptedApplications.length,
+            applications: pendingApplications,
+            totalCount: pendingApplications.length,
           }),
           headers: {
             'Access-Control-Allow-Origin': '*',
@@ -129,9 +130,6 @@ describe('Applications page', () => {
 
   afterEach(async () => {
     await page.close();
-  });
-
-  afterAll(async () => {
     await browser.close();
   });
 
@@ -243,7 +241,8 @@ describe('Applications page', () => {
         el.classList.contains('hidden'),
       ),
     ).toBe(true);
-    await page.click('.application-details');
+    await page.click('.application-card');
+    await page.waitForSelector('.application-details:not(.hidden)');
     expect(
       await applicationDetailsModal.evaluate((el) =>
         el.classList.contains('hidden'),
@@ -326,5 +325,50 @@ describe('Applications page', () => {
 
     const repoLinkStyle = await page.evaluate((el) => el.style, repoLink);
     expect(repoLinkStyle).toBeTruthy();
+  });
+
+  it('should show success toast after accepting an application', async function () {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/applications?dev=true&status=pending`,
+    );
+    await page.waitForSelector('.application-card');
+    await page.click('.application-card');
+
+    await page.click('.application-details-accept');
+    await page.waitForSelector('[data-testid="toast-component"].show');
+    const toastComponent = await page.$('[data-testid="toast-component"]');
+    expect(
+      await toastComponent.evaluate((el) => el.classList.contains('show')),
+    ).toBe(true);
+    expect(
+      await toastComponent.evaluate((el) => el.classList.contains('hide')),
+    ).toBe(false);
+    expect(
+      await toastComponent.evaluate((el) =>
+        el.classList.contains('success__toast'),
+      ),
+    ).toBe(true);
+    expect(
+      await toastComponent.evaluate((el) =>
+        el.classList.contains('error__toast'),
+      ),
+    ).toBe(false);
+    const toastMessage = await page.$('[data-testid="toast-message"]');
+    expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
+      'application updated successfully!',
+    );
+  });
+
+  it('should display only accepted applications after applying the "ACCEPTED" filter when dev=true', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/applications?dev=true`);
+    await page.waitForNetworkIdle();
+    await page.click('[data-testid="filter-component-toggle-button"]');
+    const applyFilterButton = '[data-testid="apply-filter-component-button"]';
+    await page.waitForSelector(applyFilterButton, { visible: true });
+    await page.click(`input[type="checkbox"][id="ACCEPTED"]`);
+    await page.click(applyFilterButton);
+    await page.waitForNetworkIdle();
+    const applicationCardElements = await page.$$('.application-card');
+    expect(applicationCardElements.length).toBe(acceptedApplications.length);
   });
 });

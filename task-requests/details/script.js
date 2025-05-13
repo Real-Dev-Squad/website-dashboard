@@ -180,7 +180,12 @@ async function updateTaskRequest(action, userId) {
     });
 
     if (res.ok) {
-      showToast('Task updated Successfully', 'success');
+      showToastMessage({
+        isDev,
+        oldToastFunction: showToast,
+        type: 'success',
+        message: 'Task updated Successfully',
+      });
       taskRequest = await fetchTaskRequest();
       requestorsContainer.innerHTML = '';
       updateStatus(taskRequest.status);
@@ -188,10 +193,20 @@ async function updateTaskRequest(action, userId) {
       renderRejectButton(taskRequest);
       return res;
     } else {
-      showToast(errorMessage, 'failure');
+      showToastMessage({
+        isDev,
+        oldToastFunction: showToast,
+        type: 'failure',
+        message: errorMessage,
+      });
     }
   } catch (e) {
-    showToast(errorMessage, 'failure');
+    showToastMessage({
+      isDev,
+      oldToastFunction: showToast,
+      type: 'failure',
+      message: errorMessage,
+    });
     console.error(e);
   } finally {
     removeSpinner();
@@ -334,16 +349,26 @@ async function renderRequestors(taskRequest) {
 }
 
 async function fetchTaskRequest() {
-  const res = await fetch(`${API_BASE_URL}/taskRequests/${taskRequestId}`, {
-    credentials: 'include',
-  });
+  try {
+    const res = await fetch(`${API_BASE_URL}/taskRequests/${taskRequestId}`, {
+      credentials: 'include',
+    });
 
-  const { data } = await res.json();
-  const approvedTo = data.users
-    .filter((user) => user.status === 'APPROVED')
-    ?.map((user) => user.userId)?.[0];
-  data.approvedTo = approvedTo;
-  return data;
+    if (res.ok) {
+      const { data } = await res.json();
+      const approvedTo = data.users
+        .filter((user) => user.status === 'APPROVED')
+        ?.map((user) => user.userId)?.[0];
+      data.approvedTo = approvedTo;
+      return data;
+    } else {
+      if (isDev) {
+        showErrorMessage(res.status);
+      }
+    }
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 const renderGithubIssue = async () => {
@@ -529,6 +554,9 @@ const renderTaskRequest = async () => {
     taskRequest = await fetchTaskRequest();
     isSuperUser = await getIsSuperUser();
     taskRequestSkeleton.classList.add('hidden');
+    if (!taskRequest) {
+      return;
+    }
     renderRejectButton(taskRequest);
     renderTaskRequestDetails(taskRequest);
 
@@ -541,6 +569,24 @@ const renderTaskRequest = async () => {
   } catch (e) {
     console.error(e);
   }
+};
+
+const showErrorMessage = (error) => {
+  let errorMessageDiv;
+  const message =
+    error === 404 ? ErrorMessages.NOT_FOUND : ErrorMessages.SERVER_ERROR;
+  if (error === 404 || error === 500) {
+    errorMessageDiv = document.createElement('p');
+    errorMessageDiv.classList.add('error-message');
+    errorMessageDiv.setAttribute('data-testid', 'error-message');
+    errorMessageDiv.textContent = message;
+    const container = document.querySelector('.container') || document.body;
+    container.appendChild(errorMessageDiv);
+  }
+  taskRequestSkeleton?.classList.add('hidden');
+  taskContainer?.classList.add('hidden');
+  const requestors = document.querySelector('.requestors');
+  if (requestors) requestors.style.display = 'none';
 };
 
 function showToast(message, type) {
@@ -616,10 +662,16 @@ function populateModalContent(index) {
     index < 0 ||
     index >= taskRequest.users.length
   ) {
-    showToast('No Data Available for this requestor', 'failure');
+    showToastMessage({
+      isDev,
+      oldToastFunction: showToast,
+      type: 'failure',
+      message: 'No Data Available for this requestor',
+    });
     return;
   }
   const modal = document.getElementById('requestor_details_modal_content');
+
   const userData = taskRequest.users[index];
 
   const modalContent = modal.querySelector('.requestor_details_modal_info');
@@ -629,7 +681,6 @@ function populateModalContent(index) {
     'data-modal-start-date-text',
     'proposed-start-date-text',
   );
-  proposedStartDateText.innerHTML = '<strong>Proposed Start Date:</strong>';
 
   const proposedStartDateValue = document.createElement('p');
   proposedStartDateValue.setAttribute(
@@ -645,7 +696,6 @@ function populateModalContent(index) {
     'data-modal-end-date-text',
     'proposed-end-date-text',
   );
-  proposedDeadlineText.innerHTML = '<strong>Proposed Deadline:</strong>';
 
   const proposedDeadlineValue = document.createElement('p');
   proposedDeadlineValue.setAttribute(
@@ -661,7 +711,6 @@ function populateModalContent(index) {
     'data-modal-description-text',
     'proposed-description-text',
   );
-  descriptionText.innerHTML = '<strong>Description:</strong>';
 
   const descriptionValue = document.createElement('p');
   descriptionValue.setAttribute(
@@ -683,7 +732,8 @@ function populateModalContent(index) {
     descriptionValue.innerHTML = html;
     descriptionValue.className = 'requestor_description_details';
   } else {
-    descriptionValue.textContent = userData.description;
+    descriptionValue.textContent = userData.description ?? 'N/A';
+    descriptionValue.className = 'proposed_description_value';
   }
 
   const header = document.createElement('h2');
@@ -694,12 +744,54 @@ function populateModalContent(index) {
   modalContent.innerHTML = '';
 
   modalContent.appendChild(header);
-  modalContent.appendChild(proposedStartDateText);
-  modalContent.appendChild(proposedStartDateValue);
-  modalContent.appendChild(proposedDeadlineText);
-  modalContent.appendChild(proposedDeadlineValue);
-  modalContent.appendChild(descriptionText);
-  modalContent.appendChild(descriptionValue);
+
+  modal.className = 'requestor_details_modal_content';
+
+  proposedStartDateText.innerText = 'Proposed Start Date:';
+  proposedStartDateText.className = 'proposed_start_date_text';
+
+  proposedStartDateValue.className = 'proposed_start_date_value';
+
+  proposedDeadlineText.innerText = 'Proposed Deadline:';
+  proposedDeadlineText.className = 'proposed_end_date_text';
+
+  proposedDeadlineValue.className = 'proposed_end_date_value';
+
+  descriptionText.innerText = 'Description:';
+  descriptionText.className = 'proposed_description_text';
+
+  descriptionValue.style.border = 'none';
+  descriptionValue.style.marginTop = '-0.35rem';
+  descriptionValue.style.padding = '-0rem 0.7rem';
+
+  const modalCloseButton = document.getElementById(
+    'requestor_details_modal_close',
+  );
+  modalCloseButton.className = 'requestor_details_modal_close';
+
+  header.className = 'requestor_details_modal_heading';
+
+  const proposedStartDateDiv = document.createElement('div');
+  proposedStartDateDiv.className = 'proposed_start_date_div';
+
+  const proposedDeadlineDiv = document.createElement('div');
+  proposedDeadlineDiv.className = 'proposed_end_date_div';
+
+  const descriptionDiv = document.createElement('div');
+  descriptionDiv.className = 'proposed_description_div';
+
+  proposedStartDateDiv.appendChild(proposedStartDateText);
+  proposedStartDateDiv.appendChild(proposedStartDateValue);
+  modalContent.appendChild(proposedStartDateDiv);
+
+  proposedDeadlineDiv.appendChild(proposedDeadlineText);
+  proposedDeadlineDiv.appendChild(proposedDeadlineValue);
+  modalContent.appendChild(proposedDeadlineDiv);
+
+  descriptionDiv.appendChild(descriptionText);
+  descriptionDiv.appendChild(descriptionValue);
+  modalContent.appendChild(descriptionDiv);
+
   modalOverlay.style.display = 'block';
 }
 

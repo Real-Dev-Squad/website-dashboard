@@ -20,6 +20,8 @@ const mainContainer = document.querySelector('.container');
 const applicationCloseButton = document.querySelector(
   '.application-close-button',
 );
+const filterComponent = document.getElementById('filterComponent');
+const activeFilterTags = document.getElementById('active-filter-tags');
 const noApplicationFoundText = document.querySelector('.no_applications_found');
 const applicationDetailsMain = document.querySelector(
   '.application-details-main',
@@ -44,10 +46,25 @@ let isApplicationPending = urlParams.get('status') === 'pending';
 const filterButton = isDev
   ? document.getElementById('filter-button-new')
   : document.getElementById('filter-button');
-if (isDev)
-  document
-    .getElementsByClassName('filter-container')[0]
-    .classList.remove('hidden');
+if (isDev) {
+  activeFilterTags.classList.remove('hidden');
+  filterComponent.classList.remove('hidden');
+  const statusList = [
+    { name: 'Accepted', id: 'ACCEPTED' },
+    { name: 'Pending', id: 'PENDING' },
+    { name: 'Rejected', id: 'REJECTED' },
+  ];
+  document.addEventListener('DOMContentLoaded', () => {
+    renderFilterComponent({
+      filterComponent,
+      page: 'applications',
+      statusList,
+      shouldAllowMultipleSelection: false,
+      parentContainer: applicationContainer,
+      renderFunction: renderApplicationCards,
+    });
+  });
+}
 
 const filterDropdown = document.querySelector('.filter-dropdown');
 const filterOptions = document.querySelectorAll(
@@ -85,12 +102,21 @@ function updateUserApplication({ isAccepted }) {
     .then((res) => {
       const updatedFeedback = payload.feedback || '';
       applicationTextarea.value = updatedFeedback;
-
-      showToast({ type: 'success', message: res.message });
+      showToastMessage({
+        isDev,
+        oldToastFunction: showToast,
+        type: 'success',
+        message: res.message,
+      });
       setTimeout(() => closeApplicationDetails(), 1000);
     })
     .catch((error) => {
-      showToast({ type: 'error', message: error.message });
+      showToastMessage({
+        isDev,
+        oldToastFunction: showToast,
+        type: 'error',
+        message: error.message,
+      });
     });
 }
 
@@ -463,7 +489,7 @@ async function renderApplicationById(id) {
 (async function renderCardsInitial() {
   changeLoaderVisibility({ hide: false });
 
-  const isSuperUser = await getIsSuperUser();
+  const isSuperUser = await getIsSuperUser(isDev);
   if (!isSuperUser) {
     const unAuthorizedText = createElement({
       type: 'h1',

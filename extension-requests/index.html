@@ -5,8 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/global.css" />
     <link rel="stylesheet" href="/extension-requests/style.css" />
+    <link rel="stylesheet" href="/components/filter/style.css" />
+    <link rel="stylesheet" href="/components/toast/style.css" />
     <title>Extension Requests</title>
+    <script src="/components/filter/script.js" defer></script>
     <script src="/navbar.global.js" async></script>
+    <script src="/components/toast/script.js" defer></script>
     <script src="/userLogin.js" async></script>
   </head>
 
@@ -21,7 +25,13 @@
         <img id="asc-sort-icon" src="/images/sort-asc.svg" alt="sort-icon" />
         <img id="desc-sort-icon" src="/images/sort-desc.svg" alt="sort-icon" />
       </button>
-      <button id="filter-button" class="filter-button">
+      <div
+        class="filter__component hidden"
+        id="filterComponent"
+        data-testid="filter-component"
+      ></div>
+
+      <button id="filter-button" class="filter-button hidden">
         <span class="filter-text">Filters</span>
 
         <img class="funnel-icon" src="/images/funnel.svg" alt="funnel icon" />
@@ -40,6 +50,19 @@
         </button>
       </div>
     </div>
+    <div
+      id="toastComponent"
+      data-testid="toast-component"
+      class="toast__component toast__hidden"
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
+    ></div>
+    <div
+      id="active-filter-tags"
+      class="filter__component__active__tags hidden"
+      data-testid="active-filter-tags"
+    ></div>
     <div class="container">
       <div class="extension-requests"></div>
       <div class="virtual"></div>

@@ -8,7 +8,7 @@ const {
   STAGING_API_URL,
   LOCAL_TEST_PAGE_URL,
 } = require('../../mock-data/constants');
-
+const { longDescription } = require('../../mock-data/taskRequests/index.js');
 describe('Request container for non-super users', () => {
   let browser;
   let page;
@@ -86,6 +86,19 @@ describe('Task request details page', () => {
           ...defaultMockResponseHeaders,
           body: JSON.stringify(urlMappings[url]),
         });
+      } else if (
+        url === `${STAGING_API_URL}/taskRequests/dM5wwDdsfd9QsiTzi7eG7Oq5`
+      ) {
+        interceptedRequest.respond({
+          status: 404,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify('Task Requests not found'),
+        });
       } else {
         interceptedRequest.continue();
       }
@@ -145,9 +158,32 @@ describe('Task request details page', () => {
       '[data-modal-description-value="proposed-description-value"]',
       (element) => element.textContent,
     );
-    expect(descriptionTextValue).toBe(
-      'code change 3 days , testing - 2 days. total - 5 days',
+    expect(descriptionTextValue).toBe(longDescription);
+  });
+  it('should show "Task Requests not found" When the task ID is invalid and dev mode is enabled', async function () {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwDdsfd9QsiTzi7eG7Oq5&dev=true`,
     );
+
+    await page.waitForNetworkIdle();
+
+    const errorText = await page.$eval(
+      '[data-testid="error-message"]',
+      (el) => el.textContent,
+    );
+    expect(errorText).toBe('Task Requests not found');
+  });
+
+  it('should not show "Task Requests not found" message when dev mode is disabled', async function () {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwDdsfd9QsiTzi7eG7Oq5`,
+    );
+
+    await page.waitForNetworkIdle();
+
+    const errorElement = await page.$('[data-testid="error-message"]');
+
+    expect(errorElement).toBeNull();
   });
 
   it('Should render Approve and Reject buttons for super users', async function () {
@@ -159,6 +195,47 @@ describe('Task request details page', () => {
     const rejectButton = await page.$('[data-testid="task-reject-button"]');
     expect(approveButton).toBeTruthy();
     expect(rejectButton).toBeTruthy();
+  });
+
+  it('should properly handle long descriptions in the modal', async function () {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq5`,
+    );
+    await page.waitForNetworkIdle();
+    await page.click('.info__more');
+    await page.waitForSelector('#requestor_details_modal_content', {
+      visible: true,
+    });
+
+    const descriptionText = await page.$eval(
+      '[data-modal-description-value="proposed-description-value"]',
+      (el) => el.textContent.trim(),
+    );
+    expect(descriptionText.length).toBeGreaterThan(1000);
+
+    const isScrollable = await page.evaluate(() => {
+      const modal = document.querySelector('#requestor_details_modal_content');
+      return modal.scrollHeight > modal.clientHeight;
+    });
+
+    expect(isScrollable).toBe(true);
+  });
+
+  it('should render N/A for description if descriptions is not present', async function () {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq7`,
+    );
+    await page.waitForNetworkIdle();
+    await page.click('.info__more');
+    await page.waitForSelector('#requestor_details_modal_content', {
+      visible: true,
+    });
+
+    const descriptionHtmlValue = await page.$eval(
+      '[data-modal-description-value="proposed-description-value"]',
+      (element) => element.innerHTML,
+    );
+    expect(descriptionHtmlValue).toContain('N/A');
   });
 });
 
@@ -334,6 +411,38 @@ describe('Task request details page with status creation', () => {
 
     expect(link).toContain(
       'https://github.com/Real-Dev-Squad/members-site/issues/92',
+    );
+  });
+
+  it('should show success toast after approving the task  request', async function () {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq5&dev=true`,
+    );
+    await page.waitForNetworkIdle();
+
+    const approveButton = await page.$('[data-testid="task-approve-button"]');
+
+    await approveButton.click();
+    const toastComponent = await page.$('[data-testid="toast-component"]');
+    expect(
+      await toastComponent.evaluate((el) => el.classList.contains('show')),
+    ).toBe(true);
+    expect(
+      await toastComponent.evaluate((el) => el.classList.contains('hide')),
+    ).toBe(false);
+    expect(
+      await toastComponent.evaluate((el) =>
+        el.classList.contains('success__toast'),
+      ),
+    ).toBe(true);
+    expect(
+      await toastComponent.evaluate((el) =>
+        el.classList.contains('error__toast'),
+      ),
+    ).toBe(false);
+    const toastMessage = await page.$('[data-testid="toast-message"]');
+    expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
+      'Task updated Successfully',
     );
   });
 });

@@ -20,6 +20,22 @@ const pendingRequest = {
 
 const approvedRequest = {
   message: 'Request fetched successfully',
+  data: {
+    id: 'Wl4TTbpSrQDIjs6KLJwD',
+    createdAt: 1711439903761,
+    requestedBy: 'V4rqL1aDecNGoa1IxiCu',
+    from: 1712275200000,
+    until: 1712448000000,
+    type: 'OOO',
+    message: 'request message',
+    lastModifiedBy: 'V4rqL1aDecNGoa1IxiCu',
+    state: 'APPROVED',
+    updatedAt: 1711482912686,
+  },
+};
+
+const approvedRequestsData = {
+  message: 'Request fetched successfully',
   data: [
     {
       id: 'Wl4TTbpSrQDIjs6KLJwD',
@@ -33,9 +49,20 @@ const approvedRequest = {
       state: 'APPROVED',
       updatedAt: 1711482912686,
     },
+
+    {
+      id: 'Wl4TTbpSrQDIjs6KLJwD',
+      createdAt: 1711439903661,
+      requestedBy: 'V4rqL1aDecNGoa1IxiCu',
+      from: 1712275206600,
+      until: 1712448000000,
+      type: 'OOO',
+      message: 'request message for OOO',
+      lastModifiedBy: 'V4rqL1aDecNGoa1IxiCu',
+      state: 'APPROVED',
+      updatedAt: 1711482912686,
+    },
   ],
-  next: null,
-  prev: null,
 };
 
 const requestActionResponse = {
@@ -73,9 +100,47 @@ const extensionRequest = {
   prev: null,
 };
 
+const onboardingExtensionRequest = {
+  message: 'Request fetched successfully',
+  data: [
+    {
+      id: 'Jne4XfI8lm5QTCfcHQyJ',
+      createdAt: 1737140162577,
+      type: 'ONBOARDING',
+      state: 'APPROVED',
+      userId: 'V4rqL1aDecNGoa1IxiCu',
+      requestedBy: 'kotesh',
+      oldEndsOn: 1731827984919,
+      requestNumber: 1,
+      reason: 'request reason',
+      lastModifiedBy: 'V4rqL1aDecNGoa1IxiCu',
+      newEndsOn: 1740756889491,
+      updatedAt: 1738688705368,
+      message: 'approved',
+    },
+    {
+      id: 'Jne4XfI8lm5QTCfcHQyJ',
+      createdAt: 1737140162577,
+      type: 'ONBOARDING',
+      state: 'PENDING',
+      userId: 'V4rqL1aDecNGoa1IxiCu',
+      requestedBy: 'kotesh',
+      oldEndsOn: 1731827984919,
+      requestNumber: 1,
+      reason: 'request reason',
+      newEndsOn: 1740756889491,
+      updatedAt: 1738688705368,
+    },
+  ],
+  next: null,
+  prev: null,
+};
+
 module.exports = {
   pendingRequest,
   approvedRequest,
+  approvedRequestsData,
   requestActionResponse,
   extensionRequest,
+  onboardingExtensionRequest,
 };
