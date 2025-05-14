@@ -1228,7 +1228,7 @@ describe('Tests the Extension Requests Screen', () => {
     );
   });
 
-  it.skip('should display all the field in the extension request card', async () => {
+  it.skip('should display all the required field in the extension request card under feature flag', async () => {
     await page.goto(
       `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&dev=true&size=1&q=status%3APENDING`,
     );
@@ -1258,7 +1258,7 @@ describe('Tests the Extension Requests Screen', () => {
     expect(taskTitle).toContain(taskDone.taskData.title);
   });
 
-  it.skip('should remove the card from display after approving the request', async () => {
+  it.skip('should remove the card from display after approving the request under feature flag', async () => {
     await page.goto(
       `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&dev=true&size=1&q=status%3APENDING`,
     );
@@ -1280,7 +1280,7 @@ describe('Tests the Extension Requests Screen', () => {
     expect(extensionCardsAfter.length).toBe(0);
   });
 
-  it.skip('should remove the card from display after rejecting the request', async () => {
+  it.skip('should remove the card from display after rejecting the request under feature flag', async () => {
     await page.goto(
       `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&dev=true&size=1&q=status%3APENDING`,
     );
