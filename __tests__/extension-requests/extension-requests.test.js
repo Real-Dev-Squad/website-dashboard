@@ -1227,4 +1227,78 @@ describe('Tests the Extension Requests Screen', () => {
       extensionRequestListForAuditLogs.allExtensionRequests.length,
     );
   });
+
+  it.skip('should display all the required field in the extension request card under feature flag', async () => {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&dev=true&size=1&q=status%3APENDING`,
+    );
+    await page.waitForNetworkIdle();
+
+    const card = await page.$("[data-testid='extension-request-card']");
+    expect(card).not.toBeNull();
+
+    const reasonText = await card.$eval(
+      '[data-testid="request-reason"]',
+      (el) => el.textContent.trim(),
+    );
+    expect(reasonText).toBe(
+      extensionRequestsListPending.allExtensionRequests[1].reason,
+    );
+
+    const assigneeName = await card.$eval('.assignee-name', (el) =>
+      el.textContent.trim().toLowerCase(),
+    );
+    expect(assigneeName).toBe(
+      extensionRequestsListPending.allExtensionRequests[1].assignee,
+    );
+
+    const taskTitle = await card.$eval('.task-title', (el) =>
+      el.textContent.trim(),
+    );
+    expect(taskTitle).toContain(taskDone.taskData.title);
+  });
+
+  it.skip('should remove the card from display after approving the request under feature flag', async () => {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&dev=true&size=1&q=status%3APENDING`,
+    );
+    await page.waitForNetworkIdle();
+    const extensionCards = await page.$$(
+      "[data-testid='extension-request-card']",
+    );
+    expect(extensionCards.length).toBe(1);
+
+    const approveButton = await extensionCards[0].$('.approve-button');
+    await approveButton.click();
+
+    await page.waitForTimeout(2000);
+
+    const extensionCardsAfter = await page.$$(
+      "[data-testid='extension-request-card']",
+    );
+
+    expect(extensionCardsAfter.length).toBe(0);
+  });
+
+  it.skip('should remove the card from display after rejecting the request under feature flag', async () => {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&dev=true&size=1&q=status%3APENDING`,
+    );
+    await page.waitForNetworkIdle();
+    const extensionCards = await page.$$(
+      "[data-testid='extension-request-card']",
+    );
+    expect(extensionCards.length).toBe(1);
+
+    const rejectButton = await extensionCards[0].$('.reject-button');
+    await rejectButton.click();
+
+    await page.waitForTimeout(2000);
+
+    const extensionCardsAfter = await page.$$(
+      "[data-testid='extension-request-card']",
+    );
+
+    expect(extensionCardsAfter.length).toBe(0);
+  });
 });
