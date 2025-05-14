@@ -21,16 +21,16 @@ async function createRequestCardComponent({
     },
   });
 
-  let oldEndsOnValue = data.oldEndsOn;
-  let newEndsOnValue = data.newEndsOn;
+  let oldEndsOn = data.oldEndsOn;
+  let newEndsOn = data.newEndsOn;
   const currentTimestamp = Date.now();
 
   if (data.type === RequestType.OOO) {
-    oldEndsOnValue = data.from;
-    newEndsOnValue = data.until;
+    oldEndsOn = data.from;
+    newEndsOn = data.until;
   }
 
-  const requestNumber = data.requestNumber || 1;
+  const requestNumber = data.requestNumber;
   let assigneeNameElement;
   let assigneeImage;
   let taskStatusElement;
@@ -39,50 +39,46 @@ async function createRequestCardComponent({
     ? getTaskDetails(data.taskId)
     : Promise.resolve({ taskData: null });
 
-  const isDeadLineCrossed =
-    currentTimestamp >
-    standardizeTimeToMilliseconds(oldEndsOnValue, isExtensionRequest);
-  const isNewDeadLineCrossed =
-    currentTimestamp >
-    standardizeTimeToMilliseconds(newEndsOnValue, isExtensionRequest);
-  const isStatusPending = isExtensionRequest
-    ? data.status === RequestStatus.PENDING
-    : data.state === RequestStatus.PENDING;
-  const requestedDaysTextColor = getRequestColor(
-    standardizeTimeToMilliseconds(oldEndsOnValue, isExtensionRequest),
-    standardizeTimeToMilliseconds(
-      isExtensionRequest ? data.timestamp : data.createdAt,
-      isExtensionRequest,
-    ),
-  );
-  const oldEndsOn = standardizeTimeToMilliseconds(
-    oldEndsOnValue,
+  const oldEndsOnInMillisecond = getTimeInMilliseconds(
+    oldEndsOn,
     isExtensionRequest,
   );
-  const newEndsOn = standardizeTimeToMilliseconds(
-    newEndsOnValue,
+  const newEndsOnInMillisecond = getTimeInMilliseconds(
+    newEndsOn,
     isExtensionRequest,
   );
-  const requestTimestamp = standardizeTimeToMilliseconds(
+  const requestCreatedAt = getTimeInMilliseconds(
     isExtensionRequest ? data.timestamp : data.createdAt,
     isExtensionRequest,
   );
 
-  const requestDays = dateDiff(newEndsOn, oldEndsOn);
+  const isDeadLineCrossed = currentTimestamp > oldEndsOnInMillisecond;
+  const isNewDeadLineCrossed = currentTimestamp > newEndsOnInMillisecond;
+  const isStatusPending = isExtensionRequest
+    ? data.status === RequestStatus.PENDING
+    : data.state === RequestStatus.PENDING;
+  const requestedDaysTextColor = getRequestColor(
+    oldEndsOnInMillisecond,
+    requestCreatedAt,
+  );
+
+  const requestTimestamp = requestCreatedAt;
+
+  const requestDays = dateDiff(newEndsOnInMillisecond, oldEndsOnInMillisecond);
 
   const deadlineDays = dateDiff(
     currentTimestamp,
-    oldEndsOn,
+    oldEndsOnInMillisecond,
     (d) => d + (isDeadLineCrossed ? ' ago' : ''),
   );
 
   const newDeadlineDays = isExtensionRequest
     ? dateDiff(
         currentTimestamp,
-        newEndsOn,
+        newEndsOnInMillisecond,
         (d) => d + (isNewDeadLineCrossed ? ' ago' : ''),
       )
-    : getTwoDigitDate(newEndsOnValue);
+    : getTwoDigitDate(newEndsOn);
 
   const requestedDaysAgo = dateDiff(
     currentTimestamp,
@@ -201,12 +197,7 @@ async function createRequestCardComponent({
   const requestedToolTip = createElement({
     type: 'span',
     attributes: { class: 'tooltip' },
-    innerText: `${formatToFullDate(
-      standardizeTimeToMilliseconds(
-        isExtensionRequest ? data.timestamp : data.createdAt,
-        isExtensionRequest,
-      ),
-    )}`,
+    innerText: `${formatToFullDate(requestCreatedAt)}`,
   });
   const taskStatusText = createElement({
     type: 'span',
@@ -224,17 +215,13 @@ async function createRequestCardComponent({
   const newDeadlineToolTip = createElement({
     type: 'span',
     attributes: { class: 'tooltip' },
-    innerText: `${formatToFullDate(
-      standardizeTimeToMilliseconds(newEndsOnValue, isExtensionRequest),
-    )}`,
+    innerText: `${formatToFullDate(newEndsOnInMillisecond)}`,
   });
 
   const requestToolTip = createElement({
     type: 'span',
     attributes: { class: 'tooltip' },
-    innerText: formatToFullDate(
-      standardizeTimeToMilliseconds(newEndsOnValue, isExtensionRequest),
-    ),
+    innerText: formatToFullDate(newEndsOnInMillisecond),
   });
 
   const requestRequestNumber = createElement({
@@ -320,7 +307,7 @@ async function createRequestCardComponent({
       isDeadLineCrossed,
       deadlineDays,
       data,
-      oldEndsOnValue,
+      oldEndsOn,
       isStatusPending,
     });
   const {
@@ -333,9 +320,9 @@ async function createRequestCardComponent({
     isExtensionRequest,
     newDeadlineDays,
     isDeadLineCrossed,
-    newEndsOnValue,
+    newEndsOn,
     requestDays,
-    oldEndsOnValue,
+    oldEndsOn,
   );
   const {
     container: reasonContainer,
