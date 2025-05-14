@@ -25,7 +25,7 @@ async function createRequestCardComponent({
   let newEndsOnValue = data.newEndsOn;
   const currentTimestamp = Date.now();
 
-  if (!isExtensionRequest && data.type === 'OOO') {
+  if (data.type === RequestType.OOO) {
     oldEndsOnValue = data.from;
     newEndsOnValue = data.until;
   }
@@ -33,7 +33,7 @@ async function createRequestCardComponent({
   const requestNumber = data.requestNumber || 1;
   let assigneeNameElement;
   let assigneeImage;
-  let taskStatusValue;
+  let taskStatusElement;
 
   const taskDataPromise = isExtensionRequest
     ? getTaskDetails(data.taskId)
@@ -41,42 +41,52 @@ async function createRequestCardComponent({
 
   const isDeadLineCrossed =
     currentTimestamp >
-    normalizeToMilliseconds(oldEndsOnValue, isExtensionRequest);
+    standardizeTimeToMilliseconds(oldEndsOnValue, isExtensionRequest);
   const isNewDeadLineCrossed =
     currentTimestamp >
-    normalizeToMilliseconds(newEndsOnValue, isExtensionRequest);
+    standardizeTimeToMilliseconds(newEndsOnValue, isExtensionRequest);
   const isStatusPending = isExtensionRequest
     ? data.status === RequestStatus.PENDING
     : data.state === RequestStatus.PENDING;
   const requestedDaysTextColor = getRequestColor(
-    normalizeToMilliseconds(oldEndsOnValue, isExtensionRequest),
-    normalizeToMilliseconds(
+    standardizeTimeToMilliseconds(oldEndsOnValue, isExtensionRequest),
+    standardizeTimeToMilliseconds(
       isExtensionRequest ? data.timestamp : data.createdAt,
       isExtensionRequest,
     ),
   );
-  const requestDays = dateDiff(
-    normalizeToMilliseconds(newEndsOnValue, isExtensionRequest),
-    normalizeToMilliseconds(oldEndsOnValue, isExtensionRequest),
+  const oldEndsOn = standardizeTimeToMilliseconds(
+    oldEndsOnValue,
+    isExtensionRequest,
   );
+  const newEndsOn = standardizeTimeToMilliseconds(
+    newEndsOnValue,
+    isExtensionRequest,
+  );
+  const requestTimestamp = standardizeTimeToMilliseconds(
+    isExtensionRequest ? data.timestamp : data.createdAt,
+    isExtensionRequest,
+  );
+
+  const requestDays = dateDiff(newEndsOn, oldEndsOn);
+
   const deadlineDays = dateDiff(
     currentTimestamp,
-    normalizeToMilliseconds(oldEndsOnValue, isExtensionRequest),
+    oldEndsOn,
     (d) => d + (isDeadLineCrossed ? ' ago' : ''),
   );
+
   const newDeadlineDays = isExtensionRequest
     ? dateDiff(
         currentTimestamp,
-        normalizeToMilliseconds(newEndsOnValue, isExtensionRequest),
+        newEndsOn,
         (d) => d + (isNewDeadLineCrossed ? ' ago' : ''),
       )
     : getTwoDigitDate(newEndsOnValue);
+
   const requestedDaysAgo = dateDiff(
     currentTimestamp,
-    normalizeToMilliseconds(
-      isExtensionRequest ? data.timestamp : data.createdAt,
-      isExtensionRequest,
-    ),
+    requestTimestamp,
     (s) => s + ' ago',
   );
 
@@ -87,6 +97,7 @@ async function createRequestCardComponent({
   const titleText = createElement({
     type: 'span',
     attributes: { class: 'card-title title-text' },
+    'data-testid': 'request-title-text',
     innerText: data.title,
   });
   const committedHoursHoverTrigger = createElement({
@@ -95,6 +106,7 @@ async function createRequestCardComponent({
       class: 'committed-hours-trigger',
       src: '/images/time.svg',
       alt: 'clock-icon',
+      'data-testid': 'committed-hours-trigger',
     },
   });
   const requestCardHeaderWrapper = createElement({
@@ -147,7 +159,7 @@ async function createRequestCardComponent({
   committedHoursHoverTrigger.addEventListener('mouseleave', () => {
     hideTimeout = setTimeout(() => {
       committedHoursHoverCard.classList.add('hidden');
-    }, 700);
+    }, HOVER_CARD_HIDE_DELAY);
   });
 
   committedHoursHoverTrigger.addEventListener('mouseenter', () => {
@@ -156,7 +168,7 @@ async function createRequestCardComponent({
   committedHoursHoverTrigger.addEventListener('mouseleave', () => {
     setTimeout(() => {
       committedHoursHoverCard.classList.add('hidden');
-    }, 700);
+    }, HOVER_CARD_HIDE_DELAY);
   });
 
   const detailsContainer = createElement({
@@ -183,14 +195,14 @@ async function createRequestCardComponent({
     attributes: {
       class: `requested-day tooltip-container ${requestedDaysTextColor}`,
     },
-    innerText: ` ${requestedDaysAgo}`,
+    innerText: `${requestedDaysAgo}`,
   });
 
   const requestedToolTip = createElement({
     type: 'span',
     attributes: { class: 'tooltip' },
     innerText: `${formatToFullDate(
-      normalizeToMilliseconds(
+      standardizeTimeToMilliseconds(
         isExtensionRequest ? data.timestamp : data.createdAt,
         isExtensionRequest,
       ),
@@ -201,7 +213,7 @@ async function createRequestCardComponent({
     attributes: { class: 'card-row-text' },
     innerText: 'Task status ',
   });
-  taskStatusValue = createElement({
+  taskStatusElement = createElement({
     type: 'span',
     attributes: {
       class: 'skeleton-span',
@@ -213,7 +225,7 @@ async function createRequestCardComponent({
     type: 'span',
     attributes: { class: 'tooltip' },
     innerText: `${formatToFullDate(
-      normalizeToMilliseconds(newEndsOnValue, isExtensionRequest),
+      standardizeTimeToMilliseconds(newEndsOnValue, isExtensionRequest),
     )}`,
   });
 
@@ -221,7 +233,7 @@ async function createRequestCardComponent({
     type: 'span',
     attributes: { class: 'tooltip' },
     innerText: formatToFullDate(
-      normalizeToMilliseconds(newEndsOnValue, isExtensionRequest),
+      standardizeTimeToMilliseconds(newEndsOnValue, isExtensionRequest),
     ),
   });
 
@@ -229,6 +241,7 @@ async function createRequestCardComponent({
     type: 'span',
     attributes: { class: 'card-row-text ' },
     innerText: 'Request ',
+    'data-testid': 'request-number-container',
   });
 
   const requestRequestNumberValue = createElement({
@@ -275,6 +288,7 @@ async function createRequestCardComponent({
   const accordionButton = createElement({
     type: 'button',
     attributes: { class: 'accordion uninitialized' },
+    'data-testid': 'accordion-button',
   });
   const downArrowIcon = createElement({
     type: 'img',
