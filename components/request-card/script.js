@@ -178,12 +178,12 @@ async function createRequestCardComponent({
     attributes: { id: 'requested-time-container' },
   });
 
-  const requestedText = createElement({
+  const requestedTextLabel = createElement({
     type: 'span',
     attributes: { class: 'card-row-text' },
     innerText: 'Requested ',
   });
-  const requestedValue = createElement({
+  const requestedTextValue = createElement({
     type: 'span',
     attributes: {
       class: `requested-day tooltip-container ${requestedDaysTextColor}`,
@@ -197,7 +197,7 @@ async function createRequestCardComponent({
     innerText: `${formatToFullDate(requestCreatedAt)}`,
   });
 
-  const taskStatusText = createElement({
+  const taskStatusTextLabel = createElement({
     type: 'span',
     attributes: { class: 'card-row-text' },
     innerText: 'Task status ',
@@ -238,7 +238,7 @@ async function createRequestCardComponent({
     attributes: { class: 'assignee-container' },
   });
 
-  const assigneeText = createElement({
+  const assigneeTextLabel = createElement({
     type: 'span',
     attributes: { class: 'assignee-text' },
     innerText: 'Requested By',
