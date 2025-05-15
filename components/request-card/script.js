@@ -191,7 +191,7 @@ async function createRequestCardComponent({
     innerText: `${requestedDaysAgo}`,
   });
 
-  const requestedToolTip = createElement({
+  const requestCreatedAtTooltip = createElement({
     type: 'span',
     attributes: { class: 'tooltip' },
     innerText: `${formatToFullDate(requestCreatedAt)}`,
