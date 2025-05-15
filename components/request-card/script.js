@@ -62,8 +62,6 @@ async function createRequestCardComponent({
     requestCreatedAt,
   );
 
-  const requestTimestamp = requestCreatedAt;
-
   const requestDays = dateDiff(newEndsOnInMillisecond, oldEndsOnInMillisecond);
 
   const deadlineDays = dateDiff(
@@ -82,7 +80,7 @@ async function createRequestCardComponent({
 
   const requestedDaysAgo = dateDiff(
     currentTimestamp,
-    requestTimestamp,
+    requestCreatedAt,
     (s) => s + ' ago',
   );
 
@@ -90,12 +88,14 @@ async function createRequestCardComponent({
     type: 'form',
     attributes: { class: 'request-card-form' },
   });
+
   const titleText = createElement({
     type: 'span',
     attributes: { class: 'card-title title-text' },
     'data-testid': 'request-title-text',
     innerText: data.title,
   });
+
   const committedHoursHoverTrigger = createElement({
     type: 'img',
     attributes: {
@@ -105,10 +105,12 @@ async function createRequestCardComponent({
       'data-testid': 'committed-hours-trigger',
     },
   });
+
   const requestCardHeaderWrapper = createElement({
     type: 'div',
     attributes: { class: 'request-header-wrapper' },
   });
+
   const titleInput = createElement({
     type: 'input',
     attributes: {
@@ -119,10 +121,12 @@ async function createRequestCardComponent({
       'data-testid': 'title-text-input',
     },
   });
+
   const titleInputWrapper = createElement({
     type: 'div',
     attributes: { class: 'title-input-wrapper hidden' },
   });
+
   const titleInputError = createElement({
     type: 'div',
     attributes: {
@@ -136,11 +140,12 @@ async function createRequestCardComponent({
     type: 'div',
     attributes: { class: 'committed-hours hidden' },
   });
-  const CommittedHoursLabel = createElement({
+
+  const committedHoursLabel = createElement({
     type: 'span',
     attributes: { class: 'label' },
   });
-  const CommittedHoursContent = createElement({
+  const committedHoursContent = createElement({
     type: 'span',
     attributes: { class: 'label-content' },
   });
@@ -158,15 +163,6 @@ async function createRequestCardComponent({
     }, HOVER_CARD_HIDE_DELAY);
   });
 
-  committedHoursHoverTrigger.addEventListener('mouseenter', () => {
-    committedHoursHoverCard.classList.remove('hidden');
-  });
-  committedHoursHoverTrigger.addEventListener('mouseleave', () => {
-    setTimeout(() => {
-      committedHoursHoverCard.classList.add('hidden');
-    }, HOVER_CARD_HIDE_DELAY);
-  });
-
   const detailsContainer = createElement({
     type: 'div',
     attributes: { class: 'details-container' },
@@ -176,6 +172,7 @@ async function createRequestCardComponent({
     type: 'span',
     attributes: { class: 'details-line' },
   });
+
   const requestedContainer = createElement({
     type: 'div',
     attributes: { id: 'requested-time-container' },
@@ -199,11 +196,13 @@ async function createRequestCardComponent({
     attributes: { class: 'tooltip' },
     innerText: `${formatToFullDate(requestCreatedAt)}`,
   });
+
   const taskStatusText = createElement({
     type: 'span',
     attributes: { class: 'card-row-text' },
     innerText: 'Task status ',
   });
+
   taskStatusElement = createElement({
     type: 'span',
     attributes: {
@@ -212,26 +211,20 @@ async function createRequestCardComponent({
     },
   });
 
-  const newDeadlineToolTip = createElement({
+  const newEndsOnTooltip = createElement({
     type: 'span',
     attributes: { class: 'tooltip' },
     innerText: `${formatToFullDate(newEndsOnInMillisecond)}`,
   });
 
-  const requestToolTip = createElement({
-    type: 'span',
-    attributes: { class: 'tooltip' },
-    innerText: formatToFullDate(newEndsOnInMillisecond),
-  });
-
-  const requestRequestNumber = createElement({
+  const requestNumberLabel = createElement({
     type: 'span',
     attributes: { class: 'card-row-text ' },
     innerText: 'Request ',
     'data-testid': 'request-number-container',
   });
 
-  const requestRequestNumberValue = createElement({
+  const requestNumberValue = createElement({
     type: 'span',
     innerText: `#${requestNumber}`,
   });
@@ -290,13 +283,13 @@ async function createRequestCardComponent({
     attributes: { id: `log-container-${data.id}` },
   });
 
-  const logDetailsLine = createElement({
+  const logLabel = createElement({
     type: 'span',
     attributes: { class: 'log-details-line' },
     innerText: 'Logs',
   });
 
-  const logDetailsLines = createElement({
+  const logContent = createElement({
     type: 'span',
     attributes: { class: 'details-line' },
   });
