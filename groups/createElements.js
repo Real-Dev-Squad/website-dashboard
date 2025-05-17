@@ -6,6 +6,7 @@ const createCard = (
 ) => {
   const group = {
     ...rawGroup,
+    count: rawGroup.count || 0,
     description:
       rawGroup.description ||
       'Please ask the role creator or admin to update this group description.',
@@ -24,7 +25,7 @@ const createCard = (
               <img class="delete-group__icon" src="assets/delete.svg" alt="Delete" />
             </button>`
               : ''
-          }  
+          }
         </div>
         <p class="card__description"></p>
         <div class="card__action">
@@ -169,7 +170,7 @@ const createGroupCreationModal = (onClose = () => {}, onSubmit = () => {}) => {
                 <textarea
                   class="input__field"
                   name="description"
-                  placeholder="This group is for..." 
+                  placeholder="This group is for..."
                 ></textarea>
               </div>
             </div>
@@ -257,7 +258,7 @@ const createDeleteConfirmationModal = (
     <div class="delete-modal__content">
       <p class="delete-modal__msg"> Are you sure you want to delete this group? </p>
     </div>
-    
+
     <div class="delete-modal__buttons">
       <button class="delete-modal-button button--secondary" id="cancel-delete">Cancel</button>
       <button class="delete-modal-button button--danger" id="confirm-delete">Delete</button>
