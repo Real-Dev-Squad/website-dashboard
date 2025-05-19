@@ -129,80 +129,77 @@ async function createRequestCardComponent({
     domRefs: { panel, accordionButton, rootElement, parentContainer },
   });
 
-  titleInputWrapper.appendChild(titleInput);
-  titleInputWrapper.appendChild(titleInputError);
-  committedHoursHoverCard.appendChild(committedHoursLabel);
-  committedHoursHoverCard.appendChild(committedHoursContent);
-  requestCardHeaderWrapper.appendChild(titleInputWrapper);
-  requestCardHeaderWrapper.appendChild(titleText);
-  requestCardHeaderWrapper.appendChild(committedHoursHoverTrigger);
-  requestCardHeaderWrapper.appendChild(committedHoursHoverCard);
+  titleInputWrapper.append(titleInput, titleInputError);
+  committedHoursHoverCard.append(committedHoursLabel, committedHoursContent);
+  requestCardHeaderWrapper.append(
+    titleInputWrapper,
+    titleText,
+    committedHoursHoverTrigger,
+    committedHoursHoverCard,
+  );
+
   if (isExtensionRequest) {
-    formContainer.appendChild(requestCardHeaderWrapper);
+    formContainer.append(requestCardHeaderWrapper);
   }
-  taskDetailsContainer.appendChild(requestedContainer);
-  requestedContainer.appendChild(requestedTextLabel);
-  requestedTextValue.appendChild(requestCreatedAtTooltip);
-  requestedContainer.appendChild(requestedTextValue);
+  taskDetailsContainer.append(requestedContainer);
+  requestedTextValue.append(requestCreatedAtTooltip);
+  requestedContainer.append(requestedTextLabel, requestedTextValue);
+
   const taskStatusContainer = createElement({ type: 'div' });
   if (isExtensionRequest) {
-    taskDetailsContainer.appendChild(taskStatusContainer);
+    taskDetailsContainer.append(taskStatusContainer);
   }
-  taskStatusContainer.appendChild(taskStatusTextLabel);
 
-  taskStatusContainer.appendChild(taskStatusElement);
-  summaryContainer.appendChild(datesContainer);
-
-  newDeadlineValue.appendChild(newEndsOnTooltip);
-
-  requestForValue.appendChild(requestCreatedAtTooltip);
+  taskStatusContainer.append(taskStatusTextLabel, taskStatusElement);
+  summaryContainer.append(datesContainer);
+  newDeadlineValue.append(newEndsOnTooltip);
+  requestForValue.append(requestCreatedAtTooltip);
 
   const requestNumberContainer = createElement({ type: 'div' });
   if (isExtensionRequest) {
-    datesContainer.appendChild(requestNumberContainer);
+    datesContainer.append(requestNumberContainer);
   } else if (data.type !== RequestType.OOO) {
-    taskDetailsContainer.appendChild(requestNumberContainer);
+    taskDetailsContainer.append(requestNumberContainer);
   }
-  requestNumberContainer.appendChild(requestNumberLabel);
 
-  requestNumberContainer.appendChild(requestNumberValue);
-  cardAssigneeButtonContainer.appendChild(assigneeContainer);
-  assigneeContainer.appendChild(assigneeTextLabel);
-  assigneeContainer.appendChild(assigneeImage);
+  requestNumberContainer.append(requestNumberLabel, requestNumberValue);
+  cardAssigneeButtonContainer.append(assigneeContainer);
 
-  formContainer.appendChild(summaryContainer);
+  assigneeContainer.append(
+    assigneeTextLabel,
+    assigneeImage,
+    assigneeNameElement,
+  );
 
-  assigneeContainer.appendChild(assigneeNameElement);
-  cardAssigneeButtonContainer.appendChild(requestActionContainer);
+  cardAssigneeButtonContainer.append(requestActionContainer);
 
-  panel.appendChild(reasonContainer);
+  panel.append(reasonContainer);
 
   if (isExtensionRequest) {
-    panel.appendChild(logContainer);
+    panel.append(logContainer);
   } else if (data?.state !== RequestStatus.PENDING) {
-    panel.appendChild(commentContainer);
+    panel.append(commentContainer);
   }
 
   accordionButton.addEventListener('click', function () {
     isExtensionRequest ? renderLogs(data.id) : toggleAccordionPanel(panel);
   });
   const cardFooter = createElement({ type: 'div' });
-  cardFooter.appendChild(cardAssigneeButtonContainer);
-  cardFooter.appendChild(accordionContainer);
-  formContainer.appendChild(cardFooter);
-  rootElement.appendChild(formContainer);
+  cardFooter.append(cardAssigneeButtonContainer, accordionContainer);
+  formContainer.append(summaryContainer, cardFooter);
+  rootElement.append(formContainer);
 
   formContainer.addEventListener('submit', async (e) => {
     e.preventDefault();
     const formData = getFormEntries(new FormData(e.target));
-    formData['newEndsOn'] = new Date(formData['newEndsOn']).getTime() / 1000;
+    formData.newEndsOn = new Date(formData.newEndsOn).getTime() / 1000;
 
     const todayDate = Math.floor(new Date().getTime() / 1000);
     if (
       !formData.title?.trim() ||
       !formData.reason?.trim() ||
-      isNaN(formData['newEndsOn']) ||
-      formData['newEndsOn'] < todayDate
+      isNaN(formData.newEndsOn) ||
+      formData.newEndsOn < todayDate
     ) {
       return;
     }
@@ -227,9 +224,9 @@ async function createRequestCardComponent({
       },
       meta: {
         requestId: data.id,
-        name: `${currentUser?.first_name ?? ''} ${
-          currentUser?.last_name ?? ''
-        }`,
+        name: [currentUser?.first_name, currentUser?.last_name]
+          .filter(Boolean)
+          .join(' '),
         userId: currentUser?.id,
       },
       timestamp: {
@@ -290,7 +287,7 @@ async function createRequestCardComponent({
     );
     newDeadlineValue.innerText = newDeadlineDays;
     newEndsOnTooltip.innerText = formatToFullDate(formDataNewEndsOn);
-    newDeadlineValue.appendChild(newEndsOnTooltip);
+    newDeadlineValue.append(newEndsOnTooltip);
     function revertDataChange() {
       titleText.innerText = previousTitle;
       reasonParagraph.innerText = previousReason;
@@ -356,8 +353,8 @@ async function createRequestCardComponent({
     }
   });
 
-  fragment.appendChild(rootElement);
-  parentContainer.appendChild(fragment);
+  fragment.append(rootElement);
+  parentContainer.append(fragment);
 
   return rootElement;
 
@@ -592,10 +589,8 @@ function createAccordionContainer() {
       alt: 'down-arrow',
     },
   });
-
-  accordionContainer.appendChild(accordionButton);
-  accordionButton.appendChild(downArrowIcon);
-  accordionContainer.appendChild(panel);
+  accordionButton.append(downArrowIcon);
+  accordionContainer.append(accordionButton, panel);
 
   return {
     accordionContainer,
