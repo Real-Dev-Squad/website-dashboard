@@ -1209,4 +1209,96 @@ describe('Tests the Extension Requests Screen', () => {
       'Extension request successfully updated.',
     );
   });
+
+  it('should show only "APPROVED" and "DENIED" extension requests after selecting those filters when dev=true', async () => {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/extension-requests?dev=true&order=desc`,
+    );
+    await page.waitForNetworkIdle();
+    await page.click('[data-testid="filter-component-toggle-button"]');
+    const applyFilterButton = '[data-testid="apply-filter-component-button"]';
+    await page.waitForSelector(applyFilterButton, { visible: true });
+    await page.click(`input[type="checkbox"][id="APPROVED"]`);
+    await page.click(`input[type="checkbox"][id="DENIED"]`);
+    await page.click(applyFilterButton);
+    await page.waitForNetworkIdle();
+    const extensionRequestCards = await page.$$('.extension-card');
+    expect(extensionRequestCards.length).toBe(
+      extensionRequestListForAuditLogs.allExtensionRequests.length,
+    );
+  });
+
+  it.skip('should display all the required field in the extension request card under feature flag', async () => {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&dev=true&size=1&q=status%3APENDING`,
+    );
+    await page.waitForNetworkIdle();
+
+    const card = await page.$("[data-testid='extension-request-card']");
+    expect(card).not.toBeNull();
+
+    const reasonText = await card.$eval(
+      '[data-testid="request-reason"]',
+      (el) => el.textContent.trim(),
+    );
+    expect(reasonText).toBe(
+      extensionRequestsListPending.allExtensionRequests[1].reason,
+    );
+
+    const assigneeName = await card.$eval('.assignee-name', (el) =>
+      el.textContent.trim().toLowerCase(),
+    );
+    expect(assigneeName).toBe(
+      extensionRequestsListPending.allExtensionRequests[1].assignee,
+    );
+
+    const taskTitle = await card.$eval('.task-title', (el) =>
+      el.textContent.trim(),
+    );
+    expect(taskTitle).toContain(taskDone.taskData.title);
+  });
+
+  it.skip('should remove the card from display after approving the request under feature flag', async () => {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&dev=true&size=1&q=status%3APENDING`,
+    );
+    await page.waitForNetworkIdle();
+    const extensionCards = await page.$$(
+      "[data-testid='extension-request-card']",
+    );
+    expect(extensionCards.length).toBe(1);
+
+    const approveButton = await extensionCards[0].$('.approve-button');
+    await approveButton.click();
+
+    await page.waitForTimeout(2000);
+
+    const extensionCardsAfter = await page.$$(
+      "[data-testid='extension-request-card']",
+    );
+
+    expect(extensionCardsAfter.length).toBe(0);
+  });
+
+  it.skip('should remove the card from display after rejecting the request under feature flag', async () => {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&dev=true&size=1&q=status%3APENDING`,
+    );
+    await page.waitForNetworkIdle();
+    const extensionCards = await page.$$(
+      "[data-testid='extension-request-card']",
+    );
+    expect(extensionCards.length).toBe(1);
+
+    const rejectButton = await extensionCards[0].$('.reject-button');
+    await rejectButton.click();
+
+    await page.waitForTimeout(2000);
+
+    const extensionCardsAfter = await page.$$(
+      "[data-testid='extension-request-card']",
+    );
+
+    expect(extensionCardsAfter.length).toBe(0);
+  });
 });

@@ -4,6 +4,7 @@ const {
   requestActionResponse,
   approvedRequest,
   extensionRequest,
+  approvedRequestsData,
   onboardingExtensionRequest,
 } = require('../../mock-data/requests');
 const { allUsersData, userRandhir } = require('../../mock-data/users');
@@ -116,6 +117,20 @@ describe('Tests the request cards', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
           body: JSON.stringify(userRandhir),
+        });
+      } else if (
+        url ===
+        `${STAGING_API_URL}/requests?dev=true&type=OOO&size=12&state=APPROVED`
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(approvedRequestsData),
         });
       } else {
         interceptedRequest.continue();
@@ -584,5 +599,97 @@ describe('Tests the request cards', () => {
     expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
       'Request approved successfully',
     );
+  });
+
+  it('should show only "APPROVED" requests after approved filter is applied when dev=true', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/requests?dev=true`);
+    await page.waitForNetworkIdle();
+    await page.click('[data-testid="filter-component-toggle-button"]');
+    const applyFilterButton = '[data-testid="apply-filter-component-button"]';
+    await page.waitForSelector(applyFilterButton, { visible: true });
+    await page.click(`input[type="checkbox"][id="APPROVED"]`);
+    await page.click(applyFilterButton);
+    await page.waitForNetworkIdle();
+
+    const requestCards = await page.$$('[data-testid="ooo-request-card"]');
+    expect(requestCards.length).toBe(approvedRequestsData.data.length);
+
+    const statusText = await requestCards[0].$eval(
+      '[data-testid="request-status"]',
+      (el) => el.textContent,
+    );
+    expect(statusText).toContain('Approved');
+  });
+
+  describe.skip('Test Request Card (Dev Mode Enabled)', () => {
+    beforeEach(async () => {
+      await page.goto(`${LOCAL_TEST_PAGE_URL}/requests?dev=true`);
+      await page.waitForNetworkIdle();
+    });
+
+    it('should display all the field in the request card', async () => {
+      const requestCards = await page.$$('[data-testid="ooo-request-card"]');
+      expect(requestCards.length).toBeGreaterThan(0);
+
+      for (const card of requestCards) {
+        const approveButton = await card.$(
+          '[data-testid="request-approve-button"]',
+        );
+        const rejectButton = await card.$(
+          '[data-testid="request-reject-button"]',
+        );
+        const remarkInput = await card.$(
+          '[data-testid="request-remark-input"]',
+        );
+
+        const requestTypeElement = await card.$('[data-testid="request-type"]');
+        const requestTypeText = await requestTypeElement.evaluate((el) =>
+          el.textContent.trim(),
+        );
+
+        const requestReasonElement = await card.$(
+          '[data-testid="request-reason"]',
+        );
+
+        const requestReasonText = await requestReasonElement.evaluate((el) =>
+          el.textContent.trim(),
+        );
+        expect(approveButton).not.toBeNull();
+        expect(rejectButton).not.toBeNull();
+        expect(remarkInput).not.toBeNull();
+        expect(requestTypeText).toBe('OOO');
+        expect(requestReasonText).toBe(pendingRequest.data[0].reason);
+      }
+    });
+
+    it('should remove the card from display after approving the request', async () => {
+      const requestCards = await page.$$('[data-testid="ooo-request-card"]');
+      expect(requestCards.length).toBe(1);
+
+      const approveButton = await requestCards[0].$('.approve-button');
+      await approveButton.click();
+      approveButton.click();
+
+      await page.waitForTimeout(2000);
+
+      const requestCardsAfterUpdate = await page.$$(
+        '[data-testid="ooo-request-card"]',
+      );
+      expect(requestCardsAfterUpdate.length).toBe(0);
+    });
+
+    it('should remove the card from display after rejecting the request', async () => {
+      const requestCards = await page.$$('[data-testid="ooo-request-card"]');
+      expect(requestCards.length).toBe(1);
+
+      const rejectButton = await requestCards[0].$('.reject-button');
+      await rejectButton.click();
+      await page.waitForTimeout(2000);
+
+      const requestCardsAfterUpdate = await page.$$(
+        '[data-testid="ooo-request-card"]',
+      );
+      expect(requestCardsAfterUpdate.length).toBe(0);
+    });
   });
 });
