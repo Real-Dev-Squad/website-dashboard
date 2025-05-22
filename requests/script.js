@@ -30,6 +30,12 @@ let userDetails = [];
 let nextLink = '';
 let isDataLoading = false;
 
+let currentUserDetails;
+
+getSelfUser().then((response) => {
+  currentUserDetails = response;
+});
+
 function updateTabLink(requestType) {
   if (requestType === OOO_REQUEST_TYPE) {
     oooTabLink.classList.add(selected__tab__class);
@@ -471,10 +477,13 @@ function createRequestCard(request, superUserDetails, requesterUserDetails) {
         }),
         createElementFromMap({
           tagName: 'button',
-          class: ['request__status', `request__status--${state.toLowerCase()}`],
+          class: [
+            'request__status',
+            `request__status--${state?.toLowerCase()}`,
+          ],
           testId: 'request-status',
           textContent:
-            state.charAt(0).toUpperCase() + state.slice(1).toLowerCase() ||
+            state?.charAt(0).toUpperCase() + state?.slice(1).toLowerCase() ||
             'N/A',
         }),
       ],
@@ -501,9 +510,19 @@ async function renderRequestCards(queries = {}) {
       if (request.state !== 'PENDING') {
         superUserDetails = await getUserDetails(request.lastModifiedBy);
       }
-      requestContainer.appendChild(
-        createRequestCard(request, superUserDetails, requesterUserDetails),
-      );
+      if (isDev) {
+        createRequestCardComponent({
+          data: request,
+          isExtensionRequest: false,
+          parentContainer: requestContainer,
+          currentUser: currentUserDetails,
+          requestUser: requesterUserDetails,
+        });
+      } else {
+        requestContainer.appendChild(
+          createRequestCard(request, superUserDetails, requesterUserDetails),
+        );
+      }
     }
   } catch (error) {
     console.error(error);

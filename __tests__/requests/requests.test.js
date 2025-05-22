@@ -95,7 +95,9 @@ describe('Tests the request cards', () => {
           body: JSON.stringify(requestActionResponse),
         });
       } else if (
-        url === `${STAGING_API_URL}/requests?dev=true&id=Wl4TTbpSrQDIjs6KLJwD`
+        url ===
+          `${STAGING_API_URL}/requests?dev=true&id=Wl4TTbpSrQDIjs6KLJwD` ||
+        url === `${STAGING_API_URL}/requests/Wl4TTbpSrQDIjs6KLJwD`
       ) {
         interceptedRequest.respond({
           status: 200,
@@ -568,15 +570,11 @@ describe('Tests the request cards', () => {
     await page.goto(`${LOCAL_TEST_PAGE_URL}/requests?dev=true`);
     await page.waitForNetworkIdle();
     await page.click('#ooo_tab_link');
-    await page.waitForSelector('.request__status');
-
-    const statusButtonText = await page.$eval(
-      '.request__status',
-      (el) => el.textContent,
+    const requestReasonElement = await page.$(
+      '[data-testid="request-card-status"]',
     );
-    expect(statusButtonText).toBe('Pending');
 
-    await page.click('.request__action__btn.accept__btn');
+    await page.click('.approve-button');
     await page.waitForSelector('[data-testid="toast-component"].show');
     const toastComponent = await page.$('[data-testid="toast-component"]');
     expect(
@@ -615,13 +613,13 @@ describe('Tests the request cards', () => {
     expect(requestCards.length).toBe(approvedRequestsData.data.length);
 
     const statusText = await requestCards[0].$eval(
-      '[data-testid="request-status"]',
+      '[data-testid="request-card-status"]',
       (el) => el.textContent,
     );
-    expect(statusText).toContain('Approved');
+    expect(statusText).toContain('APPROVED');
   });
 
-  describe.skip('Test Request Card (Dev Mode Enabled)', () => {
+  describe('Test Request Card (Dev Mode Enabled)', () => {
     beforeEach(async () => {
       await page.goto(`${LOCAL_TEST_PAGE_URL}/requests?dev=true`);
       await page.waitForNetworkIdle();

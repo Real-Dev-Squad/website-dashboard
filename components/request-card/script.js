@@ -126,7 +126,13 @@ async function createRequestCardComponent({
       titleInputWrapper,
     },
     uiHandlers: { toggleInputs, appendLogs },
-    domRefs: { panel, accordionButton, rootElement, parentContainer },
+    domRefs: {
+      panel,
+      accordionButton,
+      rootElement,
+      parentContainer,
+      requestDetails,
+    },
   });
 
   titleInputWrapper.append(titleInput, titleInputError);
@@ -153,7 +159,7 @@ async function createRequestCardComponent({
   taskStatusContainer.append(taskStatusTextLabel, taskStatusElement);
   summaryContainer.append(datesContainer);
   newDeadlineValue.append(newEndsOnTooltip);
-  requestForValue.append(requestCreatedAtTooltip);
+  requestForValue.append(newEndsOnTooltip.cloneNode(true));
 
   const requestNumberContainer = createElement({ type: 'div' });
   if (isExtensionRequest) {
@@ -243,7 +249,12 @@ async function createRequestCardComponent({
         data.title = formData.title;
         data.newEndsOn = formData.newEndsOn;
         showSuccessHighlight(rootElement);
-        showToast(SUCCESS_MESSAGE, 'success');
+        showToastMessage({
+          isDev: true,
+          oldToastFunction: showToast,
+          type: 'success',
+          message: SUCCESS_MESSAGE,
+        });
 
         appendLogs(payloadForLog, data.id);
       })
@@ -253,7 +264,12 @@ async function createRequestCardComponent({
 
         const errorMessage =
           error?.response?.data?.message || error?.message || ERROR_MESSAGE;
-        showToast(errorMessage, 'error');
+        showToastMessage({
+          isDev: true,
+          oldToastFunction: showToast,
+          type: 'error',
+          message: errorMessage,
+        });
       })
       .finally(() => {
         rootElement.classList.remove('disabled');
@@ -306,13 +322,42 @@ async function createRequestCardComponent({
   function toggleInputs() {
     titleInputWrapper.classList.toggle('hidden');
     titleInput.classList.toggle('hidden');
-    titleInputError.classList.toggle('hidden');
     titleText.classList.toggle('hidden');
     reasonInput.classList.toggle('hidden');
     reasonParagraph.classList.toggle('hidden');
-    reasonInputError.classList.toggle('hidden');
     newDeadlineValue.classList.toggle('hidden');
     requestInput.classList.toggle('hidden');
+  }
+
+  async function renderLogs(extensionRequestId) {
+    const logContainer = document.getElementById(
+      `log-container-${extensionRequestId}`,
+    );
+    if (logContainer.querySelector('.server-log')?.innerHTML) {
+      return;
+    }
+    const extensionLogs = await getExtensionRequestLogs({
+      extensionRequestId,
+    });
+    const innerHTML = generateSentence(
+      extensionLogs.logs,
+      'server-log',
+      extensionRequestId,
+    );
+    if (innerHTML) {
+      const isLocalLogPresent = logContainer.querySelectorAll('.local-log');
+      if (isLocalLogPresent) {
+        const tempDiv = document.createElement('div');
+        tempDiv.classList.add('invisible-div');
+        tempDiv.innerHTML = innerHTML;
+
+        const localLogElement = logContainer.querySelector('.local-log');
+        logContainer.insertBefore(tempDiv, localLogElement);
+      } else {
+        logContainer.innerHTML += innerHTML;
+      }
+      updateAccordionHeight(panel);
+    }
   }
 
   const userImage = requestUser?.picture?.url ?? DEFAULT_USER_AVATAR;
@@ -383,7 +428,6 @@ function prepareRequestCardData({ data, isExtensionRequest }) {
     oldEndsOn = data.from;
     newEndsOn = data.until;
   }
-
   const oldEndsOnInMillisecond = getTimeInMilliseconds(
     oldEndsOn,
     isExtensionRequest,
@@ -392,6 +436,7 @@ function prepareRequestCardData({ data, isExtensionRequest }) {
     newEndsOn,
     isExtensionRequest,
   );
+
   const requestCreatedAt = getTimeInMilliseconds(
     isExtensionRequest ? data.timestamp : data.createdAt,
     isExtensionRequest,

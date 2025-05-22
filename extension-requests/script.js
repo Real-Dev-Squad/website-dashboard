@@ -270,7 +270,15 @@ async function populateExtensionRequests(query = {}, newLink) {
     }
     for (let data of allExtensionRequests) {
       if (query.dev) {
-        createExtensionCard(data, true);
+        const requestUser = await getUser(data.assignee);
+        createRequestCardComponent({
+          data,
+          isExtensionRequest: true,
+          parentContainer: extensionRequestsContainer,
+          currentUser: currentUserDetails,
+          requestUser,
+          userStatusMap,
+        });
       } else {
         createExtensionCard(data);
       }

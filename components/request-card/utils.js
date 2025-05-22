@@ -40,6 +40,9 @@ const getTwoDigitDate = (timestamp, isInSeconds = false) => {
 
 const formatToDateOnly = (milliseconds) => {
   const date = new Date(milliseconds);
+  if (isNaN(date.getTime())) {
+    return '';
+  }
   return date.toISOString().split('T')[0];
 };
 
@@ -309,7 +312,7 @@ function createTextBlockContainer(data, isForReasonComponent) {
       name: 'reason',
       'data-testid': 'reason-input-text-area',
     },
-    value: data.reason,
+    innerText: data.reason,
   });
 
   const inputError = createElement({
@@ -388,7 +391,6 @@ function createDateContainer(
     attributes: { class: 'requested-day tooltip-container' },
     innerText: ` ${newDeadlineDays}`,
   });
-
   const requestInput = createElement({
     type: 'input',
     attributes: {
@@ -396,11 +398,8 @@ function createDateContainer(
       type: 'date',
       name: 'newEndsOn',
       id: 'newEndsOn',
-      min: formatToDateOnly(Date.now()),
       oninput: 'this.blur()',
-      value: formatToDateOnly(
-        getTimeInMilliseconds(newEndsOnValue, isExtensionRequest),
-      ),
+      value: formatToDateOnly(newEndsOnValue),
       'data-testid': 'request-input',
     },
   });
@@ -460,8 +459,8 @@ function createDateContainer(
     requestInputError,
   );
   requestForContainer.append(requestForText, requestForValue);
-  fromDateContainer.append(fromDateText, fromDateValue);
   fromDateValue.append(fromDateValueToolTip);
+  fromDateContainer.append(fromDateText, fromDateValue);
   datesContainer.append(datesDetailsContainer);
 
   if (isExtensionRequest) {
@@ -477,4 +476,367 @@ function createDateContainer(
     requestInputError,
     requestForValue,
   };
+}
+
+function createActionContainer({ context, elements, uiHandlers, domRefs }) {
+  const { isExtensionRequest, data, currentUser, isStatusPending } = context;
+  const {
+    titleInput,
+    titleInputError,
+    reasonInput,
+    reasonInputError,
+    requestInput,
+    requestInputError,
+    titleInputWrapper,
+  } = elements;
+  const { toggleInputs, appendLogs } = uiHandlers;
+  const {
+    panel,
+    accordionButton,
+    rootElement,
+    parentContainer,
+    requestDetails,
+  } = domRefs;
+  const requestStatus = isExtensionRequest ? data.status : data.state;
+  const requestActionContainer = createElement({
+    type: 'div',
+    attributes: {
+      class: `request-action-container`,
+      'data-testid': 'request-action-container',
+    },
+  });
+
+  const requestCardButtons = createElement({
+    type: 'div',
+    attributes: {
+      class: `request-card-buttons ${
+        isStatusPending ? '' : 'request-card-status'
+      }`,
+      'data-testid': 'request-card-status',
+    },
+  });
+
+  const remarkInputField = createElement({
+    type: 'input',
+    attributes: {
+      class: 'remark-input-field',
+      placeholder: 'add comment ...',
+      'data-testid': 'request-remark-input',
+    },
+  });
+
+  if (!isExtensionRequest && isStatusPending) {
+    requestActionContainer.append(remarkInputField);
+  }
+  requestActionContainer.append(requestCardButtons);
+
+  if (requestStatus === Status.APPROVED) {
+    const approveButton = createElement({
+      type: 'button',
+      attributes: {
+        class: 'approve-button approved ',
+      },
+
+      innerText: Status.APPROVED,
+    });
+    requestCardButtons.append(approveButton);
+  } else if (
+    requestStatus ===
+    (isExtensionRequest ? RequestStatus.DENIED : RequestStatus.REJECTED)
+  ) {
+    const rejectButton = createElement({
+      type: 'button',
+      attributes: {
+        class: 'reject-button denied',
+      },
+
+      innerText: RequestStatus.REJECTED,
+    });
+    requestCardButtons.append(rejectButton);
+  } else {
+    const editButton = createElement({
+      type: 'button',
+      attributes: { class: 'edit-button', 'data-testid': 'edit-button' },
+    });
+
+    if (
+      isExtensionRequest &&
+      shouldDisplayEditButton(data.assigneeId, currentUser)
+    ) {
+      requestCardButtons.append(editButton);
+    }
+
+    const editIcon = createElement({
+      type: 'img',
+      attributes: { src: ICON_EDIT, alt: 'edit-icon' },
+    });
+    editButton.append(editIcon);
+    const updateWrapper = createElement({
+      type: 'div',
+      attributes: {
+        class: 'update-wrapper hidden',
+        'data-testid': 'update-wrapper',
+      },
+    });
+    requestCardButtons.append(updateWrapper);
+    const updateButton = createElement({
+      type: 'button',
+      attributes: { class: 'update-button', 'data-testid': 'update-button' },
+      innerText: 'SAVE',
+    });
+
+    const cancelButton = createElement({
+      type: 'button',
+      attributes: { class: 'cancel-button' },
+      innerText: 'CANCEL',
+    });
+    updateWrapper.append(cancelButton, updateButton);
+    const rejectButton = createElement({
+      type: 'button',
+      attributes: {
+        class: 'reject-button',
+        'data-testid': 'request-reject-button',
+      },
+    });
+
+    const rejectIcon = createElement({
+      type: 'img',
+      attributes: { src: ICON_CANCEL, alt: 'edit-icon' },
+    });
+
+    rejectButton.append(rejectIcon);
+
+    const approveButton = createElement({
+      type: 'button',
+      attributes: {
+        class: 'approve-button',
+        'data-testid': 'request-approve-button',
+      },
+    });
+    const approveIcon = createElement({
+      type: 'img',
+      attributes: { class: 'check-icon', src: ICON_CHECK, alt: 'check-icon' },
+    });
+    approveButton.append(approveIcon);
+    requestCardButtons.append(rejectButton, approveButton);
+
+    editButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      toggleInputs();
+      toggleActionButtonVisibility();
+      editButton.classList.toggle('hidden');
+      updateWrapper.classList.toggle('hidden');
+      if (!panel.style.maxHeight) {
+        accordionButton.click();
+      }
+      expandAccordionPanel(panel);
+    });
+    updateButton.addEventListener('click', (event) => {
+      const isTitleMissing = !titleInput.value;
+      const isReasonMissing = !reasonInput.value;
+      const todayDate = Math.floor(new Date().getTime() / 1000);
+      const newDeadline = new Date(requestInput.value).getTime() / 1000;
+      const isDeadlineInPast = newDeadline < todayDate;
+      const isInvalidDateFormat = isNaN(newDeadline);
+
+      if (isInvalidDateFormat) {
+        requestInputError.innerText =
+          'Invalid date format. Please provide a valid date.';
+      } else if (isDeadlineInPast) {
+        requestInputError.innerText = "Past date can't be the new deadline.";
+      }
+
+      titleInputError.classList.toggle('hidden', !isTitleMissing);
+      reasonInputError.classList.toggle('hidden', !isReasonMissing);
+      requestInputError.classList.toggle(
+        'hidden',
+        !(isDeadlineInPast || isInvalidDateFormat),
+      );
+
+      if (
+        !isTitleMissing &&
+        !isReasonMissing &&
+        !(isDeadlineInPast || isInvalidDateFormat)
+      ) {
+        toggleInputs();
+        toggleActionButtonVisibility();
+        editButton.classList.toggle('hidden');
+        updateWrapper.classList.toggle('hidden');
+        titleInputWrapper.classList.add('hidden');
+      }
+    });
+    cancelButton.addEventListener('click', (event) => {
+      titleInput.value = data.title;
+      reasonInput.value = data.reason;
+      requestInput.value = formatToDateOnly(
+        getTimeInMilliseconds(
+          requestDetails.newEndsOnInMillisecond,
+          isExtensionRequest,
+        ),
+      );
+      event.preventDefault();
+      toggleInputs();
+      toggleActionButtonVisibility();
+      editButton.classList.toggle('hidden');
+      updateWrapper.classList.toggle('hidden');
+
+      titleInputError.classList.add('hidden');
+      reasonInputError.classList.add('hidden');
+      requestInputError.classList.add('hidden');
+    });
+    const payloadForLog = {
+      body: {},
+      meta: {},
+      timestamp: {
+        _seconds: Date.now() / 1000,
+      },
+    };
+
+    approveButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      const removeSpinner = addLoadingSpinner(rootElement);
+      rootElement.classList.add('disabled');
+      payloadForLog.body.status = RequestStatus.APPROVED;
+      payloadForLog.meta = {
+        requestRequestId: data.id,
+        name: `${currentUserDetails?.first_name} ${currentUserDetails?.last_name}`,
+        userId: currentUserDetails?.id,
+      };
+
+      let reqBody;
+      const remarkMessage = remarkInputField.value;
+
+      if (isExtensionRequest)
+        reqBody = {
+          status: RequestStatus.APPROVED,
+        };
+      else if (
+        remarkMessage === '' ||
+        remarkMessage === undefined ||
+        remarkMessage === null
+      ) {
+        reqBody = {
+          type: data?.type,
+          state: RequestStatus.APPROVED,
+        };
+      } else {
+        reqBody = {
+          type: data?.type,
+          state: RequestStatus.APPROVED,
+          message: remarkMessage,
+        };
+      }
+
+      updateRequestStatus({
+        id: data.id,
+        body: reqBody,
+        isExtensionRequest,
+      })
+        .then(async () => {
+          removeSpinner();
+          isExtensionRequest && appendLogs(payloadForLog, data.id);
+          showToastMessage({
+            isDev: true,
+            oldToastFunction: showToast,
+            type: 'success',
+            message: APPROVED_MESSAGE,
+          });
+          await removeCard(rootElement, 'green-card', parentContainer);
+        })
+        .catch(() => {
+          removeSpinner();
+          showErrorHighlight(rootElement);
+        })
+        .finally(() => {
+          rootElement.classList.remove('disabled');
+        });
+    });
+    approveButton.addEventListener('mouseenter', (event) => {
+      approveIcon.src = ICON_CHECK_WHITE;
+    });
+    approveButton.addEventListener('mouseleave', (event) => {
+      approveIcon.src = ICON_CHECK;
+    });
+    rejectButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      const removeSpinner = addLoadingSpinner(rootElement);
+      rootElement.classList.add('disabled');
+      payloadForLog.body.status = RequestStatus.DENIED;
+      payloadForLog.meta = {
+        requestRequestId: data.id,
+        name: `${currentUserDetails?.first_name} ${currentUserDetails?.last_name}`,
+        userId: currentUserDetails?.id,
+      };
+
+      let reqBody;
+      const remarkMessage = remarkInputField.value;
+
+      if (isExtensionRequest)
+        reqBody = {
+          status: RequestStatus.DENIED,
+        };
+      else if (
+        remarkMessage === '' ||
+        remarkMessage === undefined ||
+        remarkMessage === null
+      ) {
+        reqBody = {
+          type: data?.type,
+          state: RequestStatus.REJECTED,
+        };
+      } else {
+        reqBody = {
+          type: data?.type,
+          state: RequestStatus.REJECTED,
+          message: remarkMessage,
+        };
+      }
+
+      updateRequestStatus({
+        id: data.id,
+        body: reqBody,
+        isExtensionRequest,
+      })
+        .then(async () => {
+          removeSpinner();
+          isExtensionRequest && appendLogs(payloadForLog, data.id);
+          showToastMessage({
+            isDev: true,
+            oldToastFunction: showToast,
+            type: 'success',
+            message: REJECTED_MESSAGE,
+          });
+          await removeCard(rootElement, 'red-card', parentContainer);
+        })
+        .catch(() => {
+          removeSpinner();
+          showErrorHighlight(rootElement);
+        })
+        .finally(() => {
+          rootElement.classList.remove('disabled');
+        });
+    });
+    rejectButton.addEventListener('mouseenter', (event) => {
+      rejectIcon.src = ICON_CANCEL_WHITE;
+    });
+    rejectButton.addEventListener('mouseleave', (event) => {
+      rejectIcon.src = ICON_CANCEL;
+    });
+
+    function toggleActionButtonVisibility() {
+      if (approveButton.style.display === 'none') {
+        approveButton.style.display = 'block';
+      } else {
+        approveButton.style.display = 'none';
+      }
+
+      if (rejectButton.style.display === 'none') {
+        rejectButton.style.display = 'block';
+      } else {
+        rejectButton.style.display = 'none';
+      }
+    }
+  }
+
+  return requestActionContainer;
 }

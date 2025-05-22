@@ -720,8 +720,8 @@ describe('Tests the Extension Requests Screen', () => {
 
     await page.click(editButtonSelector);
 
-    const extensionInputSelector = '[data-testid="extension-input"]';
-    const extensionErrorSelector = '[data-testid="extension-input-error"]';
+    const extensionInputSelector = '[data-testid="request-input"]';
+    const extensionErrorSelector = '[data-testid="request-input-error"]';
     await page.$eval(extensionInputSelector, (input) => {
       input.value = '2020-01-01';
     });
@@ -750,7 +750,7 @@ describe('Tests the Extension Requests Screen', () => {
 
     await page.type('[data-testid="title-text-input"]', 'Valid Title');
     await page.type('[data-testid="reason-input-text-area"]', 'Valid Reason');
-    await page.type('[data-testid="extension-input"]', '2050-01-01');
+    await page.type('[data-testid="request-input"]', '2050-01-01');
 
     await page.click(updateButtonSelector);
 
@@ -772,7 +772,7 @@ describe('Tests the Extension Requests Screen', () => {
     const titleInputSelector = '[data-testid="title-text-input"]';
     const reasonInputSelector = '[data-testid="reason-input-text-area"]';
     const titleDisplaySelector = '.title-text';
-    const reasonDisplaySelector = '.reason-text';
+    const reasonDisplaySelector = '[data-testid="request-reason"]';
 
     const longTitle = 'A'.repeat(300);
     const longReason = 'This is a very long reason '.repeat(50);
@@ -811,8 +811,8 @@ describe('Tests the Extension Requests Screen', () => {
 
     await page.click(editButtonSelector);
 
-    const extensionInputSelector = '[data-testid="extension-input"]';
-    const extensionErrorSelector = '[data-testid="extension-input-error"]';
+    const extensionInputSelector = '[data-testid="request-input"]';
+    const extensionErrorSelector = '[data-testid="request-input-error"]';
 
     await page.$eval(extensionInputSelector, (input) => {
       input.value = 'invalid-date';
@@ -1206,7 +1206,7 @@ describe('Tests the Extension Requests Screen', () => {
     ).toBe(false);
     const toastMessage = await page.$('[data-testid="toast-message"]');
     expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
-      'Extension request successfully updated.',
+      'Request updated successfully',
     );
   });
 
@@ -1222,13 +1222,13 @@ describe('Tests the Extension Requests Screen', () => {
     await page.click(`input[type="checkbox"][id="DENIED"]`);
     await page.click(applyFilterButton);
     await page.waitForNetworkIdle();
-    const extensionRequestCards = await page.$$('.extension-card');
+    const extensionRequestCards = await page.$$('.request-card');
     expect(extensionRequestCards.length).toBe(
       extensionRequestListForAuditLogs.allExtensionRequests.length,
     );
   });
 
-  it.skip('should display all the required field in the extension request card under feature flag', async () => {
+  it('should display all the required field in the extension request card under feature flag', async () => {
     await page.goto(
       `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&dev=true&size=1&q=status%3APENDING`,
     );
@@ -1258,7 +1258,7 @@ describe('Tests the Extension Requests Screen', () => {
     expect(taskTitle).toContain(taskDone.taskData.title);
   });
 
-  it.skip('should remove the card from display after approving the request under feature flag', async () => {
+  it('should remove the card from display after approving the request under feature flag', async () => {
     await page.goto(
       `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&dev=true&size=1&q=status%3APENDING`,
     );
@@ -1280,7 +1280,7 @@ describe('Tests the Extension Requests Screen', () => {
     expect(extensionCardsAfter.length).toBe(0);
   });
 
-  it.skip('should remove the card from display after rejecting the request under feature flag', async () => {
+  it('should remove the card from display after rejecting the request under feature flag', async () => {
     await page.goto(
       `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&dev=true&size=1&q=status%3APENDING`,
     );

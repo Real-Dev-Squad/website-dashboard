@@ -9,6 +9,10 @@ const ICON_CANCEL_WHITE = '/images/x-icon-white.svg';
 const ICON_CHECK = '/images/check-icon.svg';
 const ICON_CHECK_WHITE = '/images/check-icon-white.svg';
 const ICON_ARROW_DOWN = '/images/chevron-down-black.svg';
+const SUCCESS_MESSAGE = 'Request updated successfully';
+const APPROVED_MESSAGE = 'Request approved successfully';
+const REJECTED_MESSAGE = 'Request rejected successfully';
+const HOVER_CARD_HIDE_DELAY = 700;
 
 const RequestStatus = Object.freeze({
   APPROVED: 'APPROVED',
