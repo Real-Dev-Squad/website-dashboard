@@ -1,5 +1,5 @@
-function getTimeInMilliseconds(time, isExtensionRequest) {
-  return isExtensionRequest ? time * 1000 : time;
+function getTimeInMilliseconds(time, isInSeconds) {
+  return isInSeconds ? time * 1000 : time;
 }
 
 const getRequestColor = (deadline, createdTime) => {
@@ -48,14 +48,24 @@ async function addDelay(milliSeconds) {
 }
 
 function getFormEntries(formData) {
-  if (!formData) return;
+  if (!formData) return {};
   return Object.fromEntries(formData.entries());
 }
 
 const addLoadingSpinner = (container) => {
+  if (container.querySelector('.loading-spinner')) {
+    return () => {};
+  }
+
   const spinner = createElement({
     type: 'div',
-    attributes: { class: 'loading-spinner' },
+    attributes: {
+      class: 'loading-spinner',
+      role: 'alert',
+      'aria-live': 'polite',
+      'aria-busy': 'true',
+      'aria-label': 'Loading, please wait',
+    },
   });
 
   container.append(spinner);
@@ -120,6 +130,7 @@ async function updateRequestStatus({ id, body, isExtensionRequest }) {
       body: JSON.stringify(body),
       headers: {
         'Content-type': 'application/json',
+        Accept: 'application/json',
       },
     });
     if (!res.ok) {
@@ -191,6 +202,8 @@ function createSummarySection({
     attributes: {
       class: 'external-link skeleton-link',
       'data-testid': 'external-link skeleton-link',
+      target: '_blank',
+      'aria-label': 'Open task details on status site',
     },
   });
   const taskTitle = createElement({
@@ -383,6 +396,7 @@ function createDateContainer(
       type: 'date',
       name: 'newEndsOn',
       id: 'newEndsOn',
+      min: formatToDateOnly(Date.now()),
       oninput: 'this.blur()',
       value: formatToDateOnly(
         getTimeInMilliseconds(newEndsOnValue, isExtensionRequest),
