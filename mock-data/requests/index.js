@@ -8,6 +8,7 @@ const pendingRequest = {
       from: 1712275200000,
       until: 1712448000000,
       type: 'OOO',
+      reason: 'need some time for job',
       message: 'request message',
       lastModifiedBy: 'V4rqL1aDecNGoa1IxiCu',
       state: 'PENDING',
