@@ -158,7 +158,7 @@ async function createRequestCardComponent({
   const requestNumberContainer = createElement({ type: 'div' });
   if (isExtensionRequest) {
     datesContainer.append(requestNumberContainer);
-  } else if (data.type !== RequestType.OOO) {
+  } else if (data.type !== REQUEST_TYPE.OOO) {
     taskDetailsContainer.append(requestNumberContainer);
   }
 
@@ -315,7 +315,7 @@ async function createRequestCardComponent({
     requestInput.classList.toggle('hidden');
   }
 
-  const userImage = requestUser?.picture?.url ?? DEFAULT_USER_AVATAR;
+  const userImage = requestUser?.picture?.url ?? ICONS.DEFAULT_USER_AVATAR;
   let userFirstName = requestUser?.first_name ?? data.assignee;
   const userId = requestUser?.id;
   const userStatus = userStatusMap?.get(userId);
@@ -379,7 +379,7 @@ function prepareRequestCardData({ data, isExtensionRequest }) {
   let oldEndsOn = data.oldEndsOn;
   let newEndsOn = data.newEndsOn;
 
-  if (data.type === RequestType.OOO) {
+  if (data.type === REQUEST_STATUS.OOO) {
     oldEndsOn = data.from;
     newEndsOn = data.until;
   }
@@ -585,7 +585,7 @@ function createAccordionContainer() {
   const downArrowIcon = createElement({
     type: 'img',
     attributes: {
-      src: ICON_ARROW_DOWN,
+      src: ICONS.ARROW_DOWN,
       alt: 'down-arrow',
     },
   });
