@@ -461,3 +461,368 @@ function createDateContainer(
     requestForValue,
   };
 }
+
+function createActionContainer({ context, elements, uiHandlers, domRefs }) {
+  const { isExtensionRequest, data, currentUser, isStatusPending } = context;
+  const {
+    titleInput,
+    titleInputError,
+    reasonInput,
+    reasonInputError,
+    requestInput,
+    requestInputError,
+    titleInputWrapper,
+  } = elements;
+  const { toggleInputs, appendLogs } = uiHandlers;
+  const {
+    panel,
+    accordionButton,
+    rootElement,
+    parentContainer,
+    requestDetails,
+  } = domRefs;
+  const requestStatus = isExtensionRequest ? data.status : data.state;
+  const requestActionContainer = createElement({
+    type: 'div',
+    attributes: {
+      class: `request-action-container`,
+      'data-testid': 'request-action-container',
+    },
+  });
+
+  const requestCardButtons = createElement({
+    type: 'div',
+    attributes: {
+      class: `request-card-buttons ${
+        isStatusPending ? '' : 'request-card-status'
+      }`,
+      'data-testid': 'request-card-status',
+    },
+  });
+
+  const remarkInputField = createElement({
+    type: 'input',
+    attributes: {
+      class: 'remark-input-field',
+      placeholder: 'add comment ...',
+      'data-testid': 'request-remark-input',
+    },
+  });
+
+  if (!isExtensionRequest && isStatusPending) {
+    requestActionContainer.append(remarkInputField);
+  }
+  requestActionContainer.append(requestCardButtons);
+
+  if (requestStatus === REQUEST_STATUS.APPROVED) {
+    const approveButton = createElement({
+      type: 'button',
+      attributes: {
+        class: 'approve-button approved ',
+      },
+
+      innerText: REQUEST_STATUS.APPROVED,
+    });
+    requestCardButtons.append(approveButton);
+  } else if (
+    requestStatus ===
+    (isExtensionRequest ? REQUEST_STATUS.DENIED : REQUEST_STATUS.REJECTED)
+  ) {
+    const rejectButton = createElement({
+      type: 'button',
+      attributes: {
+        class: 'reject-button denied',
+      },
+
+      innerText: isExtensionRequest
+        ? REQUEST_STATUS.DENIED
+        : REQUEST_STATUS.REJECTED,
+    });
+    requestCardButtons.append(rejectButton);
+  } else {
+    const editButton = createElement({
+      type: 'button',
+      attributes: { class: 'edit-button', 'data-testid': 'edit-button' },
+    });
+
+    if (
+      isExtensionRequest &&
+      shouldDisplayEditButton(data.assigneeId, currentUser)
+    ) {
+      requestCardButtons.append(editButton);
+    }
+
+    const editIcon = createElement({
+      type: 'img',
+      attributes: { src: ICONS.EDIT, alt: 'edit-icon' },
+    });
+    editButton.append(editIcon);
+    const updateWrapper = createElement({
+      type: 'div',
+      attributes: {
+        class: 'update-wrapper hidden',
+        'data-testid': 'update-wrapper',
+      },
+    });
+    requestCardButtons.append(updateWrapper);
+    const updateButton = createElement({
+      type: 'button',
+      attributes: { class: 'update-button', 'data-testid': 'update-button' },
+      innerText: 'SAVE',
+    });
+
+    const cancelButton = createElement({
+      type: 'button',
+      attributes: { class: 'cancel-button' },
+      innerText: 'CANCEL',
+    });
+    updateWrapper.append(cancelButton, updateButton);
+    const rejectButton = createElement({
+      type: 'button',
+      attributes: {
+        class: 'reject-button',
+        'data-testid': 'request-reject-button',
+      },
+    });
+
+    const rejectIcon = createElement({
+      type: 'img',
+      attributes: { src: ICONS.CANCEL, alt: 'edit-icon' },
+    });
+
+    rejectButton.append(rejectIcon);
+
+    const approveButton = createElement({
+      type: 'button',
+      attributes: {
+        class: 'approve-button',
+        'data-testid': 'request-approve-button',
+      },
+    });
+    const approveIcon = createElement({
+      type: 'img',
+      attributes: { class: 'check-icon', src: ICONS.CHECK, alt: 'check-icon' },
+    });
+    approveButton.append(approveIcon);
+    requestCardButtons.append(rejectButton, approveButton);
+
+    editButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      toggleInputs();
+      setActionButtonsVisibility(false);
+      editButton.classList.toggle('hidden');
+      updateWrapper.classList.toggle('hidden');
+      if (!panel.style.maxHeight) {
+        accordionButton.click();
+      }
+      expandAccordionPanel(panel);
+    });
+    updateButton.addEventListener('click', (event) => {
+      const isTitleMissing = !titleInput.value;
+      const isReasonMissing = !reasonInput.value;
+      const todayDate = Math.floor(new Date().getTime() / 1000);
+      const newDeadline = new Date(requestInput.value).getTime() / 1000;
+      const isDeadlineInPast = newDeadline < todayDate;
+      const isInvalidDateFormat = isNaN(newDeadline);
+
+      if (isInvalidDateFormat) {
+        requestInputError.innerText = ERROR_MESSAGE.DATE_INPUT_ERROR;
+      } else if (isDeadlineInPast) {
+        requestInputError.innerText = ERROR_MESSAGE.DEADLINE_PASSED;
+      }
+
+      titleInputError.classList.toggle('hidden', !isTitleMissing);
+      reasonInputError.classList.toggle('hidden', !isReasonMissing);
+      requestInputError.classList.toggle(
+        'hidden',
+        !(isDeadlineInPast || isInvalidDateFormat),
+      );
+
+      if (
+        !isTitleMissing &&
+        !isReasonMissing &&
+        !(isDeadlineInPast || isInvalidDateFormat)
+      ) {
+        toggleInputs();
+        setActionButtonsVisibility(false);
+        editButton.classList.toggle('hidden');
+        updateWrapper.classList.toggle('hidden');
+        titleInputWrapper.classList.add('hidden');
+      }
+    });
+    cancelButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      titleInput.value = data.title;
+      reasonInput.value = data.reason;
+      requestInput.value = formatToDateOnly(
+        getTimeInMilliseconds(
+          requestDetails.newEndsOnInMillisecond,
+          isExtensionRequest,
+        ),
+      );
+      toggleInputs();
+      setActionButtonsVisibility(true);
+      editButton.classList.toggle('hidden');
+      updateWrapper.classList.toggle('hidden');
+
+      titleInputError.classList.add('hidden');
+      reasonInputError.classList.add('hidden');
+      requestInputError.classList.add('hidden');
+    });
+    const payloadForLog = {
+      body: {},
+      meta: {},
+      timestamp: {
+        _seconds: Date.now() / 1000,
+      },
+    };
+
+    approveButton.addEventListener('click', async (event) => {
+      event.preventDefault();
+      const removeSpinner = addLoadingSpinner(rootElement);
+      rootElement.classList.add('disabled');
+      payloadForLog.body.status = REQUEST_STATUS.APPROVED;
+      payloadForLog.meta = {
+        requestId: data.id,
+        name: `${currentUser?.first_name} ${currentUser?.last_name}`,
+        userId: currentUser?.id,
+      };
+
+      const requestBody = buildRequestBody({
+        isExtensionRequest,
+        data,
+        remarkMessage: remarkInputField.value,
+        status: REQUEST_STATUS.APPROVED,
+      });
+
+      await handleRequestStatusUpdate({
+        id: data.id,
+        reqBody: requestBody,
+        isExtensionRequest,
+        payloadForLog,
+        rootElement,
+        parentContainer,
+        removeSpinner,
+        isApproved: true,
+      });
+    });
+    approveButton.addEventListener('mouseenter', (event) => {
+      approveIcon.src = ICONS.CHECK_WHITE;
+    });
+    approveButton.addEventListener('mouseleave', (event) => {
+      approveIcon.src = ICONS.CHECK;
+    });
+    rejectButton.addEventListener('click', async (event) => {
+      event.preventDefault();
+      const removeSpinner = addLoadingSpinner(rootElement);
+      rootElement.classList.add('disabled');
+      payloadForLog.body.status = REQUEST_STATUS.DENIED;
+      payloadForLog.meta = {
+        requestId: data.id,
+        name: `${currentUser?.first_name} ${currentUser?.last_name}`,
+        userId: currentUser?.id,
+      };
+
+      const requestBody = buildRequestBody({
+        isExtensionRequest,
+        data,
+        remarkMessage: remarkInputField.value,
+        status: isExtensionRequest
+          ? REQUEST_STATUS.DENIED
+          : REQUEST_STATUS.REJECTED,
+      });
+
+      await handleRequestStatusUpdate({
+        id: data.id,
+        reqBody: requestBody,
+        isExtensionRequest,
+        payloadForLog,
+        rootElement,
+        parentContainer,
+        removeSpinner,
+        isApproved: false,
+      });
+    });
+    rejectButton.addEventListener('mouseenter', (event) => {
+      rejectIcon.src = ICONS.CANCEL_WHITE;
+    });
+    rejectButton.addEventListener('mouseleave', (event) => {
+      rejectIcon.src = ICONS.CANCEL;
+    });
+
+    function setActionButtonsVisibility(shouldShow) {
+      const displayValue = shouldShow ? 'block' : 'none';
+      approveButton.style.display = displayValue;
+      rejectButton.style.display = displayValue;
+    }
+  }
+  return requestActionContainer;
+}
+
+function buildRequestBody({ isExtensionRequest, data, remarkMessage, status }) {
+  let requestBody;
+
+  if (isExtensionRequest) {
+    requestBody = {
+      status: status,
+    };
+  } else if (!remarkMessage) {
+    requestBody = {
+      type: data?.type,
+      state: status,
+    };
+  } else {
+    requestBody = {
+      type: data?.type,
+      state: status,
+      message: remarkMessage,
+    };
+  }
+  return requestBody;
+}
+
+async function handleRequestStatusUpdate({
+  id,
+  reqBody,
+  isExtensionRequest,
+  payloadForLog,
+  rootElement,
+  parentContainer,
+  isApproved,
+  removeSpinner,
+  appendLogs,
+}) {
+  const toastMessage = isApproved
+    ? SUCCESS_MESSAGE.APPROVED
+    : SUCCESS_MESSAGE.REJECTED;
+  const cardClass = isApproved ? 'green-card' : 'red-card';
+
+  try {
+    await updateRequestStatus({
+      id,
+      body: reqBody,
+      isExtensionRequest,
+    });
+
+    removeSpinner();
+
+    if (isExtensionRequest) {
+      appendLogs(payloadForLog, id);
+    }
+
+    showToastMessage({
+      isDev: true,
+      oldToastFunction: showToast,
+      type: 'success',
+      message: toastMessage,
+    });
+
+    await removeCard(rootElement, cardClass, parentContainer);
+  } catch (error) {
+    console.error(error);
+    removeSpinner();
+    showErrorHighlight(rootElement);
+  } finally {
+    rootElement.classList.remove('disabled');
+  }
+}
