@@ -23,6 +23,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm install
       - run: npm run check
+
   test:
     runs-on: ubuntu-latest
     if: github.event_name != 'schedule'
@@ -38,6 +39,7 @@ jobs:
 
       - name: Run tests
         run: yarn test
+        
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
