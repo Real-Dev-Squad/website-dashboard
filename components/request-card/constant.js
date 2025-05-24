@@ -33,6 +33,6 @@ const ERROR_MESSAGE = Object.freeze({
 });
 
 const SUCCESS_MESSAGE = Object.freeze({
-  APPROVED_MESSAGE: 'Request approved successfully',
-  REJECTED_MESSAGE: 'Request rejected successfully',
+  APPROVED: 'Request approved successfully',
+  REJECTED: 'Request rejected successfully',
 });

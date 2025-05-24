@@ -565,7 +565,7 @@ function createActionContainer({ context, elements, uiHandlers, domRefs }) {
       },
     });
     requestCardButtons.append(updateWrapper);
-    const updateButton = createElement({
+    const saveButton = createElement({
       type: 'button',
       attributes: { class: 'update-button', 'data-testid': 'update-button' },
       innerText: 'SAVE',
@@ -576,7 +576,7 @@ function createActionContainer({ context, elements, uiHandlers, domRefs }) {
       attributes: { class: 'cancel-button' },
       innerText: 'CANCEL',
     });
-    updateWrapper.append(cancelButton, updateButton);
+    updateWrapper.append(cancelButton, saveButton);
     const rejectButton = createElement({
       type: 'button',
       attributes: {
@@ -617,7 +617,7 @@ function createActionContainer({ context, elements, uiHandlers, domRefs }) {
       }
       expandAccordionPanel(panel);
     });
-    updateButton.addEventListener('click', (event) => {
+    saveButton.addEventListener('click', (event) => {
       const isTitleMissing = !titleInput.value;
       const isReasonMissing = !reasonInput.value;
       const todayDate = Math.floor(new Date().getTime() / 1000);
