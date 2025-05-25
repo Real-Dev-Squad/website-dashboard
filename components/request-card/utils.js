@@ -1,5 +1,5 @@
-function normalizeToMilliseconds(time, isExtensionRequest) {
-  return isExtensionRequest ? time * 1000 : time;
+function getTimeInMilliseconds(time, isInSeconds) {
+  return isInSeconds ? time * 1000 : time;
 }
 const getRequestColor = (deadline, createdTime) => {
   const wasDeadlineBreached = createdTime > deadline;
@@ -12,7 +12,7 @@ const getRequestColor = (deadline, createdTime) => {
   }
   return 'orange-text';
 };
-const formatToFullDate = (timestamp) => {
+const formatToFullDate = (timestamp, locale = 'en-US') => {
   const options = {
     weekday: 'long',
     year: 'numeric',
@@ -23,10 +23,10 @@ const formatToFullDate = (timestamp) => {
     timeZoneName: 'short',
     hour12: true,
   };
-  return new Intl.DateTimeFormat('en-US', options).format(new Date(timestamp));
+  return new Intl.DateTimeFormat(locale, options).format(new Date(timestamp));
 };
 const getTwoDigitDate = (timestamp, isInSeconds = false) => {
-  const normalizedTime = normalizeToMilliseconds(timestamp, isInSeconds);
+  const normalizedTime = getTimeInMilliseconds(timestamp, isInSeconds);
 
   return new Intl.DateTimeFormat('en-US', {
     day: '2-digit',
@@ -41,6 +41,9 @@ function formatToDateOnly(milliseconds) {
     '0',
   )}-${String(date.getDate()).padStart(2, '0')}`;
 }
+async function addDelay(milliSeconds) {
+  await new Promise((resolve) => setTimeout(resolve, milliSeconds));
+}
 function getFormEntries(formData) {
   if (!formData) return;
   const result = {};
@@ -52,7 +55,7 @@ function getFormEntries(formData) {
 const addLoadingSpinner = (container) => {
   const spinner = createElement({
     type: 'div',
-    attributes: { class: 'loading-spinner' },
+    attributes: { class: 'spinner' },
   });
 
   container.append(spinner);
@@ -121,7 +124,12 @@ async function updateRequestStatus({ id, body, isExtensionRequest }) {
 
   return await res.json();
 }
-async function removeCard(element, elementClass, parentContainer) {
+async function removeRequestCard(
+  element,
+  elementClass,
+  parentContainer,
+  cleanupEventListener,
+) {
   element.classList.add(elementClass);
   await addDelay(800);
   element.style.overflow = 'hidden';
@@ -160,6 +168,7 @@ async function removeCard(element, elementClass, parentContainer) {
       if (parentContainer.innerHTML === '') {
         addEmptyPageMessage(parentContainer);
       }
+      cleanupEventListener();
     });
 }
 function createSummarySection({
@@ -179,7 +188,7 @@ function createSummarySection({
     type: 'div',
     attributes: { class: 'task-details-container' },
   });
-  summaryContainer.appendChild(taskDetailsContainer);
+  summaryContainer.append(taskDetailsContainer);
 
   const statusSiteLink = createElement({
     type: 'a',
@@ -202,13 +211,12 @@ function createSummarySection({
     type: 'div',
     attributes: { id: 'requestType-container' },
   });
-  taskTitle.appendChild(statusSiteLink);
+  taskTitle.append(statusSiteLink);
 
   if (isExtensionRequest) {
-    taskDetailsContainer.appendChild(taskTitle);
-    taskDetailsContainer.appendChild(deadlineContainer);
+    taskDetailsContainer.append(taskTitle, deadlineContainer);
   } else {
-    taskDetailsContainer.appendChild(requestTypeContainer);
+    taskDetailsContainer.append(requestTypeContainer);
   }
 
   const deadlineText = createElement({
@@ -223,9 +231,6 @@ function createSummarySection({
     innerText: 'Request Type ',
   });
 
-  requestTypeContainer.appendChild(requestType);
-  deadlineContainer.appendChild(deadlineText);
-
   const deadlineValue = createElement({
     type: 'span',
     innerText: `${deadlineDays}`,
@@ -238,19 +243,20 @@ function createSummarySection({
 
   const requestTypeText = createElement({
     type: 'span',
+    attributes: {
+      'data-testid': 'request-type',
+    },
     innerText: data?.type,
   });
 
-  deadlineContainer.appendChild(deadlineValue);
-  requestTypeContainer.appendChild(requestTypeText);
   const deadlineTooltip = createElement({
     type: 'span',
     attributes: { class: 'tooltip' },
-    innerText: `${formatToFullDate(
-      normalizeToMilliseconds(oldEndsOnValue, isExtensionRequest),
-    )}`,
+    innerText: `${formatToFullDate(oldEndsOnValue)}`,
   });
-  deadlineValue.appendChild(deadlineTooltip);
+  deadlineValue.append(deadlineTooltip);
+  requestTypeContainer.append(requestType, requestTypeText);
+  deadlineContainer.append(deadlineText, deadlineValue);
 
   return { summaryContainer, taskDetailsContainer, statusSiteLink };
 }
@@ -266,7 +272,10 @@ function createTextBlockContainer(data, isForReasonComponent) {
 
   const paragraph = createElement({
     type: 'p',
-    attributes: { class: 'text-block-content' },
+    attributes: {
+      class: 'text-block-content',
+      'data-testid': isForReasonComponent ? 'request-reason' : 'request-remark',
+    },
     innerText: isForReasonComponent ? data.reason : data.message,
   });
 
@@ -276,7 +285,7 @@ function createTextBlockContainer(data, isForReasonComponent) {
       class: 'input-text-area hidden',
       id: 'reason',
       name: 'reason',
-      'data-testid': 'reason-input',
+      'data-testid': 'reason-input-text-area',
     },
     innerText: data.reason,
   });
@@ -296,17 +305,10 @@ function createTextBlockContainer(data, isForReasonComponent) {
   });
 
   if (isForReasonComponent) {
-    container.appendChild(title);
-    container.appendChild(detailsLine);
-    container.appendChild(textAreaInput);
-    container.appendChild(inputError);
-    container.appendChild(paragraph);
+    container.append(title, detailsLine, textAreaInput, inputError, paragraph);
   } else {
-    container.appendChild(title);
-    container.appendChild(detailsLine);
-    container.appendChild(paragraph);
+    container.append(title, detailsLine, paragraph);
   }
-
   return {
     container,
     textAreaInput,
@@ -371,9 +373,7 @@ function createDateContainer(
       name: 'newEndsOn',
       id: 'newEndsOn',
       oninput: 'this.blur()',
-      value: formatToDateOnly(
-        normalizeToMilliseconds(newEndsOnValue, isExtensionRequest),
-      ),
+      value: formatToDateOnly(newEndsOnValue),
       'data-testid': 'request-input',
     },
   });
@@ -416,41 +416,32 @@ function createDateContainer(
   const fromDateValue = createElement({
     type: 'span',
     attributes: { class: 'tooltip-container' },
-    innerText: getTwoDigitDate(oldEndsOnValue),
+    innerText: getTwoDigitDate(oldEndsOnValue, isExtensionRequest),
   });
 
   const fromDateValueToolTip = createElement({
     type: 'span',
     attributes: { class: 'tooltip' },
-    innerText: formatToFullDate(
-      normalizeToMilliseconds(oldEndsOnValue, isExtensionRequest),
-    ),
+    innerText: formatToFullDate(oldEndsOnValue),
   });
 
-  datesDetailsContainer.appendChild(requestDetailsHeading);
-  datesDetailsContainer.appendChild(requestDetailsLine);
+  datesDetailsContainer.append(requestDetailsHeading, requestDetailsLine);
+  newDeadlineContainer.append(
+    newDeadlineText,
+    newDeadlineValue,
+    requestInput,
+    requestInputError,
+  );
 
-  newDeadlineContainer.appendChild(newDeadlineText);
-  newDeadlineContainer.appendChild(newDeadlineValue);
-  newDeadlineContainer.appendChild(requestInput);
-  newDeadlineContainer.appendChild(requestInputError);
-
-  requestForContainer.appendChild(requestForText);
-  requestForContainer.appendChild(requestForValue);
-
-  fromDateContainer.appendChild(fromDateText);
-  fromDateContainer.appendChild(fromDateValue);
-
-  fromDateValue.appendChild(fromDateValueToolTip);
-
-  datesContainer.appendChild(datesDetailsContainer);
+  requestForContainer.append(requestForText, requestForValue);
+  fromDateValue.append(fromDateValueToolTip);
+  fromDateContainer.append(fromDateText, fromDateValue);
+  datesContainer.append(datesDetailsContainer);
 
   if (isExtensionRequest) {
-    datesContainer.appendChild(newDeadlineContainer);
-    datesContainer.appendChild(requestForContainer);
+    datesContainer.append(newDeadlineContainer, requestForContainer);
   } else {
-    datesContainer.appendChild(fromDateContainer);
-    datesContainer.appendChild(newDeadlineContainer);
+    datesContainer.append(fromDateContainer, newDeadlineContainer);
   }
 
   return {
@@ -460,4 +451,435 @@ function createDateContainer(
     requestInputError,
     requestForValue,
   };
+}
+
+function createActionContainer({ context, elements, uiHandlers, domRefs }) {
+  const { isExtensionRequest, data, currentUser, isStatusPending } = context;
+  const {
+    titleInput,
+    titleInputError,
+    reasonInput,
+    reasonInputError,
+    requestInput,
+    requestInputError,
+    titleInputWrapper,
+  } = elements;
+  const { toggleInputs, appendLogs } = uiHandlers;
+  const {
+    panel,
+    accordionButton,
+    rootElement,
+    parentContainer,
+    requestDetails,
+  } = domRefs;
+  const requestStatus = isExtensionRequest ? data.status : data.state;
+  const eventListenerRemovers = [];
+  const requestActionContainer = createElement({
+    type: 'div',
+    attributes: {
+      class: `request-action-container`,
+      'data-testid': 'request-action-container',
+    },
+  });
+
+  const requestCardButtons = createElement({
+    type: 'div',
+    attributes: {
+      class: `request-card-buttons ${
+        isStatusPending ? '' : 'request-card-status'
+      }`,
+      'data-testid': 'request-card-status',
+    },
+  });
+
+  const remarkInputField = createElement({
+    type: 'input',
+    attributes: {
+      class: 'remark-input-field',
+      placeholder: 'add comment ...',
+      'data-testid': 'request-remark-input',
+    },
+  });
+
+  if (!isExtensionRequest && isStatusPending) {
+    requestActionContainer.append(remarkInputField);
+  }
+  requestActionContainer.append(requestCardButtons);
+
+  if (requestStatus === REQUEST_STATUS.APPROVED) {
+    const approveButton = createElement({
+      type: 'button',
+      attributes: {
+        class: 'approve-button approved ',
+      },
+
+      innerText: REQUEST_STATUS.APPROVED,
+    });
+    requestCardButtons.append(approveButton);
+  } else if (
+    requestStatus ===
+    (isExtensionRequest ? REQUEST_STATUS.DENIED : REQUEST_STATUS.REJECTED)
+  ) {
+    const rejectButton = createElement({
+      type: 'button',
+      attributes: {
+        class: 'reject-button denied',
+      },
+
+      innerText: isExtensionRequest
+        ? REQUEST_STATUS.DENIED
+        : REQUEST_STATUS.REJECTED,
+    });
+    requestCardButtons.append(rejectButton);
+  } else {
+    const editButton = createElement({
+      type: 'button',
+      attributes: { class: 'edit-button', 'data-testid': 'edit-button' },
+    });
+
+    if (
+      isExtensionRequest &&
+      shouldDisplayEditButton(data.assigneeId, currentUser)
+    ) {
+      requestCardButtons.append(editButton);
+    }
+
+    const editIcon = createElement({
+      type: 'img',
+      attributes: { src: ICONS.EDIT, alt: 'edit-icon' },
+    });
+    editButton.append(editIcon);
+    const updateWrapper = createElement({
+      type: 'div',
+      attributes: {
+        class: 'update-wrapper hidden',
+        'data-testid': 'update-wrapper',
+      },
+    });
+    requestCardButtons.append(updateWrapper);
+    const saveButton = createElement({
+      type: 'button',
+      attributes: { class: 'update-button', 'data-testid': 'update-button' },
+      innerText: 'SAVE',
+    });
+
+    const cancelButton = createElement({
+      type: 'button',
+      attributes: { class: 'cancel-button' },
+      innerText: 'CANCEL',
+    });
+    updateWrapper.append(cancelButton, saveButton);
+    const rejectButton = createElement({
+      type: 'button',
+      attributes: {
+        class: 'reject-button',
+        'data-testid': 'request-reject-button',
+      },
+    });
+
+    const rejectIcon = createElement({
+      type: 'img',
+      attributes: { src: ICONS.CANCEL, alt: 'edit-icon' },
+    });
+
+    rejectButton.append(rejectIcon);
+
+    const approveButton = createElement({
+      type: 'button',
+      attributes: {
+        class: 'approve-button',
+        'data-testid': 'request-approve-button',
+      },
+    });
+    const approveIcon = createElement({
+      type: 'img',
+      attributes: { class: 'check-icon', src: ICONS.CHECK, alt: 'check-icon' },
+    });
+    approveButton.append(approveIcon);
+    requestCardButtons.append(rejectButton, approveButton);
+
+    function onEditClick(event) {
+      event.preventDefault();
+      toggleInputs();
+      setActionButtonsVisibility(false);
+      editButton.classList.toggle('hidden');
+      updateWrapper.classList.toggle('hidden');
+      if (!panel.style.maxHeight) accordionButton.click();
+      expandAccordionPanel(panel);
+    }
+
+    function onSaveClick(event) {
+      const isTitleMissing = !titleInput.value;
+      const isReasonMissing = !reasonInput.value;
+      const todayDate = Math.floor(new Date().getTime() / 1000);
+      const newDeadline = new Date(requestInput.value).getTime() / 1000;
+      const isDeadlineInPast = newDeadline < todayDate;
+      const isInvalidDateFormat = isNaN(newDeadline);
+
+      if (isInvalidDateFormat) {
+        requestInputError.innerText = ERROR_MESSAGE.DATE_INPUT_ERROR;
+      } else if (isDeadlineInPast) {
+        requestInputError.innerText = ERROR_MESSAGE.DEADLINE_PASSED;
+      }
+
+      titleInputError.classList.toggle('hidden', !isTitleMissing);
+      reasonInputError.classList.toggle('hidden', !isReasonMissing);
+      requestInputError.classList.toggle(
+        'hidden',
+        !(isDeadlineInPast || isInvalidDateFormat),
+      );
+
+      if (
+        !isTitleMissing &&
+        !isReasonMissing &&
+        !(isDeadlineInPast || isInvalidDateFormat)
+      ) {
+        toggleInputs();
+        setActionButtonsVisibility(true);
+        editButton.classList.toggle('hidden');
+        updateWrapper.classList.toggle('hidden');
+        titleInputWrapper.classList.add('hidden');
+      }
+    }
+
+    function onCancelClick(event) {
+      event.preventDefault();
+      titleInput.value = data.title;
+      reasonInput.value = data.reason;
+      requestInput.value = formatToDateOnly(
+        getTimeInMilliseconds(
+          requestDetails.newEndsOnInMillisecond,
+          isExtensionRequest,
+        ),
+      );
+      toggleInputs();
+      setActionButtonsVisibility(true);
+      editButton.classList.toggle('hidden');
+      updateWrapper.classList.toggle('hidden');
+
+      titleInputError.classList.add('hidden');
+      reasonInputError.classList.add('hidden');
+      requestInputError.classList.add('hidden');
+    }
+
+    async function onApproveClick(event) {
+      event.preventDefault();
+      const removeSpinner = addLoadingSpinner(rootElement);
+      rootElement.classList.add('disabled');
+      payloadForLog.body.status = REQUEST_STATUS.APPROVED;
+      payloadForLog.meta = {
+        requestId: data.id,
+        name: `${currentUser?.first_name} ${currentUser?.last_name}`,
+        userId: currentUser?.id,
+      };
+
+      const requestBody = buildRequestBody({
+        isExtensionRequest,
+        data,
+        remarkMessage: remarkInputField.value,
+        status: REQUEST_STATUS.APPROVED,
+      });
+
+      await handleRequestStatusUpdate({
+        id: data.id,
+        reqBody: requestBody,
+        isExtensionRequest,
+        payloadForLog,
+        rootElement,
+        parentContainer,
+        removeSpinner,
+        isApproved: true,
+        appendLogs,
+        cleanupEventListener,
+      });
+    }
+
+    async function onRejectClick(event) {
+      event.preventDefault();
+      const removeSpinner = addLoadingSpinner(rootElement);
+      rootElement.classList.add('disabled');
+      payloadForLog.body.status = REQUEST_STATUS.DENIED;
+      payloadForLog.meta = {
+        requestId: data.id,
+        name: `${currentUser?.first_name} ${currentUser?.last_name}`,
+        userId: currentUser?.id,
+      };
+
+      const requestBody = buildRequestBody({
+        isExtensionRequest,
+        data,
+        remarkMessage: remarkInputField.value,
+        status: isExtensionRequest
+          ? REQUEST_STATUS.DENIED
+          : REQUEST_STATUS.REJECTED,
+      });
+
+      await handleRequestStatusUpdate({
+        id: data.id,
+        reqBody: requestBody,
+        isExtensionRequest,
+        payloadForLog,
+        rootElement,
+        parentContainer,
+        removeSpinner,
+        isApproved: false,
+        appendLogs,
+        cleanupEventListener,
+      });
+    }
+
+    function onApproveEnter() {
+      approveIcon.src = ICONS.CHECK_WHITE;
+    }
+
+    function onApproveLeave() {
+      approveIcon.src = ICONS.CHECK;
+    }
+
+    function onRejectEnter() {
+      rejectIcon.src = ICONS.CANCEL_WHITE;
+    }
+
+    function onRejectLeave() {
+      rejectIcon.src = ICONS.CANCEL;
+    }
+
+    editButton.addEventListener('click', onEditClick);
+    eventListenerRemovers.push(() =>
+      editButton.removeEventListener('click', onEditClick),
+    );
+
+    saveButton.addEventListener('click', onSaveClick);
+    eventListenerRemovers.push(() =>
+      saveButton.removeEventListener('click', onSaveClick),
+    );
+
+    cancelButton.addEventListener('click', onCancelClick);
+    eventListenerRemovers.push(() =>
+      cancelButton.removeEventListener('click', onCancelClick),
+    );
+
+    approveButton.addEventListener('click', onApproveClick);
+    eventListenerRemovers.push(() =>
+      approveButton.removeEventListener('click', onApproveClick),
+    );
+
+    approveButton.addEventListener('mouseenter', onApproveEnter);
+    eventListenerRemovers.push(() =>
+      approveButton.removeEventListener('mouseenter', onApproveEnter),
+    );
+
+    approveButton.addEventListener('mouseleave', onApproveLeave);
+    eventListenerRemovers.push(() =>
+      approveButton.removeEventListener('mouseleave', onApproveLeave),
+    );
+
+    rejectButton.addEventListener('click', onRejectClick);
+    eventListenerRemovers.push(() =>
+      rejectButton.removeEventListener('click', onRejectClick),
+    );
+
+    rejectButton.addEventListener('mouseenter', onRejectEnter);
+    eventListenerRemovers.push(() =>
+      rejectButton.removeEventListener('mouseenter', onRejectEnter),
+    );
+
+    rejectButton.addEventListener('mouseleave', onRejectLeave);
+    eventListenerRemovers.push(() =>
+      rejectButton.removeEventListener('mouseleave', onRejectLeave),
+    );
+
+    function cleanupEventListener() {
+      eventListenerRemovers.forEach((fn) => fn());
+    }
+
+    const payloadForLog = {
+      body: {},
+      meta: {},
+      timestamp: {
+        _seconds: Date.now() / 1000,
+      },
+    };
+
+    function setActionButtonsVisibility(shouldShow) {
+      const displayValue = shouldShow ? 'block' : 'none';
+      approveButton.style.display = displayValue;
+      rejectButton.style.display = displayValue;
+    }
+  }
+  return requestActionContainer;
+}
+
+function buildRequestBody({ isExtensionRequest, data, remarkMessage, status }) {
+  let requestBody;
+
+  if (isExtensionRequest) {
+    requestBody = {
+      status: status,
+    };
+  } else if (!remarkMessage) {
+    requestBody = {
+      type: data?.type,
+      state: status,
+    };
+  } else {
+    requestBody = {
+      type: data?.type,
+      state: status,
+      message: remarkMessage,
+    };
+  }
+  return requestBody;
+}
+
+async function handleRequestStatusUpdate({
+  id,
+  reqBody,
+  isExtensionRequest,
+  payloadForLog,
+  rootElement,
+  parentContainer,
+  isApproved,
+  removeSpinner,
+  appendLogs,
+  cleanupEventListener,
+}) {
+  const toastMessage = isApproved
+    ? SUCCESS_MESSAGE.APPROVED
+    : SUCCESS_MESSAGE.REJECTED;
+  const cardClass = isApproved ? 'green-card' : 'red-card';
+
+  try {
+    await updateRequestStatus({
+      id,
+      body: reqBody,
+      isExtensionRequest,
+    });
+
+    removeSpinner();
+
+    if (isExtensionRequest) {
+      appendLogs(payloadForLog, id);
+    }
+
+    showToastMessage({
+      isDev: true,
+      oldToastFunction: showToast,
+      type: 'success',
+      message: toastMessage,
+    });
+
+    await removeRequestCard(
+      rootElement,
+      cardClass,
+      parentContainer,
+      cleanupEventListener,
+    );
+  } catch (error) {
+    console.error(error);
+    removeSpinner();
+    showErrorHighlight(rootElement);
+  } finally {
+    rootElement.classList.remove('disabled');
+  }
 }
