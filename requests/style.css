@@ -165,7 +165,15 @@ p {
   padding: 0.5rem;
   width: 8rem;
   margin-right: 1rem;
-  height: 1rem;
+}
+
+.remark-input-field {
+  width: 13rem;
+  border-radius: 0.5rem;
+  height: 2rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--black);
+  margin-bottom: 0.25rem;
 }
 
 .search__filter__container {
@@ -685,8 +693,8 @@ nav a:hover {
     justify-content: center;
   }
   .filter__container {
+    margin-left: 4rem;
     justify-content: center;
-    margin-left: 2rem;
   }
 }
 
