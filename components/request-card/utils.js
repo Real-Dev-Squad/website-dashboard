@@ -1,5 +1,5 @@
-function normalizeToMilliseconds(time, isExtensionRequest) {
-  return isExtensionRequest ? time * 1000 : time;
+function getTimeInMilliseconds(time, isInSeconds) {
+  return isInSeconds ? time * 1000 : time;
 }
 const getRequestColor = (deadline, createdTime) => {
   const wasDeadlineBreached = createdTime > deadline;
@@ -12,7 +12,7 @@ const getRequestColor = (deadline, createdTime) => {
   }
   return 'orange-text';
 };
-const formatToFullDate = (timestamp) => {
+const formatToFullDate = (timestamp, locale = 'en-US') => {
   const options = {
     weekday: 'long',
     year: 'numeric',
@@ -23,10 +23,10 @@ const formatToFullDate = (timestamp) => {
     timeZoneName: 'short',
     hour12: true,
   };
-  return new Intl.DateTimeFormat('en-US', options).format(new Date(timestamp));
+  return new Intl.DateTimeFormat(locale, options).format(new Date(timestamp));
 };
 const getTwoDigitDate = (timestamp, isInSeconds = false) => {
-  const normalizedTime = normalizeToMilliseconds(timestamp, isInSeconds);
+  const normalizedTime = getTimeInMilliseconds(timestamp, isInSeconds);
 
   return new Intl.DateTimeFormat('en-US', {
     day: '2-digit',
@@ -41,6 +41,9 @@ function formatToDateOnly(milliseconds) {
     '0',
   )}-${String(date.getDate()).padStart(2, '0')}`;
 }
+async function addDelay(milliSeconds) {
+  await new Promise((resolve) => setTimeout(resolve, milliSeconds));
+}
 function getFormEntries(formData) {
   if (!formData) return;
   const result = {};
@@ -50,6 +53,9 @@ function getFormEntries(formData) {
   return result;
 }
 const addLoadingSpinner = (container) => {
+  if (container.querySelector('.loading-spinner')) {
+    return () => {};
+  }
   const spinner = createElement({
     type: 'div',
     attributes: { class: 'loading-spinner' },
@@ -121,7 +127,7 @@ async function updateRequestStatus({ id, body, isExtensionRequest }) {
 
   return await res.json();
 }
-async function removeCard(
+async function removeRequestCard(
   element,
   elementClass,
   parentContainer,
@@ -185,7 +191,7 @@ function createSummarySection({
     type: 'div',
     attributes: { class: 'task-details-container' },
   });
-  summaryContainer.appendChild(taskDetailsContainer);
+  summaryContainer.append(taskDetailsContainer);
 
   const statusSiteLink = createElement({
     type: 'a',
@@ -208,13 +214,12 @@ function createSummarySection({
     type: 'div',
     attributes: { id: 'requestType-container' },
   });
-  taskTitle.appendChild(statusSiteLink);
+  taskTitle.append(statusSiteLink);
 
   if (isExtensionRequest) {
-    taskDetailsContainer.appendChild(taskTitle);
-    taskDetailsContainer.appendChild(deadlineContainer);
+    taskDetailsContainer.append(taskTitle, deadlineContainer);
   } else {
-    taskDetailsContainer.appendChild(requestTypeContainer);
+    taskDetailsContainer.append(requestTypeContainer);
   }
 
   const deadlineText = createElement({
@@ -229,9 +234,6 @@ function createSummarySection({
     innerText: 'Request Type ',
   });
 
-  requestTypeContainer.appendChild(requestType);
-  deadlineContainer.appendChild(deadlineText);
-
   const deadlineValue = createElement({
     type: 'span',
     innerText: `${deadlineDays}`,
@@ -244,19 +246,20 @@ function createSummarySection({
 
   const requestTypeText = createElement({
     type: 'span',
+    attributes: {
+      'data-testid': 'request-type',
+    },
     innerText: data?.type,
   });
 
-  deadlineContainer.appendChild(deadlineValue);
-  requestTypeContainer.appendChild(requestTypeText);
   const deadlineTooltip = createElement({
     type: 'span',
     attributes: { class: 'tooltip' },
-    innerText: `${formatToFullDate(
-      normalizeToMilliseconds(oldEndsOnValue, isExtensionRequest),
-    )}`,
+    innerText: `${formatToFullDate(oldEndsOnValue)}`,
   });
-  deadlineValue.appendChild(deadlineTooltip);
+  deadlineValue.append(deadlineTooltip);
+  requestTypeContainer.append(requestType, requestTypeText);
+  deadlineContainer.append(deadlineText, deadlineValue);
 
   return { summaryContainer, taskDetailsContainer, statusSiteLink };
 }
@@ -272,7 +275,10 @@ function createTextBlockContainer(data, isForReasonComponent) {
 
   const paragraph = createElement({
     type: 'p',
-    attributes: { class: 'text-block-content' },
+    attributes: {
+      class: 'text-block-content',
+      'data-testid': isForReasonComponent ? 'request-reason' : 'request-remark',
+    },
     innerText: isForReasonComponent ? data.reason : data.message,
   });
 
@@ -282,7 +288,7 @@ function createTextBlockContainer(data, isForReasonComponent) {
       class: 'input-text-area hidden',
       id: 'reason',
       name: 'reason',
-      'data-testid': 'reason-input',
+      'data-testid': 'reason-input-text-area',
     },
     innerText: data.reason,
   });
@@ -302,17 +308,10 @@ function createTextBlockContainer(data, isForReasonComponent) {
   });
 
   if (isForReasonComponent) {
-    container.appendChild(title);
-    container.appendChild(detailsLine);
-    container.appendChild(textAreaInput);
-    container.appendChild(inputError);
-    container.appendChild(paragraph);
+    container.append(title, detailsLine, textAreaInput, inputError, paragraph);
   } else {
-    container.appendChild(title);
-    container.appendChild(detailsLine);
-    container.appendChild(paragraph);
+    container.append(title, detailsLine, paragraph);
   }
-
   return {
     container,
     textAreaInput,
@@ -377,9 +376,7 @@ function createDateContainer(
       name: 'newEndsOn',
       id: 'newEndsOn',
       oninput: 'this.blur()',
-      value: formatToDateOnly(
-        normalizeToMilliseconds(newEndsOnValue, isExtensionRequest),
-      ),
+      value: formatToDateOnly(newEndsOnValue),
       'data-testid': 'request-input',
     },
   });
@@ -422,41 +419,32 @@ function createDateContainer(
   const fromDateValue = createElement({
     type: 'span',
     attributes: { class: 'tooltip-container' },
-    innerText: getTwoDigitDate(oldEndsOnValue),
+    innerText: getTwoDigitDate(oldEndsOnValue, isExtensionRequest),
   });
 
   const fromDateValueToolTip = createElement({
     type: 'span',
     attributes: { class: 'tooltip' },
-    innerText: formatToFullDate(
-      normalizeToMilliseconds(oldEndsOnValue, isExtensionRequest),
-    ),
+    innerText: formatToFullDate(oldEndsOnValue),
   });
 
-  datesDetailsContainer.appendChild(requestDetailsHeading);
-  datesDetailsContainer.appendChild(requestDetailsLine);
+  datesDetailsContainer.append(requestDetailsHeading, requestDetailsLine);
+  newDeadlineContainer.append(
+    newDeadlineText,
+    newDeadlineValue,
+    requestInput,
+    requestInputError,
+  );
 
-  newDeadlineContainer.appendChild(newDeadlineText);
-  newDeadlineContainer.appendChild(newDeadlineValue);
-  newDeadlineContainer.appendChild(requestInput);
-  newDeadlineContainer.appendChild(requestInputError);
-
-  requestForContainer.appendChild(requestForText);
-  requestForContainer.appendChild(requestForValue);
-
-  fromDateContainer.appendChild(fromDateText);
-  fromDateContainer.appendChild(fromDateValue);
-
-  fromDateValue.appendChild(fromDateValueToolTip);
-
-  datesContainer.appendChild(datesDetailsContainer);
+  requestForContainer.append(requestForText, requestForValue);
+  fromDateValue.append(fromDateValueToolTip);
+  fromDateContainer.append(fromDateText, fromDateValue);
+  datesContainer.append(datesDetailsContainer);
 
   if (isExtensionRequest) {
-    datesContainer.appendChild(newDeadlineContainer);
-    datesContainer.appendChild(requestForContainer);
+    datesContainer.append(newDeadlineContainer, requestForContainer);
   } else {
-    datesContainer.appendChild(fromDateContainer);
-    datesContainer.appendChild(newDeadlineContainer);
+    datesContainer.append(fromDateContainer, newDeadlineContainer);
   }
 
   return {
@@ -650,7 +638,7 @@ function createActionContainer({ context, elements, uiHandlers, domRefs }) {
         !(isDeadlineInPast || isInvalidDateFormat)
       ) {
         toggleInputs();
-        setActionButtonsVisibility(false);
+        setActionButtonsVisibility(true);
         editButton.classList.toggle('hidden');
         updateWrapper.classList.toggle('hidden');
         titleInputWrapper.classList.add('hidden');
@@ -884,7 +872,7 @@ async function handleRequestStatusUpdate({
       message: toastMessage,
     });
 
-    await removeCard(
+    await removeRequestCard(
       rootElement,
       cardClass,
       parentContainer,

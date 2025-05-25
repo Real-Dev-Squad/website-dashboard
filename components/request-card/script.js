@@ -83,7 +83,7 @@ async function createRequestCardComponent({
       isDeadLineCrossed: requestDetails.isDeadlineCrossed,
       deadlineDays: requestDetails.deadlineDays,
       data,
-      oldEndsOn: requestDetails.oldEndsOnInMillisecond,
+      oldEndsOnValue: requestDetails.oldEndsOnInMillisecond,
       isStatusPending: requestDetails.statusPending,
     });
   const {
@@ -126,7 +126,13 @@ async function createRequestCardComponent({
       titleInputWrapper,
     },
     uiHandlers: { toggleInputs, appendLogs },
-    domRefs: { panel, accordionButton, rootElement, parentContainer },
+    domRefs: {
+      panel,
+      accordionButton,
+      rootElement,
+      parentContainer,
+      requestDetails,
+    },
   });
 
   titleInputWrapper.append(titleInput, titleInputError);
@@ -153,7 +159,7 @@ async function createRequestCardComponent({
   taskStatusContainer.append(taskStatusTextLabel, taskStatusElement);
   summaryContainer.append(datesContainer);
   newDeadlineValue.append(newEndsOnTooltip);
-  requestForValue.append(requestCreatedAtTooltip);
+  requestForValue.append(newEndsOnTooltip.cloneNode(true));
 
   const requestNumberContainer = createElement({ type: 'div' });
   if (isExtensionRequest) {
@@ -177,7 +183,7 @@ async function createRequestCardComponent({
 
   if (isExtensionRequest) {
     panel.append(logContainer);
-  } else if (data?.state !== RequestStatus.PENDING) {
+  } else if (data?.state !== REQUEST_STATUS.PENDING) {
     panel.append(commentContainer);
   }
 
@@ -243,7 +249,12 @@ async function createRequestCardComponent({
         data.title = formData.title;
         data.newEndsOn = formData.newEndsOn;
         showSuccessHighlight(rootElement);
-        showToast(SUCCESS_MESSAGE, 'success');
+        showToastMessage({
+          isDev: true,
+          oldToastFunction: showToast,
+          type: 'success',
+          message: SUCCESS_MESSAGE.UPDATED,
+        });
 
         appendLogs(payloadForLog, data.id);
       })
@@ -252,8 +263,15 @@ async function createRequestCardComponent({
         showErrorHighlight(rootElement);
 
         const errorMessage =
-          error?.response?.data?.message || error?.message || ERROR_MESSAGE;
-        showToast(errorMessage, 'error');
+          error?.response?.data?.message ||
+          error?.message ||
+          ERROR_MESSAGE.UPDATE;
+        showToastMessage({
+          isDev: true,
+          oldToastFunction: showToast,
+          type: 'error',
+          message: errorMessage,
+        });
       })
       .finally(() => {
         rootElement.classList.remove('disabled');
@@ -306,13 +324,46 @@ async function createRequestCardComponent({
   function toggleInputs() {
     titleInputWrapper.classList.toggle('hidden');
     titleInput.classList.toggle('hidden');
-    titleInputError.classList.toggle('hidden');
     titleText.classList.toggle('hidden');
     reasonInput.classList.toggle('hidden');
     reasonParagraph.classList.toggle('hidden');
-    reasonInputError.classList.toggle('hidden');
     newDeadlineValue.classList.toggle('hidden');
     requestInput.classList.toggle('hidden');
+  }
+
+  async function renderLogs(extensionRequestId) {
+    const logContainer = document.getElementById(
+      `log-container-${extensionRequestId}`,
+    );
+    if (logContainer.querySelector('.server-log')?.innerHTML) {
+      return;
+    }
+    try {
+      const extensionLogs = await getExtensionRequestLogs({
+        extensionRequestId,
+      });
+      const innerHTML = generateSentence(
+        extensionLogs.logs,
+        'server-log',
+        extensionRequestId,
+      );
+      if (innerHTML) {
+        const isLocalLogPresent = logContainer.querySelectorAll('.local-log');
+        if (isLocalLogPresent) {
+          const tempDiv = document.createElement('div');
+          tempDiv.classList.add('invisible-div');
+          tempDiv.innerHTML = innerHTML;
+
+          const localLogElement = logContainer.querySelector('.local-log');
+          logContainer.insertBefore(tempDiv, localLogElement);
+        } else {
+          logContainer.innerHTML += innerHTML;
+        }
+        updateAccordionHeight(panel);
+      }
+    } catch (error) {
+      console.error('Failed to fetch extension request logs:', error);
+    }
   }
 
   const userImage = requestUser?.picture?.url ?? ICONS.DEFAULT_USER_AVATAR;
@@ -376,10 +427,11 @@ async function createRequestCardComponent({
 
 function prepareRequestCardData({ data, isExtensionRequest }) {
   const currentTimestamp = Date.now();
-  let oldEndsOn = data.oldEndsOn;
-  let newEndsOn = data.newEndsOn;
 
-  if (data.type === REQUEST_STATUS.OOO) {
+  let oldEndsOn = data?.oldEndsOn;
+  let newEndsOn = data?.newEndsOn;
+
+  if (data.type === REQUEST_TYPE.OOO) {
     oldEndsOn = data.from;
     newEndsOn = data.until;
   }
@@ -399,11 +451,9 @@ function prepareRequestCardData({ data, isExtensionRequest }) {
 
   const isDeadlineCrossed = currentTimestamp > oldEndsOnInMillisecond;
   const isNewDeadlineCrossed = currentTimestamp > newEndsOnInMillisecond;
-
   const statusPending = isExtensionRequest
-    ? data.status === RequestStatus.PENDING
-    : data.state === RequestStatus.PENDING;
-
+    ? data.status === REQUEST_STATUS.PENDING
+    : data.state === REQUEST_STATUS.PENDING;
   const deadlineDays = dateDiff(
     currentTimestamp,
     oldEndsOnInMillisecond,
@@ -416,7 +466,7 @@ function prepareRequestCardData({ data, isExtensionRequest }) {
         newEndsOnInMillisecond,
         (d) => d + (isNewDeadlineCrossed ? ' ago' : ''),
       )
-    : getTwoDigitDate(newEndsOn);
+    : getTwoDigitDate(newEndsOnInMillisecond, true);
 
   return {
     oldEndsOnInMillisecond,

@@ -30,6 +30,12 @@ let userDetails = [];
 let nextLink = '';
 let isDataLoading = false;
 
+let currentUserDetails;
+
+getSelfUser().then((response) => {
+  currentUserDetails = response;
+});
+
 function updateTabLink(requestType) {
   if (requestType === OOO_REQUEST_TYPE) {
     oooTabLink.classList.add(selected__tab__class);
@@ -501,9 +507,19 @@ async function renderRequestCards(queries = {}) {
       if (request.state !== 'PENDING') {
         superUserDetails = await getUserDetails(request.lastModifiedBy);
       }
-      requestContainer.appendChild(
-        createRequestCard(request, superUserDetails, requesterUserDetails),
-      );
+      if (isDev) {
+        createRequestCardComponent({
+          data: request,
+          isExtensionRequest: false,
+          parentContainer: requestContainer,
+          currentUser: currentUserDetails,
+          requestUser: requesterUserDetails,
+        });
+      } else {
+        requestContainer.appendChild(
+          createRequestCard(request, superUserDetails, requesterUserDetails),
+        );
+      }
     }
   } catch (error) {
     console.error(error);
