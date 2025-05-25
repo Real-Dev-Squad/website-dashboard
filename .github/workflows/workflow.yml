@@ -24,7 +24,7 @@ jobs:
       - run: npm install
       - run: npm run check
       - name: Run tests
-        run: yarn test      
+        run: npm run test      
 
   analyze:
     name: Analyze
