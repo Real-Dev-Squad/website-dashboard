@@ -41,7 +41,8 @@
   background-color: grey;
 }
 
-.extension-card {
+.extension-card,
+.request-card {
   border-radius: 10px;
   text-align: left;
   display: flex;
@@ -58,7 +59,8 @@
   transition: 800ms ease-in-out;
 }
 
-.extension-card-form {
+.extension-card-form,
+.request-card-form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -110,6 +112,8 @@
 }
 
 .accordion img {
+  width: 1rem;
+  margin-top: 0.5rem;
   transition: transform 500ms ease, scale 100ms ease;
 }
 
@@ -156,6 +160,23 @@
   align-items: center;
   justify-content: center;
   padding: 2px;
+}
+
+.reject-button {
+  width: 6.25rem;
+  height: 2rem;
+  background-color: var(--secondary10);
+  border-radius: 6px;
+  border: 1px solid var(--secondary600);
+  transition: 200ms ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+}
+
+.reject-button:hover {
+  background-color: var(--secondary600);
 }
 
 .check-icon {
@@ -309,7 +330,8 @@
   color: var(--medium-gray);
 }
 
-.extension-card-buttons {
+.extension-card-buttons,
+.request-card-buttons {
   display: flex;
   gap: 0.5rem;
   margin-right: 3.5rem;
@@ -731,7 +753,8 @@ body {
 }
 
 /* Filter modal end */
-.commited-hours-trigger {
+.commited-hours-trigger,
+.committed-hours-trigger {
   width: 1.5rem;
   height: 1.5rem;
   cursor: pointer;
@@ -739,7 +762,8 @@ body {
 .hidden {
   display: none !important;
 }
-.comitted-hours {
+.comitted-hours,
+.committed-hours {
   width: 250px;
   height: 50px;
   position: absolute;
@@ -766,7 +790,8 @@ body {
 .label-content-missing {
   color: var(--secondary600);
 }
-.extension-request-header-wrapper {
+.extension-request-header-wrapper,
+.request-header-wrapper {
   width: 100%;
   display: flex;
   gap: 1rem;
@@ -869,7 +894,8 @@ body {
   .search-filter {
     justify-content: center;
   }
-  .comitted-hours {
+  .comitted-hours,
+  .committed-hours {
     right: 0.5rem;
   }
 }
