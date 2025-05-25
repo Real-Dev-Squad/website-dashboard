@@ -21,8 +21,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+      - name: Install system dependencies
+        run: |
+          echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
+
       - run: npm install
       - run: npm run check
+
       - name: Run tests
         run: npm run test      
 
