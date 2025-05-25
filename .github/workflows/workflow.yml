@@ -29,7 +29,7 @@ jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
-    needs: [build, test]
+    needs: build-test
     permissions:
       actions: read
       contents: read
