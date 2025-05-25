@@ -25,11 +25,11 @@ jobs:
         run: |
           echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
 
-      - run: npm install
-      - run: npm run check
+      - run: yarn install
+      - run: yarn check
 
       - name: Run tests
-        run: npm run test      
+        run: yarn test      
 
   analyze:
     name: Analyze
