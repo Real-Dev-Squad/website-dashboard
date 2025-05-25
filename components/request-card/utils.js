@@ -121,7 +121,12 @@ async function updateRequestStatus({ id, body, isExtensionRequest }) {
 
   return await res.json();
 }
-async function removeCard(element, elementClass, parentContainer) {
+async function removeCard(
+  element,
+  elementClass,
+  parentContainer,
+  cleanupEventListener,
+) {
   element.classList.add(elementClass);
   await addDelay(800);
   element.style.overflow = 'hidden';
@@ -160,6 +165,7 @@ async function removeCard(element, elementClass, parentContainer) {
       if (parentContainer.innerHTML === '') {
         addEmptyPageMessage(parentContainer);
       }
+      cleanupEventListener();
     });
 }
 function createSummarySection({
@@ -482,6 +488,7 @@ function createActionContainer({ context, elements, uiHandlers, domRefs }) {
     requestDetails,
   } = domRefs;
   const requestStatus = isExtensionRequest ? data.status : data.state;
+  const eventListenerRemovers = [];
   const requestActionContainer = createElement({
     type: 'div',
     attributes: {
@@ -606,18 +613,17 @@ function createActionContainer({ context, elements, uiHandlers, domRefs }) {
     approveButton.append(approveIcon);
     requestCardButtons.append(rejectButton, approveButton);
 
-    editButton.addEventListener('click', (event) => {
+    function onEditClick(event) {
       event.preventDefault();
       toggleInputs();
       setActionButtonsVisibility(false);
       editButton.classList.toggle('hidden');
       updateWrapper.classList.toggle('hidden');
-      if (!panel.style.maxHeight) {
-        accordionButton.click();
-      }
+      if (!panel.style.maxHeight) accordionButton.click();
       expandAccordionPanel(panel);
-    });
-    saveButton.addEventListener('click', (event) => {
+    }
+
+    function onSaveClick(event) {
       const isTitleMissing = !titleInput.value;
       const isReasonMissing = !reasonInput.value;
       const todayDate = Math.floor(new Date().getTime() / 1000);
@@ -649,8 +655,9 @@ function createActionContainer({ context, elements, uiHandlers, domRefs }) {
         updateWrapper.classList.toggle('hidden');
         titleInputWrapper.classList.add('hidden');
       }
-    });
-    cancelButton.addEventListener('click', (event) => {
+    }
+
+    function onCancelClick(event) {
       event.preventDefault();
       titleInput.value = data.title;
       reasonInput.value = data.reason;
@@ -668,16 +675,9 @@ function createActionContainer({ context, elements, uiHandlers, domRefs }) {
       titleInputError.classList.add('hidden');
       reasonInputError.classList.add('hidden');
       requestInputError.classList.add('hidden');
-    });
-    const payloadForLog = {
-      body: {},
-      meta: {},
-      timestamp: {
-        _seconds: Date.now() / 1000,
-      },
-    };
+    }
 
-    approveButton.addEventListener('click', async (event) => {
+    async function onApproveClick(event) {
       event.preventDefault();
       const removeSpinner = addLoadingSpinner(rootElement);
       rootElement.classList.add('disabled');
@@ -704,15 +704,12 @@ function createActionContainer({ context, elements, uiHandlers, domRefs }) {
         parentContainer,
         removeSpinner,
         isApproved: true,
+        appendLogs,
+        cleanupEventListener,
       });
-    });
-    approveButton.addEventListener('mouseenter', (event) => {
-      approveIcon.src = ICONS.CHECK_WHITE;
-    });
-    approveButton.addEventListener('mouseleave', (event) => {
-      approveIcon.src = ICONS.CHECK;
-    });
-    rejectButton.addEventListener('click', async (event) => {
+    }
+
+    async function onRejectClick(event) {
       event.preventDefault();
       const removeSpinner = addLoadingSpinner(rootElement);
       rootElement.classList.add('disabled');
@@ -741,14 +738,83 @@ function createActionContainer({ context, elements, uiHandlers, domRefs }) {
         parentContainer,
         removeSpinner,
         isApproved: false,
+        appendLogs,
+        cleanupEventListener,
       });
-    });
-    rejectButton.addEventListener('mouseenter', (event) => {
+    }
+
+    function onApproveEnter() {
+      approveIcon.src = ICONS.CHECK_WHITE;
+    }
+
+    function onApproveLeave() {
+      approveIcon.src = ICONS.CHECK;
+    }
+
+    function onRejectEnter() {
       rejectIcon.src = ICONS.CANCEL_WHITE;
-    });
-    rejectButton.addEventListener('mouseleave', (event) => {
+    }
+
+    function onRejectLeave() {
       rejectIcon.src = ICONS.CANCEL;
-    });
+    }
+
+    editButton.addEventListener('click', onEditClick);
+    eventListenerRemovers.push(() =>
+      editButton.removeEventListener('click', onEditClick),
+    );
+
+    saveButton.addEventListener('click', onSaveClick);
+    eventListenerRemovers.push(() =>
+      saveButton.removeEventListener('click', onSaveClick),
+    );
+
+    cancelButton.addEventListener('click', onCancelClick);
+    eventListenerRemovers.push(() =>
+      cancelButton.removeEventListener('click', onCancelClick),
+    );
+
+    approveButton.addEventListener('click', onApproveClick);
+    eventListenerRemovers.push(() =>
+      approveButton.removeEventListener('click', onApproveClick),
+    );
+
+    approveButton.addEventListener('mouseenter', onApproveEnter);
+    eventListenerRemovers.push(() =>
+      approveButton.removeEventListener('mouseenter', onApproveEnter),
+    );
+
+    approveButton.addEventListener('mouseleave', onApproveLeave);
+    eventListenerRemovers.push(() =>
+      approveButton.removeEventListener('mouseleave', onApproveLeave),
+    );
+
+    rejectButton.addEventListener('click', onRejectClick);
+    eventListenerRemovers.push(() =>
+      rejectButton.removeEventListener('click', onRejectClick),
+    );
+
+    rejectButton.addEventListener('mouseenter', onRejectEnter);
+    eventListenerRemovers.push(() =>
+      rejectButton.removeEventListener('mouseenter', onRejectEnter),
+    );
+
+    rejectButton.addEventListener('mouseleave', onRejectLeave);
+    eventListenerRemovers.push(() =>
+      rejectButton.removeEventListener('mouseleave', onRejectLeave),
+    );
+
+    function cleanupEventListener() {
+      eventListenerRemovers.forEach((fn) => fn());
+    }
+
+    const payloadForLog = {
+      body: {},
+      meta: {},
+      timestamp: {
+        _seconds: Date.now() / 1000,
+      },
+    };
 
     function setActionButtonsVisibility(shouldShow) {
       const displayValue = shouldShow ? 'block' : 'none';
@@ -791,6 +857,7 @@ async function handleRequestStatusUpdate({
   isApproved,
   removeSpinner,
   appendLogs,
+  cleanupEventListener,
 }) {
   const toastMessage = isApproved
     ? SUCCESS_MESSAGE.APPROVED
@@ -817,7 +884,12 @@ async function handleRequestStatusUpdate({
       message: toastMessage,
     });
 
-    await removeCard(rootElement, cardClass, parentContainer);
+    await removeCard(
+      rootElement,
+      cardClass,
+      parentContainer,
+      cleanupEventListener,
+    );
   } catch (error) {
     console.error(error);
     removeSpinner();
