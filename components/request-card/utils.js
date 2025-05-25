@@ -53,12 +53,9 @@ function getFormEntries(formData) {
   return result;
 }
 const addLoadingSpinner = (container) => {
-  if (container.querySelector('.loading-spinner')) {
-    return () => {};
-  }
   const spinner = createElement({
     type: 'div',
-    attributes: { class: 'loading-spinner' },
+    attributes: { class: 'spinner' },
   });
 
   container.append(spinner);

@@ -693,7 +693,8 @@ nav a:hover {
     justify-content: center;
   }
   .filter__container {
-    margin-left: 2rem;
+    margin-left: 4rem;
+    justify-content: center;
   }
 }
 

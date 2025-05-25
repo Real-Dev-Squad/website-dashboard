@@ -32,9 +32,14 @@ let isDataLoading = false;
 
 let currentUserDetails;
 
-getSelfUser().then((response) => {
-  currentUserDetails = response;
-});
+getSelfUser()
+  .then((response) => {
+    currentUserDetails = response;
+  })
+  .catch((error) => {
+    currentUserDetails = null;
+    showMessage('ERROR', ErrorMessages.UNAUTHENTICATED);
+  });
 
 function updateTabLink(requestType) {
   if (requestType === OOO_REQUEST_TYPE) {
