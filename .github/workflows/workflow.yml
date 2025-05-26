@@ -1,36 +1,47 @@
-# For most projects, this workflow file will not need changing; you simply need
-# to commit it to your repository.
-#
-# You may wish to alter this file to override the set of languages analyzed,
-# or to provide custom queries or build logic.
-#
-# ******** NOTE ********
-# We have attempted to detect the languages in your repository. Please check
-# the `language` matrix defined below to confirm you have the correct set of
-# supported CodeQL languages.
-#
-name: 'CodeQL'
+name: Workflow
 
 on:
-  push:
-    branches: ['develop', main]
   pull_request:
-    # The branches below must be a subset of the branches above
-    branches: ['develop']
+    branches:
+      - '**'
   schedule:
     - cron: '35 9 * * 6'
 
 jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    if: github.event_name != 'schedule'
+    strategy:
+      matrix:
+        node-version: [22.x]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      
+      - name: Install system dependencies
+        run: |
+          echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
+
+      - run: yarn install
+      - run: yarn check
+
+      - name: Run tests
+        run: yarn test      
+
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
+    needs: build-test
     permissions:
       actions: read
       contents: read
       security-events: write
 
     strategy:
-      fail-fast: false
       matrix:
         language: ['javascript']
         # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby' ]
@@ -38,7 +49,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
