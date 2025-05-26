@@ -268,10 +268,22 @@ async function populateExtensionRequests(query = {}, newLink) {
     if (currentVersion !== extensionPageVersion) {
       return;
     }
-    for (let data of allExtensionRequests) {
-      if (query.dev) {
-        createExtensionCard(data, true);
-      } else {
+    if (query.dev) {
+      await Promise.all(
+        allExtensionRequests.map(async (data) => {
+          const requestUser = await getUser(data.assignee);
+          createRequestCardComponent({
+            data,
+            isExtensionRequest: true,
+            parentContainer: extensionRequestsContainer,
+            currentUser: currentUserDetails,
+            requestUser,
+            userStatusMap,
+          });
+        }),
+      );
+    } else {
+      for (let data of allExtensionRequests) {
         createExtensionCard(data);
       }
     }
