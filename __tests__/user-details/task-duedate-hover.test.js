@@ -2,6 +2,7 @@ const puppeteer = require('puppeteer');
 const {
   userDetailsApi,
   usersTasksInDev,
+  userTaskData,
 } = require('../../mock-data/task-card-date-hover/index'); //has user info
 const {
   superUserDetails,
@@ -98,6 +99,19 @@ describe('Tasks On User Management Page', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
           body: JSON.stringify(usersTasksInDev['OhNeSTj5J72PhrA4mtrr']),
+        });
+      } else if (
+        url === `${STAGING_API_URL}/tasks/?size=3&dev=true&assignee=sunny`
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(userTaskData),
         });
       } else {
         interceptedRequest.continue();

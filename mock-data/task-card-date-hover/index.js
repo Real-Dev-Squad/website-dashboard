@@ -355,4 +355,80 @@ const usersTasksInDev = {
     next: '',
   },
 };
-module.exports = { userDetailsApi, usersTasksInDev };
+
+const userTaskData = {
+  message: 'Tasks returned successfully!',
+  tasks: [
+    {
+      id: 'XPbADEkSiaJLfqczuaN5',
+      assignee: 'sunny',
+      title: 'Create API Contract for `/request` Route',
+      type: 'feature',
+      percentCompleted: 0,
+      priority: 'TBD',
+      createdAt: 1728973260,
+      updatedAt: 1728973260,
+      startedOn: 1720369838.778,
+      endsOn: 1720974638.777,
+      github: {
+        issue: {
+          url: 'https://api.github.com/repos/Real-Dev-Squad/website-api-contracts/issues/182',
+          html_url:
+            'https://github.com/Real-Dev-Squad/website-api-contracts/issues/182',
+        },
+      },
+      updated_at: 1735965041200,
+      status: 'BACKLOG',
+      assigneeId: 'iODXB6ns8jaZB9p0XlBw',
+      dependsOn: [],
+    },
+    {
+      id: 'qjJoYsDvUXBfA6yZzYO9',
+      percentCompleted: 0,
+      createdAt: 1703335423,
+      endsOn: 1703939480.688,
+      github: {
+        issue: {
+          html_url: 'https://github.com/Real-Dev-Squad/website-www/issues/779',
+          url: 'https://api.github.com/repos/Real-Dev-Squad/website-www/issues/779',
+        },
+      },
+      assignee: 'sunny',
+      title: 'Refactor archived user page ',
+      type: 'feature',
+      priority: 'TBD',
+      startedOn: 1703334680.688,
+      updatedAt: 1703335423,
+      updated_at: 1735965041200,
+      status: 'BACKLOG',
+      assigneeId: 'iODXB6ns8jaZB9p0XlBw',
+      dependsOn: [],
+    },
+    {
+      id: 'knpVSUel5tXPIdMYt2qG',
+      percentCompleted: 0,
+      createdAt: 1703306264,
+      endsOn: 1703910538.864,
+      github: {
+        issue: {
+          html_url:
+            'https://api.github.com/repos/Real-Dev-Squad/website-status/issues/1054',
+          url: 'https://api.github.com/repos/Real-Dev-Squad/website-status/issues/1054',
+        },
+      },
+      assignee: 'sunny',
+      title: 'Remove search button from tasks search',
+      type: 'feature',
+      priority: 'TBD',
+      startedOn: 1703305738.864,
+      updatedAt: 1703306264,
+      updated_at: 1735965041200,
+      status: 'BACKLOG',
+      assigneeId: 'iODXB6ns8jaZB9p0XlBw',
+      dependsOn: [],
+    },
+  ],
+  prev: '',
+  next: '/tasks?assignee=sunny&size=3&next=bSB6uRgdA79JVjot7uQU',
+};
+module.exports = { userDetailsApi, usersTasksInDev, userTaskData };
