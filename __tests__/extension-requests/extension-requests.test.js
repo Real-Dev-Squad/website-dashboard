@@ -1312,7 +1312,7 @@ describe('Tests the Extension Requests Screen', () => {
     expect(extensionCardsAfter.length).toBe(0);
   });
 
-  it('should render DONE when task status in COMPLETED', async () => {
+  it('should display the task status as "DONE" when task data status is "COMPLETED"', async () => {
     await page.goto(
       `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&q=taskId%3AKYj79ki2agB0q5JN3kUf%2Cstatus%3APENDING`,
     );
@@ -1334,7 +1334,7 @@ describe('Tests the Extension Requests Screen', () => {
     expect(statusText).toBe('DONE');
   });
 
-  it('should render DONE when task status in COMPLETED for dev flag', async () => {
+  it('should display the task status as "DONE" when task data status is "COMPLETED" for dev flag', async () => {
     await page.goto(
       `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&dev=true&q=taskId%3AKYj79ki2agB0q5JN3kUf%2Cstatus%3APENDING`,
     );
