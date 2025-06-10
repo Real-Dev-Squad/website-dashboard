@@ -91,8 +91,35 @@ const auditLogTasks = {
   },
 };
 
+const taskCompleted = {
+  message: 'task returned successfully',
+  taskData: {
+    percentCompleted: 100,
+    endsOn: 1692149100,
+    isNoteworthy: false,
+    createdBy: 'ajeyak',
+    lossRate: {
+      dinero: 100,
+      neelam: 0,
+    },
+    assignee: 'ajeyak',
+    title: 'A Task',
+    type: 'feature',
+    priority: 'HIGH',
+    completionAward: {
+      dinero: 1000,
+      neelam: 0,
+    },
+    startedOn: 1690429785.762,
+    status: 'COMPLETED',
+    assigneeId: 'eChYAP0kUwLo4wQ1gqMV',
+    dependsOn: [],
+  },
+};
+
 module.exports = {
   taskDone,
   taskVerified,
   auditLogTasks,
+  taskCompleted,
 };
