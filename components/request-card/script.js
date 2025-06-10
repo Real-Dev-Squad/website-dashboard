@@ -389,7 +389,10 @@ async function createRequestCardComponent({
 
   fetchTaskDetailsPromise.then(({ taskData }) => {
     if (taskData) {
-      const taskStatus = taskData?.status?.replaceAll('_', ' ');
+      let taskStatus = taskData?.status?.replaceAll('_', ' ');
+      if (taskStatus === 'COMPLETED') {
+        taskStatus = 'DONE';
+      }
       statusSiteLink.href = `${STATUS_BASE_URL}/tasks/${data.taskId}`;
       statusSiteLink.innerText = taskData.title;
       statusSiteLink.classList.remove('skeleton-link');

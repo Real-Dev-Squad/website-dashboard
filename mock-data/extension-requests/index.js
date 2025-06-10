@@ -218,6 +218,24 @@ const extensionRequestListForAuditLogs = {
   ],
 };
 
+const extensionRequestsTaskCompleted = {
+  message: 'Extension Requests returned successfully!',
+  allExtensionRequests: [
+    {
+      assignee: 'anuj',
+      id: 'QISvF7kAmnD9vXHwwIsG',
+      newEndsOn: 1690528980,
+      oldEndsOn: 1689954609.948,
+      reason: 'test reason',
+      status: 'APPROVED',
+      taskId: 'KYj79ki2agB0q5JN3kUf',
+      timestamp: 1689233034,
+      title: 'test title',
+    },
+  ],
+  next: '',
+};
+
 module.exports = {
   extensionRequestsList,
   extensionRequestsListApproved,
@@ -226,4 +244,5 @@ module.exports = {
   extensionRequestsListPendingAscending,
   extensionRequestsListUserSearch,
   extensionRequestListForAuditLogs,
+  extensionRequestsTaskCompleted,
 };

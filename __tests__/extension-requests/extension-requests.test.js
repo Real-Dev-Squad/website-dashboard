@@ -7,6 +7,7 @@ const {
   extensionRequestsListPendingAscending,
   extensionRequestsListUserSearch,
   extensionRequestListForAuditLogs,
+  extensionRequestsTaskCompleted,
 } = require('../../mock-data/extension-requests');
 const {
   extensionRequestLogs,
@@ -20,7 +21,11 @@ const {
   searchedUserForAuditLogs,
 } = require('../../mock-data/users');
 const { usersStatus } = require('../../mock-data/users-status');
-const { taskDone, auditLogTasks } = require('../../mock-data/tasks/index');
+const {
+  taskDone,
+  auditLogTasks,
+  taskCompleted,
+} = require('../../mock-data/tasks/index');
 const {
   STAGING_API_URL,
   LOCAL_TEST_PAGE_URL,
@@ -134,6 +139,19 @@ describe('Tests the Extension Requests Screen', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
           body: JSON.stringify(taskDone),
+        });
+      } else if (
+        url === `${STAGING_API_URL}/tasks/KYj79ki2agB0q5JN3kUf/details`
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(taskCompleted),
         });
       } else if (
         url === `${STAGING_API_URL}/tasks/GCYGDiU0lw4fwc3qljSY/details`
@@ -359,6 +377,22 @@ describe('Tests the Extension Requests Screen', () => {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           },
           body: JSON.stringify(extensionRequestsListUserSearch),
+        });
+      } else if (
+        url ===
+          `${STAGING_API_URL}/extension-requests?order=desc&q=taskId%3AKYj79ki2agB0q5JN3kUf%2Cstatus%3APENDING` ||
+        url ===
+          `${STAGING_API_URL}/extension-requests?order=desc&dev=true&q=taskId%3AKYj79ki2agB0q5JN3kUf%2Cstatus%3APENDING`
+      ) {
+        interceptedRequest.respond({
+          status: 200,
+          contentType: 'application/json',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          },
+          body: JSON.stringify(extensionRequestsTaskCompleted),
         });
       } else if (
         url ===
@@ -1276,5 +1310,49 @@ describe('Tests the Extension Requests Screen', () => {
     );
 
     expect(extensionCardsAfter.length).toBe(0);
+  });
+
+  it('should render DONE when task status in COMPLETED', async () => {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&q=taskId%3AKYj79ki2agB0q5JN3kUf%2Cstatus%3APENDING`,
+    );
+    await page.waitForNetworkIdle();
+
+    const extensionCard = await page.$('.extension-card');
+    expect(extensionCard).not.toBeNull();
+    const statusText = await extensionCard.$eval(
+      '.task-details-container',
+      (el) => {
+        const spans = Array.from(el.querySelectorAll('span'));
+        const statusSpan = spans.find((span) =>
+          span.previousSibling?.textContent?.includes('Task status'),
+        );
+        return statusSpan?.textContent?.trim();
+      },
+    );
+
+    expect(statusText).toBe('DONE');
+  });
+
+  it('should render DONE when task status in COMPLETED for dev flag', async () => {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/extension-requests?order=desc&dev=true&q=taskId%3AKYj79ki2agB0q5JN3kUf%2Cstatus%3APENDING`,
+    );
+    await page.waitForNetworkIdle();
+
+    const extensionCard = await page.$('.request-card');
+    expect(extensionCard).not.toBeNull();
+    const statusText = await extensionCard.$eval(
+      '.task-details-container',
+      (el) => {
+        const spans = Array.from(el.querySelectorAll('span'));
+        const statusSpan = spans.find((span) =>
+          span.previousSibling?.textContent?.includes('Task status'),
+        );
+        return statusSpan?.textContent?.trim();
+      },
+    );
+
+    expect(statusText).toBe('DONE');
   });
 });

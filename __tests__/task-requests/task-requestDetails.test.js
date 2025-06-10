@@ -423,6 +423,9 @@ describe('Task request details page with status creation', () => {
     const approveButton = await page.$('[data-testid="task-approve-button"]');
 
     await approveButton.click();
+    await page.waitForSelector('[data-testid="toast-component"]', {
+      visible: true,
+    });
     const toastComponent = await page.$('[data-testid="toast-component"]');
     expect(
       await toastComponent.evaluate((el) => el.classList.contains('show')),

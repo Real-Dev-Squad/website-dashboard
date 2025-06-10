@@ -1431,7 +1431,10 @@ async function createExtensionCard(data, dev) {
     const [{ taskData }, userData] = response;
     const userImage = userData?.picture?.url ?? DEFAULT_AVATAR;
     let userFirstName = userData?.first_name ?? data.assignee;
-    const taskStatus = taskData?.status?.replaceAll('_', ' ');
+    let taskStatus = taskData?.status?.replaceAll('_', ' ');
+    if (taskStatus === 'COMPLETED') {
+      taskStatus = 'DONE';
+    }
     const userId = userData?.id;
     const userStatus = userStatusMap.get(userId);
     const comittedHours = userStatus?.monthlyHours?.comitted;
