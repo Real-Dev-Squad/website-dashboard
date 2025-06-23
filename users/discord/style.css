@@ -20,8 +20,9 @@ main {
 
 .users_section {
   grid-area: aside;
-  overflow: scroll;
+  overflow: auto;
   padding-inline: 1rem;
+  max-height: 80vh;
 }
 
 .tabs_section {
