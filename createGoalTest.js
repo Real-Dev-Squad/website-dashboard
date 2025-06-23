@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 let config = {
   launchOptions: {
-    headless: false,
+    headless: 'new',
   },
 };
 puppeteer.launch(config.launchOptions).then(async (browser) => {
