@@ -34,9 +34,9 @@ function createElementFromMap(domObjectMap) {
   return el;
 }
 
-function getQueryParamsString(requestType, query) {
+function getQueryParamsString(requestType, query, dev = true) {
   const params = new URLSearchParams({
-    dev: 'true',
+    dev,
     type: requestType,
     size: '12',
   });
@@ -71,18 +71,11 @@ function convertDateToReadableStringDate(date, format) {
 }
 
 function getFullNameOfUser(user) {
+  console.log('user', user);
   if (!user || typeof user !== 'object') {
     return 'N/A';
   }
-  const firstName = user.first_name || 'N/A';
-  const lastName = user.last_name || '';
-  return (
-    firstName.charAt(0).toUpperCase() +
-    firstName.slice(1).toLowerCase() +
-    ' ' +
-    lastName.charAt(0).toUpperCase() +
-    lastName.slice(1).toLowerCase()
-  );
+  return user.username;
 }
 
 function extractQueryParameters(url) {

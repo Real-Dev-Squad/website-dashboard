@@ -1,4 +1,5 @@
-const API_BASE_URL = window.API_BASE_URL;
+const API_BASE_URL = 'http://localhost:3000';
+// const API_BASE_URL = window.API_BASE_URL;
 const requestContainer = document.getElementById(REQUEST_CONTAINER_ID);
 const lastElementContainer = document.querySelector(LAST_ELEMENT_CONTAINER);
 const params = new URLSearchParams(window.location.search);
@@ -142,17 +143,31 @@ onboardingExtensionTabLink.addEventListener('click', async function (event) {
 function updateUrlWithQuery(type) {
   const url = new URL(window.location);
   url.searchParams.set('type', type.toLowerCase());
+  if (isDev) {
+    url.searchParams.set('dev', 'true');
+  }
+  
   window.history.pushState({ path: url.toString() }, '', url.toString());
 }
 
 async function getRequests(requestType, query = {}) {
   let finalUrl =
     API_BASE_URL +
-    (nextLink || `/requests${getQueryParamsString(requestType, query)}`);
+    (nextLink ||
+      `/requests${getQueryParamsString(
+        requestType,
+        query,
+        requestType === 'OOO' ? isDev : true,
+      )}`);
 
   if (query?.state?.[0] || query?.requestedBy) {
     finalUrl =
-      API_BASE_URL + `/requests${getQueryParamsString(requestType, query)}`;
+      API_BASE_URL +
+      `/requests${getQueryParamsString(
+        requestType,
+        query,
+        requestType === 'OOO' ? isDev : true,
+      )}`;
   }
   const notFoundErrorMessage =
     requestType === ONBOARDING_EXTENSION_REQUEST_TYPE
@@ -617,13 +632,18 @@ async function performAcceptRejectAction(isAccepted, e) {
   let remark = document.getElementById(`remark-text-${requestId}`).value;
   let body = JSON.stringify({
     type: currentReqType,
-    message: remark,
-    state: isAccepted ? 'APPROVED' : 'REJECTED',
+    [currentReqType === 'OOO' ? 'comment' : 'message']: remark,
+    [currentReqType === 'OOO' ? 'status' : 'state']: isAccepted
+      ? 'APPROVED'
+      : 'REJECTED',
   });
   if (remark === '' || remark === undefined || remark === null) {
     body = JSON.stringify({
       type: currentReqType,
-      state: isAccepted ? 'APPROVED' : 'REJECTED',
+      [currentReqType === 'OOO' ? 'comment' : 'message']: remark,
+      [currentReqType === 'OOO' ? 'status' : 'state']: isAccepted
+        ? 'APPROVED'
+        : 'REJECTED',
     });
   }
 
