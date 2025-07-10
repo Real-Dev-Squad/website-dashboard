@@ -367,7 +367,7 @@ async function createRequestCardComponent({
   }
 
   const userImage = requestUser?.picture?.url ?? ICONS.DEFAULT_USER_AVATAR;
-  let userFirstName = requestUser?.first_name ?? data.assignee;
+  let userFirstName = requestUser?.first_name ?? data.assignee ?? data.requestedBy;
   const userId = requestUser?.id;
   const userStatus = userStatusMap?.get(userId);
   const committedHours = userStatus?.monthlyHours?.committed;
