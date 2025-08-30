@@ -24,7 +24,7 @@ You can run the dashboard locally in just a few steps:
 3.  **Install npm dependencies** by running the following command in your project directory:
 
     ```bash
-    npm install
+    yarn
     ```
 
     This will install all required packages for the proxy server and other tooling.
@@ -32,7 +32,7 @@ You can run the dashboard locally in just a few steps:
 4.  **Start the proxy server** by running:
 
     ```bash
-    npm run dev
+    yarn dev
     ```
 
     This command starts the proxy server, which is necessary for API calls from the frontend to the backend (see the "Proxying API Requests" section below for more details).
