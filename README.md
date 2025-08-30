@@ -24,7 +24,7 @@ You can run the dashboard locally in just a few steps:
 3.  **Install yarn dependencies** by running the following command in your project directory:
 
     ```bash
-    yarn
+    yarn install
     ```
 
     This will install all required packages for the proxy server and other tooling.
