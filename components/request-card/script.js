@@ -466,7 +466,7 @@ function prepareRequestCardData({ data, isExtensionRequest }) {
         newEndsOnInMillisecond,
         (d) => d + (isNewDeadlineCrossed ? ' ago' : ''),
       )
-    : getTwoDigitDate(newEndsOnInMillisecond, true);
+    : getTwoDigitDate(newEndsOnInMillisecond, false);
 
   return {
     oldEndsOnInMillisecond,

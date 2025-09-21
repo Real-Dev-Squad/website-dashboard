@@ -1,45 +1,11 @@
-function createElementFromMap(domObjectMap) {
-  if (
-    !domObjectMap ||
-    typeof domObjectMap !== 'object' ||
-    !domObjectMap.tagName
-  ) {
-    throw new Error('Invalid domObjectMap. tagName is required.');
-  }
-  const el = document.createElement(domObjectMap.tagName);
-  for (const [key, value] of Object.entries(domObjectMap)) {
-    if (key === 'tagName') {
-      continue;
-    }
-    if (key === 'eventListeners') {
-      value.forEach((obj) => {
-        el.addEventListener(obj.event, obj.func);
-      });
-    }
-    if (key === 'class') {
-      if (Array.isArray(value)) {
-        el.classList.add(...value);
-      } else {
-        el.classList.add(value);
-      }
-    } else if (key === 'child') {
-      el.append(...value);
-    } else if (key === 'testId') {
-      el.setAttribute('data-testid', value);
-    } else {
-      el[key] = value;
-    }
-  }
-
-  return el;
-}
-
 function getQueryParamsString(requestType, query) {
   const params = new URLSearchParams({
-    dev: 'true',
     type: requestType,
     size: '12',
   });
+  if (requestType !== OOO_REQUEST_TYPE) {
+    params.set('dev', 'true');
+  }
 
   if (query.state && query.state !== 'ALL') {
     params.set('state', query.state);
@@ -50,24 +16,6 @@ function getQueryParamsString(requestType, query) {
   }
 
   return `?${params.toString()}`;
-}
-
-function convertDateToReadableStringDate(date, format) {
-  if (format === undefined || format === null) {
-    format = DEFAULT_DATE_FORMAT;
-  }
-  if (date !== undefined && date !== null) {
-    const options = { day: 'numeric', month: 'short', year: 'numeric' };
-    return new Date(date)
-      .toLocaleString('default', options)
-      .replace('DD', new Date(date).getDate())
-      .replace(
-        'MMM',
-        new Date(date).toLocaleString('default', { month: 'short' }),
-      )
-      .replace('YYYY', new Date(date).getFullYear());
-  }
-  return 'N/A';
 }
 
 function getFullNameOfUser(user) {
