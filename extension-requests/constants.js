@@ -1,6 +1,7 @@
 const DEFAULT_AVATAR = '/images/avatar.png';
 const EXTERNAL_LINK_ICON = '/images/external-link.svg';
 const DOWN_ARROW_ICON = '/images/chevron-down.svg';
+const DOWN_ARROW_ICON_BLACK = '/images/chevron-down-black.svg';
 const CHECK_ICON = '/images/check-icon.svg';
 const CHECK_ICON_WHITE = '/images/check-icon-white.svg';
 const CANCEL_ICON = '/images/x-icon.svg';
