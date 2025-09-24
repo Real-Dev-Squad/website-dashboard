@@ -1165,7 +1165,7 @@ async function createExtensionCard(data, dev) {
   accordionContainer.appendChild(accordionButton);
   const downArrowIcon = createElement({
     type: 'img',
-    attributes: { src: DOWN_ARROW_ICON_BLACK, alt: 'down-arrow' },
+    attributes: { src: ICONS.ARROW_DOWN, alt: 'down-arrow' },
   });
   accordionButton.appendChild(downArrowIcon);
   const panel = createElement({ type: 'div', attributes: { class: 'panel' } });
