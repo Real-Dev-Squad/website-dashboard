@@ -603,6 +603,15 @@ describe('Tests the Extension Requests Screen', () => {
     expect(firstAccordionIsHidden).toBe(true);
   });
 
+  it('Renders the black down arrow icon on accordion button', async () => {
+    const firstAccordionIconSrc = await page.$eval(
+      '.extension-card:first-child .accordion img[alt="down-arrow"]',
+      (el) => el.getAttribute('src'),
+    );
+
+    expect(firstAccordionIconSrc).toBe('/images/chevron-down-black.svg');
+  });
+
   it('Checks that new items are loaded when scrolled to the bottom', async () => {
     extensionCardsList = await page.$$('.extension-card');
 
