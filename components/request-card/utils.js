@@ -98,11 +98,14 @@ function showErrorHighlight(element) {
   element.classList.add('red-card');
   setTimeout(() => element.classList.remove('red-card'), 1000);
 }
-async function updateRequestStatus({ id, body, isExtensionRequest }) {
+async function updateRequestStatus({ id, body, isExtensionRequest, isOOORequest }) {
   let url;
   let method;
   if (isExtensionRequest) {
     url = `${API_BASE_URL}/extension-requests/${id}/status`;
+    method = 'PATCH';
+  } else if (isOOORequest){
+    url = `${API_BASE_URL}/requests/${id}?dev=true`
     method = 'PATCH';
   } else {
     url = `${API_BASE_URL}/requests/${id}`;
@@ -261,9 +264,9 @@ function createSummarySection({
   return { summaryContainer, taskDetailsContainer, statusSiteLink };
 }
 
-function createTextBlockContainer(data, isForReasonComponent) {
+function createTextBlockContainer(data, isForReasonComponent, isOOORequest) {
   const container = createElement({ type: 'div' });
-
+  console.log("DATA: ", data)
   const title = createElement({
     type: 'span',
     attributes: { class: 'panel-title' },
@@ -276,7 +279,9 @@ function createTextBlockContainer(data, isForReasonComponent) {
       class: 'text-block-content',
       'data-testid': isForReasonComponent ? 'request-reason' : 'request-remark',
     },
-    innerText: isForReasonComponent ? data.reason : data.message,
+    innerText: isOOORequest? 
+    (isForReasonComponent ? data.message : data.reason):
+    (isForReasonComponent ? data.reason : data.message)
   });
 
   const textAreaInput = createElement({
@@ -454,7 +459,7 @@ function createDateContainer(
 }
 
 function createActionContainer({ context, elements, uiHandlers, domRefs }) {
-  const { isExtensionRequest, data, currentUser, isStatusPending } = context;
+  const { isExtensionRequest, isOOORequest, data, currentUser, isStatusPending } = context;
   const {
     titleInput,
     titleInputError,
@@ -675,6 +680,7 @@ function createActionContainer({ context, elements, uiHandlers, domRefs }) {
 
       const requestBody = buildRequestBody({
         isExtensionRequest,
+        isOOORequest,
         data,
         remarkMessage: remarkInputField.value,
         status: REQUEST_STATUS.APPROVED,
@@ -684,6 +690,7 @@ function createActionContainer({ context, elements, uiHandlers, domRefs }) {
         id: data.id,
         reqBody: requestBody,
         isExtensionRequest,
+        isOOORequest,
         payloadForLog,
         rootElement,
         parentContainer,
@@ -810,13 +817,24 @@ function createActionContainer({ context, elements, uiHandlers, domRefs }) {
   return requestActionContainer;
 }
 
-function buildRequestBody({ isExtensionRequest, data, remarkMessage, status }) {
+function buildRequestBody({ isExtensionRequest, isOOORequest, data, remarkMessage, status }) {
   let requestBody;
 
   if (isExtensionRequest) {
     requestBody = {
       status: status,
     };
+  } else if (isOOORequest && !remarkMessage) {
+    requestBody = {
+      type: data?.type,
+      status: status
+    }
+  } else if(isOOORequest && remarkMessage) {
+    requestBody = {
+      type: data?.type,
+      status: status,
+      comment: remarkMessage
+    }
   } else if (!remarkMessage) {
     requestBody = {
       type: data?.type,
@@ -836,6 +854,7 @@ async function handleRequestStatusUpdate({
   id,
   reqBody,
   isExtensionRequest,
+  isOOORequest,
   payloadForLog,
   rootElement,
   parentContainer,
@@ -854,6 +873,7 @@ async function handleRequestStatusUpdate({
       id,
       body: reqBody,
       isExtensionRequest,
+      isOOORequest
     });
 
     removeSpinner();

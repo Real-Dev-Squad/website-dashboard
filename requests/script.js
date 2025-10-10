@@ -1,4 +1,4 @@
-const API_BASE_URL = window.API_BASE_URL;
+const API_BASE_URL = 'http://localhost:3000';
 const requestContainer = document.getElementById(REQUEST_CONTAINER_ID);
 const lastElementContainer = document.querySelector(LAST_ELEMENT_CONTAINER);
 const params = new URLSearchParams(window.location.search);
@@ -513,9 +513,11 @@ async function renderRequestCards(queries = {}) {
         superUserDetails = await getUserDetails(request.lastModifiedBy);
       }
       if (isDev) {
+        const isOOORequest = request.type === 'OOO' ? true : false;
         createRequestCardComponent({
           data: request,
           isExtensionRequest: false,
+          isOOORequest,
           parentContainer: requestContainer,
           currentUser: currentUserDetails,
           requestUser: requesterUserDetails,
