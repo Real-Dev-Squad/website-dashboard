@@ -183,50 +183,21 @@ describe('Tests the request cards', () => {
     expect(isOOOTabLinkSelected).toBe(false);
   });
 
-  it('should update the card when the accept or reject button is clicked for OOO requests', async () => {
-    await page.goto(`${LOCAL_TEST_PAGE_URL}/requests`);
-    await page.waitForNetworkIdle();
-
-    await page.click('#ooo_tab_link');
-    expect(page.url()).toContain('type=ooo');
-
-    await page.waitForSelector('.request__status');
-    const statusButtonText = await page.$eval(
-      '.request__status',
-      (el) => el.textContent,
-    );
-    expect(statusButtonText).toBe('Pending');
-
-    await page.click('.request__action__btn.accept__btn');
-
-    await page.waitForFunction(
-      () =>
-        document.querySelector('.request__status')?.textContent === 'Approved',
-    );
-
-    await page.waitForSelector('.request__status');
-    const updatedStatusButtonText = await page.$eval(
-      '.request__status',
-      (el) => el.textContent,
-    );
-    expect(updatedStatusButtonText).toBe('Approved');
-  });
-
   it('should load the extension request when the extension tab is clicked', async () => {
     await page.click('#extension_tab_link');
-    await page.waitForSelector('.request__card');
+    await page.waitForSelector('.request-card');
 
     const cardTitle = await page.$eval(
-      '.request__content p',
+      '[data-testid="request-reason"]',
       (el) => el.textContent,
     );
-    expect(cardTitle).toBe('Reason: request message');
+    expect(cardTitle).toBe('request message');
 
     const statusButtonText = await page.$eval(
-      '.request__status',
+      '.approve-button',
       (el) => el.textContent,
     );
-    expect(statusButtonText).toBe('Approved');
+    expect(statusButtonText).toBe('APPROVED');
   });
 
   it('should show requests cards after reloading the page', async () => {
@@ -288,7 +259,7 @@ describe('Tests the request cards', () => {
       );
 
       const statusButtonText = await page.$eval(
-        '[data-testid="request-status"]',
+        '[data-testid="request-card-status"] button',
         (el) => el.textContent,
       );
       expect(statusButtonText.toLowerCase()).toBe(
@@ -308,57 +279,32 @@ describe('Tests the request cards', () => {
 
       for (const card of requestCards) {
         const statusText = await card.$eval(
-          '[data-testid="request-status"]',
+          '[data-testid="request-card-status"] button',
           (el) => el.textContent.trim(),
         );
-
         const actionContainer = await card.$(
-          '[data-testid="action-container"]',
+          '[data-testid="request-action-container"]',
         );
-        const approveButton = await card.$('[data-testid="approve-button"]');
-        const rejectButton = await card.$('[data-testid="reject-button"]');
         const remarkInput = await card.$(
           '[data-testid="request-remark-input"]',
         );
-
-        if (statusText === 'Pending') {
+        const approveButton = await card.$('.approve-button');
+        const rejectButton = await card.$('.reject-button');
+        if (statusText !== 'APPROVED' && statusText !== 'REJECTED') {
           expect(await actionContainer.isVisible()).toBe(true);
           expect(await approveButton.isVisible()).toBe(true);
           expect(await rejectButton.isVisible()).toBe(true);
           expect(await remarkInput.isVisible()).toBe(true);
+        } else if (statusText === 'APPROVED') {
+          expect(await actionContainer.isVisible()).toBe(true);
+          expect(await approveButton.isVisible()).toBe(true);
+          expect(await rejectButton).toBeNull();
+          expect(await remarkInput).toBeNull();
         } else {
-          expect(await actionContainer.isVisible()).toBe(false);
-          expect(await approveButton.isVisible()).toBe(false);
-          expect(await rejectButton.isVisible()).toBe(false);
-          expect(await remarkInput.isVisible()).toBe(false);
-        }
-      }
-    });
-
-    it('should display superuser details only for non-pending requests', async () => {
-      const onboardingTabLink = await page.$('[data-testid="onboarding-tab"]');
-      await onboardingTabLink.click();
-      await page.waitForSelector('[data-testid="onboarding-request-card"]');
-
-      const requestCards = await page.$$(
-        '[data-testid="onboarding-request-card"]',
-      );
-      expect(requestCards.length).toBeGreaterThan(0);
-
-      for (const card of requestCards) {
-        const statusText = await card.$eval(
-          '[data-testid="request-status"]',
-          (el) => el.textContent.trim(),
-        );
-
-        const superuserSection = await card.$(
-          '[data-testid="admin-info-and-status"]',
-        );
-
-        if (statusText === 'Pending') {
-          expect(await superuserSection.isVisible()).toBe(false);
-        } else {
-          expect(await superuserSection.isVisible()).toBe(true);
+          expect(await actionContainer.isVisible()).toBe(true);
+          expect(await approveButton).toBeNull();
+          expect(await rejectButton.isVisible()).toBe(true);
+          expect(await remarkInput).toBeNull();
         }
       }
     });
@@ -616,75 +562,69 @@ describe('Tests the request cards', () => {
     expect(statusText).toContain('APPROVED');
   });
 
-  describe('Test Request Card (Dev Mode Enabled)', () => {
-    beforeEach(async () => {
-      await page.goto(`${LOCAL_TEST_PAGE_URL}/requests?dev=true`);
-      await page.waitForNetworkIdle();
-    });
+  it('should display all the field in the request card', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/requests`);
+    const requestCards = await page.$$('[data-testid="ooo-request-card"]');
+    expect(requestCards.length).toBeGreaterThan(0);
 
-    it('should display all the field in the request card', async () => {
-      const requestCards = await page.$$('[data-testid="ooo-request-card"]');
-      expect(requestCards.length).toBeGreaterThan(0);
-
-      for (const card of requestCards) {
-        const approveButton = await card.$(
-          '[data-testid="request-approve-button"]',
-        );
-        const rejectButton = await card.$(
-          '[data-testid="request-reject-button"]',
-        );
-        const remarkInput = await card.$(
-          '[data-testid="request-remark-input"]',
-        );
-
-        const requestTypeElement = await card.$('[data-testid="request-type"]');
-        const requestTypeText = await requestTypeElement.evaluate((el) =>
-          el.textContent.trim(),
-        );
-
-        const requestReasonElement = await card.$(
-          '[data-testid="request-reason"]',
-        );
-
-        const requestReasonText = await requestReasonElement.evaluate((el) =>
-          el.textContent.trim(),
-        );
-        expect(approveButton).not.toBeNull();
-        expect(rejectButton).not.toBeNull();
-        expect(remarkInput).not.toBeNull();
-        expect(requestTypeText).toBe('OOO');
-        expect(requestReasonText).toBe(pendingRequest.data[0].reason);
-      }
-    });
-
-    it('should remove the card from display after approving the request', async () => {
-      const requestCards = await page.$$('[data-testid="ooo-request-card"]');
-      expect(requestCards.length).toBe(1);
-
-      const approveButton = await requestCards[0].$('.approve-button');
-      await approveButton.click();
-      approveButton.click();
-
-      await page.waitForTimeout(2000);
-
-      const requestCardsAfterUpdate = await page.$$(
-        '[data-testid="ooo-request-card"]',
+    for (const card of requestCards) {
+      const approveButton = await card.$(
+        '[data-testid="request-approve-button"]',
       );
-      expect(requestCardsAfterUpdate.length).toBe(0);
-    });
-
-    it('should remove the card from display after rejecting the request', async () => {
-      const requestCards = await page.$$('[data-testid="ooo-request-card"]');
-      expect(requestCards.length).toBe(1);
-
-      const rejectButton = await requestCards[0].$('.reject-button');
-      await rejectButton.click();
-      await page.waitForTimeout(2000);
-
-      const requestCardsAfterUpdate = await page.$$(
-        '[data-testid="ooo-request-card"]',
+      const rejectButton = await card.$(
+        '[data-testid="request-reject-button"]',
       );
-      expect(requestCardsAfterUpdate.length).toBe(0);
-    });
+      const remarkInput = await card.$('[data-testid="request-remark-input"]');
+
+      const requestTypeElement = await card.$('[data-testid="request-type"]');
+      const requestTypeText = await requestTypeElement.evaluate((el) =>
+        el.textContent.trim(),
+      );
+
+      const requestReasonElement = await card.$(
+        '[data-testid="request-reason"]',
+      );
+
+      const requestReasonText = await requestReasonElement.evaluate((el) =>
+        el.textContent.trim(),
+      );
+      expect(approveButton).not.toBeNull();
+      expect(rejectButton).not.toBeNull();
+      expect(remarkInput).not.toBeNull();
+      expect(requestTypeText).toBe('OOO');
+      expect(requestReasonText).toBe(pendingRequest.data[0].message);
+    }
+  });
+
+  it('should remove the card from display after rejecting the request', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/requests`);
+    const requestCards = await page.$$('[data-testid="ooo-request-card"]');
+    expect(requestCards.length).toBe(1);
+
+    const rejectButton = await requestCards[0].$('.reject-button');
+    await rejectButton.click();
+    await page.waitForTimeout(2000);
+
+    const requestCardsAfterUpdate = await page.$$(
+      '[data-testid="ooo-request-card"]',
+    );
+    expect(requestCardsAfterUpdate.length).toBe(0);
+  });
+
+  it('should remove the card from display after approving the request', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/requests`);
+    const requestCards = await page.$$('[data-testid="ooo-request-card"]');
+    expect(requestCards.length).toBe(1);
+
+    const approveButton = await requestCards[0].$('.approve-button');
+    await approveButton.click();
+    approveButton.click();
+
+    await page.waitForTimeout(2000);
+
+    const requestCardsAfterUpdate = await page.$$(
+      '[data-testid="ooo-request-card"]',
+    );
+    expect(requestCardsAfterUpdate.length).toBe(0);
   });
 });

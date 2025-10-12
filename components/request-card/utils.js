@@ -283,13 +283,7 @@ function createTextBlockContainer(data, isForReasonComponent, isOOORequest) {
       class: 'text-block-content',
       'data-testid': isForReasonComponent ? 'request-reason' : 'request-remark',
     },
-    innerText: isOOORequest
-      ? isForReasonComponent
-        ? data.message
-        : data.reason
-      : isForReasonComponent
-      ? data.reason
-      : data.message,
+    innerText: isForReasonComponent ? data.message : data.reason,
   });
 
   const textAreaInput = createElement({
