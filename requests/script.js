@@ -234,7 +234,7 @@ async function renderRequestCards(queries = {}) {
       if (request.state !== 'PENDING') {
         superUserDetails = await getUserDetails(request.lastModifiedBy);
       }
-      const isOOORequest = request.type === 'OOO' ? true : false;
+      const isOOORequest = request.type === 'OOO';
       createRequestCardComponent({
         data: request,
         isExtensionRequest: false,

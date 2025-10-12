@@ -269,7 +269,7 @@ function createSummarySection({
   return { summaryContainer, taskDetailsContainer, statusSiteLink };
 }
 
-function createTextBlockContainer(data, isForReasonComponent, isOOORequest) {
+function createTextBlockContainer(data, isForReasonComponent) {
   const container = createElement({ type: 'div' });
   const title = createElement({
     type: 'span',

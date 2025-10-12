@@ -106,13 +106,9 @@ async function createRequestCardComponent({
     textAreaInput: reasonInput,
     inputError: reasonInputError,
     paragraph: reasonParagraph,
-  } = createTextBlockContainer(data, true, isOOORequest);
+  } = createTextBlockContainer(data, true);
 
-  const { container: commentContainer } = createTextBlockContainer(
-    data,
-    false,
-    isOOORequest,
-  );
+  const { container: commentContainer } = createTextBlockContainer(data, false);
 
   const requestActionContainer = createActionContainer({
     context: {
