@@ -55,7 +55,13 @@ function getFormEntries(formData) {
 const addLoadingSpinner = (container) => {
   const spinner = createElement({
     type: 'div',
-    attributes: { class: 'spinner' },
+    attributes: {
+      class: 'spinner',
+      style: `
+        top: 0%;
+        right: 0%;
+      `,
+    },
   });
 
   container.append(spinner);
@@ -722,6 +728,7 @@ function createActionContainer({ context, elements, uiHandlers, domRefs }) {
 
       const requestBody = buildRequestBody({
         isExtensionRequest,
+        isOOORequest,
         data,
         remarkMessage: remarkInputField.value,
         status: isExtensionRequest
@@ -733,6 +740,7 @@ function createActionContainer({ context, elements, uiHandlers, domRefs }) {
         id: data.id,
         reqBody: requestBody,
         isExtensionRequest,
+        isOOORequest,
         payloadForLog,
         rootElement,
         parentContainer,
