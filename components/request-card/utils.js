@@ -840,33 +840,21 @@ function buildRequestBody({
   remarkMessage,
   status,
 }) {
-  let requestBody;
+  let requestBody = {};
 
   if (isExtensionRequest) {
-    requestBody = {
-      status: status,
-    };
-  } else if (isOOORequest && !remarkMessage) {
+    requestBody = { status };
+  } else if (isOOORequest) {
     requestBody = {
       type: data?.type,
       status: status,
-    };
-  } else if (isOOORequest && remarkMessage) {
-    requestBody = {
-      type: data?.type,
-      status: status,
-      comment: remarkMessage,
-    };
-  } else if (!remarkMessage) {
-    requestBody = {
-      type: data?.type,
-      state: status,
+      ...(remarkMessage && { comment: remarkMessage }),
     };
   } else {
     requestBody = {
       type: data?.type,
       state: status,
-      message: remarkMessage,
+      ...(remarkMessage && { message: remarkMessage }),
     };
   }
   return requestBody;

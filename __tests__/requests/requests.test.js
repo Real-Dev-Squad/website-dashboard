@@ -290,21 +290,19 @@ describe('Tests the request cards', () => {
         );
         const approveButton = await card.$('.approve-button');
         const rejectButton = await card.$('.reject-button');
-        if (statusText !== 'APPROVED' && statusText !== 'REJECTED') {
-          expect(await actionContainer.isVisible()).toBe(true);
+        expect(await actionContainer.isVisible()).toBe(true);
+        if (statusText === 'APPROVED') {
+          expect(await approveButton.isVisible()).toBe(true);
+          expect(rejectButton).toBeNull();
+          expect(remarkInput).toBeNull();
+        } else if (statusText === 'REJECTED') {
+          expect(approveButton).toBeNull();
+          expect(await rejectButton.isVisible()).toBe(true);
+          expect(remarkInput).toBeNull();
+        } else {
           expect(await approveButton.isVisible()).toBe(true);
           expect(await rejectButton.isVisible()).toBe(true);
           expect(await remarkInput.isVisible()).toBe(true);
-        } else if (statusText === 'APPROVED') {
-          expect(await actionContainer.isVisible()).toBe(true);
-          expect(await approveButton.isVisible()).toBe(true);
-          expect(await rejectButton).toBeNull();
-          expect(await remarkInput).toBeNull();
-        } else {
-          expect(await actionContainer.isVisible()).toBe(true);
-          expect(await approveButton).toBeNull();
-          expect(await rejectButton.isVisible()).toBe(true);
-          expect(await remarkInput).toBeNull();
         }
       }
     });
