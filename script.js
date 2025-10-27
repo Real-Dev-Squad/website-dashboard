@@ -1,4 +1,5 @@
 const userManagementLink = document.getElementById(USER_MANAGEMENT_LINK);
+const requestsLink = document.getElementById(REQUESTS_LINK);
 const discordUserLink = document.getElementById('discord-user-link');
 const extensionRequestsLink = document.getElementById(EXTENSION_REQUESTS_LINK);
 const syncUsersStatusButton = document.getElementById(SYNC_USERS_STATUS);
@@ -95,6 +96,7 @@ showSuperUserOptions(
   extensionRequestsLink,
   discordUserLink,
   taskRequestsLink,
+  requestsLink,
 );
 
 const createGoalButton = document.getElementById('create-goal');

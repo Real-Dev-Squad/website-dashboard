@@ -554,4 +554,20 @@ describe('Home Page', () => {
     const menuOff = await page.$('.nav-links:not(.active)');
     expect(menuOff).toBeTruthy();
   });
+
+  it('should display the requests button', async () => {
+    const requestsButton = await page.$('#requests-link');
+    expect(requestsButton).toBeTruthy();
+    const requestsButtonHref = await page.evaluate(
+      (el) => el.getAttribute('href'),
+      requestsButton,
+    );
+    expect(requestsButtonHref).toBe('/requests/index.html');
+    const requestsButtonText = await page.evaluate(
+      (el) => el.innerText,
+      requestsButton,
+    );
+    const trimmedRequestButtonText = requestsButtonText.trim();
+    expect(trimmedRequestButtonText).toBe('Requests');
+  });
 });

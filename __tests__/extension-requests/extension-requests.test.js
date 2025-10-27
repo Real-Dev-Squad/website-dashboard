@@ -1223,7 +1223,7 @@ describe('Tests the Extension Requests Screen', () => {
     expect(card).not.toBeNull();
 
     const reasonText = await card.$eval(
-      '[data-testid="request-reason"]',
+      '[data-testid="reason-input-text-area"]',
       (el) => el.textContent.trim(),
     );
     expect(reasonText).toBe(
