@@ -1,6 +1,7 @@
 async function createRequestCardComponent({
   data,
   isExtensionRequest,
+  isOOORequest,
   parentContainer,
   currentUser,
   requestUser,
@@ -112,6 +113,7 @@ async function createRequestCardComponent({
   const requestActionContainer = createActionContainer({
     context: {
       isExtensionRequest,
+      isOOORequest,
       data,
       currentUser,
       isStatusPending: requestDetails.statusPending,
@@ -466,7 +468,7 @@ function prepareRequestCardData({ data, isExtensionRequest }) {
         newEndsOnInMillisecond,
         (d) => d + (isNewDeadlineCrossed ? ' ago' : ''),
       )
-    : getTwoDigitDate(newEndsOnInMillisecond, true);
+    : getTwoDigitDate(newEndsOnInMillisecond, false);
 
   return {
     oldEndsOnInMillisecond,
