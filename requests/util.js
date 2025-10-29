@@ -52,24 +52,6 @@ function getQueryParamsString(requestType, query) {
   return `?${params.toString()}`;
 }
 
-function convertDateToReadableStringDate(date, format) {
-  if (format === undefined || format === null) {
-    format = DEFAULT_DATE_FORMAT;
-  }
-  if (date !== undefined && date !== null) {
-    const options = { day: 'numeric', month: 'short', year: 'numeric' };
-    return new Date(date)
-      .toLocaleString('default', options)
-      .replace('DD', new Date(date).getDate())
-      .replace(
-        'MMM',
-        new Date(date).toLocaleString('default', { month: 'short' }),
-      )
-      .replace('YYYY', new Date(date).getFullYear());
-  }
-  return 'N/A';
-}
-
 function getFullNameOfUser(user) {
   if (!user || typeof user !== 'object') {
     return 'N/A';
