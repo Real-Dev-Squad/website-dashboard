@@ -21,10 +21,10 @@ You can run the dashboard locally in just a few steps:
 
 1.  **Clone this repository** to your local machine.
 2.  **Open the project folder** in VS Code.
-3.  **Install npm dependencies** by running the following command in your project directory:
+3.  **Install yarn dependencies** by running the following command in your project directory:
 
     ```bash
-    npm install
+    yarn install
     ```
 
     This will install all required packages for the proxy server and other tooling.
@@ -32,7 +32,7 @@ You can run the dashboard locally in just a few steps:
 4.  **Start the proxy server** by running:
 
     ```bash
-    npm run dev
+    yarn dev
     ```
 
     This command starts the proxy server, which is necessary for API calls from the frontend to the backend (see the "Proxying API Requests" section below for more details).
@@ -40,7 +40,7 @@ You can run the dashboard locally in just a few steps:
 5.  **Start the frontend server:** Click the **"Go Live" button** in the bottom-right corner of VS Code.
     - This will open the dashboard in your browser and automatically reload when you make changes.
     - If you don't see the "Go Live" button, ensure the Live Server extension is installed and enabled.
-    - **Important:** For full functionality, especially API calls, make sure both the proxy server (`npm run dev` started in step 4) and the Live Server are running concurrently.
+    - **Important:** For full functionality, especially API calls, make sure both the proxy server (`yarn dev` started in step 4) and the Live Server are running concurrently.
 
 > **Note:** If you only start Live Server without the proxy server, API requests from the frontend may fail due to CORS issues. Always run both servers for a complete local development experience.
 
