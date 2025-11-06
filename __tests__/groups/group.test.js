@@ -422,4 +422,62 @@ describe('Discord Groups Page', () => {
       'Group deleted successfully',
     );
   });
+  test('Should show last used label and tooltip when lastUsedOn is present', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/groups`);
+    await page.waitForNetworkIdle();
+
+    // Find a card where last-used is visible
+    const cardHandle = await page.evaluateHandle(() => {
+      const cards = Array.from(document.querySelectorAll('.card'));
+      return cards.find((card) => {
+        const el = card.querySelector('.card__last-used');
+        return el && getComputedStyle(el).display !== 'none';
+      }) || null;
+    });
+
+    expect(cardHandle).toBeTruthy();
+
+    // Read label text (exclude tooltip text inside)
+    const lastUsedText = await page.evaluate((card) => {
+      const el = card.querySelector('.card__last-used');
+      if (!el) return '';
+      const tooltip = el.querySelector('.tooltip');
+      if (tooltip) {
+        // Remove tooltip text from overall textContent
+        const full = el.textContent.trim();
+        const tip = tooltip.textContent.trim();
+        return full.replace(tip, '').trim();
+      }
+      // Fallback: take first text node only
+      const first = el.childNodes[0];
+      if (first && first.nodeType === Node.TEXT_NODE) return first.textContent.trim();
+      return el.textContent.trim();
+    }, cardHandle);
+
+    expect(lastUsedText).toMatch(/^Last used on: [A-Za-z]{3}, \d{1,2} [A-Za-z]{3} \d{4}$/);
+
+    // Tooltip
+    const tooltipText = await page.evaluate((card) => {
+      const tip = card.querySelector('.card__last-used .tooltip');
+      return tip ? tip.textContent.trim() : '';
+    }, cardHandle);
+
+    expect(tooltipText.length).toBeGreaterThan(0);
+  });
+
+  test('Should hide last used label when lastUsedOn is absent', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/groups`);
+    await page.waitForNetworkIdle();
+
+    // Find a card where last-used is hidden
+    const isAnyHidden = await page.evaluate(() => {
+      const cards = Array.from(document.querySelectorAll('.card'));
+      return cards.some((card) => {
+        const el = card.querySelector('.card__last-used');
+        return el && getComputedStyle(el).display === 'none';
+      });
+    });
+
+    expect(isAnyHidden).toBe(true);
+  });
 });
