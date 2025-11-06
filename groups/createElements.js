@@ -27,6 +27,7 @@ const createCard = (
           }  
         </div>
         <p class="card__description"></p>
+        <p class="card__last-used"></p>
         <div class="card__action">
             <button class="card__btn button"></button>
             <span class="card__count">
@@ -35,12 +36,39 @@ const createCard = (
             </span>
         </div>
     `;
-
+  
   if (group.isUpdating)
     cardElement.querySelector('.card__btn').classList.add('button--blocked');
   cardElement.querySelector('.card__title').textContent = group.title;
   cardElement.querySelector('.card__description').textContent =
     group.description;
+  const lastUsedElement = cardElement.querySelector('.card__last-used');
+  if (group.lastUsedOnMs) {
+    const shortFormatted = new Intl.DateTimeFormat('en-US', {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    }).format(new Date(group.lastUsedOnMs));
+    lastUsedElement.classList.add('tooltip-container');
+    lastUsedElement.textContent = `Last used on: ${shortFormatted}`;
+
+    const tooltip = document.createElement('span');
+    tooltip.className = 'tooltip';
+    tooltip.innerText = new Intl.DateTimeFormat('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      timeZoneName: 'short',
+      hour12: true,
+    }).format(new Date(group.lastUsedOnMs));
+    lastUsedElement.appendChild(tooltip);
+  } else {
+    lastUsedElement.style.display = 'none';
+  }
   cardElement.querySelector('.card__btn').textContent = group.isMember
     ? 'Remove me'
     : 'Add me';
