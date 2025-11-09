@@ -160,9 +160,9 @@ describe('Task request details page', () => {
     );
     expect(descriptionTextValue).toBe(longDescription);
   });
-  it('should show "Task Requests not found" When the task ID is invalid and dev mode is enabled', async function () {
+  it('should show "Task Requests not found" When the task ID is invalid', async function () {
     await page.goto(
-      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwDdsfd9QsiTzi7eG7Oq5&dev=true`,
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwDdsfd9QsiTzi7eG7Oq5`,
     );
 
     await page.waitForNetworkIdle();
@@ -172,18 +172,6 @@ describe('Task request details page', () => {
       (el) => el.textContent,
     );
     expect(errorText).toBe('Task Requests not found');
-  });
-
-  it('should not show "Task Requests not found" message when dev mode is disabled', async function () {
-    await page.goto(
-      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwDdsfd9QsiTzi7eG7Oq5`,
-    );
-
-    await page.waitForNetworkIdle();
-
-    const errorElement = await page.$('[data-testid="error-message"]');
-
-    expect(errorElement).toBeNull();
   });
 
   it('Should render Approve and Reject buttons for super users', async function () {
@@ -443,6 +431,41 @@ describe('Task request details page with status creation', () => {
     const toastMessage = await page.$('[data-testid="toast-message"]');
     expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
       'Task updated Successfully',
+    );
+  });
+});
+
+describe('Task Request details page without login', () => {
+  let browser;
+  let page;
+  jest.setTimeout(60000);
+
+  beforeAll(async () => {
+    browser = await puppeteer.launch({
+      headless: 'new',
+      ignoreHTTPSErrors: true,
+      args: ['--incognito', '--disable-web-security'],
+      devtools: false,
+    });
+    page = await browser.newPage();
+  });
+
+  afterAll(async () => {
+    await browser.close();
+  });
+
+  it('should show the error message if the cookie is not set', async () => {
+    await page.goto(
+      `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq5`,
+    );
+    await page.waitForNetworkIdle();
+
+    const errorMessage = await page.$eval(
+      '[data-testid="error-message"]',
+      (el) => el.textContent,
+    );
+    expect(errorMessage).toBe(
+      'You are unauthenticated to view this section, please login!',
     );
   });
 });
