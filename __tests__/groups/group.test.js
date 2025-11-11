@@ -429,10 +429,12 @@ describe('Discord Groups Page', () => {
     // Find a card where last-used is visible
     const cardHandle = await page.evaluateHandle(() => {
       const cards = Array.from(document.querySelectorAll('.card'));
-      return cards.find((card) => {
-        const el = card.querySelector('.card__last-used');
-        return el && getComputedStyle(el).display !== 'none';
-      }) || null;
+      return (
+        cards.find((card) => {
+          const el = card.querySelector('.card__last-used');
+          return el && getComputedStyle(el).display !== 'none';
+        }) || null
+      );
     });
 
     expect(cardHandle).toBeTruthy();
@@ -450,11 +452,12 @@ describe('Discord Groups Page', () => {
       }
       // Fallback: take first text node only
       const first = el.childNodes[0];
-      if (first && first.nodeType === Node.TEXT_NODE) return first.textContent.trim();
+      if (first && first.nodeType === Node.TEXT_NODE)
+        return first.textContent.trim();
       return el.textContent.trim();
     }, cardHandle);
 
-    expect(lastUsedText).toMatch(/^Last used on: [A-Za-z]{3}, \d{1,2} [A-Za-z]{3} \d{4}$/);
+    expect(lastUsedText).toMatch(/^Last used on: \d{1,2} [A-Za-z]{3} \d{4}$/);
 
     // Tooltip
     const tooltipText = await page.evaluate((card) => {

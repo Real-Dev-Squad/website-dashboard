@@ -179,6 +179,13 @@ function setParamValueInURL(paramKey, paramValue) {
 }
 
 const fullDateString = (timestamp) => {
+  if (typeof timestamp !== 'number' || !Number.isFinite(timestamp)) {
+    return 'N/A';
+  }
+  const dateObj = new Date(timestamp);
+  if (isNaN(dateObj.getTime())) {
+    return 'N/A';
+  }
   const options = {
     weekday: 'long',
     year: 'numeric',
@@ -189,16 +196,22 @@ const fullDateString = (timestamp) => {
     timeZoneName: 'short',
     hour12: true,
   };
-  return new Intl.DateTimeFormat('en-US', options).format(new Date(timestamp));
+  return new Intl.DateTimeFormat('en-US', options).format(dateObj);
 };
 
 const shortDateString = (timestamp) => {
-  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  if (typeof timestamp !== 'number' || !Number.isFinite(timestamp)) {
+    return 'N/A';
+  }
   const date = new Date(timestamp);
-  const day = daysOfWeek[date.getDay()];
+  if (isNaN(date.getTime())) {
+    return 'N/A';
+  }
   const year = date.getFullYear();
-  const month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(date);
-  return `${day}, ${date.getDate()} ${month} ${year}`;
+  const month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(
+    date,
+  );
+  return `${date.getDate()} ${month} ${year}`;
 };
 
 export {
