@@ -15,11 +15,51 @@ export const usersData = {
   verified: null,
 };
 const urlParams = new URLSearchParams(window.location.search);
+const isDev = urlParams.get('dev') === 'true';
 
 let activeTab = urlParams.get('tab') ?? 'in_discord';
-
+const INITIAL_USERS = 10;
+let isLoading = false;
+let currentPage = 1;
 let showUser = 0;
-usersData[activeTab] = await getUsers(activeTab);
+
+if (!isDev) {
+  usersData[activeTab] = await getUsers(activeTab);
+}
+
+export const paginateFetchedUsers = async (tabId, page = 1) => {
+  if (isLoading) {
+    return;
+  }
+  usersData[activeTab] = await getUsers(activeTab);
+
+  isLoading = true;
+
+  try {
+    const start = (page - 1) * INITIAL_USERS;
+    const end = start + INITIAL_USERS;
+
+    const newUsers = usersData[tabId].slice(start, end);
+
+    if (newUsers.length > 0) {
+      if (page === 1) {
+        usersData[tabId] = newUsers; // Initial load
+      } else {
+        const existingIds = new Set(usersData[tabId].map((user) => user.id));
+        const uniqueNewUsers = newUsers.filter(
+          (user) => !existingIds.has(user.id),
+        );
+        usersData[tabId] = [...usersData[tabId], ...uniqueNewUsers];
+      }
+      currentPage = page;
+    }
+  } catch (error) {
+    console.error('Error fetching users', error);
+  } finally {
+    isLoading = false;
+    rerender(App(), document.getElementById('root'));
+  }
+};
 
 const handleTabNavigation = async (e) => {
   const selectedTabId = e.target.value;
@@ -60,6 +100,10 @@ export const App = () => {
         users,
         showUser,
         handleUserSelected,
+        paginateFetchedUsers,
+        activeTab,
+        currentPage,
+        isLoading,
       }),
       UserDetailsSection({ user: users[showUser] ?? {} }),
     ]);
@@ -69,3 +113,6 @@ export const App = () => {
     NoUserFound(),
   ]);
 };
+if (isDev) {
+  paginateFetchedUsers(activeTab, 1);
+}
