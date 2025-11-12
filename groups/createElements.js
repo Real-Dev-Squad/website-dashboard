@@ -38,21 +38,21 @@ const createCard = (
             </span>
         </div>
     `;
-  
+
   if (group.isUpdating)
     cardElement.querySelector('.card__btn').classList.add('button--blocked');
   cardElement.querySelector('.card__title').textContent = group.title;
   cardElement.querySelector('.card__description').textContent =
     group.description;
   const lastUsedElement = cardElement.querySelector('.card__last-used');
-  if (group.lastUsedOnMs) {
-    const shortFormatted = shortDateString(group.lastUsedOnMs);
+  if (group.lastUsedTimestamp) {
+    const shortFormatted = shortDateString(group.lastUsedTimestamp);
     lastUsedElement.classList.add('tooltip-container');
     lastUsedElement.textContent = `Last used on: ${shortFormatted}`;
 
     const tooltip = document.createElement('span');
     tooltip.className = 'tooltip';
-    tooltip.innerText = fullDateString(group.lastUsedOnMs);
+    tooltip.innerText = fullDateString(group.lastUsedTimestamp);
     lastUsedElement.appendChild(tooltip);
   } else {
     lastUsedElement.style.display = 'none';

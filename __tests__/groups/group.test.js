@@ -483,4 +483,56 @@ describe('Discord Groups Page', () => {
 
     expect(isAnyHidden).toBe(true);
   });
+
+  test('fullDateString should return correctly formatted string and N/A for invalid inputs', async () => {
+    const result = await page.evaluate(async () => {
+      const mod = await import('/groups/utils.js');
+      const ts = Date.UTC(2024, 10, 6, 10, 15);
+      const formatted = mod.fullDateString(ts);
+      const options = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        timeZoneName: 'short',
+        hour12: true,
+      };
+      const expected = new Intl.DateTimeFormat('en-US', options).format(
+        new Date(ts),
+      );
+      const invalidString = mod.fullDateString('abc');
+      const invalidNaN = mod.fullDateString(NaN);
+      const invalidObj = mod.fullDateString({});
+      return { formatted, expected, invalidString, invalidNaN, invalidObj };
+    });
+
+    expect(result.formatted).toBe(result.expected);
+    expect(result.invalidString).toBe('N/A');
+    expect(result.invalidNaN).toBe('N/A');
+    expect(result.invalidObj).toBe('N/A');
+  });
+
+  test('shortDateString should return correctly formatted string and N/A for invalid inputs', async () => {
+    const result = await page.evaluate(async () => {
+      const mod = await import('/groups/utils.js');
+      const ts = Date.UTC(2024, 10, 6, 10, 15);
+      const formatted = mod.shortDateString(ts);
+      const d = new Date(ts);
+      const month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(
+        d,
+      );
+      const expected = `${d.getDate()} ${month} ${d.getFullYear()}`;
+      const invalidUndef = mod.shortDateString(undefined);
+      const invalidStr = mod.shortDateString('bad');
+      const invalidNaN = mod.shortDateString(NaN);
+      return { formatted, expected, invalidUndef, invalidStr, invalidNaN };
+    });
+
+    expect(result.formatted).toBe(result.expected);
+    expect(result.invalidUndef).toBe('N/A');
+    expect(result.invalidStr).toBe('N/A');
+    expect(result.invalidNaN).toBe('N/A');
+  });
 });
