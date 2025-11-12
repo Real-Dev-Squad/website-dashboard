@@ -454,7 +454,7 @@ describe('Task Request details page without login', () => {
     await browser.close();
   });
 
-  it('should show the error message if the cookie is not set', async () => {
+  it('should show an unauthenticated error message if the user is not logged in', async () => {
     await page.goto(
       `${LOCAL_TEST_PAGE_URL}/task-requests/details/?id=dM5wwD9QsiTzi7eG7Oq5`,
     );
