@@ -393,10 +393,8 @@ body {
 .card__last-used {
   margin-top: 0.4rem;
   color: var(--color-text-secondary);
-  font-weight: 400;
   font-size: 0.75rem;
 }
-
 
 .tooltip-container {
   position: relative;
