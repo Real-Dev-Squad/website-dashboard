@@ -36,27 +36,6 @@ body {
   margin: 0.5rem 0;
 }
 
-.header {
-  background: #1d1283;
-  padding: 1rem;
-}
-.header__contents {
-  max-width: 1440px;
-  padding: 0.5rem 1rem;
-  margin: 0 auto;
-  color: var(--color-white);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.header__contents__navlink {
-  color: var(--color-white);
-  text-decoration: none;
-}
-.header__contents__navlink:hover {
-  text-decoration: underline;
-}
-
 .container {
   max-width: 1440px;
   margin: 0 auto;
@@ -574,9 +553,8 @@ p:hover {
 .error-message {
   display: grid;
   place-items: center;
-  height: 100vh;
-  width: 100vw;
-  position: fixed;
+  height: 100%;
+  width: 100%;
   top: 0;
   left: 0;
   text-align: center;
