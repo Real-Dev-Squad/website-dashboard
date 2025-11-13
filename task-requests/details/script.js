@@ -362,9 +362,7 @@ async function fetchTaskRequest() {
       data.approvedTo = approvedTo;
       return data;
     } else {
-      if (isDev) {
-        showErrorMessage(res.status);
-      }
+      showErrorMessage(res.status);
     }
   } catch (e) {
     console.log(e);
@@ -573,16 +571,26 @@ const renderTaskRequest = async () => {
 
 const showErrorMessage = (error) => {
   let errorMessageDiv;
-  const message =
-    error === 404 ? ErrorMessages.NOT_FOUND : ErrorMessages.SERVER_ERROR;
-  if (error === 404 || error === 500) {
-    errorMessageDiv = document.createElement('p');
-    errorMessageDiv.classList.add('error-message');
-    errorMessageDiv.setAttribute('data-testid', 'error-message');
-    errorMessageDiv.textContent = message;
-    const container = document.querySelector('.container') || document.body;
-    container.appendChild(errorMessageDiv);
+  let message = '';
+  errorMessageDiv = document.createElement('div');
+  errorMessageDiv.classList.add('error-message');
+  errorMessageDiv.setAttribute('data-testid', 'error-message');
+  switch (error) {
+    case 404:
+      message = ErrorMessages.NOT_FOUND;
+      break;
+    case 401:
+      message = ErrorMessages.UNAUTHENTICATED;
+      break;
+    default:
+      message = ErrorMessages.SERVER_ERROR;
+      break;
   }
+  errorMessageDiv.textContent = message;
+  const container =
+    document.querySelector('#task-request-details') || document.body;
+  container.appendChild(errorMessageDiv);
+
   taskRequestSkeleton?.classList.add('hidden');
   taskContainer?.classList.add('hidden');
   const requestors = document.querySelector('.requestors');
