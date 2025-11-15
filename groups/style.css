@@ -390,6 +390,37 @@ body {
   line-height: 18px;
 }
 
+.card__last-used {
+  margin-top: 0.4rem;
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+}
+
+.tooltip-container {
+  position: relative;
+}
+
+.tooltip {
+  background-color: var(--black-color, #000);
+  color: var(--white, #fff);
+  visibility: hidden;
+  text-align: center;
+  border-radius: 4px;
+  padding: 0.5rem;
+  position: absolute;
+  opacity: 0.9;
+  font-size: 0.7rem;
+  width: 10rem;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -5rem;
+}
+
+.tooltip-container:hover .tooltip {
+  visibility: visible;
+  transition-delay: 400ms;
+}
+
 .card__action {
   display: flex;
   justify-content: space-between;

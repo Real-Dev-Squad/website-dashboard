@@ -196,6 +196,12 @@ const afterAuthentication = async () => {
           .split('-')
           .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
           .join(' ');
+        const lastUsedTimestamp =
+          group?.lastUsedOn?.seconds !== undefined
+            ? group.lastUsedOn.seconds * 1000
+            : group?.lastUsedOn?._seconds !== undefined
+            ? group.lastUsedOn._seconds * 1000
+            : undefined;
         acc[group.id] = {
           id: group.id,
           title: title,
@@ -203,6 +209,7 @@ const afterAuthentication = async () => {
           isMember: group.isMember,
           roleId: group.roleid,
           description: group.description,
+          lastUsedTimestamp,
           isUpdating: false,
         };
         return acc;

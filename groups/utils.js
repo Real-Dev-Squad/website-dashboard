@@ -178,6 +178,42 @@ function setParamValueInURL(paramKey, paramValue) {
   );
 }
 
+const fullDateString = (timestamp) => {
+  if (typeof timestamp !== 'number' || !Number.isFinite(timestamp)) {
+    return 'N/A';
+  }
+  const dateObj = new Date(timestamp);
+  if (isNaN(dateObj.getTime())) {
+    return 'N/A';
+  }
+  const options = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    timeZoneName: 'short',
+    hour12: true,
+  };
+  return new Intl.DateTimeFormat('en-US', options).format(dateObj);
+};
+
+const shortDateString = (timestamp) => {
+  if (typeof timestamp !== 'number' || !Number.isFinite(timestamp)) {
+    return 'N/A';
+  }
+  const date = new Date(timestamp);
+  if (isNaN(date.getTime())) {
+    return 'N/A';
+  }
+  const year = date.getFullYear();
+  const month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(
+    date,
+  );
+  return `${date.getDate()} ${month} ${year}`;
+};
+
 export {
   getUserGroupRoles,
   getMembers,
@@ -191,4 +227,6 @@ export {
   getDiscordGroupIdsFromSearch,
   getParamValueFromURL,
   setParamValueInURL,
+  fullDateString,
+  shortDateString,
 };

@@ -21,6 +21,19 @@ describe('Discord Groups Page', () => {
   let page;
   jest.setTimeout(60000);
 
+  // Shared constants for date formatting tests
+  const TEST_TIMESTAMP = Date.UTC(2024, 10, 6, 10, 15);
+  const FULL_DATE_FORMAT_OPTIONS = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    timeZoneName: 'short',
+    hour12: true,
+  };
+
   beforeAll(async () => {
     browser = await puppeteer.launch({
       headless: 'new',
@@ -421,5 +434,117 @@ describe('Discord Groups Page', () => {
     expect(await toastMessage.evaluate((el) => el.textContent)).toBe(
       'Group deleted successfully',
     );
+  });
+  test('Should display last used label and tooltip when lastUsedOn is present', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/groups`);
+    await page.waitForNetworkIdle();
+
+    const groupCardHandle = await page.evaluateHandle(() => {
+      const cards = Array.from(document.querySelectorAll('.card'));
+      return (
+        cards.find((card) => {
+          const el = card.querySelector('.card__last-used');
+          return el && getComputedStyle(el).display !== 'none';
+        }) || null
+      );
+    });
+
+    expect(groupCardHandle).toBeTruthy();
+
+    const lastUsedText = await page.evaluate((card) => {
+      const el = card.querySelector('.card__last-used');
+      if (!el) return '';
+      const tooltipElement = el.querySelector('.tooltip');
+      if (tooltipElement) {
+        const fullText = el.textContent.trim();
+        const tooltipText = tooltipElement.textContent.trim();
+        return fullText.replace(tooltipText, '').trim();
+      }
+      const firstChildNode = el.childNodes[0];
+      if (firstChildNode && firstChildNode.nodeType === Node.TEXT_NODE)
+        return firstChildNode.textContent.trim();
+      return el.textContent.trim();
+    }, groupCardHandle);
+
+    expect(lastUsedText).toMatch(/^Last used on: \d{1,2} [A-Za-z]{3} \d{4}$/);
+
+    const tooltipText = await page.evaluate((card) => {
+      const tooltipElement = card.querySelector('.card__last-used .tooltip');
+      return tooltipElement ? tooltipElement.textContent.trim() : '';
+    }, groupCardHandle);
+
+    expect(tooltipText.length).toBeGreaterThan(0);
+  });
+
+  test('Should hide last used label when lastUsedOn is absent', async () => {
+    await page.goto(`${LOCAL_TEST_PAGE_URL}/groups`);
+    await page.waitForNetworkIdle();
+
+    const isAnyCardHidden = await page.evaluate(() => {
+      const cards = Array.from(document.querySelectorAll('.card'));
+      return cards.some((card) => {
+        const el = card.querySelector('.card__last-used');
+        return el && getComputedStyle(el).display === 'none';
+      });
+    });
+
+    expect(isAnyCardHidden).toBe(true);
+  });
+
+  test('Should return correctly formatted full date string and N/A for invalid inputs', async () => {
+    const evaluationResult = await page.evaluate(
+      async (timestamp, fullDateFormatOptions) => {
+        const utilsModule = await import('/groups/utils.js');
+        const formatted = utilsModule.fullDateString(timestamp);
+        const expected = new Intl.DateTimeFormat(
+          'en-US',
+          fullDateFormatOptions,
+        ).format(new Date(timestamp));
+        const invalidString = utilsModule.fullDateString('abc');
+        const invalidNotANumber = utilsModule.fullDateString(NaN);
+        const invalidObject = utilsModule.fullDateString({});
+        return {
+          formatted,
+          expected,
+          invalidString,
+          invalidNotANumber,
+          invalidObject,
+        };
+      },
+      TEST_TIMESTAMP,
+      FULL_DATE_FORMAT_OPTIONS,
+    );
+
+    expect(evaluationResult.formatted).toBe(evaluationResult.expected);
+    expect(evaluationResult.invalidString).toBe('N/A');
+    expect(evaluationResult.invalidNotANumber).toBe('N/A');
+    expect(evaluationResult.invalidObject).toBe('N/A');
+  });
+
+  test('Should return correctly formatted short date string and N/A for invalid inputs', async () => {
+    const evaluationResult = await page.evaluate(async (timestamp) => {
+      const utilsModule = await import('/groups/utils.js');
+      const formatted = utilsModule.shortDateString(timestamp);
+      const dateInstance = new Date(timestamp);
+      const month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(
+        dateInstance,
+      );
+      const expected = `${dateInstance.getDate()} ${month} ${dateInstance.getFullYear()}`;
+      const invalidUndefined = utilsModule.shortDateString(undefined);
+      const invalidStringInput = utilsModule.shortDateString('bad');
+      const invalidNotANumber = utilsModule.shortDateString(NaN);
+      return {
+        formatted,
+        expected,
+        invalidUndefined,
+        invalidStringInput,
+        invalidNotANumber,
+      };
+    }, TEST_TIMESTAMP);
+
+    expect(evaluationResult.formatted).toBe(evaluationResult.expected);
+    expect(evaluationResult.invalidUndefined).toBe('N/A');
+    expect(evaluationResult.invalidStringInput).toBe('N/A');
+    expect(evaluationResult.invalidNotANumber).toBe('N/A');
   });
 });
