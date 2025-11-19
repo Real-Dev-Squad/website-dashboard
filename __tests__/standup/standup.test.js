@@ -22,6 +22,35 @@ function isSunday(date) {
   return date.getDay() === 0;
 }
 
+function countSundays(startDate, endDate) {
+  let start = new Date(startDate);
+  let end = new Date(endDate);
+
+  let sundayCount = 0;
+  while (start.getDay() !== 0) {
+    start.setDate(start.getDate() + 1);
+  }
+
+  while (start <= end) {
+    sundayCount++;
+    start.setDate(start.getDate() + 7);
+  }
+
+  return sundayCount;
+}
+
+function calculateScrollPosition(date, width) {
+  const selectedDate = new Date(date);
+  const endDate = new Date();
+  selectedDate.setHours(0, 0, 0, 0);
+
+  const dateDifference = endDate.getTime() - selectedDate.getTime();
+  const numberOfSundays = countSundays(selectedDate, endDate);
+  const oneDay = 24 * 60 * 60 * 1000;
+  const days = Math.floor(dateDifference / oneDay) - numberOfSundays;
+  return days * width;
+}
+
 function generateExpectedDateValues() {
   const expectedDateValues = [];
   for (
@@ -157,5 +186,75 @@ describe('Standup Page', () => {
     });
     const expectedDateValues = generateExpectedDateValues();
     expect(dateCellValues.length).toEqual(expectedDateValues.length);
+  });
+
+  it('should scroll to the correct date column when a date is selected', async () => {
+    const dateInput = await page.$('#date');
+    const testDate = '2024-09-25';
+
+    await page.evaluate(() => {
+      const datePicker = document.getElementById('date');
+      datePicker.value = '2024-09-25';
+      const event = new Event('change');
+      datePicker.dispatchEvent(event);
+    });
+
+    await page.waitForTimeout(1000);
+
+    let scrollPosition = await page.evaluate(() => {
+      return document.getElementById('table-container').scrollLeft;
+    });
+
+    const width = await page.evaluate(() => {
+      return document.getElementsByClassName('dates')[0].offsetWidth;
+    });
+
+    scrollPosition = Math.ceil(scrollPosition);
+
+    const expectedScrollPosition = calculateScrollPosition(testDate, width);
+
+    expect(scrollPosition).toEqual(expectedScrollPosition);
+
+    await page.evaluate(() => {
+      const datePicker = document.getElementById('date');
+      datePicker.value = new Date().toLocaleDateString('en-CA');
+      const event = new Event('change');
+      datePicker.dispatchEvent(event);
+    });
+  });
+
+  it('shouldnot scroll if the date selected is not in range', async () => {
+    const dateInput = await page.$('#date');
+    const testDate = '2025-09-26';
+
+    await page.evaluate(() => {
+      const datePicker = document.getElementById('date');
+      datePicker.value = '2025-09-26';
+      const event = new Event('change');
+      datePicker.dispatchEvent(event);
+    });
+
+    await page.waitForTimeout(1000);
+
+    let scrollPosition = await page.evaluate(() => {
+      return document.getElementById('table-container').scrollLeft;
+    });
+
+    const width = await page.evaluate(() => {
+      return document.getElementsByClassName('dates')[0].offsetWidth;
+    });
+
+    scrollPosition = Math.ceil(scrollPosition);
+
+    const expectedScrollPosition = calculateScrollPosition(testDate, width);
+
+    expect(scrollPosition).toEqual(0);
+
+    await page.evaluate(() => {
+      const datePicker = document.getElementById('date');
+      datePicker.value = new Date().toLocaleDateString('en-CA');
+      const event = new Event('change');
+      datePicker.dispatchEvent(event);
+    });
   });
 });
